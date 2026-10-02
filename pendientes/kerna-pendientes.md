@@ -12,7 +12,8 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - Terraform escrito, **nunca aplicado**: `infra/terraform/` (+ `README.md` paso a paso) e `infra/scripts/subir_imagen.sh`.
 - Arquitectura Azure diseñada (fases A y C aprobadas, B descartada) — solo diseño, sin Terraform ni código.
 - Dataset de evaluación: `kerna/evaluacion/datos/denuncias_publicas.xlsx` (+ `.json`), 113 casos públicos. Fuera de git.
-- **Nada está commiteado**: `infra/`, `kerna/`, `pendientes/` siguen sin seguimiento en git.
+- Commiteado y subido en la rama `feature/kerna-pipeline-azure` (sin `.env`, `terraform.tfvars`, `backend.hcl` ni datos de
+  evaluación; se versionan solo los `.example`).
 
 ## Reglas para retomar
 
@@ -95,4 +96,5 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 
 - [ ] ¿Se agregan los estatutos públicos modificados por la Ley Karin (Leyes 18.575, 18.834, 18.883, 18.695)?
       (comentario abierto en el doc).
-- [ ] ¿Cuándo se commitea el trabajo y en qué rama? (hoy todo está sin seguimiento en `stable`).
+- [ ] `docker/globaleaks.tar` (172 MB) está preparado en el índice desde antes: supera el límite de 100 MB de GitHub.
+      Sacarlo del índice o usar Git LFS antes de commitear los cambios de `docker/`.
