@@ -1,0 +1,7 @@
+.env
+.venv/
+salida/
+logs/
+__pycache__/
+test_*.py
+requirements-dev.txt

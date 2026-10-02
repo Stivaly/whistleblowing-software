@@ -1,0 +1,6 @@
+# Copiar a backend.hcl (excluido de git); lo genera el paso 4 del README.
+resource_group_name  = "rg-kerna-tfstate"
+storage_account_name = "stkernatfXXXXX"
+container_name       = "tfstate"
+key                  = "kerna-dev.tfstate"
+use_azuread_auth     = true

@@ -1,0 +1,29 @@
+{
+  "comentario": "Corpus normativo Kerna AI. Solo se extraen las entradas con \"activa\": true (o las nombradas con --normas). Alcance definido por el equipo el 2026-10-02: Ley 20.393, Ley 21.643 (Karin) y Ley 19.628 con su reforma por la Ley 21.719. Claves por entrada documentadas en extraer_bcn.py. Al agregar una norma: python3 extraer_bcn.py --verificar idLey=N (o idNorma=N[@AAAA-MM-DD]), confirmar el título y anotar \"verificado\".",
+  "normas": [
+    {"nombre": "Ley 20.393 Responsabilidad penal de las personas jurídicas", "idLey": 20393, "idNorma": 1008668, "categoria": ["penal", "compliance"], "prioridad": 1, "verificado": "2026-10-02", "activa": true,
+     "origen": "Alcance 2026-10-02. Artículo Primero (doble articulado) = la ley; Segundo y Tercero modifican CP 294 bis y Ley 19.913 (modificatorios, no se embeben)."},
+
+    {"nombre": "Ley 21.643 (Ley Karin) acoso laboral, sexual y violencia en el trabajo", "idLey": 21643, "idNorma": 1200096, "categoria": ["laboral", "acoso"], "prioridad": 1, "verificado": "2026-10-02", "activa": true,
+     "origen": "Alcance 2026-10-02. Arts. 1-5 modifican otras leyes (no se embeben); art. 6 y transitorios son sustantivos."},
+
+    {"nombre": "Código del Trabajo: artículos incorporados o modificados por la Ley 21.643 (Karin)", "clave": "207436-karin", "idNorma": 207436, "fuente": "json", "solo_modificados_por": 1200096, "categoria": ["laboral", "acoso"], "prioridad": 1, "verificado": "2026-10-02", "activa": true,
+     "origen": "Derivada de Ley 21.643: texto consolidado vigente de los artículos que la ley tocó (2, 154, 154 bis, 154 ter, 211-A a 211-E)."},
+
+    {"nombre": "Ley 19.628 Protección de los datos personales (reformada por Ley 21.719)", "clave": "141599@2026-12-01", "idNorma": 141599, "fuente": "json", "version": "2026-12-01", "vigencia": "anticipada", "categoria": ["datos"], "prioridad": 1, "verificado": "2026-10-02", "activa": true,
+     "origen": "Texto consolidado que rige desde 2026-12-01. Decisión del equipo: vigente en el corpus desde ya (vigencia_anticipada=true hasta esa fecha)."},
+
+    {"nombre": "Ley 19.628 Protección de la vida privada (texto previo a la Ley 21.719)", "clave": "141599@2023-05-09", "idNorma": 141599, "fuente": "json", "version": "2023-05-09", "vigencia": "historica", "categoria": ["datos"], "prioridad": 1, "verificado": "2026-10-02", "activa": true,
+     "origen": "Contexto: texto que rige en la BCN hasta 2026-11-30. vigente=false en el corpus."},
+
+    {"nombre": "Ley 21.719 Regula la protección y el tratamiento de los datos personales", "idLey": 21719, "idNorma": 1209272, "categoria": ["datos"], "prioridad": 1, "verificado": "2026-10-02", "activa": true,
+     "origen": "Alcance 2026-10-02. Arts. permanentes modifican Leyes 19.628, 20.285 y 19.496 (no se embeben: su efecto está en la entrada 141599@2026-12-01); transitorios sustantivos (plazos, Agencia)."},
+
+    {"nombre": "Código Penal", "idNorma": 1984, "categoria": ["penal"], "prioridad": 2, "verificado": "2026-10-02", "activa": false},
+    {"nombre": "Código del Trabajo (DFL 1) completo", "idNorma": 207436, "clave": "207436", "categoria": ["laboral"], "prioridad": 2, "verificado": "2026-10-02", "activa": false},
+    {"nombre": "Ley 21.595 Delitos económicos", "idLey": 21595, "idNorma": 1195119, "categoria": ["penal", "economico"], "prioridad": 2, "verificado": "2026-10-02", "activa": false},
+    {"nombre": "Ley 20.205 Protección al funcionario denunciante", "idLey": 20205, "idNorma": 262932, "categoria": ["denuncias"], "prioridad": 2, "verificado": "2026-10-02", "activa": false},
+    {"nombre": "Ley 21.592 Estatuto de protección del denunciante", "idLey": 21592, "idNorma": 1195215, "categoria": ["denuncias"], "prioridad": 2, "verificado": "2026-10-02", "activa": false},
+    {"nombre": "Ley 20.609 (Ley Zamudio) no discriminación", "idLey": 20609, "idNorma": 1042092, "categoria": ["laboral", "discriminacion"], "prioridad": 2, "verificado": "2026-10-02", "activa": false}
+  ]
+}

@@ -1,0 +1,3 @@
+pymongo>=4.6,<4.9  # mongomock aún no soporta el bulk_write de pymongo 4.9+
+mongomock>=4.1
+pytest>=8

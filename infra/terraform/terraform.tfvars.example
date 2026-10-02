@@ -1,0 +1,7 @@
+# Copiar a terraform.tfvars (excluido de git) y completar.
+subscription_id = "00000000-0000-0000-0000-000000000000"
+region          = "eastus2"
+prefijo         = "kerna"
+ambiente        = "dev"
+crear_jobs      = false
+imagen_tag      = "v1"

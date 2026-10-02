@@ -1,0 +1,23 @@
+# Crontab del pipeline normativo Kerna AI (instalar con: crontab crontab.txt)
+# Las credenciales NO van aquí: se leen de /opt/kerna/pipeline_bcn/.env (chmod 600).
+CRON_TZ=America/Santiago
+TZ=America/Santiago
+SHELL=/bin/bash
+K=/opt/kerna/pipeline_bcn
+
+# 1) Carga/actualización del corpus desde BCN — diario 03:00 (entradas activas de leyes.json).
+#    Además de detectar cambios en la BCN, recalcula la vigencia de cada entrada:
+#    así la Ley 19.628 reformada (vigencia anticipada) pierde la marca el 2026-12-01.
+0 3 * * * cd $K && set -a && . ./.env && set +a && .venv/bin/python extraer_bcn.py >> logs/extraccion.log 2>&1
+
+# 2) Embeddings de fragmentos pendientes — diario 03:40 (después de la extracción)
+40 3 * * * cd $K && set -a && . ./.env && set +a && .venv/bin/python embed_sync.py >> logs/embeddings.log 2>&1
+
+# 3) Verificación semanal completa (re-evalúa todos los fragmentos) — domingo 04:00
+0 4 * * 0 cd $K && set -a && . ./.env && set +a && .venv/bin/python extraer_bcn.py --forzar >> logs/verificacion.log 2>&1
+
+# 4) Entrada en vigencia de la Ley 21.719 — 1 de diciembre 00:05: actualiza la vigencia de la
+#    Ley 19.628 apenas comienza el día (sin esperar las 03:00) y re-sincroniza Qdrant.
+5 0 1 12 * (cd $K && set -a && . ./.env && set +a && .venv/bin/python extraer_bcn.py --normas 141599 && .venv/bin/python embed_sync.py) >> $K/logs/vigencia_21719.log 2>&1
+
+# Nota: en la corrida inicial (backfill) ejecutar manualmente y revisar salida/*.json antes de habilitar el cron.
