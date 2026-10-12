@@ -33,3 +33,25 @@ docker rmi veridy-pgtest:latest
 - `test_migration` (SQLite): 16 fallos **previos**, iguales con el código original (no los causan estos cambios).
 - Guardias de arranque verificadas: segundo arranque (68) arranca; versión 67 no arranca; volumen con
   `globaleaks.db` no arranca.
+
+# Recursos de prueba del 2026-10-12 (diagnóstico general)
+
+Creados por Claude para correr todas las pruebas. Se dejan detenidos, no borrados; la usuaria decide.
+
+| Recurso | Tipo | Para qué |
+| --- | --- | --- |
+| `veridy-test-1012-sqlite`, `-pg`, `-base` | contenedores (veridy-pgtest) | Suite completa del backend: código actual en SQLite y PostgreSQL, y rama `stable` como línea base |
+| `veridy-test-1012-repro52`, `-pg-mig`, `-sqlite-mig` | contenedores | Reproducción del fallo de migración y verificación del skip en PostgreSQL |
+| `veridy-test-1012-e2e-backend` | contenedor (detenido) | Primer intento de backend para Cypress (escuchaba solo en 127.0.0.1 interno) |
+| `veridy-test-1012-e2e` | contenedor | Backend + cliente de pruebas para Cypress, puerto 127.0.0.1:18443 |
+| `kerna-mongo44-test` | contenedor (mongo:4.4, 127.0.0.1:27018) | MongoDB desechable para las pruebas del pipeline (`MONGODB_TEST_URI`) |
+| `kerna-mongo-test` | contenedor (mongo:8.0, salió con error) | Intento con MongoDB 8: no corre, la CPU no tiene AVX |
+| `mongo:4.4`, `mongo:8.0` | imágenes | La 8.0 no sirve en esta máquina |
+| `kerna/pipeline_bcn/.venv-test` | entorno Python (fuera de git) | Primer entorno de pruebas; ya no hace falta (requirements-dev ya no fija pymongo) |
+
+Para eliminarlo (cuando la usuaria lo decida):
+
+```bash
+docker rm $(docker ps -aq --filter name=veridy-test-1012) kerna-mongo-test
+docker rmi mongo:8.0
+```

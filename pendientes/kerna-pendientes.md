@@ -100,8 +100,16 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 ## 5b. Base de Veridy en PostgreSQL de Azure (2026-10-04)
 
 - [x] Código de Veridy para PostgreSQL, probado contra PostgreSQL local (114/114 tests en PG, 195/195 en SQLite).
-- [ ] Usuaria: verificar en el portal que Flexible Server B1ms esté cubierto por el crédito (README, paso 11).
-- [ ] Usuaria: `crear_postgres = true`, IP del host de Veridy, plan/apply (paso 11) y roles (paso 12).
+- [x] Suite completa del backend (2026-10-12): SQLite 341/357 y PostgreSQL 340/357 → 16 fallos de `test_migration`
+      idénticos en la rama `stable` (upstream: `no such table: internalfile`); el de PostgreSQL (migración 68) ahora
+      se salta porque las migraciones son solo para SQLite.
+- [x] Decisión de la usuaria (2026-10-12): PostgreSQL Flexible Server (no Azure SQL), encendido solo cuando se usa.
+      `infra/scripts/veridy_bd.sh` + cron: apaga tras 60 min sin peticiones a Veridy, enciende al volver a entrar
+      (README paso 13; instrucción en `.claude/CLAUDE.md`). Probado con un `az` falso (4 casos).
+- [x] `terraform.tfvars`: `crear_postgres = true`, IPv4 del host 181.43.152.136 (el firewall no acepta IPv6).
+      Si el proveedor cambia la IP, actualizarla y volver a aplicar.
+- [ ] Usuaria: generar las dos contraseñas en Key Vault (a Claude se lo bloquea el clasificador de permisos).
+- [ ] plan/apply (paso 11), roles (paso 12) e `instalar-cron` (paso 13).
 - [ ] Usuaria: construir la imagen y primer arranque con `docker/README-postgres.md`; quitar luego la URI de admin.
 - [ ] Retirar `etl_incremental.py` cuando ya no se necesite (mover a `.papelera/`, no borrar) y rotar su credencial.
 - [ ] Decidir si se eliminan los recursos Docker de prueba (`pendientes/recursos-de-prueba.md`).
