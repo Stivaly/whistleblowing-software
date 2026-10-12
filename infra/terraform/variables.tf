@@ -4,9 +4,9 @@ variable "subscription_id" {
 }
 
 variable "region" {
-  description = "Región de todos los recursos (la misma del cluster de MongoDB Atlas)"
+  description = "Región de todos los recursos. chilecentral salvo que un servicio no esté disponible o salga caro ahí"
   type        = string
-  default     = "eastus2"
+  default     = "chilecentral"
 }
 
 variable "prefijo" {

@@ -1,11 +1,11 @@
 # Infraestructura Kerna AI en Azure (Terraform)
 
-Qué crea (todo en `eastus2`, grupo `rg-kerna-dev`):
+Qué crea (todo en `chilecentral`, grupo `rg-kerna-dev`):
 
 | Recurso | Para qué | Costo aprox. (Azure for Students) |
 |---|---|---|
 | Log Analytics | logs de los jobs (tope 0,5 GB/día) | centavos |
-| Container Registry Basic | imagen `kerna-pipeline` | ~US$5/mes |
+| Container Registry Standard | imagen `kerna-pipeline` | 1 registro Standard incluido en Azure for Students (Basic se cobra) |
 | Key Vault | `mongodb-uri`, `qdrant-url`, `qdrant-api-key`, `gemini-api-key` | centavos |
 | Identidad administrada | el job lee Key Vault y baja la imagen sin claves | gratis |
 | Container Apps Environment + 3 jobs | diario, semanal y 1 de diciembre | dentro de la cuota gratuita mensual |
@@ -35,7 +35,7 @@ az version && terraform version
 ## 1. Iniciar sesión
 
 ```bash
-az login --use-device-code          # abre el código en el navegador y aprueba
+az login                            # si no abre el navegador: az login --use-device-code
 az account show --query "{suscripcion:name, id:id, tenant:tenantId}" -o table
 ```
 
@@ -45,12 +45,27 @@ az account show --query "{suscripcion:name, id:id, tenant:tenantId}" -o table
 az policy assignment list --query "[].{nombre:displayName, regiones:parameters.listOfAllowedLocations.value}" -o json
 ```
 
-Si aparece una lista y `eastus2` no está, avisar: hay que cambiar `region` (y conviene que coincida con Mongo).
+Regiones permitidas en la suscripción (2026-10-12): `chilecentral`, `mexicocentral`, `westus`, `canadacentral`,
+`southafricanorth`. Se usa `chilecentral` salvo que un servicio no esté disponible o salga caro ahí.
+
+Verificar que los servicios existan en la región (después del paso 3):
+
+```bash
+REGION=chilecentral
+for rt in Microsoft.App/managedEnvironments Microsoft.App/jobs Microsoft.ContainerRegistry/registries \
+          Microsoft.KeyVault/vaults Microsoft.OperationalInsights/workspaces \
+          Microsoft.ManagedIdentity/userAssignedIdentities Microsoft.DBforPostgreSQL/flexibleServers; do
+  ns=${rt%%/*}; t=${rt#*/}
+  az provider show -n $ns --query "resourceTypes[?resourceType=='$t'].locations[]" -o tsv \
+    | tr -d ' ' | tr 'A-Z' 'a-z' | grep -qx "$REGION" && echo "OK  $rt" || echo "NO  $rt"
+done
+az postgres flexible-server list-skus -l $REGION -o json | grep -io '"standard_b[0-9a-z]*"' | sort -u     # debe salir "Standard_B1ms"
+```
 
 ## 3. Registrar los proveedores de recursos (una vez)
 
 ```bash
-for p in Microsoft.App Microsoft.OperationalInsights Microsoft.ContainerRegistry Microsoft.KeyVault Microsoft.ManagedIdentity Microsoft.Storage; do
+for p in Microsoft.App Microsoft.OperationalInsights Microsoft.ContainerRegistry Microsoft.KeyVault Microsoft.ManagedIdentity Microsoft.Storage Microsoft.DBforPostgreSQL; do
   az provider register --namespace $p
 done
 az provider list --query "[?namespace=='Microsoft.App' || namespace=='Microsoft.ContainerRegistry'].{ns:namespace, estado:registrationState}" -o table
@@ -61,13 +76,13 @@ az provider list --query "[?namespace=='Microsoft.App' || namespace=='Microsoft.
 
 ```bash
 SUF=$(tr -dc a-z0-9 </dev/urandom | head -c 5)
-az group create -n rg-kerna-tfstate -l eastus2 -o none
-az storage account create -n stkernatf$SUF -g rg-kerna-tfstate -l eastus2 \
+az group create -n rg-kerna-tfstate -l chilecentral -o none
+az storage account create -n stkernatf$SUF -g rg-kerna-tfstate -l chilecentral \
   --sku Standard_LRS --min-tls-version TLS1_2 --allow-blob-public-access false -o none
-az storage container create -n tfstate --account-name stkernatf$SUF --auth-mode login -o none
 az role assignment create --role "Storage Blob Data Contributor" \
   --assignee $(az ad signed-in-user show --query id -o tsv) \
   --scope $(az storage account show -n stkernatf$SUF -g rg-kerna-tfstate --query id -o tsv) -o none
+az storage container create -n tfstate --account-name stkernatf$SUF --auth-mode login -o none
 
 cd infra/terraform
 cat > backend.hcl <<EOF
@@ -95,7 +110,7 @@ terraform apply fase1.tfplan
 
 ## 6. Cargar los secretos en Key Vault
 
-Antes: crear el cluster gratuito en [Qdrant Cloud](https://cloud.qdrant.io) (proveedor Azure, región cercana a eastus2) y la API key de Gemini en [Google AI Studio](https://aistudio.google.com/apikey), y agregarlas al `.env` del pipeline:
+Antes: crear el cluster gratuito en [Qdrant Cloud](https://cloud.qdrant.io) (proveedor Azure, la región más cercana a `chilecentral` que ofrezca) y la API key de Gemini en [Google AI Studio](https://aistudio.google.com/apikey), y agregarlas al `.env` del pipeline:
 
 ```
 QDRANT_URL='https://xxxx.eastus2-0.azure.cloud.qdrant.io:6333'
