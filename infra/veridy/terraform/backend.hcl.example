@@ -1,0 +1,6 @@
+# Copiar a backend.hcl (excluido de git). Misma cuenta de Storage que infra/terraform, otra clave.
+resource_group_name  = "rg-kerna-tfstate"
+storage_account_name = "stkernatfXXXXX"
+container_name       = "tfstate"
+key                  = "veridy-dev.tfstate"
+use_azuread_auth     = true

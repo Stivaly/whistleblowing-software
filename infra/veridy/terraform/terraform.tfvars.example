@@ -1,0 +1,12 @@
+# Copiar a terraform.tfvars (excluido de git) y completar.
+subscription_id  = "00000000-0000-0000-0000-000000000000"
+region           = "chilecentral"
+ambiente         = "dev"
+acr_nombre       = "acrkernadevXXXXX"   # terraform -chdir=../../terraform output -raw acr_nombre
+postgres_nombre  = "psql-veridy-dev-XXXXX"
+crear_contenedor = false
+imagen_tag       = "v1"
+# IPv4 públicas de administración con acceso directo a PostgreSQL (curl -4 -s https://ifconfig.me)
+postgres_ips_permitidas = {
+  # "host-veridy" = "203.0.113.10"
+}

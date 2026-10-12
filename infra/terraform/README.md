@@ -9,7 +9,6 @@ Qué crea (todo en `chilecentral`, grupo `rg-kerna-dev`):
 | Key Vault | `mongodb-uri`, `qdrant-url`, `qdrant-api-key`, `gemini-api-key` | centavos |
 | Identidad administrada | el job lee Key Vault y baja la imagen sin claves | gratis |
 | Container Apps Environment + 3 jobs | diario, semanal y 1 de diciembre | dentro de la cuota gratuita mensual |
-| PostgreSQL Flexible Server B1ms (opcional, `crear_postgres`) | base operativa de Veridy | verificar cobertura gratuita antes del apply (paso 11) |
 
 Fuera de Terraform (a mano): MongoDB Atlas (ya existe), Qdrant Cloud y la API key de Google Gemini (AI Studio).
 
@@ -163,54 +162,10 @@ az containerapp job execution list -n job-kerna-dev-diario -g rg-kerna-dev \
 az containerapp job logs show -n job-kerna-dev-diario -g rg-kerna-dev --container pipeline
 ```
 
-## 11. PostgreSQL de Veridy (servidor, base y firewall)
+## 11. Veridy
 
-Antes de crear: Portal de Azure → **Free services** (o "Servicios gratuitos" de Azure for Students) y confirmar que
-**Azure Database for PostgreSQL – Flexible Server, Burstable B1ms** aparece con horas disponibles. Si no aparece,
-avisar antes de seguir: el servidor cobra por hora mientras está encendido (se puede detener hasta 7 días seguidos).
-
-```bash
-cd infra/terraform
-KV=$(terraform output -raw key_vault_nombre)
-
-# 1. Contraseñas: se generan aquí y van directo a Key Vault (no se escriben en archivos)
-az keyvault secret set --vault-name $KV --name veridy-db-admin-password --value "$(openssl rand -base64 30 | tr -d '/+=')" -o none
-az keyvault secret set --vault-name $KV --name veridy-db-app-password   --value "$(openssl rand -base64 30 | tr -d '/+=')" -o none
-
-# 2. IP pública (IPv4: el firewall de Azure no acepta IPv6) del host donde corre Veridy
-curl -4 -s https://ifconfig.me; echo
-#    → agregarla en terraform.tfvars:  postgres_ips_permitidas = { "host-veridy" = "<esa IP>" }
-sed -i 's/crear_postgres *= *false/crear_postgres  = true/' terraform.tfvars
-
-# 3. Plan y apply (la contraseña entra como valor de solo escritura)
-az provider register --namespace Microsoft.DBforPostgreSQL
-export TF_VAR_postgres_admin_password="$(az keyvault secret show --vault-name $KV --name veridy-db-admin-password --query value -o tsv)"
-terraform plan -out=fase3.tfplan     # debe agregar: servidor, base, 2 configuraciones y las reglas de firewall
-terraform apply fase3.tfplan
-unset TF_VAR_postgres_admin_password
-terraform output postgres_servidor
-```
-
-Si `terraform validate` rechaza `administrator_password_wo`, pegar el error: depende de la versión del proveedor azurerm.
-
-## 12. Roles dentro de la base (una vez)
-
-Crea `veridy_app`, el rol con el que corre Veridy (solo lee y escribe datos, sin crear tablas). Usa la imagen
-`postgres:15` que ya está en la máquina como cliente `psql`:
-
-```bash
-cd infra/terraform
-KV=$(terraform output -raw key_vault_nombre)
-PGHOST=$(terraform output -raw postgres_servidor)
-docker run --rm -i \
-  -e PGPASSWORD="$(az keyvault secret show --vault-name $KV --name veridy-db-admin-password --query value -o tsv)" \
-  postgres:15 psql "host=$PGHOST dbname=veridy user=veridyadmin sslmode=require" \
-  -v app_password="$(az keyvault secret show --vault-name $KV --name veridy-db-app-password --query value -o tsv)" \
-  -f - < ../sql/veridy_roles.sql
-```
-
-Al final debe mostrar `veridy_app` con `rolsuper = f`. Después, el contenedor de Veridy se conecta según
-`docker/README-postgres.md`.
+Veridy (contenedor, PostgreSQL y su Key Vault) tiene su propio Terraform y estado: ver `infra/veridy/README.md`.
+El PostgreSQL se creó primero desde aquí y se trasladó a `rg-veridy-dev` el 2026-10-12.
 
 ## Probar una versión nueva (sin Terraform)
 
@@ -234,21 +189,3 @@ Terraform no revierte la imagen desplegada (`ignore_changes` en los jobs): Terra
 | vigencia-21719 | `5 3 1 12 *` | 1 de diciembre 00:05 |
 
 En invierno (UTC-4) los jobs corren una hora antes en hora local; no afecta al pipeline.
-
-## 13. Encendido y apagado automático de PostgreSQL
-
-El servidor solo cobra cómputo mientras está encendido. `infra/scripts/veridy_bd.sh` lo apaga tras 60 minutos sin
-peticiones a Veridy y lo enciende cuando alguien vuelve a entrar (la primera petición ve un error; la base queda
-lista en 1-5 minutos). Se mide en el `access.log` de Veridy, sin contar el healthcheck, porque los jobs de Veridy
-consultan la base cada 5 segundos.
-
-```bash
-infra/scripts/veridy_bd.sh estado          # Ready / Stopped / ...
-infra/scripts/veridy_bd.sh instalar-cron   # una vez, en el host de Veridy
-infra/scripts/veridy_bd.sh inactividad     # minutos sin uso
-tail ~/.local/state/veridy-bd/veridy-bd.log
-```
-
-Umbrales: `VERIDY_BD_INACTIVIDAD_MIN` (60) y `VERIDY_BD_DESPERTAR_MIN` (3). El cron usa la sesión de `az` del
-usuario: si el tenant vuelve a pedir MFA, deja de poder encender o apagar hasta el próximo `az login`.
-
