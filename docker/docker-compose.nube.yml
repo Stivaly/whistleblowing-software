@@ -1,0 +1,17 @@
+# Veridy con su base de datos en PostgreSQL de Azure (docker/README-postgres.md).
+#
+#   docker compose -f docker-compose.yml -f docker-compose.nube.yml up -d --build
+#
+# Usa un volumen propio (veridy_nube) para adjuntos, archivos y logs: el volumen local
+# docker_globaleaks y su SQLite quedan intactos.
+services:
+  globaleaks:
+    container_name: veridy-nube
+    env_file:
+      - path: ./veridy-db.env
+        required: true
+    volumes: !override
+      - veridy_nube:/var/globaleaks:rw
+
+volumes:
+  veridy_nube: {}

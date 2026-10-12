@@ -24,6 +24,7 @@ RUN apt-get update -q && \
     apt-get install -y --no-install-recommends lsb-release && \
     chmod +x /tmp/install.sh && \
     /tmp/install.sh && \
+    apt-get install -y --no-install-recommends python3-psycopg2 ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
@@ -32,11 +33,15 @@ RUN mkdir -p /run/globaleaks && chown -R globaleaks:globaleaks /run/globaleaks
 COPY client /tmp/client-source
 WORKDIR /tmp/client-source
 RUN apt-get update && apt-get install -y nodejs npm && \
-    npm install && \
-    npx ng build --configuration=production && \
-    cp -r /tmp/client-source/dist/* /usr/share/globaleaks/client/ && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    npm install -d && \
+    ./node_modules/grunt/bin/grunt build && \
+    rm -rf /usr/share/globaleaks/client/* && \
+    cp -r /tmp/client-source/build/* /usr/share/globaleaks/client/ && \
+    rm -rf /tmp/client-source
+
+COPY backend/globaleaks /usr/lib/python3/dist-packages/globaleaks
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 WORKDIR /
 
 EXPOSE 8080 8443
