@@ -618,5 +618,22 @@
   "This email is to remind you the presence of unread or updated reports.": "Este correo electrónico es para recordarle que existen denuncias no leídas o actualizadas.",
   "Reminder about unread or updated reports": "Recordar la existencia de denuncias no leídas o actualizadas.",
   "Role: {Role}": "Rol: {Role}",
-  "Password: {Password}": "Contraseña: {Password}"
+  "Password: {Password}": "Contraseña: {Password}",
+  "Total Reports": "Total de Reportes",
+  "Last 30 days": "Últimos 30 días",
+  "Important": "Importantes",
+  "Reports with attachments": "Reportes con adjuntos",
+  "Operational Metrics": "Métricas Operacionales",
+  "Effectiveness Metrics": "Métricas de Efectividad",
+  "Average accesses per report": "Promedio de accesos por reporte",
+  "Trust and Security Metrics": "Métricas de Confianza y Seguridad",
+  "Subscribed later": "Suscrito posteriormente",
+  "Export Reports": "Exportar Reportes",
+  "Mobile": "Móvil",
+  "With files": "Con archivos",
+  "Without files": "Sin archivos",
+  "Returning whistleblowers": "Denunciantes que regresan",
+  "Anonymity": "Anonimato",
+  "Anonymous": "Anónimo",
+  "Subscribed": "Suscrito"
 }

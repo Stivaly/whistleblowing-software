@@ -1,24 +1,95 @@
-<div class="row">
-  <div class="col-md-3">
-    <div class="card">
-      <div class="card-header">{{ 'Reports' | translate }}</div>
-      <div class="card-body text-center">
-        <h2>{{ charts[0].total }}</h2>
-      </div>
-    </div>
-  </div>
+<!-- Header con botón de exportación -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3>{{ 'Statistics' | translate }}</h3>
+  <button class="btn btn-primary" (click)="exportReports()">
+    <i class="fa-solid fa-download"></i> {{ 'Export Reports' | translate }}
+  </button>
 </div>
 
-<div class="row">
-  @for (chart of charts; track chart; let i = $index) {
+<!-- Métricas Operacionales -->
+<div class="mb-4">
+  <h4 class="mb-3">{{ 'Operational Metrics' | translate }}</h4>
+  <div class="row">
     <div class="col-md-3">
       <div class="card">
-        <div class="card-header">{{ chart.title | translate }}</div>
-        <div class="card-body analyst-graph">
-          <canvas baseChart class="chart chart-pie" [type]="'pie'" [labels]="chart.labels" [datasets]="chart.datasets" [legend]="true">
-          </canvas>
+        <div class="card-header">{{ 'Total Reports' | translate }}</div>
+        <div class="card-body text-center">
+          <h2>{{ operationalMetrics.stats.total }}</h2>
         </div>
       </div>
     </div>
-  }
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-header">{{ 'Last 30 days' | translate }}</div>
+        <div class="card-body text-center">
+          <h2>{{ operationalMetrics.stats.last30Days }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-header">{{ 'Important' | translate }}</div>
+        <div class="card-body text-center">
+          <h2>{{ operationalMetrics.stats.important }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    @for (chart of operationalMetrics.charts; track chart) {
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-header">{{ chart.title }}</div>
+          <div class="card-body analyst-graph">
+            <canvas baseChart class="chart chart-pie" [type]="'pie'" [labels]="chart.labels" [datasets]="chart.datasets" [legend]="true">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Métricas de Efectividad -->
+<div class="mb-4">
+  <h4 class="mb-3">{{ 'Effectiveness Metrics' | translate }}</h4>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-header">{{ 'Average accesses per report' | translate }}</div>
+        <div class="card-body text-center">
+          <h2>{{ effectivenessMetrics.stats.averageAccess }}</h2>
+        </div>
+      </div>
+    </div>
+    @for (chart of effectivenessMetrics.charts; track chart) {
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-header">{{ chart.title }}</div>
+          <div class="card-body analyst-graph">
+            <canvas baseChart class="chart chart-pie" [type]="'pie'" [labels]="chart.labels" [datasets]="chart.datasets" [legend]="true">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Métricas de Confianza y Seguridad -->
+<div class="mb-4">
+  <h4 class="mb-3">{{ 'Trust and Security Metrics' | translate }}</h4>
+  <div class="row">
+    @for (chart of trustMetrics.charts; track chart) {
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">{{ chart.title }}</div>
+          <div class="card-body analyst-graph">
+            <canvas baseChart class="chart chart-pie" [type]="'pie'" [labels]="chart.labels" [datasets]="chart.datasets" [legend]="true">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
 </div>

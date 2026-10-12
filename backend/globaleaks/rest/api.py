@@ -102,6 +102,7 @@ api_spec = [
 
     # Analyst Handlers
     ('/api/analyst/stats', analyst.Statistics),
+    ('/api/analyst/export', analyst.ExportReports),
 
     # Admin Handlers
     ('/api/admin/node', admin.node.NodeInstance),

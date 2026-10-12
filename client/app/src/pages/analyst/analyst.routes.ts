@@ -25,7 +25,7 @@ export const analystRoutes: Routes = [
       StatisticsResolver
     },
     pathMatch: "full",
-    data: {pageTitle: "statistics"},
+    data: {pageTitle: "Statistics"},
   },
   {
     path: "preferences",
