@@ -43,7 +43,8 @@ RUN apt-get update -q && \
     apt-get install -y --no-install-recommends lsb-release && \
     chmod +x /tmp/install.sh && \
     /tmp/install.sh && \
-    apt-get install -y --no-install-recommends python3-psycopg2 ca-certificates && \
+    apt-get install -y --no-install-recommends python3-psycopg2 ca-certificates \
+      python3-h2 python3-priority python3-six && \
     rm -rf /usr/share/globaleaks/client/* && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/*
