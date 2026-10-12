@@ -116,6 +116,11 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [ ] Prueba con la imagen real (`docker compose ... build`) y luego apagar el servidor e `instalar-cron`.
       La usuaria pidió dejarlo encendido solo hasta la primera prueba correcta de despliegue.
 - [ ] Usuaria: construir la imagen y primer arranque con `docker/README-postgres.md`; quitar luego la URI de admin.
+- [ ] Más adelante: script que limpie los registros de red de Veridy y de las máquinas (access.log y logs del
+      contenedor, logs del host, diagnósticos de Azure si se activan), para no conservar IPs de quienes entran por
+      navegador normal. Pedido por la usuaria el 2026-10-12. Tor se mantiene (quitarlo no reduce la imagen).
+- [ ] Pregunta abierta: ¿aviso en la portada de que el anonimato es de contenido y no de red (no denunciar desde la
+      red o el equipo del trabajo)?
 - [ ] Retirar `etl_incremental.py` cuando ya no se necesite (mover a `.papelera/`, no borrar) y rotar su credencial.
 - [ ] Decidir si se eliminan los recursos Docker de prueba (`pendientes/recursos-de-prueba.md`).
 
