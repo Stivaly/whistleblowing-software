@@ -7,8 +7,8 @@ El extractor se reescribió el 2026-10-02 tras probarlo contra XML reales de la 
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt      # producción
-python3 -m venv .venv-test && .venv-test/bin/pip install -r requirements-dev.txt   # una vez (pymongo < 4.9 para mongomock)
-.venv-test/bin/python -m pytest -q                                                  # pruebas
+docker run -d --name kerna-mongo44-test -p 127.0.0.1:27018:27017 mongo:4.4   # una vez: MongoDB de prueba (5+ exige AVX)
+.venv/bin/pip install -r requirements-dev.txt && .venv/bin/python -m pytest -q   # pruebas
 ```
 
 ## Uso
