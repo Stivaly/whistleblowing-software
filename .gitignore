@@ -3,3 +3,32 @@ backend/workingdir/
 client/build
 client/node_modules/
 documentation/_build
+
+# --- Veridy (fork) ---
+# Entornos y builds locales
+venv/
+.venv/
+__pycache__/
+client/.angular/
+client/dist/
+
+# Credenciales locales (se versionan solo los *.example)
+.env
+*.env
+!*.env.example
+
+# Configuración local de Claude Code (CLAUDE.md sí se versiona)
+.claude/settings.local.json
+
+# Imagen Docker exportada (>100 MB, límite de GitHub)
+docker/globaleaks.tar
+
+# ETL temporal hacia la nube: contiene credenciales y estado local (ver pendientes)
+etl_incremental.py
+etl_state.json
+
+# Material de referencia (puede estar desactualizado; ver .claude/CLAUDE.md)
+fable upgrades/
+
+# Papelera del proyecto (regla de no eliminación)
+.papelera/
