@@ -113,6 +113,10 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [x] Roles (paso 12): `veridy_app` sin superuser/createdb/createrole; no puede crear ni borrar tablas.
 - [x] Prueba previa de arranque contra Azure (imagen de prueba + backend actual): esquema creado (34 tablas,
       versión 68, dueño veridyadmin), Veridy opera como `veridy_app`, segundo arranque sin credencial admin OK.
+- [~] Cypress e2e (2026-10-12, 22 escenarios / 86 pruebas, contra backend en contenedor): GlobaLeaks `stable` 77/86;
+      Veridy 1ª corrida 78/86 (fallan 6, 12, 15, 18, 22: los mismos escenarios fallan en `stable`). Veridy 2ª corrida
+      26/86: desde el escenario 9 no aparece el formulario de login (`[name="username"]`) en cascada; con el mismo
+      código que la 1ª corrida → probable estado del ambiente. Repetir aparte antes de concluir.
 - [ ] Prueba con la imagen real (`docker compose ... build`) y luego apagar el servidor e `instalar-cron`.
       La usuaria pidió dejarlo encendido solo hasta la primera prueba correcta de despliegue.
 - [ ] Usuaria: construir la imagen y primer arranque con `docker/README-postgres.md`; quitar luego la URI de admin.
