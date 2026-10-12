@@ -19,7 +19,9 @@ WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'veridy_app')
 \gexec
 
 ALTER ROLE veridy_app PASSWORD :'app_password';
-ALTER ROLE veridy_app NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+-- Sin NOSUPERUSER: en Azure el administrador no es superusuario y no puede nombrar ese
+-- atributo; un rol creado así nunca es superusuario (la comprobación final lo muestra).
+ALTER ROLE veridy_app NOCREATEDB NOCREATEROLE NOINHERIT;
 ALTER ROLE veridy_app CONNECTION LIMIT 40;
 ALTER ROLE veridy_app SET search_path = public;
 ALTER ROLE veridy_app SET statement_timeout = '60s';
