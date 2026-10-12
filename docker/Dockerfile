@@ -9,15 +9,13 @@ ARG DISTRIBUTION=trixie
 
 FROM ${BASE_IMAGE}
 
-ADD https://deb.globaleaks.org/install.sh /tmp/install.sh
-
 # Redeclare build arguments to make them available after FROM
 ARG DISTRIBUTION=trixie
 
 # Set environment for non-interactive installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-COPY files/* /tmp/
+COPY docker/files/* /tmp/
 
 RUN groupadd -r globaleaks --gid=1000 && useradd -r -d /var/globaleaks -g globaleaks --uid=1000 globaleaks
 
@@ -30,6 +28,16 @@ RUN apt-get update -q && \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
 RUN mkdir -p /run/globaleaks && chown -R globaleaks:globaleaks /run/globaleaks
+
+COPY client /tmp/client-source
+WORKDIR /tmp/client-source
+RUN apt-get update && apt-get install -y nodejs npm && \
+    npm install && \
+    npx ng build --configuration=production && \
+    cp -r /tmp/client-source/dist/* /usr/share/globaleaks/client/ && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+WORKDIR /
 
 EXPOSE 8080 8443
 
