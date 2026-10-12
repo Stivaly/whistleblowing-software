@@ -111,7 +111,33 @@ class SettingsClass(object, metaclass=Singleton):
         self.questions_path = os.path.join(self.client_path, 'data/questions')
         self.field_attrs_file = os.path.join(self.client_path, 'data/field_attrs.json')
 
-        set_db_uri(make_db_uri(self.db_file_path))
+        set_db_uri(self.get_db_uri())
+
+    def get_db_uri(self):
+        """
+        Return the database URI.
+
+        Veridy can use PostgreSQL instead of the SQLite file: the URI comes from the
+        environment (GLOBALEAKS_DB_URI, or a file named by GLOBALEAKS_DB_URI_FILE) and
+        never from the command line, so that it does not show up in the process list.
+        The password may also be given apart in PGPASSWORD, which libpq reads.
+        """
+        db_uri = os.environ.get('GLOBALEAKS_DB_URI', '').strip()
+
+        db_uri_file = os.environ.get('GLOBALEAKS_DB_URI_FILE', '').strip()
+        if not db_uri and db_uri_file:
+            with open(db_uri_file) as fd:
+                db_uri = fd.read().strip()
+
+        if not db_uri:
+            self.db_type = 'sqlite'
+            return make_db_uri(self.db_file_path)
+
+        if not db_uri.startswith('postgresql+psycopg2://'):
+            raise RuntimeError('GLOBALEAKS_DB_URI must start with postgresql+psycopg2://')
+
+        self.db_type = 'postgresql'
+        return db_uri
 
     def set_devel_mode(self):
         self.devel_mode = True

@@ -73,6 +73,7 @@ def get_receivertips(session, tid, receiver_id, user_key, language, args={}):
     ]
 
     dict_ret = dict()
+    seen_rtips = set()
     # Fetch rtip, internaltip and associated questionnaire schema
     for rtip, itip, answers, data in session.query(models.ReceiverTip,
                                                    models.InternalTip,
@@ -88,7 +89,15 @@ def get_receivertips(session, tid, receiver_id, user_key, language, args={}):
                                                     models.InternalTip.update_date <= updated_before,
                                                     models.InternalTip.id == models.ReceiverTip.internaltip_id,
                                                     models.InternalTipAnswers.internaltip_id == models.ReceiverTip.internaltip_id) \
-                                            .group_by(models.ReceiverTip.id):
+                                            .order_by(models.ReceiverTip.id,
+                                                      models.InternalTipAnswers.creation_date):
+        # One row per rtip with the answers of the initial questionnaire. This replaces a
+        # GROUP BY on receivertip.id that PostgreSQL rejects (non-aggregated columns).
+        if rtip.id in seen_rtips:
+            continue
+
+        seen_rtips.add(rtip.id)
+
         answers = answers.answers
         label = itip.label
         accessible = rtip.receiver_id == receiver_id

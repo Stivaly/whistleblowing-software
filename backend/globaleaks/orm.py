@@ -1,9 +1,10 @@
 import random
 import time
 import sqlite3
+import threading
 
 from sqlalchemy import create_engine, event
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import sessionmaker
 
 from twisted.internet import reactor
@@ -16,6 +17,13 @@ _ORM_DEBUG = False
 _ORM_DB_URI = "sqlite:///:memory:"
 _ORM_THREAD_POOL = None
 _ORM_TRANSACTION_RETRIES = 20
+
+# PostgreSQL (Veridy): one cached engine per URI, so that its connection pool is reused
+_PG_ENGINES = {}
+_PG_ENGINES_LOCK = threading.Lock()
+
+# serialization_failure, deadlock_detected
+_PG_RETRY_SQLSTATES = ('40001', '40P01')
 
 
 SQLITE_DELETE=9
@@ -40,9 +48,52 @@ def get_db_uri():
     return _ORM_DB_URI
 
 
+def is_postgres_uri(db_uri=None):
+    if db_uri is None:
+        db_uri = get_db_uri()
+
+    return db_uri.startswith('postgresql')
+
+
+def get_postgres_engine(db_uri):
+    """
+    Return the cached engine for a PostgreSQL database.
+
+    The SQLite authorizer and PRAGMAs do not apply to PostgreSQL: their protection
+    is replaced by the privileges of the database role (infra/sql/veridy_roles.sql).
+    """
+    with _PG_ENGINES_LOCK:
+        engine = _PG_ENGINES.get(db_uri)
+        if engine is None:
+            connect_args = {'connect_timeout': 10, 'application_name': 'veridy'}
+
+            # Verify the server certificate unless the URI states otherwise
+            if 'sslmode=' not in db_uri:
+                connect_args['sslmode'] = 'verify-full'
+                connect_args['sslrootcert'] = 'system'
+
+            engine = create_engine(db_uri,
+                                   connect_args=connect_args,
+                                   isolation_level='SERIALIZABLE',
+                                   pool_size=16,
+                                   max_overflow=4,
+                                   pool_timeout=30,
+                                   pool_pre_ping=True,
+                                   pool_recycle=1800,
+                                   hide_parameters=True,
+                                   echo=_ORM_DEBUG)
+
+            _PG_ENGINES[db_uri] = engine
+
+        return engine
+
+
 def get_engine(db_uri=None, foreign_keys=True, orm_lockdown=True):
     if db_uri is None:
         db_uri = get_db_uri()
+
+    if is_postgres_uri(db_uri):
+        return get_postgres_engine(db_uri)
 
     engine = create_engine(db_uri, connect_args={'timeout': 30}, echo=_ORM_DEBUG)
 
@@ -53,7 +104,8 @@ def get_engine(db_uri=None, foreign_keys=True, orm_lockdown=True):
                       SQLITE_SELECT,
                       SQLITE_TRANSACTION,
                       SQLITE_UPDATE] or \
-           (action == SQLITE_FUNCTION and column in ['count',
+           (action == SQLITE_FUNCTION and column in ['avg',
+                                                     'count',
                                                      'length',
                                                      'lower',
                                                      'min',
@@ -129,6 +181,19 @@ def db_del(session, selector, filter=None):
     db_query(session, selector, filter).delete(synchronize_session=False)
 
 
+def is_transient_error(e):
+    """
+    Return True if the transaction failed for a reason that a retry may solve
+    """
+    if getattr(e, 'connection_invalidated', False):
+        return True
+
+    if getattr(getattr(e, 'orig', None), 'pgcode', None) in _PG_RETRY_SQLSTATES:
+        return True
+
+    return "database is locked" in str(e)
+
+
 def db_log(session, **kwargs):
     entry = AuditLog()
 
@@ -179,10 +244,10 @@ class transact(object):
                         result = function(session, *args, **kwargs)
 
                     session.commit()
-                except OperationalError as e:
+                except DBAPIError as e:
                     session.rollback()
 
-                    if "database is locked" not in str(e):
+                    if not is_transient_error(e):
                         raise
 
                     retries += 1
@@ -190,7 +255,7 @@ class transact(object):
                     if retries >= _ORM_TRANSACTION_RETRIES:
                         raise Exception("Transaction failed with too many retries")
 
-                    time.sleep(0.2 * random.uniform(1, 2 ** retries))
+                    time.sleep(min(5.0, 0.2 * random.uniform(1, 2 ** retries)))
                 except:
                     session.rollback()
                     raise

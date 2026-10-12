@@ -24,6 +24,8 @@ from twisted.web.test.requesthelper import DummyRequest
 
 from . import TEST_DIR
 
+from sqlalchemy import text
+
 from globaleaks import db, models, orm, jobs, __version__, DATABASE_VERSION
 from globaleaks.db.appdata import load_appdata
 from globaleaks.orm import transact, tw
@@ -49,6 +51,9 @@ from globaleaks.utils.crypto import GCE, generateRandomKey, sha256
 from globaleaks.utils.securetempfile import SecureTemporaryFile
 from globaleaks.utils.utility import datetime_now, uuid4
 from globaleaks.utils.log import log
+
+# Optional: URI of a dedicated PostgreSQL database for running the tests on PostgreSQL
+TEST_PG_URI = os.environ.get('GLOBALEAKS_TEST_PG_URI', '').strip()
 
 GCE.options['OPSLIMIT'] = 1
 
@@ -145,6 +150,10 @@ def init_state():
     Settings.failed_login_attempts.clear()
     Settings.working_path = os.path.abspath('./working_path')
 
+    # The test suite runs on SQLite unless GLOBALEAKS_TEST_PG_URI names a disposable PostgreSQL database
+    os.environ.pop('GLOBALEAKS_DB_URI', None)
+    os.environ.pop('GLOBALEAKS_DB_URI_FILE', None)
+
     Settings.eval_paths()
 
     if os.path.exists(Settings.working_path):
@@ -160,6 +169,11 @@ def init_state():
     State.tenants[1].cache.encryption = True
 
     State.init_environment()
+
+    # After init_environment(), which evaluates the paths (and the database URI) again
+    if TEST_PG_URI:
+        orm.set_db_uri(TEST_PG_URI)
+        Settings.db_type = 'postgresql'
 
     Sessions.clear()
 
@@ -568,7 +582,18 @@ class TestGL(unittest.TestCase):
 
         self.setUp_dummy()
 
-        if self.initialize_test_database_using_archived_db:
+        if TEST_PG_URI:
+            # WARNING: every test drops and recreates the whole PostgreSQL schema.
+            # Sessions left open by a previous test would block the DROP: close them first.
+            engine = orm.get_engine()
+            with engine.connect() as conn:
+                conn.execute(text('SELECT pg_terminate_backend(pid) FROM pg_stat_activity '
+                                  'WHERE datname = current_database() AND pid <> pg_backend_pid()'))
+            engine.dispose()
+            models.Base.metadata.drop_all(engine)
+            yield db.create_db()
+            yield db.initialize_db()
+        elif self.initialize_test_database_using_archived_db:
             shutil.copy(
                 os.path.join(TEST_DIR, 'db', 'empty', 'globaleaks-%d.db' % DATABASE_VERSION),
                 os.path.join(Settings.db_file_path)

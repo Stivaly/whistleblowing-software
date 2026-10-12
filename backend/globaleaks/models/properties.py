@@ -10,8 +10,21 @@ try:
 except:
     from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
+from sqlalchemy.ext.compiler import compiles
+
 from globaleaks.utils.utility import uuid4
 # pylint: enable=unused-import
+
+
+@compiles(types.Text, 'postgresql')
+@compiles(types.UnicodeText, 'postgresql')
+def compile_text_without_length(type_, compiler, **kw):
+    """
+    PostgreSQL rejects TEXT(n). SQLite never enforced the declared lengths and
+    several columns hold longer values (e.g. crypto_prv_key), so VARCHAR(n)
+    is not an option either: render a plain TEXT.
+    """
+    return 'TEXT'
 
 
 class JSON(types.TypeDecorator):

@@ -36,7 +36,7 @@ from globaleaks.db.migrations.update_67 import \
         InternalTip_v_66, ReceiverFile_v_66, Redaction_v_66, User_v_66, WhistleblowerFile_v_66
 from globaleaks.db.migrations.update_68 import Subscriber_v_67
 
-from globaleaks.orm import get_engine, get_session, make_db_uri
+from globaleaks.orm import get_engine, get_session, is_postgres_uri, make_db_uri
 from globaleaks.models import config, Base
 from globaleaks.settings import Settings
 from globaleaks.utils.fs import srm
@@ -109,13 +109,16 @@ def get_right_model(migration_mapping, model_name, version):
 def perform_data_update(db_file):
     """
     Update the database including up-to-date application data
-    :param db_file: The database file path
+    :param db_file: The database file path, or None to use the configured database (PostgreSQL)
     """
     now = datetime_now()
 
     appdata = load_appdata()
 
-    session = get_session(make_db_uri(db_file), foreign_keys = False)
+    if db_file:
+        session = get_session(make_db_uri(db_file), foreign_keys = False)
+    else:
+        session = get_session(foreign_keys = False)
 
     enabled_languages = [lang.name for lang in session.query(models.EnabledLanguage)]
 
@@ -158,6 +161,10 @@ def perform_migration(version):
     Utility function for performing a database migration
     :param version: The current version of the database to update
     """
+    if is_postgres_uri():
+        log.err("Schema migrations are only supported on SQLite databases")
+        sys.exit(1)
+
     if version < FIRST_DATABASE_VERSION_SUPPORTED:
         log.info("Migrations from DB version lower than %d are no longer supported!" % FIRST_DATABASE_VERSION_SUPPORTED)
         sys.exit(1)

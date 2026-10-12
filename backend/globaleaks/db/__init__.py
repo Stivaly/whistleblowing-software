@@ -3,11 +3,13 @@ import sys
 import traceback
 import sqlalchemy
 
+from sqlalchemy.pool import NullPool
+
 from globaleaks import models, DATABASE_VERSION
 from globaleaks.handlers.admin.https import db_load_tls_configs
 from globaleaks.models import Base, Config
 from globaleaks.models.config_desc import ConfigFilters
-from globaleaks.orm import get_engine, get_session, make_db_uri, transact, transact_sync
+from globaleaks.orm import get_engine, get_session, is_postgres_uri, make_db_uri, transact, transact_sync
 from globaleaks.settings import Settings
 from globaleaks.state import State, TenantState
 from globaleaks.utils import fs
@@ -38,10 +40,66 @@ def get_db_file(db_path):
     return 0, ''
 
 
+def get_postgres_db_version():
+    """
+    Utility function to retrieve the schema version of a PostgreSQL database
+    :return: The version, or 0 if the database is empty
+    """
+    inspector = sqlalchemy.inspect(get_engine())
+    if not inspector.has_table('config'):
+        if inspector.get_table_names():
+            raise Exception('The PostgreSQL database is not empty but has no config table')
+
+        return 0
+
+    session = get_session()
+    try:
+        row = session.query(models.Config.value).filter(Config.tid == 1,
+                                                        Config.var_name == 'version_db').one_or_none()
+    finally:
+        session.close()
+
+    if row is None:
+        raise Exception('The PostgreSQL database is partially initialized (config.version_db is missing)')
+
+    return int(row[0])
+
+
+def create_postgres_db():
+    """
+    Create the schema on PostgreSQL.
+
+    The schema is created by the owner role given in GLOBALEAKS_DB_ADMIN_URI, so that
+    the runtime role (GLOBALEAKS_DB_URI) needs no DDL privilege. The advisory lock
+    keeps two containers starting at the same time from creating it twice.
+    """
+    admin_uri = os.environ.get('GLOBALEAKS_DB_ADMIN_URI', '').strip()
+
+    if admin_uri:
+        engine = sqlalchemy.create_engine(admin_uri,
+                                          connect_args={'connect_timeout': 10,
+                                                        'application_name': 'veridy-admin'},
+                                          poolclass=NullPool,
+                                          hide_parameters=True)
+    else:
+        engine = get_engine()
+
+    try:
+        with engine.begin() as conn:
+            conn.execute(sqlalchemy.text('SELECT pg_advisory_xact_lock(1447385673)'))
+            Base.metadata.create_all(conn)
+    finally:
+        if admin_uri:
+            engine.dispose()
+
+
 def create_db():
     """
     Utility function to create a new database
     """
+    if is_postgres_uri():
+        return create_postgres_db()
+
     engine = get_engine(orm_lockdown=False)
 
     conn = engine.connect()
@@ -60,6 +118,10 @@ def compact_db():
     """
     Execute VACUUM command to deallocate database space
     """
+    if is_postgres_uri():
+        # PostgreSQL reclaims space with autovacuum
+        return
+
     engine = get_engine(orm_lockdown=False)
     conn = engine.connect()
     try:
@@ -75,6 +137,11 @@ def initialize_db(session):
     :param session: An ORM session
     """
     from globaleaks.handlers.admin import tenant
+
+    if session.get_bind().dialect.name == 'postgresql':
+        # The root tenant must get id 1 even if a previous attempt consumed the sequence
+        session.execute(sqlalchemy.text("SELECT setval(pg_get_serial_sequence('tenant', 'id'), 1, false)"))
+
     tenant.db_create(session, {'active': True, 'mode': 'default', 'name': 'GLOBALEAKS', 'subdomain': ''})
 
 
@@ -83,6 +150,9 @@ def update_db():
     This function handles the update of an existing database
     :return: The database version
     """
+    if is_postgres_uri():
+        return update_postgres_db()
+
     db_version, db_file_path = get_db_file(Settings.working_path)
     if db_version == 0:
         return 0
@@ -99,6 +169,48 @@ def update_db():
         else:
             migration.perform_data_update(db_file_path)
             compact_db()
+
+        sync_clean_untracked_files()
+
+    except Exception as exception:
+        log.err('Failure: %s', exception)
+        log.err('Verbose exception traceback:')
+        etype, value, tback = sys.exc_info()
+        log.info('\n'.join(traceback.format_exception(etype, value, tback)))
+        return -1
+
+    return DATABASE_VERSION
+
+
+def update_postgres_db():
+    """
+    Check and update an existing PostgreSQL database.
+
+    Schema migrations are only implemented for SQLite files: on PostgreSQL a
+    version mismatch stops the startup instead of attempting an upgrade.
+    :return: The database version, 0 for an empty database or -1 on failure
+    """
+    if os.path.exists(Settings.db_file_path):
+        # The attachments of that SQLite installation are not tracked by the PostgreSQL
+        # database and the startup cleanup would delete them
+        log.err('FATAL: the working path contains a SQLite database (%s); '
+                'use a separate working path or volume for PostgreSQL', Settings.db_file_path)
+        return -1
+
+    try:
+        db_version = get_postgres_db_version()
+        if db_version == 0:
+            return 0
+
+        log.err('Found an already initialized PostgreSQL database version: %d', db_version)
+
+        if db_version != DATABASE_VERSION:
+            log.err('FATAL: the PostgreSQL database is at version %d and this code requires version %d; '
+                    'schema migrations are not supported on PostgreSQL', db_version, DATABASE_VERSION)
+            return -1
+
+        from globaleaks.db import migration
+        migration.perform_data_update(None)
 
         sync_clean_untracked_files()
 

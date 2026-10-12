@@ -125,7 +125,8 @@ def db_set_internaltip_data(session, itip_id, key, value, date=None):
 
 
 def db_assign_submission_progressive(session, tid):
-    counter = session.query(models.Config).filter(models.Config.tid == tid, models.Config.var_name == 'counter_submissions').one()
+    # The row lock keeps concurrent submissions from reading the same value on PostgreSQL
+    counter = session.query(models.Config).filter(models.Config.tid == tid, models.Config.var_name == 'counter_submissions').with_for_update().one()
     counter.value += 1
     return counter.value
 

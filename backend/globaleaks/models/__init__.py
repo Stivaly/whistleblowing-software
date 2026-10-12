@@ -1032,7 +1032,10 @@ class _ReceiverFile(Model):
     internaltip_id = Column(UnicodeText(36), nullable=False, index=True)
     author_id = Column(UnicodeText(36))
     name = Column(UnicodeText, nullable=False)
-    size = Column(Integer, nullable=False)
+    # With encryption enabled the size is stored encrypted (a base64 string, see
+    # handlers/recipient/rtip.py). SQLite accepts it in an INTEGER column; PostgreSQL
+    # needs TEXT. The SQLite schema stays unchanged.
+    size = Column(Integer().with_variant(UnicodeText(), 'postgresql'), nullable=False)
     content_type = Column(UnicodeText, nullable=False)
     creation_date = Column(DateTime, default=datetime_now, nullable=False)
     access_date = Column(DateTime, default=datetime_null, nullable=False)
