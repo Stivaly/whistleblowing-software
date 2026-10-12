@@ -17,6 +17,9 @@ from globaleaks.tests import helpers
 
 
 class TestMigrationRoutines(unittest.TestCase):
+    if helpers.TEST_PG_URI:
+        skip = 'Schema migrations are only supported on SQLite databases'
+
     def _test(self, path, version):
         helpers.init_state()
         srcpath = os.path.join(path, 'globaleaks-%d.db' % version)
