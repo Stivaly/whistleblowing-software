@@ -36,4 +36,4 @@ if ! az acr repository show-tags -n "$ACR" --repository socat -o tsv --only-show
   az acr import -n "$ACR" --source docker.io/alpine/socat:1.8.0.3 --image socat:1.8 --only-show-errors
 fi
 
-echo "==> Subida: $REPO:$TAG ($(docker image inspect "$REPO:$TAG" --format '{{.Size}}' | awk '{printf "%.0f MB", $1/1e6}'))"
+echo "==> Subida: $REPO:$TAG ($(docker images --format '{{.Size}}' "$REPO:$TAG"))"

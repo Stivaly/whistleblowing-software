@@ -1,0 +1,16 @@
+# Contexto de construcción de docker/Dockerfile (la raíz del repo): solo lo que la imagen usa.
+*
+!LICENSE
+!docker/files
+!client
+!backend/globaleaks
+
+client/node_modules
+client/dist
+client/build
+client/tmp
+client/.angular
+client/cypress
+client/instrument
+**/__pycache__
+backend/globaleaks/tests
