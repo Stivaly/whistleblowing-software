@@ -23,16 +23,26 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 
 ## 1. Infraestructura (lo ejecuta la usuaria — `infra/terraform/README.md`)
 
-- [ ] Paso 0: instalar Azure CLI y Terraform.
-- [ ] Paso 1: `az login --use-device-code`.
-- [ ] Paso 2: verificar que eastus2 esté entre las regiones permitidas (pegar la salida).
-- [ ] Paso 3: registrar proveedores de recursos.
-- [ ] Paso 4: storage del estado + `backend.hcl` + `terraform.tfvars`.
-- [ ] Paso 5: `terraform init/validate/plan` → **pegar el plan antes de apply**. Posible ajuste: el atributo
-      `rbac_authorization_enabled` del Key Vault depende de la versión del proveedor azurerm.
-- [ ] Paso 6: crear cluster Qdrant Cloud (gratis, en Azure) y API key de Gemini (AI Studio); agregarlas al `.env`;
-      cargar los 4 secretos en Key Vault.
-- [ ] Paso 7: `infra/scripts/subir_imagen.sh --tag v1`.
+- [x] Paso 0: Azure CLI 2.91.0 y Terraform 1.16.5 instalados (2026-10-12).
+- [x] Paso 1: `az login` OK, suscripción "Azure for Students".
+- [x] Paso 2: eastus2 NO permitida. Permitidas: chilecentral, mexicocentral, westus, canadacentral, southafricanorth.
+      Decisión de la usuaria: `chilecentral` siempre que esté disponible y no sea caro (ya es el default en Terraform).
+- [x] Paso 3: registrar proveedores + verificar disponibilidad de cada servicio en chilecentral (README, paso 2).
+      Mongo Atlas sigue en Azure eastus2: tráfico entre regiones (poco volumen) y más latencia, aceptable.
+- [x] Disponibilidad en chilecentral verificada (2026-10-12): Container Apps (env + jobs), ACR, Key Vault, Log Analytics,
+      identidad administrada y PostgreSQL Flexible (B1ms y B2s, sin restricciones).
+      Precios (API pública): ACR Basic US$0,1666/día igual que westus; PG B1ms US$0,0238/h (~US$17/mes) vs westus
+      US$0,022/h (~US$16/mes), ~8% más. Diferencia menor → todo en chilecentral.
+- [x] Paso 4 (2026-10-12, lo corrió Claude con autorización puntual): estado en la cuenta `stkernatf*` de `rg-kerna-tfstate` (nombre en `backend.hcl`)
+      (chilecentral); `backend.hcl` y `terraform.tfvars` creados (fuera de git). El tenant de Inacap exige MFA para
+      escribir: si `az` responde AADSTS50076, la usuaria repite `az login` con el `--claims-challenge` que indica el error.
+- [~] Paso 5: `terraform init` (azurerm 4.81.0) y `validate` OK. Aplicados 10 de 11 recursos con `-target`
+      (grupo `rg-kerna-dev`, ACR Standard y Key Vault (nombres con `terraform output`), Log Analytics,
+      identidad y 4 roles). Falta `azurerm_container_app_environment.env`: `Microsoft.App` quedó en "Registering"
+      más de 45 min. Cuando diga "Registered": `terraform plan -out=fase1.tfplan` (debe agregar solo el entorno) y apply.
+- [x] Paso 7: imagen `kerna-pipeline:v1` (+ `latest`) subida al registro.
+- [ ] Paso 6: cargar `mongodb-uri` (lo bloqueó el clasificador de permisos de Claude → lo corre la usuaria) y crear
+      Qdrant Cloud + API key de Gemini para los otros 3 secretos.
 - [ ] Paso 8: `crear_jobs = true` + plan/apply.
 - [ ] Paso 9: Atlas → Network Access → `0.0.0.0/0` (temporal, 1-2 meses; revisar fecha de cierre).
 - [ ] Paso 10: `infra/scripts/subir_imagen.sh --desplegar --probar diario` y revisar logs.
@@ -75,10 +85,23 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 
 ## 5. Integración con la plataforma (GlobaLeaks)
 
+> 2026-10-04: plan nuevo en `pendientes/mapa-integracion-kerna-veridy.md` (docs: informe de Veridy, cifrado y plan de
+> integración). Decisión propuesta: disparo a pedido del receptor + consulta por pull (sin endpoints entrantes), resultados
+> cifrados con la clave de la denuncia. Reemplaza el enfoque de `gl_patches` de los puntos de abajo.
+
 - [ ] Adaptar `gl_patches` (en `fable upgrades/kerna_entrega2.zip`) al flujo asíncrono: `POST /api/denuncias` (202),
       webhook de sugerencia lista, `GET /api/sugerencias/{id}`, `POST /api/feedback`, clave de función.
 - [ ] Panel del auditor: aviso "sugerencia generada con un modelo en evaluación".
 - [ ] Migración de la plataforma a Postgres/Supabase (doc `fable upgrades/07`): estado no revisado en esta sesión.
+
+## 5b. Base de Veridy en PostgreSQL de Azure (2026-10-04)
+
+- [x] Código de Veridy para PostgreSQL, probado contra PostgreSQL local (114/114 tests en PG, 195/195 en SQLite).
+- [ ] Usuaria: verificar en el portal que Flexible Server B1ms esté cubierto por el crédito (README, paso 11).
+- [ ] Usuaria: `crear_postgres = true`, IP del host de Veridy, plan/apply (paso 11) y roles (paso 12).
+- [ ] Usuaria: construir la imagen y primer arranque con `docker/README-postgres.md`; quitar luego la URI de admin.
+- [ ] Retirar `etl_incremental.py` cuando ya no se necesite (mover a `.papelera/`, no borrar) y rotar su credencial.
+- [ ] Decidir si se eliminan los recursos Docker de prueba (`pendientes/recursos-de-prueba.md`).
 
 ## 6. Evaluación del modelo (bloquea uso con denuncias reales)
 
@@ -96,5 +119,20 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 
 - [ ] ¿Se agregan los estatutos públicos modificados por la Ley Karin (Leyes 18.575, 18.834, 18.883, 18.695)?
       (comentario abierto en el doc).
-- [ ] `docker/globaleaks.tar` (172 MB) está preparado en el índice desde antes: supera el límite de 100 MB de GitHub.
-      Sacarlo del índice o usar Git LFS antes de commitear los cambios de `docker/`.
+- [x] `docker/globaleaks.tar` (172 MB) sacado del índice y agregado a `.gitignore` (2026-10-12). Sigue en disco.
+
+## 8. Revisión de git del 2026-10-12 (decisiones para la usuaria)
+
+- El repo `Stivaly/whistleblowing-software` es **público**: todo lo commiteado es visible.
+- Historial ya subido revisado: sin credenciales (solo ejemplos `USUARIO:CLAVE`).
+- `etl_incremental.py` y `etl_state.json` quedan en `.gitignore`: el ETL tiene la contraseña de Supabase escrita en el
+  código. No se modificó. Al retirarlo, rotar esa credencial.
+- `docs-auditoria-denuncias/03-puntos-extension.md`: se omitieron el host de Supabase y la contraseña antes de commitear.
+- `fable upgrades/` queda en `.gitignore` (referencia, puede estar desactualizada). Si se quiere versionar, quitar la línea.
+- [ ] Pie de página: el commit `chore(client): quitar la atribución "Powered by GlobaLeaks"` va contra los términos
+      adicionales de la licencia (LICENSE, sección 7): conservar la atribución y mostrar el aviso "This server is running
+      a modified version of the GlobaLeaks software..." con enlace al código. Decidir: revertir y agregar el aviso.
+- [ ] `client/app/assets/data/l10n/es.json` (commit `i18n(es)`) parece de otra versión de GlobaLeaks: le faltan 14 claves
+      que la interfaz usa ("Analyst", "Reopen", "Mask", "Act on behalf of a whistleblower", "Unselect"…) y deja
+      "Specify" sin traducir. Revisar o restaurar el de 5.0.85 y agregar encima las claves nuevas.
+- `docker/docker-compose.yml` y `pendientes/analisis-veridy/` mencionan la IP privada de la red local: no es un secreto.
