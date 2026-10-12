@@ -8,10 +8,11 @@ payload de metadatos para filtrado. Idempotente: el ID del punto es estable
 extraer_bcn.py no lo vuelve a marcar pendiente.
 
 Uso:
-  python3 embed_sync.py [--batch 64] [--proveedor voyage|openai]
+  python3 embed_sync.py [--batch 64] [--proveedor gemini|voyage|openai]
 
 Variables de entorno:
   MONGODB_URI, QDRANT_URL, QDRANT_API_KEY
+  GEMINI_API_KEY   (proveedor gemini, por defecto: gemini-embedding-2, multilingüe)
   VOYAGE_API_KEY   (proveedor voyage: modelo voyage-3.5, multilingüe)
   OPENAI_API_KEY   (proveedor openai: text-embedding-3-large, dims=1024)
 """
@@ -36,6 +37,19 @@ def _post(url: str, headers: dict, body: dict) -> dict:
         return json.loads(r.read())
 
 
+def embed_gemini(textos: list[str]) -> list[list[float]]:
+    # gemini-embedding-2 no usa task_type: la tarea va en el texto. Formato de documento
+    # para búsqueda; el título va en "none" porque texto_embedding ya trae la norma.
+    # Con menos de 3072 dimensiones el modelo devuelve los vectores ya normalizados.
+    modelo = "models/gemini-embedding-2"
+    out = _post(f"https://generativelanguage.googleapis.com/v1beta/{modelo}:batchEmbedContents",
+                {"x-goog-api-key": os.environ["GEMINI_API_KEY"]},
+                {"requests": [{"model": modelo,
+                               "content": {"parts": [{"text": f"title: none | text: {t}"}]},
+                               "outputDimensionality": DIMS} for t in textos]})
+    return [e["values"] for e in out["embeddings"]]
+
+
 def embed_voyage(textos: list[str]) -> list[list[float]]:
     out = _post("https://api.voyageai.com/v1/embeddings",
                 {"Authorization": f"Bearer {os.environ['VOYAGE_API_KEY']}"},
@@ -51,7 +65,7 @@ def embed_openai(textos: list[str]) -> list[list[float]]:
     return [d["embedding"] for d in out["data"]]
 
 
-PROVEEDORES = {"voyage": embed_voyage, "openai": embed_openai}
+PROVEEDORES = {"gemini": embed_gemini, "voyage": embed_voyage, "openai": embed_openai}
 
 
 def qdrant(path: str, body: dict | None = None, method: str = "PUT") -> dict:
@@ -87,8 +101,8 @@ def punto_id(frag_id: str) -> str:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--batch", type=int, default=64)
-    ap.add_argument("--proveedor", default="voyage", choices=PROVEEDORES)
+    ap.add_argument("--batch", type=int, default=64)  # Gemini acepta hasta 100 por llamada
+    ap.add_argument("--proveedor", default="gemini", choices=PROVEEDORES)
     args = ap.parse_args()
 
     from pymongo import MongoClient

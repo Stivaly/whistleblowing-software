@@ -51,8 +51,11 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 
 ## 2. Código pendiente
 
-- [ ] `embed_sync.py`: proveedor Gemini (`gemini-embedding-2`, está en preview). Verificar dimensiones y ajustar `DIMS`
-      y la colección de Qdrant. Luego correr los 172 embeddings y medir recall@5 (meta ≥ 0,8).
+- [x] `embed_sync.py`: proveedor Gemini por defecto (`gemini-embedding-2`, estable desde abr-2026; 2026-10-12).
+      Se mantiene `DIMS = 1024` (el modelo acepta 128-3072 y normaliza solo). Formato de documento
+      `title: none | text: …`; las consultas del retriever deben usar `task: search result | query: …` con 1024 dims.
+      Prueba en `test_embed_sync.py` (sin red).
+- [ ] Correr los 172 embeddings (local, apenas existan Qdrant y la API key) y medir recall@5 (meta ≥ 0,8).
 - [ ] Orquestador (`fable upgrades/kerna_entrega2.zip` → `kerna_orquestador/`): reemplazar el cliente de Anthropic por
       Gemini (`gemini-3.5-flash-lite` clasificar, `gemini-3.8-flash` generar), con thinking budget bajo y salida JSON.
 - [ ] Orquestador: clave `kerna:llm:capa` (gratuita/pagada) y bloqueo de mensajes no sintéticos con capa gratuita;
