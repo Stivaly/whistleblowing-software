@@ -108,8 +108,13 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       (README paso 13; instrucción en `.claude/CLAUDE.md`). Probado con un `az` falso (4 casos).
 - [x] `terraform.tfvars`: `crear_postgres = true`, IPv4 del host 181.43.152.136 (el firewall no acepta IPv6).
       Si el proveedor cambia la IP, actualizarla y volver a aplicar.
-- [ ] Usuaria: generar las dos contraseñas en Key Vault (a Claude se lo bloquea el clasificador de permisos).
-- [ ] plan/apply (paso 11), roles (paso 12) e `instalar-cron` (paso 13).
+- [x] Contraseñas en Key Vault (las generó la usuaria). Servidor `psql-veridy-dev-*` creado en chilecentral
+      (2026-10-12). El primer apply se cortó a medias: se liberó el bloqueo del estado y se importó el servidor.
+- [x] Roles (paso 12): `veridy_app` sin superuser/createdb/createrole; no puede crear ni borrar tablas.
+- [x] Prueba previa de arranque contra Azure (imagen de prueba + backend actual): esquema creado (34 tablas,
+      versión 68, dueño veridyadmin), Veridy opera como `veridy_app`, segundo arranque sin credencial admin OK.
+- [ ] Prueba con la imagen real (`docker compose ... build`) y luego apagar el servidor e `instalar-cron`.
+      La usuaria pidió dejarlo encendido solo hasta la primera prueba correcta de despliegue.
 - [ ] Usuaria: construir la imagen y primer arranque con `docker/README-postgres.md`; quitar luego la URI de admin.
 - [ ] Retirar `etl_incremental.py` cuando ya no se necesite (mover a `.papelera/`, no borrar) y rotar su credencial.
 - [ ] Decidir si se eliminan los recursos Docker de prueba (`pendientes/recursos-de-prueba.md`).

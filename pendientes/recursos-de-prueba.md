@@ -44,6 +44,10 @@ Creados por Claude para correr todas las pruebas. Se dejan detenidos, no borrado
 | `veridy-test-1012-repro52`, `-pg-mig`, `-sqlite-mig` | contenedores | Reproducción del fallo de migración y verificación del skip en PostgreSQL |
 | `veridy-test-1012-e2e-backend` | contenedor (detenido) | Primer intento de backend para Cypress (escuchaba solo en 127.0.0.1 interno) |
 | `veridy-test-1012-e2e` | contenedor | Backend + cliente de pruebas para Cypress, puerto 127.0.0.1:18443 |
+| `veridy-test-1012-roles*`, `-check*` | contenedores (postgres:15) | Roles y verificaciones contra el PostgreSQL de Azure (contraseñas por `.pgpass` montado, no en el entorno) |
+| `veridy-test-1012-nube`, `-nube2` | contenedores (veridy-pgtest) | Primer y segundo arranque de Veridy contra Azure, puerto 127.0.0.1:28443 |
+| `veridy-test-1012-e2e-*`, `-cypress*` | contenedores | Comparación Cypress `stable` vs Veridy |
+| `cypress/included:15.4.0` | imagen (4,5 GB) | Cypress con sus dependencias gráficas (el host no las tiene) |
 | `kerna-mongo44-test` | contenedor (mongo:4.4, 127.0.0.1:27018) | MongoDB desechable para las pruebas del pipeline (`MONGODB_TEST_URI`) |
 | `kerna-mongo-test` | contenedor (mongo:8.0, salió con error) | Intento con MongoDB 8: no corre, la CPU no tiene AVX |
 | `mongo:4.4`, `mongo:8.0` | imágenes | La 8.0 no sirve en esta máquina |
