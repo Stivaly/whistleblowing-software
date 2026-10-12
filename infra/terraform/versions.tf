@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.6"
+  required_version = ">= 1.11" # atributos de solo escritura (postgres.tf)
 
   required_providers {
     azurerm = {
