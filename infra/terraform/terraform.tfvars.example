@@ -6,7 +6,7 @@ ambiente        = "dev"
 crear_jobs      = false
 imagen_tag      = "v1"
 crear_postgres  = false
-# IP pública del host que corre Veridy (curl -s https://ifconfig.me)
+# IPv4 pública del host que corre Veridy (curl -4 -s https://ifconfig.me)
 postgres_ips_permitidas = {
   # "host-veridy" = "203.0.113.10"
 }

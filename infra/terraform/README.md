@@ -177,8 +177,8 @@ KV=$(terraform output -raw key_vault_nombre)
 az keyvault secret set --vault-name $KV --name veridy-db-admin-password --value "$(openssl rand -base64 30 | tr -d '/+=')" -o none
 az keyvault secret set --vault-name $KV --name veridy-db-app-password   --value "$(openssl rand -base64 30 | tr -d '/+=')" -o none
 
-# 2. IP pública del host donde corre el contenedor de Veridy
-curl -s https://ifconfig.me; echo
+# 2. IP pública (IPv4: el firewall de Azure no acepta IPv6) del host donde corre Veridy
+curl -4 -s https://ifconfig.me; echo
 #    → agregarla en terraform.tfvars:  postgres_ips_permitidas = { "host-veridy" = "<esa IP>" }
 sed -i 's/crear_postgres *= *false/crear_postgres  = true/' terraform.tfvars
 
@@ -234,3 +234,21 @@ Terraform no revierte la imagen desplegada (`ignore_changes` en los jobs): Terra
 | vigencia-21719 | `5 3 1 12 *` | 1 de diciembre 00:05 |
 
 En invierno (UTC-4) los jobs corren una hora antes en hora local; no afecta al pipeline.
+
+## 13. Encendido y apagado automático de PostgreSQL
+
+El servidor solo cobra cómputo mientras está encendido. `infra/scripts/veridy_bd.sh` lo apaga tras 60 minutos sin
+peticiones a Veridy y lo enciende cuando alguien vuelve a entrar (la primera petición ve un error; la base queda
+lista en 1-5 minutos). Se mide en el `access.log` de Veridy, sin contar el healthcheck, porque los jobs de Veridy
+consultan la base cada 5 segundos.
+
+```bash
+infra/scripts/veridy_bd.sh estado          # Ready / Stopped / ...
+infra/scripts/veridy_bd.sh instalar-cron   # una vez, en el host de Veridy
+infra/scripts/veridy_bd.sh inactividad     # minutos sin uso
+tail ~/.local/state/veridy-bd/veridy-bd.log
+```
+
+Umbrales: `VERIDY_BD_INACTIVIDAD_MIN` (60) y `VERIDY_BD_DESPERTAR_MIN` (3). El cron usa la sesión de `az` del
+usuario: si el tenant vuelve a pedir MFA, deja de poder encender o apagar hasta el próximo `az login`.
+
