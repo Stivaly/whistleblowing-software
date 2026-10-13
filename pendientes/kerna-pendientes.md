@@ -121,7 +121,10 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       https://veridy-dev-kdicq.chilecentral.azurecontainer.io — imagen real `veridy:v1` (753 MB, antes 3,34 GB),
       health/public/cliente 200, http→https. Encendido manual con `infra/veridy/veridy.sh encender`; el vigía apaga
       todo tras 60 min sin uso.
-- [ ] Usuaria: completar el asistente inicial de Veridy en el link (mientras no se complete, cualquiera que llegue
+- [x] Asistente inicial completado por la usuaria y certificado de Let's Encrypt activo (2026-10-13).
+- [ ] El certificado vence el 2027-01-10. Veridy lo renueva solo, pero solo si está encendido en los días previos;
+      si vence estando apagado: administración > red > HTTPS > Reset y volver a pedirlo.
+- [x] (antes) Usuaria: completar el asistente inicial de Veridy en el link (mientras no se complete, cualquiera que llegue
       al link podría hacerlo y quedar como administrador).
 - [ ] Verificar el primer apagado automático del vigía (identidad administrada: stop de PostgreSQL y del grupo) y
       `veridy.sh encender` después.
