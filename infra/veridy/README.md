@@ -7,7 +7,7 @@ otro Key Vault. Solo comparte el Container Registry de Kerna (Azure for Students
 ## Uso diario
 
 ```bash
-infra/veridy/veridy.sh encender      # PostgreSQL y luego Veridy; al final muestra el link (5-10 min)
+infra/veridy/veridy.sh encender      # PostgreSQL y luego Veridy; al final muestra el link (hasta 3 min)
 infra/veridy/veridy.sh estado
 infra/veridy/veridy.sh apagar
 infra/veridy/veridy.sh mantener 3d   # no apagar por inactividad durante 3 días (12h, 90m...); "mantener no" lo revierte
@@ -17,8 +17,9 @@ infra/veridy/veridy.sh logs          # registros de Veridy (también: vigia, pue
 - **Encender es manual.** Apagar es automático: el vigía apaga Veridy y PostgreSQL tras 60 minutos sin uso
   (`inactividad_min`). "Uso" = una llamada exitosa a `/api/` que no sea `/api/health`; los bots que recorren IPs
   públicas no ejecutan la aplicación y no la mantienen encendida.
-- El navegador avisará que el certificado es autofirmado hasta configurar el dominio y Let's Encrypt en la
-  administración de Veridy (red > HTTPS).
+- HTTPS con certificado de Let's Encrypt (administración > red > HTTPS), guardado en la base. Veridy lo renueva
+  solo si está encendido en los días previos al vencimiento; si vence apagado, "Reset" y volver a pedirlo.
+- Inicio de sesión de administración y destinatarios: `<link>/#/login`.
 - Azure vuelve a encender solo un PostgreSQL detenido 7 días. Si nadie usa Veridy, quedará encendido sin Veridy:
   `veridy.sh apagar` lo corrige.
 

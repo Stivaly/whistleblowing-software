@@ -2,7 +2,7 @@
 # Enciende, apaga y consulta Veridy en Azure (contenedor + PostgreSQL).
 #
 # Uso (desde cualquier carpeta del repo):
-#   infra/veridy/veridy.sh encender          enciende PostgreSQL y luego Veridy; muestra el link (5-10 min)
+#   infra/veridy/veridy.sh encender          enciende PostgreSQL y luego Veridy; muestra el link (hasta 3 min)
 #   infra/veridy/veridy.sh apagar            apaga Veridy y PostgreSQL
 #   infra/veridy/veridy.sh estado            estado de ambos y el link
 #   infra/veridy/veridy.sh mantener 3d       no apagar por inactividad durante 3 días (también 12h, 90m)
@@ -27,17 +27,21 @@ estado_pg()  { az postgres flexible-server show -g "$RG" -n "$PG" --query state 
 estado_aci() { az container show -g "$RG" -n "$ACI" --query "instanceView.state" -o tsv --only-show-errors 2>/dev/null || echo "NoCreado"; }
 url()        { az container show -g "$RG" -n "$ACI" --query "ipAddress.fqdn" -o tsv --only-show-errors 2>/dev/null | sed 's#^#https://#'; }
 
+# Encender y apagar no toman más de 3 minutos: la espera se corta ahí.
+LIMITE=180
+
 encender() {
+  local fin=$(( $(date +%s) + LIMITE ))
   if [ "$(estado_pg)" != "Ready" ]; then
-    echo "==> Encendiendo PostgreSQL (1-5 min)"
+    echo "==> Encendiendo PostgreSQL"
     az postgres flexible-server start -g "$RG" -n "$PG" --only-show-errors -o none
   fi
   echo "==> Encendiendo Veridy"
   az container start -g "$RG" -n "$ACI" --only-show-errors -o none
   echo "==> Esperando que responda"
   local u; u="$(url)"
-  for _ in $(seq 1 60); do
-    curl -sk -o /dev/null -w '%{http_code}' "$u/api/health" 2>/dev/null | grep -q 200 && break
+  until curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$u/api/health" 2>/dev/null | grep -q 200; do
+    [ "$(date +%s)" -ge "$fin" ] && { echo "Aún no responde tras 3 min: revisar con 'veridy.sh logs'."; break; }
     sleep 5
   done
   estado
