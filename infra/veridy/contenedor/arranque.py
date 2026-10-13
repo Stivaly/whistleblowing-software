@@ -1,10 +1,10 @@
 """
-Contenedor de arranque (init) del grupo de Veridy en Azure Container Instances.
+Paso de arranque del contenedor de Veridy en Azure Container Instances.
 
-Corre antes que Veridy, con la identidad administrada del grupo:
-  1. Lee la contraseña de veridy_app desde Key Vault y la deja en un .pgpass en memoria
-     (volumen emptyDir), legible solo por el usuario de Veridy (uid 1000). Así la
-     contraseña no queda ni en el estado de Terraform ni en variables de entorno.
+Corre justo antes de Veridy, en el mismo contenedor, con la identidad administrada del grupo:
+  1. Lee la contraseña de veridy_app desde Key Vault y la deja en un .pgpass (modo 600)
+     dentro del contenedor, que se pierde al apagarlo. Así la contraseña no queda ni en
+     el estado de Terraform ni en variables de entorno.
   2. Autoriza en el firewall de PostgreSQL la IP de salida actual del grupo: cambia
      cada vez que el grupo se enciende.
 
@@ -21,7 +21,7 @@ CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
 KV_URL = os.environ["VERIDY_KV_URL"].rstrip("/")
 PG_FQDN = os.environ["VERIDY_PG_FQDN"]
 PG_ID = os.environ["VERIDY_PG_ID"]  # /subscriptions/.../flexibleServers/<nombre>
-PGPASS = os.environ.get("VERIDY_PGPASS", "/run/veridy/pgpass")
+PGPASS = os.environ.get("VERIDY_PGPASS", "/tmp/pgpass")
 REGLA = "aci-veridy"
 
 

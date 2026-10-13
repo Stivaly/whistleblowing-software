@@ -11,7 +11,7 @@ infra/veridy/veridy.sh encender      # PostgreSQL y luego Veridy; al final muest
 infra/veridy/veridy.sh estado
 infra/veridy/veridy.sh apagar
 infra/veridy/veridy.sh mantener 3d   # no apagar por inactividad durante 3 días (12h, 90m...); "mantener no" lo revierte
-infra/veridy/veridy.sh logs          # registros de Veridy (también: vigia, arranque, puertos)
+infra/veridy/veridy.sh logs          # registros de Veridy (también: vigia, puertos)
 ```
 
 - **Encender es manual.** Apagar es automático: el vigía apaga Veridy y PostgreSQL tras 60 minutos sin uso
@@ -26,7 +26,7 @@ infra/veridy/veridy.sh logs          # registros de Veridy (también: vigia, arr
 
 | Recurso | Para qué | Costo aprox. |
 |---|---|---|
-| Grupo de contenedores `aci-veridy-dev` | Veridy (1 vCPU, 1,5 GB) + `puertos` (443→8443, 80→8080) + `vigia`; contenedor de arranque | ~US$0,08/hora encendido; nada apagado |
+| Grupo de contenedores `aci-veridy-dev` | Veridy (1 vCPU, 1,5 GB) + `puertos` (443→8443, 80→8080) + `vigia` | ~US$0,08/hora encendido; nada apagado |
 | PostgreSQL Flexible Server B1ms | Base de Veridy (32 GB) | ~US$0,024/hora encendido + almacenamiento (~US$4/mes) |
 | Storage + Azure Files | `adjuntos` (10 GB), `archivos` (1 GB), `control` (1 GB) | < US$1/mes |
 | Key Vault `kv-veridy-dev-*` | `veridy-db-admin-password`, `veridy-db-app-password` | centavos |
@@ -34,11 +34,11 @@ infra/veridy/veridy.sh logs          # registros de Veridy (también: vigia, arr
 
 Cómo arranca el grupo:
 
-1. **arranque** (contenedor init, `contenedor/arranque.py`): lee la contraseña de `veridy_app` de Key Vault y la deja
-   en un `.pgpass` en memoria; autoriza la IP de salida del grupo en el firewall de PostgreSQL (regla `aci-veridy`,
-   cambia en cada encendido). Así la contraseña no queda en el estado de Terraform ni en variables de entorno.
-2. **veridy**: la imagen de `docker/Dockerfile`. Adjuntos y archivos en Azure Files; los **logs en memoria**, se
-   pierden al apagar (no se conservan IPs).
+1. **veridy**: antes de iniciar Veridy corre `contenedor/arranque.py`, que lee la contraseña de `veridy_app` de
+   Key Vault y la deja en un `.pgpass` dentro del contenedor, y autoriza la IP de salida del grupo en el firewall de
+   PostgreSQL (regla `aci-veridy`, cambia en cada encendido). Así la contraseña no queda en el estado de Terraform
+   ni en variables de entorno. Imagen de `docker/Dockerfile`; adjuntos y archivos en Azure Files; los **logs en
+   memoria**, se pierden al apagar (no se conservan IPs).
 3. **puertos**: `socat` reenvía 443 y 80 a Veridy sin abrir el TLS (Veridy maneja su certificado).
 4. **vigia** (`contenedor/vigia.py`): apagado por inactividad.
 

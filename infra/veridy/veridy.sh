@@ -7,7 +7,7 @@
 #   infra/veridy/veridy.sh estado            estado de ambos y el link
 #   infra/veridy/veridy.sh mantener 3d       no apagar por inactividad durante 3 días (también 12h, 90m)
 #   infra/veridy/veridy.sh mantener no       vuelve al apagado por inactividad
-#   infra/veridy/veridy.sh logs [veridy|vigia|arranque|puertos]   registros del contenedor
+#   infra/veridy/veridy.sh logs [veridy|vigia|puertos]   registros del contenedor
 #
 # El apagado es automático: el vigía del grupo apaga todo tras 60 min sin uso
 # (variable inactividad_min de Terraform). Encender es siempre manual.

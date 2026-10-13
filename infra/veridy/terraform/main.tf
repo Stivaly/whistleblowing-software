@@ -8,7 +8,7 @@ locals {
   nombre_grupo = "aci-${local.base}"
   grupo_id     = "${azurerm_resource_group.rg.id}/providers/Microsoft.ContainerInstance/containerGroups/${local.nombre_grupo}"
   pg_fqdn      = azurerm_postgresql_flexible_server.veridy.fqdn
-  scripts      = { for f in ["arranque.py", "vigia.py"] : f => filebase64("${path.module}/../contenedor/${f}") }
+  script       = { for f in ["arranque.py", "vigia.py"] : f => filebase64("${path.module}/../contenedor/${f}") }
 }
 
 data "azurerm_client_config" "actual" {}
@@ -123,7 +123,10 @@ resource "azurerm_role_assignment" "veridy_encendido" {
 }
 
 # ---------------------------------------------------------- grupo de contenedores
-# arranque (init) -> veridy + puertos (443->8443, 80->8080 sin abrir el TLS) + vigía.
+# veridy (corre arranque.py y luego Veridy) + puertos (443->8443, 80->8080 sin abrir
+# el TLS) + vigía. Sin contenedor init: el proveedor duplica los volúmenes que un init
+# comparte con otro contenedor (DuplicateVolumes), y así la contraseña ni siquiera
+# necesita un volumen compartido: queda en el /tmp del propio contenedor.
 resource "azurerm_container_group" "veridy" {
   count = var.crear_contenedor ? 1 : 0
 
@@ -156,32 +159,6 @@ resource "azurerm_container_group" "veridy" {
     protocol = "TCP"
   }
 
-  init_container {
-    name     = "arranque"
-    image    = local.imagen
-    commands = ["python3", "/opt/veridy/arranque.py"]
-
-    environment_variables = {
-      AZURE_CLIENT_ID = azurerm_user_assigned_identity.veridy.client_id
-      VERIDY_KV_URL   = azurerm_key_vault.kv.vault_uri
-      VERIDY_PG_FQDN  = local.pg_fqdn
-      VERIDY_PG_ID    = azurerm_postgresql_flexible_server.veridy.id
-    }
-
-    volume {
-      name       = "scripts"
-      mount_path = "/opt/veridy"
-      read_only  = true
-      secret     = local.scripts
-    }
-
-    volume {
-      name       = "pgpass"
-      mount_path = "/run/veridy"
-      empty_dir  = true
-    }
-  }
-
   container {
     name   = "veridy"
     image  = local.imagen
@@ -198,15 +175,23 @@ resource "azurerm_container_group" "veridy" {
       protocol = "TCP"
     }
 
+    commands = ["sh", "-c", "python3 /opt/veridy/arranque.py && exec /usr/bin/python3 /usr/bin/globaleaks --working-path=/var/globaleaks/ -n"]
+
     environment_variables = {
       GLOBALEAKS_DB_URI = "postgresql+psycopg2://veridy_app@${local.pg_fqdn}:5432/veridy?sslmode=verify-full&sslrootcert=system"
-      PGPASSFILE        = "/run/veridy/pgpass"
+      PGPASSFILE        = "/tmp/pgpass"
+      VERIDY_PGPASS     = "/tmp/pgpass"
+      AZURE_CLIENT_ID   = azurerm_user_assigned_identity.veridy.client_id
+      VERIDY_KV_URL     = azurerm_key_vault.kv.vault_uri
+      VERIDY_PG_FQDN    = local.pg_fqdn
+      VERIDY_PG_ID      = azurerm_postgresql_flexible_server.veridy.id
     }
 
     volume {
-      name       = "pgpass"
-      mount_path = "/run/veridy"
-      empty_dir  = true
+      name       = "script-arranque"
+      mount_path = "/opt/veridy"
+      read_only  = true
+      secret     = { "arranque.py" = local.script["arranque.py"] }
     }
 
     volume {
@@ -265,10 +250,10 @@ resource "azurerm_container_group" "veridy" {
     }
 
     volume {
-      name       = "scripts"
+      name       = "script-vigia"
       mount_path = "/opt/veridy"
       read_only  = true
-      secret     = local.scripts
+      secret     = { "vigia.py" = local.script["vigia.py"] }
     }
 
     volume {

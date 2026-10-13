@@ -117,8 +117,15 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       Veridy 1ª corrida 78/86 (fallan 6, 12, 15, 18, 22: los mismos escenarios fallan en `stable`). Veridy 2ª corrida
       26/86: desde el escenario 9 no aparece el formulario de login (`[name="username"]`) en cascada; con el mismo
       código que la 1ª corrida → probable estado del ambiente. Repetir aparte antes de concluir.
-- [ ] Prueba con la imagen real (`docker compose ... build`) y luego apagar el servidor e `instalar-cron`.
-      La usuaria pidió dejarlo encendido solo hasta la primera prueba correcta de despliegue.
+- [x] Veridy desplegado en Azure Container Instances (2026-10-13), Terraform propio en `infra/veridy/`:
+      https://veridy-dev-kdicq.chilecentral.azurecontainer.io — imagen real `veridy:v1` (753 MB, antes 3,34 GB),
+      health/public/cliente 200, http→https. Encendido manual con `infra/veridy/veridy.sh encender`; el vigía apaga
+      todo tras 60 min sin uso.
+- [ ] Usuaria: completar el asistente inicial de Veridy en el link (mientras no se complete, cualquiera que llegue
+      al link podría hacerlo y quedar como administrador).
+- [ ] Verificar el primer apagado automático del vigía (identidad administrada: stop de PostgreSQL y del grupo) y
+      `veridy.sh encender` después.
+- [ ] Repetir Cypress sobre Veridy para descartar la cascada de la 2ª corrida.
 - [ ] Usuaria: construir la imagen y primer arranque con `docker/README-postgres.md`; quitar luego la URI de admin.
 - [ ] Más adelante: script que limpie los registros de red de Veridy y de las máquinas (access.log y logs del
       contenedor, logs del host, diagnósticos de Azure si se activan), para no conservar IPs de quienes entran por
