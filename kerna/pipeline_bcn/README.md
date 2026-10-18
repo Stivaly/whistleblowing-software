@@ -57,6 +57,14 @@ exija el más estricto de los dos; ante un 429 se espera `Retry-After` y se rein
 fragmentos tardan ~10 minutos. `--proveedor gemini|openai` queda como alternativa (no mezclar modelos en una misma
 colección).
 
+## Acceso a Atlas desde los jobs (`atlas_acceso.py`)
+
+Con `ATLAS_ACCESO_TEMPORAL=1`, `run.sh` autoriza la IP de salida del contenedor en la lista de acceso del proyecto
+de Atlas antes de empezar (`abrir`: entrada con `deleteAfterDate`, `ATLAS_ACCESO_HORAS` = 2 por defecto) y la quita
+al terminar, también si el pipeline falla (`cerrar`). Si la IP ya tiene una entrada permanente no la toca. Requiere
+`ATLAS_PUBLIC_KEY`, `ATLAS_PRIVATE_KEY` y `ATLAS_PROJECT_ID`. Prueba manual con una IP de documentación:
+`python3 atlas_acceso.py abrir --ip 192.0.2.10 && python3 atlas_acceso.py cerrar`.
+
 ## Cambios respecto del código original (hallados con XML reales)
 
 1. El parser no bajaba a los `EstructurasFuncionales` anidados: devolvía 0 artículos del Código Penal y 3 de la Ley 20.393.

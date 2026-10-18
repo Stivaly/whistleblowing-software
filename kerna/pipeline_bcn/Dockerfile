@@ -9,7 +9,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY extraer_bcn.py embed_sync.py crear_bd.py leyes.json ./
+COPY extraer_bcn.py embed_sync.py crear_bd.py atlas_acceso.py leyes.json ./
 COPY run.sh ./
 RUN chmod +x run.sh && useradd --create-home kerna && chown -R kerna /app
 USER kerna
