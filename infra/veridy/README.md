@@ -121,6 +121,20 @@ terraform plan -out=fase2.tfplan && terraform apply fase2.tfplan
 terraform output url
 ```
 
+## Llevar una instalación SQLite a la base de Azure
+
+`migrar_sqlite.py` copia un `globaleaks.db` (mismo esquema) a PostgreSQL con los modelos de Veridy: reemplaza todo
+el contenido, salvo hostname, HTTPS/ACME y Tor de Azure, y agrega sin escrow los usuarios de Azure que no existan en
+SQLite. Sin `--aplicar` es un ensayo que verifica los conteos y deshace. Antes: `pg_dump` de la base y detener el
+contenedor (`az container stop`); después, subir `files/` y `attachments/` a los shares `archivos` y `adjuntos`.
+
+```bash
+docker run --rm -e PGPASSFILE=/r/pgpass \
+  -e "VERIDY_PG_URI=postgresql+psycopg2://veridyadmin@<servidor>:5432/veridy?sslmode=require" \
+  -v <dir con pgpass y globaleaks.db>:/r -v "$PWD/infra/veridy":/m:ro \
+  --entrypoint python3 <acr>/veridy:v1 /m/migrar_sqlite.py /r/globaleaks.db [--aplicar]
+```
+
 ## Versiones nuevas de Veridy
 
 ```bash
