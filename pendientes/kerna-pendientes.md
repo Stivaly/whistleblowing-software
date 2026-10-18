@@ -1,4 +1,4 @@
-# Kerna AI — pendientes (actualizado 2026-10-02)
+# Kerna AI — pendientes (actualizado 2026-10-18)
 
 Punto de partida para retomar en otra sesión. Contexto y porqués: doc **Resumen técnico**
 https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
@@ -39,28 +39,43 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [~] Paso 5: `terraform init` (azurerm 4.81.0) y `validate` OK. Aplicados 10 de 11 recursos con `-target`
       (grupo `rg-kerna-dev`, ACR Standard y Key Vault (nombres con `terraform output`), Log Analytics,
       identidad y 4 roles). Falta `azurerm_container_app_environment.env`: `Microsoft.App` quedó en "Registering"
-      más de 45 min. Cuando diga "Registered": `terraform plan -out=fase1.tfplan` (debe agregar solo el entorno) y apply.
+      más de 45 min. Ya está "Registered" (2026-10-18): el entorno va en `fase2.tfplan` junto con los jobs (paso 8).
 - [x] Paso 7: imagen `kerna-pipeline:v1` (+ `latest`) subida al registro.
+- [x] Imagen `kerna-pipeline:v2` (+ `latest`) subida (2026-10-18): voyage-4-large y `atlas_acceso.py`.
 - [ ] Paso 6: cargar `mongodb-uri` (lo bloqueó el clasificador de permisos de Claude → lo corre la usuaria) y crear
       Qdrant Cloud + API key de Gemini para los otros 3 secretos.
-- [ ] Paso 8: `crear_jobs = true` + plan/apply.
+- [~] Paso 8 (2026-10-18): `terraform.tfvars` con `crear_jobs = true`, `imagen_tag = "v2"` y `atlas_proyecto_id`.
+      `fase2.tfplan` generado: 4 para agregar (entorno `cae-kerna-dev` + 3 jobs), 0 cambios, 0 destrucciones.
+      Falta que la usuaria lo revise y aplique (`terraform apply fase2.tfplan`). Los jobs leen 7 secretos de
+      Key Vault: confirmar antes que existan `voyage-api-key`, `atlas-public-key`, `atlas-private-key`.
 - [x] Paso 9 reemplazado (2026-10-18): en vez de abrir Atlas a `0.0.0.0/0`, cada job autorizará su IP de salida como
       entrada TEMPORAL de la lista de acceso (API de administración de Atlas, `deleteAfterDate`) y la quitará al
       terminar. Claves `atlas-public-key` / `atlas-private-key` en Key Vault de Kerna; proyecto 6abfe35c3b197494864646bb.
       Probado desde el host: lectura (200) y alta temporal (201). Falta confirmar desde Azure que la API no exija
       lista de IPs para la clave (si la exige: desactivar esa opción en la organización de Atlas).
-- [ ] Código: paso de arranque/cierre en los jobs para la entrada temporal en Atlas (como `infra/veridy/contenedor/arranque.py`).
+- [x] Código (2026-10-18): `kerna/pipeline_bcn/atlas_acceso.py` + `run.sh` (`ATLAS_ACCESO_TEMPORAL=1` desde Terraform).
+      Probado contra Atlas real con la IP de documentación 192.0.2.10 (alta, ACTIVE, baja). Si dos jobs coinciden
+      (comparten IP de salida del entorno), el primero en terminar quita la entrada del otro: hoy no se solapan.
 - [ ] Paso 10: `infra/scripts/subir_imagen.sh --desplegar --probar diario` y revisar logs.
 - [ ] Atlas: eliminar o rotar el usuario anterior con `atlasAdmin` (su clave quedó expuesta en un error).
 - [ ] Respaldo de MongoDB (M0 no tiene backups): `mongodump` semanal programado.
 
 ## 2. Código pendiente
 
-- [x] `embed_sync.py`: proveedor Gemini por defecto (`gemini-embedding-2`, estable desde abr-2026; 2026-10-12).
+- [x] (reemplazado) `embed_sync.py`: proveedor Gemini por defecto (`gemini-embedding-2`, estable desde abr-2026; 2026-10-12).
       Se mantiene `DIMS = 1024` (el modelo acepta 128-3072 y normaliza solo). Formato de documento
       `title: none | text: …`; las consultas del retriever deben usar `task: search result | query: …` con 1024 dims.
       Prueba en `test_embed_sync.py` (sin red).
-- [ ] Correr los 172 embeddings (local, apenas existan Qdrant y la API key) y medir recall@5 (meta ≥ 0,8).
+- [x] `embed_sync.py` (2026-10-18): proveedor por defecto Voyage `voyage-4-large`, 1024 dims, documentos
+      `input_type: document`, consultas con `embed_consulta()` (`query`). Límites `VOYAGE_TPM`/`VOYAGE_RPM`
+      (10.000/3 sin medio de pago); reintento en 429. Pruebas: 29 OK (MongoDB de prueba en 127.0.0.1:27018).
+- [x] 172 embeddings generados desde el host (2026-10-18, ~10 min): Mongo 172 `ok` con `voyage-4-large`
+      (29 `no_aplica`); Qdrant `normativa_cl` creada con 1024 dims, coseno, 172 puntos.
+- [ ] Medir recall@5 (meta ≥ 0,8), propuesta pendiente de aprobación: 91 casos del dataset con `ley_principal`
+      (los 22 "ninguna" aparte, como tasa de falsos positivos por umbral de score). Consulta = `texto_original`
+      (y `resumen_parafraseado` como segunda corrida), `embed_consulta()` en lotes, filtro `vigente=true`, top 5.
+      Dos niveles: (a) ley: algún top-5 de la ley principal; (b) artículo: algún top-5 en `articulos_candidatos`
+      (exige normalizarlos a IDs de fragmento y la revisión legal del §6). Meta sobre (b); reportar por ley.
 - [ ] Orquestador (`fable upgrades/kerna_entrega2.zip` → `kerna_orquestador/`): reemplazar el cliente de Anthropic por
       Gemini (`gemini-3.5-flash-lite` clasificar, `gemini-3.8-flash` generar), con thinking budget bajo y salida JSON.
 - [ ] Orquestador: clave `kerna:llm:capa` (gratuita/pagada) y bloqueo de mensajes no sintéticos con capa gratuita;
