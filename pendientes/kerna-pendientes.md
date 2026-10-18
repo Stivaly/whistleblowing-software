@@ -36,7 +36,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [x] Paso 4 (2026-10-12, lo corrió Claude con autorización puntual): estado en la cuenta `stkernatf*` de `rg-kerna-tfstate` (nombre en `backend.hcl`)
       (chilecentral); `backend.hcl` y `terraform.tfvars` creados (fuera de git). El tenant de Inacap exige MFA para
       escribir: si `az` responde AADSTS50076, la usuaria repite `az login` con el `--claims-challenge` que indica el error.
-- [~] Paso 5: `terraform init` (azurerm 4.81.0) y `validate` OK. Aplicados 10 de 11 recursos con `-target`
+- [x] Paso 5: `terraform init` (azurerm 4.81.0) y `validate` OK. Aplicados 10 de 11 recursos con `-target`
       (grupo `rg-kerna-dev`, ACR Standard y Key Vault (nombres con `terraform output`), Log Analytics,
       identidad y 4 roles). Falta `azurerm_container_app_environment.env`: `Microsoft.App` quedó en "Registering"
       más de 45 min. Ya está "Registered" (2026-10-18): el entorno va en `fase2.tfplan` junto con los jobs (paso 8).
@@ -44,19 +44,23 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [x] Imagen `kerna-pipeline:v2` (+ `latest`) subida (2026-10-18): voyage-4-large y `atlas_acceso.py`.
 - [ ] Paso 6: cargar `mongodb-uri` (lo bloqueó el clasificador de permisos de Claude → lo corre la usuaria) y crear
       Qdrant Cloud + API key de Gemini para los otros 3 secretos.
-- [~] Paso 8 (2026-10-18): `terraform.tfvars` con `crear_jobs = true`, `imagen_tag = "v2"` y `atlas_proyecto_id`.
-      `fase2.tfplan` generado: 4 para agregar (entorno `cae-kerna-dev` + 3 jobs), 0 cambios, 0 destrucciones.
-      Falta que la usuaria lo revise y aplique (`terraform apply fase2.tfplan`). Los jobs leen 7 secretos de
-      Key Vault: confirmar antes que existan `voyage-api-key`, `atlas-public-key`, `atlas-private-key`.
+- [x] Paso 8 (2026-10-18): entorno `cae-kerna-dev` y 3 jobs creados (imagen v2, 7 secretos de Key Vault). Con
+      azurerm el entorno salió en modo Express (no admite jobs): se eliminó con autorización de la usuaria y se
+      recreó con `azapi` (2.13.0) y `environmentMode = "WorkloadProfiles"`. Plan posterior: sin cambios.
 - [x] Paso 9 reemplazado (2026-10-18): en vez de abrir Atlas a `0.0.0.0/0`, cada job autorizará su IP de salida como
       entrada TEMPORAL de la lista de acceso (API de administración de Atlas, `deleteAfterDate`) y la quitará al
       terminar. Claves `atlas-public-key` / `atlas-private-key` en Key Vault de Kerna; proyecto 6abfe35c3b197494864646bb.
-      Probado desde el host: lectura (200) y alta temporal (201). Falta confirmar desde Azure que la API no exija
-      lista de IPs para la clave (si la exige: desactivar esa opción en la organización de Atlas).
+      Probado desde el host: lectura (200) y alta temporal (201). Confirmado desde Azure (2026-10-18): el job
+      autorizó y quitó su IP sin problemas.
 - [x] Código (2026-10-18): `kerna/pipeline_bcn/atlas_acceso.py` + `run.sh` (`ATLAS_ACCESO_TEMPORAL=1` desde Terraform).
       Probado contra Atlas real con la IP de documentación 192.0.2.10 (alta, ACTIVE, baja). Si dos jobs coinciden
       (comparten IP de salida del entorno), el primero en terminar quita la entrada del otro: hoy no se solapan.
-- [ ] Paso 10: `infra/scripts/subir_imagen.sh --desplegar --probar diario` y revisar logs.
+- [x] Paso 10 (2026-10-18): `job-kerna-dev-diario` lanzado a mano: Succeeded (6 normas sin cambios, 0
+      embeddings, entrada de Atlas agregada y quitada). Ojo: `az containerapp job start --args` reemplaza el
+      contenedor y pierde variables y secretos; para probar, lanzar el job sin argumentos.
+- [ ] Concurrencia de jobs y entrada de Atlas: si dos ejecuciones comparten IP, la primera en terminar quita el
+      acceso de la otra (la otra falla y se reintenta una vez). Propuesta: registro de uso en Mongo
+      (`accesos_atlas`) y quitar la entrada solo si no queda otro uso activo. Pendiente de decisión.
 - [ ] Atlas: eliminar o rotar el usuario anterior con `atlasAdmin` (su clave quedó expuesta en un error).
 - [ ] Respaldo de MongoDB (M0 no tiene backups): `mongodump` semanal programado.
 
