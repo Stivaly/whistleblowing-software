@@ -10,6 +10,11 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.6"
     }
+    # Entorno de Container Apps con environmentMode explícito (azurerm aún no lo expone).
+    azapi = {
+      source  = "Azure/azapi"
+      version = "~> 2.13"
+    }
   }
 
   # Estado remoto en Azure Storage. Valores en backend.hcl (ver README.md, paso 4):

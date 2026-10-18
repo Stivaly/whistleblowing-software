@@ -10,6 +10,9 @@ Qué crea (todo en `chilecentral`, grupo `rg-kerna-dev`):
 | Identidad administrada | el job lee Key Vault y baja la imagen sin claves | gratis |
 | Container Apps Environment + 3 jobs | diario, semanal y 1 de diciembre | dentro de la cuota gratuita mensual |
 
+El entorno de Container Apps se crea con el proveedor `azapi` y `environmentMode = "WorkloadProfiles"` (perfil
+`Consumption`): `azurerm` no permite elegir el modo y, sin él, Azure crea un entorno Express, que no admite jobs.
+
 Fuera de Terraform (a mano): MongoDB Atlas (ya existe) y su clave de API de proyecto, Qdrant Cloud, la API key de Google Gemini (AI Studio, clasificación y generación) y la de Voyage AI (embeddings).
 
 Los **valores** de los secretos nunca pasan por Terraform ni quedan en su estado: se cargan con `az keyvault secret set` (paso 6).

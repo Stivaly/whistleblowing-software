@@ -124,12 +124,42 @@ resource "azurerm_role_assignment" "pipeline_kv_lectura" {
 }
 
 # ------------------------------------------------------------------- entorno
-resource "azurerm_container_app_environment" "env" {
-  name                       = "cae-${local.base}"
-  location                   = azurerm_resource_group.rg.location
-  resource_group_name        = azurerm_resource_group.rg.name
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
-  tags                       = local.etiquetas
+# azurerm no permite elegir environmentMode y Azure crea el entorno en modo Express, que no
+# admite jobs. Con azapi se fija el modo estándar con el perfil Consumption.
+resource "azapi_resource" "env" {
+  type      = "Microsoft.App/managedEnvironments@2026-07-01"
+  name      = "cae-${local.base}"
+  location  = azurerm_resource_group.rg.location
+  parent_id = azurerm_resource_group.rg.id
+  tags      = local.etiquetas
+
+  # El esquema que trae azapi puede no incluir esta versión de la API todavía.
+  schema_validation_enabled = false
+
+  body = {
+    properties = {
+      environmentMode  = "WorkloadProfiles"
+      workloadProfiles = [{ name = "Consumption", workloadProfileType = "Consumption" }]
+      zoneRedundant    = false
+      appLogsConfiguration = {
+        destination = "log-analytics"
+        logAnalyticsConfiguration = {
+          customerId = azurerm_log_analytics_workspace.logs.workspace_id
+        }
+      }
+    }
+  }
+
+  # La clave del workspace no se compara con lo que devuelve Azure (no la devuelve).
+  sensitive_body = {
+    properties = {
+      appLogsConfiguration = {
+        logAnalyticsConfiguration = {
+          sharedKey = azurerm_log_analytics_workspace.logs.primary_shared_key
+        }
+      }
+    }
+  }
 }
 
 # ---------------------------------------------------------------------- jobs
@@ -139,7 +169,8 @@ resource "azurerm_container_app_job" "pipeline" {
   name                         = "job-${local.base}-${each.key}"
   location                     = azurerm_resource_group.rg.location
   resource_group_name          = azurerm_resource_group.rg.name
-  container_app_environment_id = azurerm_container_app_environment.env.id
+  container_app_environment_id = azapi_resource.env.id
+  workload_profile_name        = "Consumption"
   replica_timeout_in_seconds   = 3600
   replica_retry_limit          = 1
   tags                         = local.etiquetas
