@@ -6,11 +6,11 @@ Qué crea (todo en `chilecentral`, grupo `rg-kerna-dev`):
 |---|---|---|
 | Log Analytics | logs de los jobs (tope 0,5 GB/día) | centavos |
 | Container Registry Standard | imagen `kerna-pipeline` | 1 registro Standard incluido en Azure for Students (Basic se cobra) |
-| Key Vault | `mongodb-uri`, `qdrant-url`, `qdrant-api-key`, `gemini-api-key` | centavos |
+| Key Vault | `mongodb-uri`, `qdrant-url`, `qdrant-api-key`, `gemini-api-key`, `voyage-api-key`, `atlas-public-key`, `atlas-private-key` | centavos |
 | Identidad administrada | el job lee Key Vault y baja la imagen sin claves | gratis |
 | Container Apps Environment + 3 jobs | diario, semanal y 1 de diciembre | dentro de la cuota gratuita mensual |
 
-Fuera de Terraform (a mano): MongoDB Atlas (ya existe), Qdrant Cloud y la API key de Google Gemini (AI Studio).
+Fuera de Terraform (a mano): MongoDB Atlas (ya existe) y su clave de API de proyecto, Qdrant Cloud, la API key de Google Gemini (AI Studio, clasificación y generación) y la de Voyage AI (embeddings).
 
 Los **valores** de los secretos nunca pasan por Terraform ni quedan en su estado: se cargan con `az keyvault secret set` (paso 6).
 
@@ -115,6 +115,9 @@ Antes: crear el cluster gratuito en [Qdrant Cloud](https://cloud.qdrant.io) (pro
 QDRANT_URL='https://xxxx.eastus2-0.azure.cloud.qdrant.io:6333'
 QDRANT_API_KEY='...'
 GEMINI_API_KEY='...'
+VOYAGE_API_KEY='...'
+ATLAS_PUBLIC_KEY='...'     # clave de API del proyecto de Atlas (rol Project Owner o Network Access Manager)
+ATLAS_PRIVATE_KEY='...'
 ```
 
 Luego (los valores se leen del `.env`, no se escriben en la terminal):
@@ -127,7 +130,10 @@ az keyvault secret set --vault-name $KV --name mongodb-uri    --file <(printf %s
 az keyvault secret set --vault-name $KV --name qdrant-url     --file <(printf %s "$QDRANT_URL")     -o none
 az keyvault secret set --vault-name $KV --name qdrant-api-key --file <(printf %s "$QDRANT_API_KEY") -o none
 az keyvault secret set --vault-name $KV --name gemini-api-key --file <(printf %s "$GEMINI_API_KEY") -o none
-az keyvault secret list --vault-name $KV --query "[].name" -o tsv     # deben salir los 4
+az keyvault secret set --vault-name $KV --name voyage-api-key    --file <(printf %s "$VOYAGE_API_KEY")    -o none
+az keyvault secret set --vault-name $KV --name atlas-public-key  --file <(printf %s "$ATLAS_PUBLIC_KEY")  -o none
+az keyvault secret set --vault-name $KV --name atlas-private-key --file <(printf %s "$ATLAS_PRIVATE_KEY") -o none
+az keyvault secret list --vault-name $KV --query "[].name" -o tsv     # deben salir los 7
 ```
 
 > Capa gratuita de Gemini: solo denuncias sintéticas (sus términos piden no enviar información confidencial). Ver la pestaña "Arquitectura en Azure" del Resumen técnico.
@@ -149,9 +155,17 @@ terraform plan -out=fase2.tfplan     # debe agregar 3 jobs
 terraform apply fase2.tfplan
 ```
 
-## 9. MongoDB Atlas: abrir acceso de red (decisión temporal, 1-2 meses)
+## 9. MongoDB Atlas: acceso de red de los jobs
 
-Atlas → Security → Network Access → Add IP Address → **Allow access from anywhere** (`0.0.0.0/0`). Container Apps no tiene IP de salida fija sin NAT Gateway (de pago). La protección queda en el usuario de mínimo privilegio + TLS.
+Container Apps no tiene IP de salida fija sin NAT Gateway (de pago). Cada ejecución autoriza la suya: `run.sh` corre
+`atlas_acceso.py abrir` (agrega la IP como entrada **temporal** de la lista de acceso del proyecto `atlas_proyecto_id`,
+con `deleteAfterDate` a 2 horas, y espera a que quede activa) y, al terminar, también si falla,
+`atlas_acceso.py cerrar` (la quita). Si el job muere sin cerrar, Atlas borra la entrada al vencer. Lo activa
+`ATLAS_ACCESO_TEMPORAL=1`, que Terraform define en los jobs.
+
+Requisito en Atlas: la clave de API (`atlas-public-key` / `atlas-private-key`) con rol Project Owner o Network
+Access Manager del proyecto, y sin lista de IPs obligatoria para la API (Organization Settings → "Require IP Access
+List for the Atlas Administration API" desactivado): la IP del job no se conoce de antemano.
 
 ## 10. Probar un job a mano
 

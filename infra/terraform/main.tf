@@ -8,10 +8,20 @@ locals {
   # Los VALORES se cargan con az keyvault secret set (README, paso 6):
   # nunca pasan por Terraform ni quedan en su estado.
   secretos = {
-    "mongodb-uri"    = "MONGODB_URI"
-    "qdrant-url"     = "QDRANT_URL"
-    "qdrant-api-key" = "QDRANT_API_KEY"
-    "gemini-api-key" = "GEMINI_API_KEY"
+    "mongodb-uri"       = "MONGODB_URI"
+    "qdrant-url"        = "QDRANT_URL"
+    "qdrant-api-key"    = "QDRANT_API_KEY"
+    "gemini-api-key"    = "GEMINI_API_KEY"
+    "voyage-api-key"    = "VOYAGE_API_KEY"
+    "atlas-public-key"  = "ATLAS_PUBLIC_KEY"
+    "atlas-private-key" = "ATLAS_PRIVATE_KEY"
+  }
+
+  # Variables sin secreto. Con ATLAS_ACCESO_TEMPORAL=1, run.sh autoriza la IP de salida del
+  # job en la lista de acceso de Atlas al empezar y la quita al terminar (atlas_acceso.py).
+  entorno = {
+    ATLAS_ACCESO_TEMPORAL = "1"
+    ATLAS_PROJECT_ID      = var.atlas_proyecto_id
   }
 
   jobs = {
@@ -172,6 +182,14 @@ resource "azurerm_container_app_job" "pipeline" {
         content {
           name        = env.value
           secret_name = env.key
+        }
+      }
+
+      dynamic "env" {
+        for_each = local.entorno
+        content {
+          name  = env.key
+          value = env.value
         }
       }
     }

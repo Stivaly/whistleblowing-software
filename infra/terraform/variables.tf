@@ -30,6 +30,11 @@ variable "crear_jobs" {
   default     = false
 }
 
+variable "atlas_proyecto_id" {
+  description = "ID del proyecto de MongoDB Atlas cuya lista de acceso administran los jobs (Atlas > Project Settings)"
+  type        = string
+}
+
 variable "imagen_tag" {
   description = "Tag de la imagen con que se CREAN los jobs. Las versiones siguientes se despliegan con infra/scripts/subir_imagen.sh"
   type        = string

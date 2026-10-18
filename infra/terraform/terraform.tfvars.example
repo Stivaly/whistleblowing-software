@@ -5,3 +5,4 @@ prefijo         = "kerna"
 ambiente        = "dev"
 crear_jobs      = false
 imagen_tag      = "v1"
+atlas_proyecto_id = "000000000000000000000000"
