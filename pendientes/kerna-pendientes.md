@@ -164,9 +164,6 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
   código. No se modificó. Al retirarlo, rotar esa credencial.
 - `docs-auditoria-denuncias/03-puntos-extension.md`: se omitieron el host de Supabase y la contraseña antes de commitear.
 - `fable upgrades/` queda en `.gitignore` (referencia, puede estar desactualizada). Si se quiere versionar, quitar la línea.
-- [ ] Pie de página: el commit `chore(client): quitar la atribución "Powered by GlobaLeaks"` va contra los términos
-      adicionales de la licencia (LICENSE, sección 7): conservar la atribución y mostrar el aviso "This server is running
-      a modified version of the GlobaLeaks software..." con enlace al código. Decidir: revertir y agregar el aviso.
 - [ ] `client/app/assets/data/l10n/es.json` (commit `i18n(es)`) parece de otra versión de GlobaLeaks: le faltan 14 claves
       que la interfaz usa ("Analyst", "Reopen", "Mask", "Act on behalf of a whistleblower", "Unselect"…) y deja
       "Specify" sin traducir. Revisar o restaurar el de 5.0.85 y agregar encima las claves nuevas.
