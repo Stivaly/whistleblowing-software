@@ -146,6 +146,13 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       health/public/cliente 200, http→https. Encendido manual con `infra/veridy/veridy.sh encender`; el vigía apaga
       todo tras 60 min sin uso.
 - [x] Asistente inicial completado por la usuaria y certificado de Let's Encrypt activo (2026-10-13).
+- [x] Personalización y datos de prueba de la instalación local (volumen `docker_globaleaks`, SQLite) llevados a la
+      base de Azure (2026-10-18) con `infra/veridy/migrar_sqlite.py`: nombre, logo, textos, "Cuestionario Base",
+      contexto "Denuncia", 4 usuarios locales (sti, Auditor, Analista, Custodio) y 9 denuncias de prueba. Se
+      conservaron HTTPS, hostname y .onion de Azure, y los usuarios Stivaly y Veridy-Adm (sin escrow).
+      Respaldos: `~/backups/veridy-azure-2026-10-18.dump` (base de Azure previa) y
+      `~/backups/globaleaks-local-2026-10-18.db`.
+- [ ] Usuaria: entrar con `sti` (admin local) y revisar; `Veridy-Adm` sigue funcionando pero sin escrow.
 - [ ] El certificado vence el 2027-01-10. Veridy lo renueva solo, pero solo si está encendido en los días previos;
       si vence estando apagado: administración > red > HTTPS > Reset y volver a pedirlo.
 - [x] (antes) Usuaria: completar el asistente inicial de Veridy en el link (mientras no se complete, cualquiera que llegue
