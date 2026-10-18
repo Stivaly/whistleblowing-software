@@ -44,7 +44,12 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [ ] Paso 6: cargar `mongodb-uri` (lo bloqueó el clasificador de permisos de Claude → lo corre la usuaria) y crear
       Qdrant Cloud + API key de Gemini para los otros 3 secretos.
 - [ ] Paso 8: `crear_jobs = true` + plan/apply.
-- [ ] Paso 9: Atlas → Network Access → `0.0.0.0/0` (temporal, 1-2 meses; revisar fecha de cierre).
+- [x] Paso 9 reemplazado (2026-10-18): en vez de abrir Atlas a `0.0.0.0/0`, cada job autorizará su IP de salida como
+      entrada TEMPORAL de la lista de acceso (API de administración de Atlas, `deleteAfterDate`) y la quitará al
+      terminar. Claves `atlas-public-key` / `atlas-private-key` en Key Vault de Kerna; proyecto 6abfe35c3b197494864646bb.
+      Probado desde el host: lectura (200) y alta temporal (201). Falta confirmar desde Azure que la API no exija
+      lista de IPs para la clave (si la exige: desactivar esa opción en la organización de Atlas).
+- [ ] Código: paso de arranque/cierre en los jobs para la entrada temporal en Atlas (como `infra/veridy/contenedor/arranque.py`).
 - [ ] Paso 10: `infra/scripts/subir_imagen.sh --desplegar --probar diario` y revisar logs.
 - [ ] Atlas: eliminar o rotar el usuario anterior con `atlasAdmin` (su clave quedó expuesta en un error).
 - [ ] Respaldo de MongoDB (M0 no tiene backups): `mongodump` semanal programado.
