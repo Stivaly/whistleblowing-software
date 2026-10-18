@@ -32,12 +32,14 @@ LIMITE=180
 
 encender() {
   local fin=$(( $(date +%s) + LIMITE ))
+  # --no-wait: los dos arranques corren en paralelo y la única espera es la de abajo, con el
+  # límite de 3 minutos (Veridy reintenta la conexión mientras PostgreSQL termina de arrancar).
   if [ "$(estado_pg)" != "Ready" ]; then
     echo "==> Encendiendo PostgreSQL"
-    az postgres flexible-server start -g "$RG" -n "$PG" --only-show-errors -o none
+    az postgres flexible-server start -g "$RG" -n "$PG" --no-wait --only-show-errors -o none
   fi
   echo "==> Encendiendo Veridy"
-  az container start -g "$RG" -n "$ACI" --only-show-errors -o none
+  az container start -g "$RG" -n "$ACI" --no-wait --only-show-errors -o none
   echo "==> Esperando que responda"
   local u; u="$(url)"
   until curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$u/api/health" 2>/dev/null | grep -q 200; do
