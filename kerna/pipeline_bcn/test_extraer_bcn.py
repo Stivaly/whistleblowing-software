@@ -3,13 +3,11 @@
 
   pip install -r requirements-dev.txt && python3 -m pytest -q
 
-Las pruebas de upsert usan un MongoDB real y desechable (MONGODB_TEST_URI, por defecto
-mongodb://127.0.0.1:27018/kerna_test). Con Docker:
+Las pruebas de upsert usan un MongoDB real y desechable (fixture `db` de conftest.py,
+MONGODB_TEST_URI, por defecto mongodb://127.0.0.1:27018/kerna_test). Con Docker:
   docker run -d --name kerna-mongo44-test -p 127.0.0.1:27018:27017 mongo:4.4
 (4.4 porque MongoDB 5+ exige CPU con AVX; las operaciones usadas son las mismas en Atlas 8.)
 """
-import os
-from urllib.parse import urlparse
 
 import pytest
 
@@ -104,23 +102,6 @@ def test_articulo_largo_se_parte():
     assert [f["_id"] for f in frags][:2] == ["555-art-9-p1", "555-art-9-p2"]
     assert frags[0]["parte"] == f"1/{len(frags)}"
     assert "(parte 1/" in frags[0]["texto_embedding"]
-
-
-@pytest.fixture
-def db():
-    from pymongo import MongoClient
-
-    uri = os.environ.get("MONGODB_TEST_URI", "mongodb://127.0.0.1:27018/kerna_test")
-    # Cada prueba borra la base: solo se acepta un servidor local y una base *_test.
-    host = urlparse(uri).hostname
-    assert host in ("127.0.0.1", "localhost"), f"MONGODB_TEST_URI debe ser local, no {host}"
-    client = MongoClient(uri, serverSelectionTimeoutMS=3000)
-    base = client.get_default_database()
-    assert base.name.endswith("_test"), f"la base de prueba debe terminar en _test, no {base.name}"
-    client.drop_database(base.name)
-    yield base
-    client.drop_database(base.name)
-    client.close()
 
 
 def test_upsert_versiona_y_no_borra(db):

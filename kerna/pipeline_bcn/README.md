@@ -45,6 +45,18 @@ Nunca se borra nada: un artículo que desaparece de la versión vigente queda `v
 
 IDs de fragmento: `<idNorma>-art-<n>` (`-art-t-<n>` para transitorios, sufijo `-p<i>` para partes). La `ñ` se escribe `nn` (los artículos `183 N` y `183 Ñ` coexisten).
 
+## Embeddings (`embed_sync.py`)
+
+Proveedor por defecto: Voyage `voyage-4-large`, 1024 dimensiones, colección Qdrant `normativa_cl` (coseno). Los
+fragmentos se embeben con `input_type: "document"`; las consultas del retriever deben usar `embed_consulta()`
+(`input_type: "query"`, mismo modelo y dimensiones). Cada fragmento guarda el modelo en `embedding_modelo`.
+
+Límites de la cuenta en `VOYAGE_TPM` y `VOYAGE_RPM` (por defecto 10.000 tokens y 3 peticiones por minuto, los de una
+cuenta sin medio de pago): las peticiones se arman bajo el 80 % del límite de tokens y la siguiente espera lo que
+exija el más estricto de los dos; ante un 429 se espera `Retry-After` y se reintenta. Con esos límites, unos 200
+fragmentos tardan ~10 minutos. `--proveedor gemini|openai` queda como alternativa (no mezclar modelos en una misma
+colección).
+
 ## Cambios respecto del código original (hallados con XML reales)
 
 1. El parser no bajaba a los `EstructurasFuncionales` anidados: devolvía 0 artículos del Código Penal y 3 de la Ley 20.393.
