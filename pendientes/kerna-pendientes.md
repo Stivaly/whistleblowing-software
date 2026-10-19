@@ -75,11 +75,15 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       (10.000/3 sin medio de pago); reintento en 429. Pruebas: 29 OK (MongoDB de prueba en 127.0.0.1:27018).
 - [x] 172 embeddings generados desde el host (2026-10-18, ~10 min): Mongo 172 `ok` con `voyage-4-large`
       (29 `no_aplica`); Qdrant `normativa_cl` creada con 1024 dims, coseno, 172 puntos.
-- [ ] Medir recall@5 (meta ≥ 0,8), propuesta pendiente de aprobación: 91 casos del dataset con `ley_principal`
-      (los 22 "ninguna" aparte, como tasa de falsos positivos por umbral de score). Consulta = `texto_original`
-      (y `resumen_parafraseado` como segunda corrida), `embed_consulta()` en lotes, filtro `vigente=true`, top 5.
-      Dos niveles: (a) ley: algún top-5 de la ley principal; (b) artículo: algún top-5 en `articulos_candidatos`
-      (exige normalizarlos a IDs de fragmento y la revisión legal del §6). Meta sobre (b); reportar por ley.
+- [x] Recall@5 medido (2026-10-19, `kerna/evaluacion/recall_retriever.py`; evidencia en `kerna/evaluacion/registro/`
+      y `registro-pruebas.md`). Voyage `voyage-4-large` query, Qdrant `normativa_cl`, `vigente=true`, top 5.
+      (a) ley, 91 casos: 0,934 con `texto_original` (19.628-21.719 1,000 · 20.393 0,792 · 21.643 0,966) y 0,967 con
+      `resumen_parafraseado` (0,974 · 0,917 · 1,000) → cumple 0,8. (b) artículo, 61 casos mapeables
+      (21.643 28/29 · 19.628 23/38 · 20.393 10/24): 0,328 / 0,344 (0,217 · 0,000 · 0,536 con texto original) → no cumple.
+      "ninguna" (22): top-1 0,175–0,537; umbral 0,55 = 0 % FP pero pasa solo el 25 % de los positivos.
+- [ ] Decidir cómo subir (b): los candidatos son artículos de definición/catálogo (CT 2, 20.393 art. 1, 19.628 art. 2)
+      y el top-5 trae procedimiento (CT 211-D/E, 20.393 art. 17 ter). Opciones: revisión legal de candidatos (§6),
+      reranker, top-k mayor, o fijar la meta sobre (a). Volver a medir con el mismo script (sin costo de Voyage).
 - [ ] Orquestador (`fable upgrades/kerna_entrega2.zip` → `kerna_orquestador/`): reemplazar el cliente de Anthropic por
       Gemini (`gemini-3.5-flash-lite` clasificar, `gemini-3.8-flash` generar), con thinking budget bajo y salida JSON.
 - [ ] Orquestador: clave `kerna:llm:capa` (gratuita/pagada) y bloqueo de mensajes no sintéticos con capa gratuita;
@@ -172,7 +176,10 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 ## 6. Evaluación del modelo (bloquea uso con denuncias reales)
 
 - [ ] Elegir qué casos del dataset entran al set (58 de 113 son frontera; equilibrar según objetivo).
-- [ ] Revisión legal de `ley_principal` y `articulos_candidatos` (son hipótesis del agente).
+- [ ] Revisión legal de `ley_principal` y `articulos_candidatos` (son hipótesis del agente). Las citas de la 19.628
+      pueden usar la numeración previa a la 21.719; el corpus vigente es el texto reformado. Tras revisar,
+      repetir `recall_retriever.py` (registra cada corrida).
+- [ ] Toda prueba o medición se anota en `kerna/evaluacion/registro-pruebas.md` (respaldo de KPIs/SLAs).
 - [ ] Copia del set con triggers del anonimizador insertados (RUT, correo, teléfono, nombres) para medir recall por tipo.
 - [ ] Comparar `gemini-3.8-flash`, `gemini-3.5-flash-lite` y un modelo superior de referencia; medir materia correcta,
       citas correctas, citas huérfanas (0), JSON válido (≥ 99 %), P95 (≤ 15 s), costo (≤ US$0,05).

@@ -77,6 +77,15 @@ def test_consulta_usa_input_type_query(monkeypatch, reloj):
     assert len(v) == s.DIMS
 
 
+def test_consultas_van_en_una_peticion_por_lote(monkeypatch, reloj):
+    bodies = []
+    monkeypatch.setattr(s, "_post", lambda url, h, body: bodies.append(body) or respuesta_voyage(body, 5))
+    v = s.embed_consultas(["uno", "dos", "tres"])
+    [body] = bodies
+    assert body["input_type"] == "query" and body["input"] == ["uno", "dos", "tres"]
+    assert [x[0] for x in v] == [0.0, 1.0, 2.0]
+
+
 def test_lotes_respetan_el_limite_de_tokens():
     textos = ["a" * 3000] * 5  # ~1001 tokens estimados cada uno
     lotes = s._lotes_por_tokens(textos, 2500)

@@ -116,9 +116,14 @@ def embed_voyage(textos: list[str], input_type: str = "document") -> list[list[f
     return vectores
 
 
+def embed_consultas(textos: list[str]) -> list[list[float]]:
+    """Embeddings de varias consultas en lotes, con los límites de Voyage."""
+    return embed_voyage(textos, input_type="query")
+
+
 def embed_consulta(texto: str) -> list[float]:
     """Embedding de una consulta del retriever (mismo espacio que los documentos)."""
-    return embed_voyage([texto], input_type="query")[0]
+    return embed_consultas([texto])[0]
 
 
 def embed_openai(textos: list[str]) -> list[list[float]]:
