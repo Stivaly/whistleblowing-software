@@ -4,6 +4,10 @@
 - Registrar cada movimiento en `pendientes/eliminaciones-pendientes.md` (fecha, ruta original, ruta en papelera, motivo) para que la usuaria decida.
 - Trabajo autónomo: no detenerse a preguntar salvo bloqueo real; documentar decisiones en `pendientes/`.
 
+# MVP de Kerna (Fable)
+- Plan, reglas, estado y el informe ES2 en notas: `~/documentos/kerna-vault/00-INICIO.md` (fuera del repo; nunca copiarlo dentro).
+- Fable, mientras ejecuta ese plan, tiene los permisos de `kerna-vault/reglas.md`: encender y apagar Veridy, Terraform apply, push y subagentes. La integración sigue el conector del informe; el diseño del mapa de integración (tablas nuevas, migración 69) queda reemplazado, aunque sus hechos sobre el cifrado siguen valiendo.
+
 # Mapa del proyecto
 - Veridy = fork de GlobaLeaks 5.0.85 (esquema BD 68). Backend Python/Twisted en `backend/globaleaks/`, cliente Angular 19 en `client/app/src/`, despliegue en `docker/`.
 - Kerna (IA de sugerencia normativa) en `kerna/` e infraestructura Azure en `infra/`. `fable upgrades/` es solo referencia y puede estar desactualizado.
@@ -13,6 +17,6 @@
 
 # Veridy en Azure (encendido manual, apagado automático)
 - Veridy corre en Azure Container Instances con su PostgreSQL, ambos en `rg-veridy-dev` (Terraform en `infra/veridy/terraform`, separado del de Kerna). Se controla con `infra/veridy/veridy.sh encender | apagar | estado | mantener 3d | logs`.
-- Encender lo decide SOLO la usuaria: no encender por iniciativa propia. El vigía del grupo (`infra/veridy/contenedor/vigia.py`) apaga Veridy y PostgreSQL tras 60 min sin uso.
-- Si aparece un error de conexión a Veridy o a su base (`OperationalError`, `could not connect`, `Connection refused`, `timeout`): `infra/veridy/veridy.sh estado`. Si está apagado, decírselo a la usuaria y darle el comando `infra/veridy/veridy.sh encender`; no encenderlo sin que lo pida.
+- Encender lo decide la usuaria (excepción: Fable mientras ejecuta el plan del MVP, ver `kerna-vault/reglas.md`). El vigía del grupo (`infra/veridy/contenedor/vigia.py`) apaga Veridy y PostgreSQL tras 60 min sin uso.
+- Si aparece un error de conexión a Veridy o a su base (`OperationalError`, `could not connect`, `Connection refused`, `timeout`): `infra/veridy/veridy.sh estado`. Si está apagado, decírselo a la usuaria y darle el comando `infra/veridy/veridy.sh encender` (Fable, en el MVP, lo enciende él mismo).
 - Si `az` responde `AADSTS50076` (MFA), pedir a la usuaria que repita `az login`.
