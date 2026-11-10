@@ -1,0 +1,1136 @@
+{
+ "context": {
+  "id": "dd0f3d5e-8dba-4793-8a81-24cc1bed2a0b",
+  "name": "Denuncia",
+  "questionnaire_id": "24a38ae9-1b1b-4740-a2f4-c08710d6d480",
+  "receivers": [
+   "00000000-0000-4000-8000-000000000001",
+   "00000000-0000-4000-8000-000000000002"
+  ],
+  "allow_recipients_selection": false,
+  "maximum_selectable_receivers": 0
+ },
+ "questionnaire": {
+  "id": "24a38ae9-1b1b-4740-a2f4-c08710d6d480",
+  "editable": true,
+  "name": "Cuestionario Base",
+  "steps": [
+   {
+    "id": "09f3c666-298d-4bee-ac50-7183d2b910b9",
+    "questionnaire_id": "24a38ae9-1b1b-4740-a2f4-c08710d6d480",
+    "order": 0,
+    "triggered_by_score": 0,
+    "triggered_by_options": [],
+    "children": [
+     {
+      "id": "a2be4fa0-8612-4c8a-9c83-359ee2879a28",
+      "instance": "instance",
+      "editable": true,
+      "type": "selectbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "09f3c666-298d-4bee-ac50-7183d2b910b9",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "display_alphabetically": {
+        "name": "display_alphabetically",
+        "type": "bool",
+        "value": false
+       }
+      },
+      "x": 0,
+      "y": 0,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [
+       {
+        "id": "7f32c906-f58d-462c-ad7a-13fc22bcc404",
+        "order": 0,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Maltrato Laboral"
+       },
+       {
+        "id": "2e27e8cd-d393-4471-829a-ced080c54aa1",
+        "order": 1,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Lavado de activos"
+       },
+       {
+        "id": "d52ecde6-5722-460b-a6ed-174f32dbc89b",
+        "order": 2,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Financiamiento al terrorismo"
+       },
+       {
+        "id": "4efd433b-f6f0-4d8b-94cb-8bf96391b763",
+        "order": 3,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Soborno a funcionarios públicos"
+       },
+       {
+        "id": "6b04dcd9-5383-4608-843a-6b72853a1b1c",
+        "order": 4,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Receptación"
+       },
+       {
+        "id": "b9d6e70b-42c3-4956-b380-83d4050cbcf7",
+        "order": 5,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Robo, hurto o apropiación indebida"
+       },
+       {
+        "id": "fa2b9956-59c9-4904-92e9-f00e1e79bb8a",
+        "order": 6,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Conflicto de intereses"
+       },
+       {
+        "id": "2c7cec0d-1fb9-4b63-ad43-400c14553c03",
+        "order": 7,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Acoso laboral"
+       },
+       {
+        "id": "adf986fe-e850-4836-92bd-e9031bf2059b",
+        "order": 8,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Acoso sexual"
+       },
+       {
+        "id": "bc5c5f4e-f24e-4361-81b2-8eb5c2d74cb7",
+        "order": 9,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Uso indebido de información"
+       },
+       {
+        "id": "555f56f6-fec2-4c2c-8f38-6f5b5ffc7ebd",
+        "order": 10,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Fraude"
+       }
+      ],
+      "children": [],
+      "label": "Tipo de denuncia",
+      "description": "Seleccione el tipo de denuncia que desea registrar",
+      "hint": "",
+      "placeholder": ""
+     }
+    ],
+    "label": "Paso 1",
+    "description": "Denuncia"
+   },
+   {
+    "id": "9aac7da3-4e97-473c-9818-0d3f1ac8298a",
+    "questionnaire_id": "24a38ae9-1b1b-4740-a2f4-c08710d6d480",
+    "order": 1,
+    "triggered_by_score": 0,
+    "triggered_by_options": [],
+    "children": [
+     {
+      "id": "bf077984-2c91-4f7d-b400-119cc110645d",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "9aac7da3-4e97-473c-9818-0d3f1ac8298a",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "none"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 0,
+      "y": 0,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [],
+      "children": [],
+      "label": "Nombres",
+      "description": "",
+      "hint": "Tomás/Pedro",
+      "placeholder": ""
+     },
+     {
+      "id": "dbef195f-b609-409d-8448-edf4fd5e5266",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "9aac7da3-4e97-473c-9818-0d3f1ac8298a",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "none"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 1,
+      "y": 1,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [],
+      "children": [],
+      "label": "Apellidos",
+      "description": "",
+      "hint": "Pérez/Rodríguez",
+      "placeholder": ""
+     },
+     {
+      "id": "0e63b01d-4e75-494a-aba9-965015047011",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "9aac7da3-4e97-473c-9818-0d3f1ac8298a",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": false,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "none"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 1,
+      "y": 1,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [],
+      "children": [],
+      "label": "Especificación",
+      "description": "",
+      "hint": "Empresa/Cargo/Otro",
+      "placeholder": ""
+     },
+     {
+      "id": "aa52279e-6ebb-499c-a032-ecb8062b6b8f",
+      "instance": "instance",
+      "editable": true,
+      "type": "selectbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "9aac7da3-4e97-473c-9818-0d3f1ac8298a",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": false,
+      "attrs": {
+       "display_alphabetically": {
+        "name": "display_alphabetically",
+        "type": "bool",
+        "value": false
+       }
+      },
+      "x": 0,
+      "y": 2,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [
+       {
+        "id": "21bec271-12c9-4d48-ab09-60fb276bb99b",
+        "order": 0,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Empleado"
+       },
+       {
+        "id": "4e1b45bf-68e1-4f03-98c1-96bf5d2f2174",
+        "order": 1,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Proveedor"
+       },
+       {
+        "id": "ced8f280-824b-4d8f-a17c-07e6a6947862",
+        "order": 2,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Cliente"
+       },
+       {
+        "id": "cdb0c489-0e6c-4087-87e4-6ae90046b0b3",
+        "order": 3,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Inversionista"
+       },
+       {
+        "id": "4cc10e64-9166-4783-bf0f-f1588a188851",
+        "order": 4,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Otro"
+       }
+      ],
+      "children": [],
+      "label": "Relación con la compañía",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     }
+    ],
+    "label": "Paso 2",
+    "description": "Identifique a las personas involucradas en el reporte a registrar"
+   },
+   {
+    "id": "c498e190-1c09-4174-ad1f-623d6c6c700b",
+    "questionnaire_id": "24a38ae9-1b1b-4740-a2f4-c08710d6d480",
+    "order": 2,
+    "triggered_by_score": 0,
+    "triggered_by_options": [],
+    "children": [
+     {
+      "id": "b60e0687-06e4-4e94-9037-add4a0bc9a98",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "c498e190-1c09-4174-ad1f-623d6c6c700b",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "none"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 0,
+      "y": 0,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [],
+      "children": [],
+      "label": "País",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "61d5c2eb-fc33-4417-a601-b3a9abc3707a",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "c498e190-1c09-4174-ad1f-623d6c6c700b",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "none"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 0,
+      "y": 0,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [],
+      "children": [],
+      "label": "Estado/Provincia",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "cdd750f2-aa87-4511-8dfb-8d3cef45f36e",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "c498e190-1c09-4174-ad1f-623d6c6c700b",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "none"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 0,
+      "y": 1,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [],
+      "children": [],
+      "label": "Ciudad/Comuna",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "0123d6bf-12b2-4560-a9d4-cbf1ba727ad3",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "c498e190-1c09-4174-ad1f-623d6c6c700b",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "none"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 1,
+      "y": 1,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [],
+      "children": [],
+      "label": "Área/Obra",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "353cd283-7ede-465f-a5df-7fae72d85071",
+      "instance": "instance",
+      "editable": true,
+      "type": "daterange",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "c498e190-1c09-4174-ad1f-623d6c6c700b",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "min_date": {
+        "name": "min_date",
+        "type": "unicode",
+        "value": {
+         "year": 2020,
+         "month": 12,
+         "day": 1
+        }
+       },
+       "max_date": {
+        "name": "max_date",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 0,
+      "y": 2,
+      "width": 6,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [],
+      "children": [],
+      "label": "Fecha del incidente",
+      "description": "Puede seleccionar solo una fecha o un rango de fechas",
+      "hint": "",
+      "placeholder": ""
+     }
+    ],
+    "label": "Paso 3",
+    "description": "Indique en qué lugar y fecha sucedió el incidente"
+   },
+   {
+    "id": "084aa922-eb7e-4852-ab43-a060781090fc",
+    "questionnaire_id": "24a38ae9-1b1b-4740-a2f4-c08710d6d480",
+    "order": 3,
+    "triggered_by_score": 0,
+    "triggered_by_options": [],
+    "children": [
+     {
+      "id": "91d13058-40de-4bb1-90d0-86fc5fb0aae3",
+      "instance": "instance",
+      "editable": true,
+      "type": "textarea",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "084aa922-eb7e-4852-ab43-a060781090fc",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "2000"
+       }
+      },
+      "x": 0,
+      "y": 0,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [],
+      "children": [],
+      "label": "Describa los detalles que ayuden a analizar y evaluar su denuncia",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "33150c67-d032-46b6-8f7e-7773ea183b07",
+      "instance": "instance",
+      "editable": true,
+      "type": "selectbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "084aa922-eb7e-4852-ab43-a060781090fc",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "display_alphabetically": {
+        "name": "display_alphabetically",
+        "type": "bool",
+        "value": false
+       }
+      },
+      "x": 0,
+      "y": 1,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [
+       {
+        "id": "2b0fcf35-889e-4f4b-950a-adfab1f8cbb1",
+        "order": 0,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "No me es posible proporcionar evidencias de ningún tipo"
+       },
+       {
+        "id": "21284e06-fac6-43de-abe3-2c31c3022656",
+        "order": 1,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "No tengo evidencias, pero podría obtenerlas y suministrarlas posteriormente"
+       },
+       {
+        "id": "57003e64-8a8b-4aaa-9ead-8b0af967122a",
+        "order": 2,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Tengo tanto evidencia física como digital que me gustaría entregar"
+       },
+       {
+        "id": "05536c12-b3da-4cad-a848-4ae9cf846c66",
+        "order": 3,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Tengo evidencia física que deseo entregar"
+       },
+       {
+        "id": "376145a9-c60d-4856-99c4-df927aff5c02",
+        "order": 4,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Tengo evidencia digital que deseo entregar"
+       }
+      ],
+      "children": [],
+      "label": "¿Posee usted evidencia física o digital que pueda ayudar en la investigación de esta denuncia?",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "3002c860-81c8-4f7b-a948-f39040bccd78",
+      "instance": "instance",
+      "editable": true,
+      "type": "fileupload",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "084aa922-eb7e-4852-ab43-a060781090fc",
+      "fieldgroup_id": "",
+      "multi_entry": true,
+      "required": true,
+      "attrs": {},
+      "x": 0,
+      "y": 1,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [
+       {
+        "field": "33150c67-d032-46b6-8f7e-7773ea183b07",
+        "option": "57003e64-8a8b-4aaa-9ead-8b0af967122a",
+        "sufficient": true
+       },
+       {
+        "field": "33150c67-d032-46b6-8f7e-7773ea183b07",
+        "option": "376145a9-c60d-4856-99c4-df927aff5c02",
+        "sufficient": true
+       }
+      ],
+      "options": [],
+      "children": [],
+      "label": "A continuación selecciona los archivos digitales a adjuntar",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "3300ba86-c6d2-44c6-a176-5d772a96b0f8",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "084aa922-eb7e-4852-ab43-a060781090fc",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "none"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 1,
+      "y": 2,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [
+       {
+        "field": "33150c67-d032-46b6-8f7e-7773ea183b07",
+        "option": "57003e64-8a8b-4aaa-9ead-8b0af967122a",
+        "sufficient": true
+       },
+       {
+        "field": "33150c67-d032-46b6-8f7e-7773ea183b07",
+        "option": "05536c12-b3da-4cad-a848-4ae9cf846c66",
+        "sufficient": true
+       }
+      ],
+      "options": [],
+      "children": [],
+      "label": "Indica la forma en la cual te gustaría entregar la información física ",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     }
+    ],
+    "label": "Paso 4",
+    "description": "Detalles del incidente"
+   },
+   {
+    "id": "4a6989da-525d-42af-8c51-b81b97d8fd60",
+    "questionnaire_id": "24a38ae9-1b1b-4740-a2f4-c08710d6d480",
+    "order": 4,
+    "triggered_by_score": 0,
+    "triggered_by_options": [],
+    "children": [
+     {
+      "id": "4a13bdc0-2ba3-4838-9de1-79e715d95814",
+      "instance": "instance",
+      "editable": true,
+      "type": "selectbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "4a6989da-525d-42af-8c51-b81b97d8fd60",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": true,
+      "attrs": {
+       "display_alphabetically": {
+        "name": "display_alphabetically",
+        "type": "bool",
+        "value": false
+       }
+      },
+      "x": 0,
+      "y": 0,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [],
+      "options": [
+       {
+        "id": "ee2dea9a-0b8c-41a6-bb24-3d8655a43e64",
+        "order": 0,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "Sí"
+       },
+       {
+        "id": "65f55e4d-eac0-4f4d-84ce-468605edcb0e",
+        "order": 1,
+        "block_submission": false,
+        "score_points": 0,
+        "score_type": "addition",
+        "trigger_receiver": [],
+        "hint1": "",
+        "hint2": "",
+        "label": "No"
+       }
+      ],
+      "children": [],
+      "label": "¿Desea compartir sus datos?",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "b5739bbc-b121-47a8-ae7f-79349752b2cc",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "4a6989da-525d-42af-8c51-b81b97d8fd60",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": false,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "none"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 0,
+      "y": 1,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [
+       {
+        "field": "4a13bdc0-2ba3-4838-9de1-79e715d95814",
+        "option": "ee2dea9a-0b8c-41a6-bb24-3d8655a43e64",
+        "sufficient": false
+       }
+      ],
+      "options": [],
+      "children": [],
+      "label": "Nombres y apellidos",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "d899dc49-5491-497c-9a94-202598de23cf",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "4a6989da-525d-42af-8c51-b81b97d8fd60",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": false,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "phonenumber"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 0,
+      "y": 1,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [
+       {
+        "field": "4a13bdc0-2ba3-4838-9de1-79e715d95814",
+        "option": "ee2dea9a-0b8c-41a6-bb24-3d8655a43e64",
+        "sufficient": false
+       }
+      ],
+      "options": [],
+      "children": [],
+      "label": "Teléfono de contacto",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "dab1050b-2008-4294-a058-248a69a1c339",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "4a6989da-525d-42af-8c51-b81b97d8fd60",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": false,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "email"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 0,
+      "y": 3,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [
+       {
+        "field": "4a13bdc0-2ba3-4838-9de1-79e715d95814",
+        "option": "ee2dea9a-0b8c-41a6-bb24-3d8655a43e64",
+        "sufficient": false
+       }
+      ],
+      "options": [],
+      "children": [],
+      "label": "Correo electrónico",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     },
+     {
+      "id": "bc3e501d-035a-4b1a-a84c-6b979970997d",
+      "instance": "instance",
+      "editable": true,
+      "type": "inputbox",
+      "template_id": "",
+      "template_override_id": "",
+      "step_id": "4a6989da-525d-42af-8c51-b81b97d8fd60",
+      "fieldgroup_id": "",
+      "multi_entry": false,
+      "required": false,
+      "attrs": {
+       "min_len": {
+        "name": "min_len",
+        "type": "int",
+        "value": "0"
+       },
+       "max_len": {
+        "name": "max_len",
+        "type": "int",
+        "value": "100"
+       },
+       "input_validation": {
+        "name": "input_validation",
+        "type": "unicode",
+        "value": "none"
+       },
+       "regexp": {
+        "name": "regexp",
+        "type": "unicode",
+        "value": ""
+       }
+      },
+      "x": 0,
+      "y": 4,
+      "width": 4,
+      "triggered_by_score": 0,
+      "triggered_by_options": [
+       {
+        "field": "4a13bdc0-2ba3-4838-9de1-79e715d95814",
+        "option": "ee2dea9a-0b8c-41a6-bb24-3d8655a43e64",
+        "sufficient": false
+       }
+      ],
+      "options": [],
+      "children": [],
+      "label": "Cualquier otra forma de contacto",
+      "description": "",
+      "hint": "",
+      "placeholder": ""
+     }
+    ],
+    "label": "Paso 5",
+    "description": "Identificación"
+   }
+  ]
+ }
+}
