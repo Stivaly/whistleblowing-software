@@ -1,5 +1,6 @@
 {
   "colecciones": [
-    {"nombre": "normativa_cl", "proveedor": "voyage", "modelo": "voyage-4-large", "dims": 1024, "activa": true}
+    {"nombre": "normativa_cl", "proveedor": "voyage", "modelo": "voyage-4-large", "dims": 1024, "activa": true},
+    {"nombre": "normativa_cl_local", "proveedor": "local", "modelo": "multilingual-e5-large-instruct", "dims": 1024, "activa": true}
   ]
 }
