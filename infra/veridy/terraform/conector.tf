@@ -59,6 +59,7 @@ locals {
       VERIDY_URL            = "https://${local.veridy_fqdn}:8443"
       VERIDY_RESOLVER_LOCAL = local.veridy_fqdn
       VERIDY_USUARIO        = "kerna-conector"
+      VERIDY_COMPARTIR_CON  = "Auditor2"
       KERNA_API_URL         = var.kerna_api_url
       KERNA_ID_EMPRESA      = var.kerna_id_empresa
       CONECTOR_INTERVALO_S  = tostring(var.conector_intervalo_s)

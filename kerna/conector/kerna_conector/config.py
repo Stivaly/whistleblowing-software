@@ -25,6 +25,7 @@ class Config:
     id_empresa: str = "veridy"
     intervalo_s: float = 30.0
     estado: str = "sqlite:///conector.db"
+    compartir_con: str = ""
 
     @classmethod
     def desde_entorno(cls, entorno=None) -> "Config":
@@ -50,4 +51,5 @@ class Config:
             id_empresa=e.get("KERNA_ID_EMPRESA", "veridy"),
             intervalo_s=intervalo,
             estado=e.get("CONECTOR_ESTADO", "sqlite:///conector.db"),
+            compartir_con=e.get("VERIDY_COMPARTIR_CON", "").strip(),
         )

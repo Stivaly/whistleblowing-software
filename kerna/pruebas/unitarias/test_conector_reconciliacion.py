@@ -325,3 +325,43 @@ def test_publicacion_siempre_interna(mundo):
     pasada(v, n, e)
     assert v.casos["c"]["comments"] and all(c["visibility"] == "internal" for c in v.casos["c"]["comments"])
     assert isinstance(notas.leer(v.casos["c"]["comments"][0]["content"]), notas.Estado)
+
+
+def pasada_c(v, n, e, con="Auditor2", t=1000.0):
+    return ejecutar_pasada(v, n, e, "emp", ahora=lambda: t, compartir_con=con)
+
+
+def test_compartir_todos_idempotente_y_nuevos(mundo):
+    v, n, e = mundo
+    v.agregar("c1"); v.agregar("c2")
+    r = pasada_c(v, n, e)
+    assert r.compartidos == 2 and sorted(c for c, _ in v.compartidos) == ["c1", "c2"]
+    v.agregar("c3")
+    r = pasada_c(v, n, e)
+    assert r.compartidos == 1 and len(v.compartidos) == 3
+    assert pasada_c(v, n, e).compartidos == 0 and len(v.compartidos) == 3
+
+
+def test_compartir_no_repite_si_ya_tiene_acceso(mundo):
+    v, n, e = mundo
+    v.agregar("c1")["receivers"].append({"id": v.RECEPTOR_COMPARTIDO, "name": "Auditor2", "active": True})
+    pasada_c(v, n, e)
+    assert not getattr(v, "compartidos", [])
+
+
+def test_compartir_desactivado_o_sin_permiso(mundo):
+    v, n, e = mundo
+    v.agregar("c1")
+    pasada_c(v, n, e, con="")
+    assert not getattr(v, "compartidos", [])
+    v.sin_permiso_grant = True
+    r = pasada_c(v, n, e)
+    assert r.compartidos == 0 and not getattr(v, "compartidos", [])
+    v.sin_permiso_grant = False
+    assert pasada_c(v, n, e, t=2000.0).compartidos == 1
+
+
+def test_compartir_receptor_inexistente(mundo):
+    v, n, e = mundo
+    v.agregar("c1")
+    assert pasada_c(v, n, e, con="NoExiste").compartidos == 0

@@ -34,6 +34,7 @@ Todas las peticiones a Veridy llevan `?kerna_conector=1` para que el vigía de i
 Variables: `VERIDY_URL`, `VERIDY_USUARIO`, `VERIDY_PASSWORD`, `VERIDY_TID` (0), `KERNA_API_URL`, `KERNA_CLIENT_ID`,
 `KERNA_CLIENT_SECRET`, `KERNA_ID_EMPRESA` (`veridy`), `CONECTOR_INTERVALO_S` (30), `CONECTOR_ESTADO`
 (`sqlite:///ruta` o URI de PostgreSQL; por defecto `sqlite:///conector.db`), `APPLICATIONINSIGHTS_CONNECTION_STRING`.
+`VERIDY_COMPARTIR_CON` (opcional; nombre del receptor al que se da acceso a todas las denuncias con la operación grant; vacío = desactivado).
 
 ## Comportamiento
 

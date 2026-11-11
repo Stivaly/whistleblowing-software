@@ -95,6 +95,18 @@ class VeridyFalso:
         self.publicaciones.append((id_caso, contenido))
         return {"id": id_nota, "visibility": "internal", "author_id": CUENTA}
 
+    RECEPTOR_COMPARTIDO = "id-auditor2"
+
+    def buscar_receptor(self, nombre):
+        return self.RECEPTOR_COMPARTIDO if nombre.casefold() == "auditor2" else None
+
+    def compartir_caso(self, id_caso, id_receptor):
+        if getattr(self, "sin_permiso_grant", False):
+            raise CasoNoAccesible("403", 403)
+        self.compartidos = getattr(self, "compartidos", [])
+        self.compartidos.append((id_caso, id_receptor))
+        self.casos[id_caso]["receivers"].append({"id": id_receptor, "name": "Auditor2", "active": True})
+
     def notas_publicadas(self, tipo=None):
         salida = []
         for _, contenido in self.publicaciones:

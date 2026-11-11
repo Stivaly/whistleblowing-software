@@ -33,6 +33,7 @@ class ResultadoPasada:
     sugerencias: int = 0
     estados: int = 0
     decisiones: int = 0
+    compartidos: int = 0
     errores: int = 0
     nucleo_caido: bool = False
     omitida: bool = False
@@ -44,8 +45,12 @@ class ResultadoPasada:
 
 
 class _Pasada:
-    def __init__(self, veridy, nucleo, estado: est.Estado, id_empresa: str, ahora: Callable[[], float]):
+    def __init__(self, veridy, nucleo, estado: est.Estado, id_empresa: str, ahora: Callable[[], float],
+                 compartir_con: str = ""):
         self.v, self.n, self.e, self.ahora = veridy, nucleo, estado, ahora
+        self.compartir_con = compartir_con
+        self.id_receptor: Optional[str] = None
+        self.compartir_bloqueado = False
         self.id_empresa = id_empresa
         self.r = ResultadoPasada()
         self.id_cuenta = veridy.id_usuario
@@ -93,6 +98,45 @@ class _Pasada:
     def _nucleo_caido(self, id_caso: str, caso: dict, id_seguimiento: Optional[str]) -> None:
         self.r.nucleo_caido = True
         self._publicar_estado(id_caso, caso, "nucleo_no_disponible", id_seguimiento)
+
+    # ---- compartir acceso (opcional) ----------------------------------------------------------------------
+    def compartir(self, meta: dict) -> None:
+        """Da acceso al receptor `compartir_con` (operación grant de Veridy; la clave del caso se re-cifra en el
+        servidor). Idempotente: se marca en el estado y se comprueba la lista de receptores del caso. Nunca
+        registra contenido de la denuncia. Un fallo aquí no afecta al resto de la pasada."""
+        if not self.compartir_con or self.compartir_bloqueado:
+            return
+        id_caso = str(meta["id"])
+        if meta.get("accessible") is False:
+            return
+        try:
+            if self.id_receptor is None:
+                self.id_receptor = self.v.buscar_receptor(self.compartir_con)
+                if self.id_receptor is None:
+                    self.compartir_bloqueado = True
+                    log.warning("compartir: no existe el receptor configurado")
+                    return
+            if self.id_receptor == self.id_cuenta:
+                self.compartir_bloqueado = True
+                return
+            if self.e.objeto_procesado(id_caso, "compartido", self.id_receptor):
+                return
+            caso = self.v.leer_caso(id_caso)
+            ya = any(r.get("id") == self.id_receptor and r.get("active", True) for r in (caso.get("receivers") or []))
+            del caso
+            if not ya:
+                self.v.compartir_caso(id_caso, self.id_receptor)
+                self.r.compartidos += 1
+                telemetria.contador("conector_caso_compartido")
+            self.e.marcar_procesado(id_caso, "compartido", self.id_receptor)
+        except CasoNoAccesible as exc:
+            if exc.codigo == 403:  # sin permiso can_grant_access_to_reports: no insistir en esta pasada
+                self.compartir_bloqueado = True
+            log.warning("compartir: Veridy rechazó la operación (http %s)", exc.codigo)
+        except ErrorVeridy as exc:
+            log.warning("compartir: error de Veridy (%s)", exc.codigo or "red")
+        except Exception as exc:
+            log.warning("compartir: falla inesperada (%s)", type(exc).__name__)
 
     # ---- etapas por caso ----------------------------------------------------------------------------------
     def _debido(self, corr: est.Correspondencia) -> bool:
@@ -231,7 +275,7 @@ class _Pasada:
 
 
 def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "veridy",
-                    ahora: Callable[[], float] = time.time) -> ResultadoPasada:
+                    ahora: Callable[[], float] = time.time, compartir_con: str = "") -> ResultadoPasada:
     dueno = str(uuid.uuid4())
     if not estado.tomar_cerrojo(CERROJO, dueno, ahora(), TTL_CERROJO_S):
         return ResultadoPasada(omitida=True, resultado="omitida")
@@ -239,11 +283,12 @@ def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "verid
     t0 = time.monotonic()
     r = ResultadoPasada()
     try:
-        p = _Pasada(veridy, nucleo, estado, id_empresa, ahora)
+        p = _Pasada(veridy, nucleo, estado, id_empresa, ahora, compartir_con)
         r = p.r
         casos = sorted(veridy.listar_casos(), key=lambda c: (str(c.get("creation_date") or ""), str(c.get("id"))))
         r.casos = len(casos)
         for meta in casos:
+            p.compartir(meta)
             try:
                 p.procesar(meta)
             except Exception as exc:  # una falla en un caso no detiene la pasada

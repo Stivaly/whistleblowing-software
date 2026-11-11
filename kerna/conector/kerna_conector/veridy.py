@@ -173,3 +173,25 @@ class ClienteVeridy:
         if r.status_code not in (200, 201):
             raise ErrorVeridy("no se pudo publicar la nota", r.status_code)
         return self._json(r)
+
+    # ---- compartir acceso -----------------------------------------------------------------------------------
+    def buscar_receptor(self, nombre: str) -> Optional[str]:
+        """Id del receptor cuyo nombre (público o de usuario) coincide con `nombre`; None si no existe."""
+        r = self._solicitar("GET", "/api/public")
+        if r.status_code != 200:
+            raise ErrorVeridy("no se pudo listar los receptores", r.status_code)
+        buscado = nombre.strip().casefold()
+        for rec in (self._json(r).get("receivers") or []):
+            if buscado in (str(rec.get("name") or "").strip().casefold(), str(rec.get("username") or "").strip().casefold()):
+                return rec.get("id")
+        return None
+
+    def compartir_caso(self, id_caso: str, id_receptor: str) -> None:
+        """Operación `grant` del rtip: Veridy re-cifra la clave del caso para `id_receptor` (requiere el permiso
+        can_grant_access_to_reports de la cuenta de servicio). No transmite ni toca el texto de la denuncia."""
+        r = self._solicitar("PUT", "/api/recipient/rtips/" + id_caso,
+                            {"operation": "grant", "args": {"receiver": id_receptor}})
+        if r.status_code in (403, 404):
+            raise CasoNoAccesible("la cuenta no puede compartir el caso", r.status_code)
+        if r.status_code not in (200, 201, 204):
+            raise ErrorVeridy("no se pudo compartir el caso", r.status_code)
