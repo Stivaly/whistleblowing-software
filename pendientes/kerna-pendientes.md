@@ -225,6 +225,10 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [ ] **Migraciones SQLite de Veridy**: 16 pruebas de `test_migration` fallan (línea base conocida, también en
       `stable`): tras migrar, `sync_clean_untracked_files` consulta una base sin tablas. Viene del soporte de
       PostgreSQL (`a9f5f5dae`). No afecta al despliegue de Azure.
+- [ ] **Embeddings** (fase 3 cerrada, `kerna/evaluacion/informe-embeddings.md`): producción sigue con `voyage-4-large`.
+  Quedan a decisión: cambiar a `voyage-law-2` (mide 0,557 frente a 0,393 por artículo, diferencia no significativa;
+  exige rehacer el índice), medir Qwen3 con GPU (no corre en el job de CPU; tiene costo) y revisar la regla de
+  conversión a la escala de 1 a 5, que se fijó después de medir.
 
 ## Pospuesto del MVP (con su motivo)
 - RF25, CU-06 (corte y umbral de consumo por cliente): un solo cliente y capa gratuita; el consumo se ve en el Workbook.
