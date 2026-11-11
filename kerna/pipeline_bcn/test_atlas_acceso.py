@@ -88,14 +88,16 @@ def python_falso(tmp_path):
 
 def correr(modo, entorno, python_falso):
     bin_, registro = python_falso
-    env = {**os.environ, "PATH": f"{bin_}:{os.environ['PATH']}", **entorno}
+    env = {**os.environ, "PATH": f"{bin_}:{os.environ['PATH']}",
+           "KERNA_RESULTADO": str(bin_.parent / "res" / "resultado.json"), **entorno}
     r = subprocess.run(["sh", "run.sh", modo], cwd=Path(__file__).parent, env=env, capture_output=True)
     return r.returncode, registro.read_text().splitlines() if registro.exists() else []
 
 
 def test_run_sh_abre_y_cierra_atlas_aunque_falle(python_falso):
     rc, llamadas = correr("diario", {"ATLAS_ACCESO_TEMPORAL": "1"}, python_falso)
-    assert llamadas == ["atlas_acceso.py abrir", "extraer_bcn.py", "atlas_acceso.py cerrar"]
+    assert llamadas[0] == "atlas_acceso.py abrir" and llamadas[-1] == "atlas_acceso.py cerrar"
+    assert len(llamadas) == 3 and llamadas[1].startswith("extraer_bcn.py --resultado ")  # sin vectorizar
     assert rc == 1  # conserva el código de error del pipeline
 
 

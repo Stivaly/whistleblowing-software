@@ -1,0 +1,5 @@
+{
+  "colecciones": [
+    {"nombre": "normativa_cl", "proveedor": "voyage", "modelo": "voyage-4-large", "dims": 1024, "activa": true}
+  ]
+}

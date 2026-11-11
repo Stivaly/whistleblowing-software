@@ -25,6 +25,9 @@ terraform {
 provider "azurerm" {
   subscription_id = var.subscription_id
 
+  # La cuenta del núcleo no admite claves de acceso: el proveedor usa Entra ID.
+  storage_use_azuread = true
+
   features {
     key_vault {
       # Nunca purgar secretos al destruir: quedan recuperables (soft delete).

@@ -618,6 +618,8 @@ def upsert_mongo(db, doc_norma: dict, fragmentos: list[dict], forzar: bool = Fal
         else:
             res["cambiados"] += 1
             historial.append(actual)
+            if actual.get("embeddings"):
+                f["embeddings"] = actual["embeddings"]   # estado por colección; embed_sync decide por firma/hash
             if actual.get("estado_embedding") == "ok" and actual.get("hash_texto") == f["hash_texto"] \
                     and f["estado_embedding"] == "pendiente":
                 f["motivo_pendiente"] = "metadatos"  # solo cambió vigencia/categorías
@@ -629,8 +631,10 @@ def upsert_mongo(db, doc_norma: dict, fragmentos: list[dict], forzar: bool = Fal
         # Artículo que ya no aparece en la versión vigente (renumeración, error de
         # parseo previo...): se conserva, se marca no vigente y se re-sincroniza.
         historial.append(dict(actual))
+        # La firma cambia para que embed_sync vuelva a subir el payload (vigente=false) a cada colección.
         ops.append(UpdateOne({"_id": fid}, {"$set": {
             "vigente": False, "retirado_en": _ahora(),
+            "firma": _sha(f"{actual.get('firma', '')}|retirado"),
             "estado_embedding": "pendiente" if actual.get("estado_embedding") == "ok"
             else actual.get("estado_embedding", "no_aplica")}}))
         res["retirados"] += 1
@@ -645,6 +649,27 @@ def upsert_mongo(db, doc_norma: dict, fragmentos: list[dict], forzar: bool = Fal
     if ops:
         db.fragmentos.bulk_write(ops, ordered=False)
     return res
+
+
+def subir_version_corpus(db) -> int:
+    """Incrementa en 1 la versión del corpus (db.meta, _id "corpus") y la devuelve."""
+    from pymongo import ReturnDocument
+
+    doc = db.meta.find_one_and_update(
+        {"_id": "corpus"}, {"$inc": {"version_corpus": 1}, "$set": {"actualizado_en": _ahora()}},
+        upsert=True, return_document=ReturnDocument.AFTER)
+    return int(doc["version_corpus"])
+
+
+def escribir_resultado(ruta: str, ok: bool, normas: int, errores: int, total: dict,
+                       version: int | None):
+    """Resultado de la extracción para run.sh/embed_sync.py: cuántos fragmentos cambiaron."""
+    Path(ruta).parent.mkdir(parents=True, exist_ok=True)
+    cambios = total["nuevos"] + total["cambiados"] + total["retirados"]
+    Path(ruta).write_text(json.dumps({
+        "ok": ok, "fecha": _ahora(), "normas": normas, "errores": errores,
+        "nuevos": total["nuevos"], "cambiados": total["cambiados"], "retirados": total["retirados"],
+        "cambios": cambios, "version_corpus": version}, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
 # ------------------------------------------------------------------------- CLI
@@ -709,6 +734,9 @@ def main(argv=None):
                     help="leer las fuentes crudas desde DIR (defecto salida/fuentes) en vez de descargar")
     ap.add_argument("--verificar", nargs="+", metavar="REF",
                     help="solo mostrar metadatos de idLey=N / idNorma=N[@AAAA-MM-DD] y salir")
+    ap.add_argument("--resultado", metavar="ARCHIVO",
+                    help="escribe ahí un JSON con ok, errores y cuántos fragmentos cambiaron "
+                         "(nuevos + cambiados + retirados); lo lee embed_sync.py --si-cambios")
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
@@ -736,6 +764,8 @@ def main(argv=None):
         normas = [n for n in normas if n.get("prioridad", 9) <= args.solo_prioridad]
     if not normas:
         log.warning("no hay normas activas que procesar (revisar 'activa' en %s)", args.config)
+        if args.resultado:
+            escribir_resultado(args.resultado, True, 0, 0, {"nuevos": 0, "cambiados": 0, "retirados": 0}, None)
         return 0
 
     db = None
@@ -749,6 +779,7 @@ def main(argv=None):
 
     errores = 0
     descargas = 0
+    total = {"nuevos": 0, "cambiados": 0, "retirados": 0}
     for n in normas:
         try:
             if args.desde_cache:
@@ -773,6 +804,8 @@ def main(argv=None):
                    f"{sum(not f['vigente'] for f in frags)} fragmentos no vigentes")
             if db is not None:
                 r = upsert_mongo(db, doc, frags, forzar=args.forzar)
+                for k in total:
+                    total[k] += r.get(k, 0)
                 msg += (" | sin cambios" if r["sin_cambios"] else
                         f" | {r['nuevos']} nuevos, {r['cambiados']} cambiados, "
                         f"{r['retirados']} retirados")
@@ -781,6 +814,16 @@ def main(argv=None):
             errores += 1
             log.error("ERR %s: %s", n.get("nombre"), e)
 
+    version = None
+    if db is not None:
+        if sum(total.values()):
+            version = subir_version_corpus(db)
+            log.info("Corpus modificado (%s nuevos, %s cambiados, %s retirados): version_corpus=%s",
+                     total["nuevos"], total["cambiados"], total["retirados"], version)
+        else:
+            version = (db.meta.find_one({"_id": "corpus"}) or {}).get("version_corpus", 0)
+    if args.resultado:
+        escribir_resultado(args.resultado, errores == 0, len(normas), errores, total, version)
     log.info("Fin: %s entradas, %s con error", len(normas), errores)
     return 1 if errores else 0
 

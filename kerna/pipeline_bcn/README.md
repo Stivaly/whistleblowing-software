@@ -40,22 +40,53 @@ Otros flags: `--solo-prioridad N`, `--forzar` (re-evaluar fragmentos aunque el X
 | `normas_historial` | versión anterior de la norma cada vez que su XML cambia |
 | `fragmentos` | 1 doc por artículo (o por parte, si el artículo supera 5.000 caracteres): la unidad del RAG |
 | `fragmentos_historial` | versión anterior de cada fragmento cambiado o retirado |
+| `meta` | `_id: "corpus"` con `version_corpus` (entero que crece cuando el corpus cambia) |
 
-Nunca se borra nada: un artículo que desaparece de la versión vigente queda `vigente: false` y `retirado_en`, y vuelve a `estado_embedding: "pendiente"` para que `embed_sync.py` actualice el payload en Qdrant (el retriever filtra `vigente=true`).
+Nunca se borra nada: un artículo que desaparece de la versión vigente queda `vigente: false` y `retirado_en`, y queda pendiente en cada colección para que `embed_sync.py` actualice el payload en Qdrant (el retriever filtra `vigente=true`).
 
 IDs de fragmento: `<idNorma>-art-<n>` (`-art-t-<n>` para transitorios, sufijo `-p<i>` para partes). La `ñ` se escribe `nn` (los artículos `183 N` y `183 Ñ` coexisten).
 
 ## Embeddings (`embed_sync.py`)
 
-Proveedor por defecto: Voyage `voyage-4-large`, 1024 dimensiones, colección Qdrant `normativa_cl` (coseno). Los
-fragmentos se embeben con `input_type: "document"`; las consultas del retriever deben usar `embed_consulta()`
-(`input_type: "query"`, mismo modelo y dimensiones). Cada fragmento guarda el modelo en `embedding_modelo`.
+Las colecciones activas están en `colecciones.json` (`nombre`, `proveedor`, `modelo`, `dims`, `activa`); hoy solo
+`normativa_cl` (Voyage `voyage-4-large`, 1024 dims, coseno). Para sumar una colección local se agrega otra entrada
+(`{"nombre":"normativa_cl_local","proveedor":"local","modelo":"<modelo>","dims":1024}`).
 
-Límites de la cuenta en `VOYAGE_TPM` y `VOYAGE_RPM` (por defecto 10.000 tokens y 3 peticiones por minuto, los de una
-cuenta sin medio de pago): las peticiones se arman bajo el 80 % del límite de tokens y la siguiente espera lo que
-exija el más estricto de los dos; ante un 429 se espera `Retry-After` y se reintenta. Con esos límites, unos 200
-fragmentos tardan ~10 minutos. `--proveedor gemini|openai` queda como alternativa (no mezclar modelos en una misma
-colección).
+```bash
+python3 embed_sync.py                                   # normativa_cl
+python3 embed_sync.py --todas                           # todas las colecciones activas
+python3 embed_sync.py --coleccion X --proveedor azure-openai --modelo text-embedding-3-large --dims 1024
+python3 embed_sync.py --paridad [--coleccion X | --todas]   # Mongo vs colección; sale con 1 si difieren
+```
+
+Proveedores: `voyage` (`voyage-4-large`, `voyage-4-lite` con `output_dimension`; `voyage-law-2` no lo acepta: 1024
+fijas), `azure-openai` (`AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY`, despliegue con el nombre del modelo o
+`AZURE_OPENAI_DEPLOYMENT`, `dimensions`), `local` (`POST {KERNA_LOCAL_URL}/embed` con `X-Token-Interno`),
+`gemini` y `openai`. Los documentos se embeben con `input_type: "document"`; las consultas, con el mismo modelo y
+dimensiones, vía `crear_embedder(...)(textos, "query")`.
+
+**Estado por colección.** Cada fragmento guarda `embeddings.<coleccion> = {modelo, hash_texto, firma, en}`. Está
+pendiente para una colección si no tiene entrada o su modelo, `hash_texto` o `firma` (texto contextualizado, vigencia,
+categorías) difieren. Los `no_aplica` (no sustantivos) no se indexan. `estado_embedding`/`embedding_modelo` se
+mantienen para `normativa_cl`: un fragmento con `estado_embedding: "ok"` y el mismo modelo cuenta como sincronizado
+aunque no tenga el mapa. Un artículo retirado cambia su `firma`, así que cada colección recibe el punto con
+`vigente=false`.
+
+**Punto de metadatos.** Cada colección tiene el punto `00000000-0000-0000-0000-000000000000` con payload
+`{"tipo":"meta","vigente":false,"version_corpus":int,"modelo":str,"actualizado_en":iso}`, actualizado al final de
+cada sincronización con cambios. `version_corpus` es el contador `meta/_id:"corpus"` de Mongo, que `extraer_bcn.py`
+incrementa una vez por corrida si hubo fragmentos nuevos, cambiados o retirados.
+
+**Regla de disparo (`run.sh`: diario, semanal, vigencia-21719).** `extraer_bcn.py --resultado ARCHIVO` escribe
+`{ok, errores, nuevos, cambiados, retirados, cambios, version_corpus}`. Luego `embed_sync.py --todas --si-cambios
+ARCHIVO`: si la extracción falló no vectoriza; si `cambios > 0` o alguna colección tiene fragmentos pendientes
+(consulta a Mongo, sin proveedores) sincroniza todas las colecciones activas; si no, imprime "sin cambios" y no llama
+a ningún proveedor.
+
+**Límites de Voyage.** `VOYAGE_TPM` y `VOYAGE_RPM` (por defecto 10.000 tokens y 3 peticiones por minuto): las
+peticiones se arman bajo el 80 % del límite de tokens, la siguiente espera lo que exija el más estricto de los dos
+(medido con `usage.total_tokens`) y un 429 se reintenta esperando `Retry-After` o un tiempo creciente. Unos 200
+fragmentos tardan ~10 minutos.
 
 ## Acceso a Atlas desde los jobs (`atlas_acceso.py`)
 

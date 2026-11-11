@@ -177,18 +177,22 @@ def test_main_sincroniza_pendientes_con_voyage(db, monkeypatch, reloj):
     monkeypatch.setenv("MONGODB_URI", uri_de(db))
     peticiones, upserts = [], []
     monkeypatch.setattr(s, "_post", lambda url, h, body: peticiones.append(body) or respuesta_voyage(body, 10))
-    monkeypatch.setattr(s, "asegurar_coleccion", lambda: None)
+    monkeypatch.setattr(s, "asegurar_coleccion", lambda *a, **k: None)
     monkeypatch.setattr(s, "qdrant", lambda path, body=None, method="PUT": upserts.append(body))
     monkeypatch.setattr("sys.argv", ["embed_sync.py", "--batch", "2"])
 
     s.main()
 
     assert [len(p["input"]) for p in peticiones] == [2, 1]
-    puntos = [p for u in upserts for p in u["points"]]
+    puntos = [p for u in upserts for p in u["points"] if p["payload"].get("tipo") != "meta"]
     assert sorted(p["payload"]["fragmento_id"] for p in puntos) == ["555-art-1", "555-art-2", "555-art-3"]
     assert puntos[0]["id"] == s.punto_id(puntos[0]["payload"]["fragmento_id"])
     assert db.fragmentos.count_documents({"estado_embedding": "ok", "embedding_modelo": "voyage-4-large"}) == 3
     assert db.fragmentos.find_one({"_id": "555-art-4"})["estado_embedding"] == "no_aplica"
+    # Estado por colección y compatibilidad con estado_embedding.
+    e = db.fragmentos.find_one({"_id": "555-art-1"})["embeddings"]["normativa_cl"]
+    assert e["modelo"] == "voyage-4-large" and e["en"]
+    assert "embeddings" not in db.fragmentos.find_one({"_id": "555-art-4"})
 
 
 def test_main_no_marca_ok_si_faltan_dimensiones(db, monkeypatch, reloj):
@@ -196,7 +200,7 @@ def test_main_no_marca_ok_si_faltan_dimensiones(db, monkeypatch, reloj):
     monkeypatch.setenv("MONGODB_URI", uri_de(db))
     monkeypatch.setattr(s, "_post", lambda url, h, body: {
         "data": [{"index": 0, "embedding": [0.1] * 512}], "usage": {"total_tokens": 1}})
-    monkeypatch.setattr(s, "asegurar_coleccion", lambda: None)
+    monkeypatch.setattr(s, "asegurar_coleccion", lambda *a, **k: None)
     monkeypatch.setattr(s, "qdrant", lambda *a, **k: pytest.fail("no debe subir vectores inválidos"))
     monkeypatch.setattr("sys.argv", ["embed_sync.py"])
 

@@ -134,7 +134,7 @@ def test_buscar_y_corpus_con_filtro_vigente(monkeypatch):
         assert m == "POST" and p.startswith("/collections/normativa_cl/")
         filtro = b["filter"] if "filter" in b else b["searches"][0]["filter"]
         assert filtro == {"must": [{"key": "vigente", "match": {"value": True}}]}
-    assert all(s["limit"] == 5 for b in busquedas for s in b["searches"])
+    assert all(s["limit"] == 10 for b in busquedas for s in b["searches"])
 
 
 def test_registrar_agrega_una_linea_sin_textos(tmp_path):

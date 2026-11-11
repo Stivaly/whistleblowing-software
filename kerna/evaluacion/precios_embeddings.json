@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "moneda": "USD",
+  "nota": "Un precio null es desconocido (no verificado) y el costo queda en null. Los precios de API son de conocimiento previo del autor, sin consulta en línea: verificar contra la fuente antes de citarlos en el informe.",
+  "modelos": {
+    "voyage-4-large": {"usd_por_millon_tokens": null, "fuente": "https://docs.voyageai.com/docs/pricing", "fecha": null, "nota": "precio no conocido con certeza"},
+    "voyage-4-lite": {"usd_por_millon_tokens": null, "fuente": "https://docs.voyageai.com/docs/pricing", "fecha": null, "nota": "precio no conocido con certeza"},
+    "voyage-law-2": {"usd_por_millon_tokens": 0.12, "fuente": "https://docs.voyageai.com/docs/pricing", "fecha": "sin verificar", "nota": "de memoria; verificar"},
+    "text-embedding-3-large": {"usd_por_millon_tokens": 0.13, "fuente": "https://openai.com/api/pricing (Azure OpenAI usa el mismo precio de lista en DataZone Standard, a verificar)", "fecha": "sin verificar", "nota": "de memoria; verificar"},
+    "qwen3-embedding-8b": {"usd_por_millon_tokens": null, "computo_usd_por_hora": 0.60, "fuente": "API pública de precios de Azure, Container Apps Consumption chilecentral, 4 vCPU + 8 GiB (kerna-vault/embeddings.md)", "fecha": "2026-11-10"},
+    "qwen3-embedding-4b": {"usd_por_millon_tokens": null, "computo_usd_por_hora": 0.60, "fuente": "ídem qwen3-embedding-8b", "fecha": "2026-11-10"},
+    "bge-m3": {"usd_por_millon_tokens": null, "computo_usd_por_hora": 0.60, "fuente": "ídem qwen3-embedding-8b", "fecha": "2026-11-10"},
+    "embeddinggemma-300m": {"usd_por_millon_tokens": null, "computo_usd_por_hora": 0.60, "fuente": "ídem qwen3-embedding-8b", "fecha": "2026-11-10"},
+    "multilingual-e5-large-instruct": {"usd_por_millon_tokens": null, "computo_usd_por_hora": 0.60, "fuente": "ídem qwen3-embedding-8b", "fecha": "2026-11-10"}
+  }
+}
