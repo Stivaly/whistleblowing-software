@@ -155,3 +155,48 @@ def test_registrar_agrega_una_linea_sin_textos(tmp_path):
     assert e["dataset"]["sha256"] == "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     assert e["fecha"] and e["commit"]
     assert "relato privado" not in reg.read_text()
+
+
+# ---- concordancia de la Ley 19.628 (numeración previa -> texto reformado) y métricas a 8 y 10
+CORPUS_19628 = {f"141599-2026-12-01-art-{n}" for n in
+                ("2", "3", "4", "5", "6", "7", "12", "13", "14-bis", "14-quinquies", "16", "17", "18", "19")}
+
+
+def ids_19628(texto, mapeo):
+    dentro, _ = r.normalizar_candidatos(texto, CORPUS_19628, mapeo)
+    return sorted(a.split("-art-", 1)[1] for a in dentro)
+
+
+def test_concordancia_traduce_la_numeracion_previa_de_la_ley_19628():
+    texto = "Ley 19.628 art. 2 g), 9, 10, 11 (seguridad); Ley 21.719 (notificación)"
+    assert ids_19628(texto, "directo") == ["2"]                       # 9, 10 y 11 no existen con ese sentido
+    assert ids_19628(texto, "concordancia") == ["14-quinquies", "16", "2", "3"]
+    assert ids_19628("Ley 19.628 art. 12 (acceso)", "concordancia") == ["4", "5", "6", "7"]
+    assert ids_19628("Ley 19.628 art. 6 y 12", "concordancia") == ["4", "5", "6", "7"]
+    assert ids_19628("Ley 19.628 art. 17-19", "concordancia") == ids_19628("Ley 19.628 art. 17-19", "directo") \
+        == ["17", "18", "19"]
+
+
+def test_concordancia_no_toca_otros_cuerpos_ni_el_valor_por_defecto_cambia_solo_la_ley_19628():
+    texto = "CT 2; CT 211-B; Ley 20.393 art. 4"
+    assert r.normalizar_candidatos(texto, CORPUS) == r.normalizar_candidatos(texto, CORPUS, "directo")
+    assert r.aplicar_concordancia(["207436-karin-art-7", "141599-2026-12-01-art-7"]) == \
+        ["207436-karin-art-7", "141599-2026-12-01-art-14-bis"]
+    with pytest.raises(ValueError):
+        r.normalizar_candidatos(texto, CORPUS, "otro")
+
+
+def test_evaluar_respeta_el_mapeo():
+    caso = {"id": "A", "ley_principal": "19.628-21.719", "articulos_candidatos": "Ley 19.628 art. 10 (datos sensibles)"}
+    top = [{"fragmento_id": "141599-2026-12-01-art-16", "id_norma": 141599, "score": 0.9}]
+    con = r.evaluar([caso], [top], CORPUS_19628, "concordancia")["por_ley"]["global"]
+    sin = r.evaluar([caso], [top], CORPUS_19628 | {"141599-2026-12-01-art-10"}, "directo")["por_ley"]["global"]
+    assert con["recall_articulo"] == 1.0 and sin["recall_articulo"] == 0.0
+
+
+def test_metricas_caso_a_8_y_10_y_cobertura():
+    cand = {"a-art-1", "a-art-2"}
+    top = [{"fragmento_id": f"a-art-{n}", "id_norma": 1, "score": 1 - n / 100} for n in (9, 8, 7, 6, 5, 4, 2, 3, 1, 10)]
+    m = r.metricas_caso(top, cand)
+    assert (m["hit5"], m["hit8"], m["hit10"]) == (0.0, 1.0, 1.0)
+    assert (m["cobertura5"], m["cobertura8"], m["cobertura10"]) == (0.0, 0.5, 1.0)

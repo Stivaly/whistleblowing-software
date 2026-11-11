@@ -106,7 +106,8 @@ def test_informe_con_y_sin_candidatos_medidos():
     def entrada(mod, col, aciertos, fecha):
         det = [{"id": f"c{i}", "metricas": {"recall5": a}} for i, a in enumerate(aciertos)]
         return {"fecha": fecha, "commit": "abc", "dataset": {"sha256": "d" * 64},
-                "parametros": {"campo_consulta": "texto_original", "coleccion": col, "modelo": mod, "modelo_consulta": mod},
+                "parametros": {"campo_consulta": "texto_original", "coleccion": col, "modelo": mod, "modelo_consulta": mod,
+                               "mapeo": "concordancia"},
                 "por_ley": {"global": {"recall_ley": 0.9, "casos_articulo": len(aciertos)},
                             "20.393": {"recall_ley": 0.9, "casos_articulo": len(aciertos)}},
                 "metricas_articulo": {"global": {"recall5": sum(aciertos) / len(aciertos), "recall5_ic95": [0.2, 0.9],
@@ -121,3 +122,27 @@ def test_informe_con_y_sin_candidatos_medidos():
     md = c.generar_informe(registro, cands, "texto_original")
     assert "| m1 | m2 | 10 |" in md and "**Local**" in md and "Ningún candidato llega" in md
     assert "Sin candidatos medidos" in c.generar_informe([], cands, "texto_original")
+
+
+def test_corridas_sin_mapeo_cuentan_como_directo_y_el_informe_muestra_antes_y_despues():
+    cand = {"id": "m1", "etiqueta": "M1", "tipo": "nube", "coleccion": "col", "modelo": "m1", "modelo_consulta": "m1"}
+
+    def entrada(mapeo, aciertos, fecha):
+        par = {"campo_consulta": "texto_original", "coleccion": "col", "modelo": "m1", "modelo_consulta": "m1"}
+        if mapeo:
+            par["mapeo"] = mapeo
+        n = len(aciertos)
+        return {"fecha": fecha, "commit": "abc", "dataset": {"sha256": "d" * 64}, "parametros": par,
+                "por_ley": {"global": {"recall_ley": 0.9, "casos_articulo": n}},
+                "metricas_articulo": {"global": {"recall5": sum(aciertos) / n, "recall5_ic95": [0.1, 0.9], "ndcg10": 0.5,
+                                                 "mrr": 0.4, "p5": 0.2, "hit5": 0.5, "casos_articulo": n,
+                                                 "hit8": 0.6, "hit10": 0.7, "cobertura5": 0.3, "cobertura8": 0.4,
+                                                 "cobertura10": 0.5}},
+                "detalle": [{"id": f"c{i}", "metricas": {"recall5": a}} for i, a in enumerate(aciertos)]}
+
+    antes = entrada(None, [1.0, 0.0, 0.0, 0.0], "2026-11-11T00:00:00+00:00")        # corrida vieja: sin parámetro
+    despues = entrada("concordancia", [1.0, 1.0, 0.0, 0.0], "2026-11-12T00:00:00+00:00")
+    assert c.ultima_corrida([antes, despues], cand, "texto_original", mapeo="directo") is antes
+    assert c.ultima_corrida([antes, despues], cand, "texto_original") is despues
+    md = c.generar_informe([antes, despues], [cand], "texto_original")
+    assert "| M1 | 0.250 | 4 | 0.500 | 4 |" in md and "hit@8" in md

@@ -15,6 +15,10 @@ tokens de las consultas y costo estimado (precios_embeddings.json). Los candidat
 alternativas aceptables (basta uno), por lo que recall@5 y hit rate@5 coinciden; la cobertura@5 mide qué
 fracción de los candidatos aparece.
 
+Mapeo de candidatos (`--mapeo`): `concordancia` (por defecto) traduce los artículos de la Ley 19.628 citados con la
+numeración previa a la Ley 21.719 a los del texto reformado que trae el corpus; `directo` usa el número citado tal
+cual (la definición anterior, para comparar). Además de recall@5 se guardan hit y cobertura a 8 y 10 resultados.
+
 Los 22 casos "ninguna" no tienen respuesta correcta: se reporta su score top-1 y la tasa
 de falsos positivos para varios umbrales.
 
@@ -44,6 +48,7 @@ import re
 import subprocess
 import sys
 import time
+import urllib.error
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -59,6 +64,7 @@ LATENCIAS = AQUI / "datos" / "latencias_consultas.json"
 PRECIOS = AQUI / "precios_embeddings.json"
 TOP_K = 5
 TOP_BUSQUEDA = 10          # nDCG@10 y MRR miran hasta 10 resultados
+TOP_NUCLEO = 8             # el núcleo entrega los 8 primeros al modelo
 SEMILLA = 20261110
 REMUESTREOS = 2000
 META = 0.8
@@ -79,6 +85,23 @@ PREFIJOS = {
     "19.628": "141599-2026-12-01",
     "21.719": "1209272",
 }
+
+# El dataset cita la Ley 19.628 con la numeración del texto previo a la Ley 21.719 (2023-05-09, vigente=false en
+# el corpus), pero el corpus vigente trae el texto reformado (2026-12-01), donde la mayoría de esos números son
+# otros artículos (p. ej. el 10 era "datos sensibles" y hoy es "forma de ejercer los derechos"; los datos
+# sensibles pasaron al 16). Concordancia por título de artículo (verificada leyendo ambos textos): número del texto
+# previo -> artículos del texto reformado que tratan la misma materia. Los no listados (2, 17, 18, 19) coinciden.
+CONCORDANCIA_19628 = {
+    "4": ["12", "13"],          # tratamiento solo con ley o consentimiento -> licitud del tratamiento
+    "6": ["6", "7"],            # eliminar o cancelar datos / modificar erróneos -> rectificación y supresión
+    "7": ["14-bis"],            # deber de secreto
+    "9": ["3"],                 # finalidad -> principios
+    "10": ["16"],               # datos sensibles
+    "11": ["14-quinquies"],     # seguridad y cuidado de los datos
+    "12": ["4", "5", "6", "7"],  # derechos de acceso, rectificación y cancelación -> derechos del titular
+}
+PREFIJO_19628 = PREFIJOS["19.628"]
+MAPEOS = ("concordancia", "directo")
 
 _SUFIJOS = "bis|ter|quater|quinquies|sexies|septies|octies|nonies"
 _NUM = rf"(\d+)(?:\s*-\s*([A-Ea-e])(?!\w))?(?:\s+({_SUFIJOS})\b)?"
@@ -138,14 +161,48 @@ def articulo_de(fragmento_id: str) -> str:
     return re.sub(r"-p\d+$", "", fragmento_id)
 
 
-def normalizar_candidatos(texto: str, articulos_corpus: set[str]) -> tuple[set[str], list[str]]:
-    """(IDs de artículo presentes en el corpus vigente, IDs citados que no están en él)."""
+def aplicar_concordancia(ids: list[str]) -> list[str]:
+    """Cambia los artículos de la Ley 19.628 citados con la numeración previa por sus equivalentes del texto
+    reformado (CONCORDANCIA_19628); el resto queda igual."""
+    out = []
+    for a in ids:
+        pref, _, resto = a.partition("-art-")
+        if pref == PREFIJO_19628 and resto in CONCORDANCIA_19628:
+            out += [f"{pref}-art-{n}" for n in CONCORDANCIA_19628[resto]]
+        else:
+            out.append(a)
+    return list(dict.fromkeys(out))
+
+
+def normalizar_candidatos(texto: str, articulos_corpus: set[str],
+                          mapeo: str = "concordancia") -> tuple[set[str], list[str]]:
+    """(IDs de artículo presentes en el corpus vigente, IDs citados que no están en él).
+
+    mapeo "concordancia" (por defecto) traduce la numeración previa de la Ley 19.628 al texto reformado que trae
+    el corpus; "directo" usa el número citado tal cual (la definición anterior, para comparar)."""
+    if mapeo not in MAPEOS:
+        raise ValueError(f"mapeo desconocido: {mapeo!r}")
     citados = citas_a_articulos(texto)
+    if mapeo == "concordancia":
+        citados = aplicar_concordancia(citados)
     return ({a for a in citados if a in articulos_corpus},
             [a for a in citados if a not in articulos_corpus])
 
 
 # ---------------------------------------------------------------- Qdrant
+def qdrant(ruta: str, cuerpo: dict | None = None, method: str = "PUT", intentos: int = 6) -> dict:
+    """embed_sync.qdrant con reintentos: el DNS del servidor falla de forma transitoria."""
+    for i in range(intentos):
+        try:
+            return embed_sync.qdrant(ruta, cuerpo, method=method)
+        except urllib.error.HTTPError:
+            raise
+        except OSError:               # URLError, socket.gaierror, timeout
+            if i == intentos - 1:
+                raise
+            time.sleep(5 * (i + 1))
+
+
 _FILTRO_VIGENTE = {"must": [{"key": "vigente", "match": {"value": True}}]}
 
 
@@ -157,7 +214,7 @@ def articulos_vigentes(coleccion: str | None = None) -> set[str]:
                 "with_vector": False}
         if offset is not None:
             body["offset"] = offset
-        out = embed_sync.qdrant(f"/collections/{col}/points/scroll", body, method="POST")["result"]
+        out = qdrant(f"/collections/{col}/points/scroll", body, method="POST")["result"]
         arts |= {articulo_de(p["payload"]["fragmento_id"]) for p in out["points"]}
         offset = out.get("next_page_offset")
         if offset is None:
@@ -172,7 +229,7 @@ def buscar(vectores: list[list[float]], k: int = TOP_BUSQUEDA, lote: int = 32,
     for i in range(0, len(vectores), lote):
         busquedas = [{"vector": v, "limit": k, "filter": _FILTRO_VIGENTE,
                       "with_payload": ["fragmento_id", "id_norma"]} for v in vectores[i:i + lote]]
-        out = embed_sync.qdrant(f"/collections/{col}/points/search/batch",
+        out = qdrant(f"/collections/{col}/points/search/batch",
                                 {"searches": busquedas}, method="POST")["result"]
         resultados += [[{"fragmento_id": p["payload"]["fragmento_id"],
                          "id_norma": p["payload"]["id_norma"], "score": p["score"]} for p in r]
@@ -230,7 +287,7 @@ def cargar_vectores_externos(ref: str, textos: list[str]) -> tuple[list[list[flo
             body = {"limit": 128, "with_payload": True, "with_vector": True}
             if offset is not None:
                 body["offset"] = offset
-            out = embed_sync.qdrant(f"/collections/{col}/points/scroll", body, method="POST")["result"]
+            out = qdrant(f"/collections/{col}/points/scroll", body, method="POST")["result"]
             for p in out["points"]:
                 pl = p["payload"]
                 consultas[pl["clave"]] = {"vector": p["vector"], "ms": pl.get("ms"), "tokens": pl.get("tokens")}
@@ -290,13 +347,18 @@ def metricas_caso(top: list[dict], candidatos: set[str]) -> dict:
     primero = next((i for i, r in enumerate(rel) if r), None)
     return {"recall5": float(any(rel[:TOP_K])), "hit5": float(any(rel[:TOP_K])),
             "cobertura5": sum(rel[:TOP_K]) / len(candidatos), "p5": sum(rel[:TOP_K]) / TOP_K,
-            "ndcg10": dcg / idcg if idcg else 0.0, "mrr": 1 / (primero + 1) if primero is not None else 0.0}
+            "ndcg10": dcg / idcg if idcg else 0.0, "mrr": 1 / (primero + 1) if primero is not None else 0.0,
+            # Con más resultados (el núcleo usa 8) y recall verdadero (fracción de candidatos hallados):
+            "hit8": float(any(rel[:TOP_NUCLEO])), "hit10": float(any(rel[:TOP_BUSQUEDA])),
+            "cobertura8": sum(rel[:TOP_NUCLEO]) / len(candidatos),
+            "cobertura10": sum(rel[:TOP_BUSQUEDA]) / len(candidatos)}
 
 
-METRICAS = ("recall5", "hit5", "cobertura5", "p5", "ndcg10", "mrr")
+METRICAS = ("recall5", "hit5", "cobertura5", "p5", "ndcg10", "mrr", "hit8", "hit10", "cobertura8", "cobertura10")
 
 
-def evaluar(casos: list[dict], tops: list[list[dict]], articulos_corpus: set[str]) -> dict:
+def evaluar(casos: list[dict], tops: list[list[dict]], articulos_corpus: set[str],
+            mapeo: str = "concordancia") -> dict:
     por_ley = defaultdict(lambda: {"n": 0, "ley": 0, "n_art": 0, "art": 0})
     valores = defaultdict(lambda: defaultdict(list))
     ninguna, top1_pos, detalle = [], [], []
@@ -311,7 +373,7 @@ def evaluar(casos: list[dict], tops: list[list[dict]], articulos_corpus: set[str
         if ley not in LEYES:
             raise ValueError(f"{caso['id']}: ley_principal desconocida {ley!r}")
         top1_pos.append(top1)
-        candidatos, _ = normalizar_candidatos(caso["articulos_candidatos"], articulos_corpus)
+        candidatos, _ = normalizar_candidatos(caso["articulos_candidatos"], articulos_corpus, mapeo)
         top5 = top[:TOP_K]
         acierto_ley = any(t["id_norma"] in LEYES[ley] for t in top5)
         acierto_art = any(articulo_de(t["fragmento_id"]) in candidatos for t in top5) if candidatos else None
@@ -461,6 +523,9 @@ def main(argv=None):
                     help="vectores de consulta precalculados (modelos abiertos calculados en Azure)")
     ap.add_argument("--muestra-latencia", type=int, default=20,
                     help="consultas sueltas para medir el P95 de la vectorización (0 = no medir)")
+    ap.add_argument("--mapeo", choices=MAPEOS, default="concordancia",
+                    help="candidatos de la Ley 19.628: 'concordancia' (numeración previa -> texto reformado del corpus) "
+                         "o 'directo' (número citado tal cual; la definición anterior)")
     ap.add_argument("--solo-mapeo", action="store_true",
                     help="solo cuenta los casos con artículos mapeables (sin proveedor de embeddings)")
     args = ap.parse_args(argv)
@@ -473,7 +538,7 @@ def main(argv=None):
     positivos = [c for c in casos if c["ley_principal"] != "ninguna"]
     mapeables = defaultdict(int)
     for c in positivos:
-        if normalizar_candidatos(c["articulos_candidatos"], articulos_corpus)[0]:
+        if normalizar_candidatos(c["articulos_candidatos"], articulos_corpus, args.mapeo)[0]:
             mapeables[c["ley_principal"]] += 1
     print(f"Corpus vigente: {len(articulos_corpus)} artículos. Casos con ley_principal: {len(positivos)}; "
           f"con artículos candidatos mapeables: {sum(mapeables.values())} ({dict(sorted(mapeables.items()))})")
@@ -508,7 +573,7 @@ def main(argv=None):
                 LATENCIAS.write_text(json.dumps(guardadas))
             origen_lat = f"{len(lat)} consultas sueltas"
     tops = buscar(vectores, coleccion=cfg["coleccion"])
-    res = evaluar(casos, tops, articulos_corpus)
+    res = evaluar(casos, tops, articulos_corpus, args.mapeo)
     imprimir(res, args.campo)
     p95 = percentil(lat, 95)
     costo = costo_estimado(cfg["proveedor"], cfg["modelo_consulta"], tokens, sum(lat) if lat else None)
@@ -516,13 +581,15 @@ def main(argv=None):
           f"tokens de las consultas: {tokens} ({origen_tokens}); costo estimado: {costo['usd']}")
     sufijo = "" if cfg["coleccion"] == embed_sync.COLECCION and cfg["modelo_consulta"] == cfg["modelo"] \
         else f"_{cfg['coleccion']}_{re.sub(r'[^A-Za-z0-9._-]', '-', cfg['modelo_consulta'])}"
+    if args.mapeo != "concordancia":
+        sufijo += f"_{args.mapeo}"
     salida = AQUI / "datos" / f"resultado_recall_{args.campo}{sufijo}.json"
     salida.write_text(json.dumps(res, ensure_ascii=False, indent=1))
     registrar(res, campo=args.campo, dataset=crudo, articulos_corpus=len(articulos_corpus),
               casos=len(casos), duracion_s=time.monotonic() - inicio,
               parametros={"modelo": cfg["modelo"], "proveedor": cfg["proveedor"], "dims": cfg["dims"],
                           "coleccion": cfg["coleccion"], "modelo_consulta": cfg["modelo_consulta"],
-                          "vectores_consulta": args.vectores_consulta},
+                          "mapeo": args.mapeo, "vectores_consulta": args.vectores_consulta},
               extra={"latencia_consulta": {"p95_ms": p95, "muestras": len(lat), "origen": origen_lat},
                      "tokens_consultas": {"total": tokens, "origen": origen_tokens},
                      "costo_estimado": costo},

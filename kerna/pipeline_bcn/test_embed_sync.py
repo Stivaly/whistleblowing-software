@@ -137,6 +137,75 @@ def test_otros_errores_no_se_reintentan(monkeypatch, reloj):
         s.embed_voyage(["uno"])
 
 
+def _azure_env(monkeypatch):
+    monkeypatch.setenv("AZURE_OPENAI_ENDPOINT", "https://oai-prueba.openai.azure.com/")
+    monkeypatch.setenv("AZURE_OPENAI_KEY", "clave-de-prueba")
+    monkeypatch.delenv("AZURE_OPENAI_DEPLOYMENT", raising=False)
+
+
+def _respuesta_azure(body):
+    return {"data": [{"index": i, "embedding": [0.5] * body["dimensions"]} for i in range(len(body["input"]))],
+            "usage": {"total_tokens": 7}}
+
+
+@pytest.mark.parametrize("falla", [
+    urllib.error.URLError("[Errno -3] Temporary failure in name resolution"),   # DNS transitorio
+    TimeoutError("timed out"),
+    urllib.error.HTTPError("u", 503, "Service Unavailable", {}, io.BytesIO()),
+    urllib.error.HTTPError("u", 429, "Too Many Requests", {"Retry-After": "3"}, io.BytesIO()),
+])
+def test_azure_openai_reintenta_fallas_transitorias(monkeypatch, reloj, falla):
+    _azure_env(monkeypatch)
+    intentos = []
+
+    def falso_post(url, headers, body):
+        intentos.append(url)
+        if len(intentos) <= 2:
+            raise falla
+        return _respuesta_azure(body)
+
+    monkeypatch.setattr(s, "_post", falso_post)
+    out = s.embed_azure_openai(["uno", "dos"], "document", "text-embedding-3-large", 8)
+    assert [len(v) for v in out] == [8, 8] and len(intentos) == 3 and len(reloj.esperas) == 2
+    assert "/deployments/text-embedding-3-large/embeddings" in intentos[0]
+
+
+def test_azure_openai_recorta_los_textos_que_exceden_el_limite_del_modelo(monkeypatch):
+    _azure_env(monkeypatch)
+    enviados = []
+
+    def falso_post(url, headers, body):
+        enviados.append([len(t) for t in body["input"]])
+        return _respuesta_azure(body)
+
+    monkeypatch.setattr(s, "_post", falso_post)
+    s.embed_azure_openai(["a" * 30000, "corto"], "query", "text-embedding-3-large", 8)
+    assert enviados == [[s.AZURE_MAX_CHARS, 5]] and s.AZURE_MAX_CHARS < 8191 * 3
+
+
+def test_azure_openai_no_reintenta_errores_de_cliente_y_se_rinde(monkeypatch, reloj):
+    _azure_env(monkeypatch)
+
+    def no_autorizado(url, headers, body):
+        raise urllib.error.HTTPError(url, 401, "Unauthorized", {}, io.BytesIO())
+
+    monkeypatch.setattr(s, "_post", no_autorizado)
+    with pytest.raises(urllib.error.HTTPError):
+        s.embed_azure_openai(["uno"], "document", "text-embedding-3-large", 8)
+    assert reloj.esperas == []
+
+    llamadas = []
+
+    def sin_red(url, headers, body):
+        llamadas.append(1)
+        raise urllib.error.URLError("sin DNS")
+
+    monkeypatch.setattr(s, "_post", sin_red)
+    with pytest.raises(urllib.error.URLError):
+        s.embed_azure_openai(["uno"], "document", "text-embedding-3-large", 8)
+    assert len(llamadas) == 5
+
+
 def test_gemini_arma_la_peticion_y_lee_los_vectores(monkeypatch):
     monkeypatch.setenv("GEMINI_API_KEY", "clave-de-prueba")
     llamadas = []

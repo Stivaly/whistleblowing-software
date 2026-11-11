@@ -180,6 +180,12 @@ def embed_consulta(texto: str) -> list[float]:
     return embed_consultas([texto])[0]
 
 
+# text-embedding-3-large admite 8.191 tokens por texto y responde 400 si se excede (algunas denuncias miden 30.000
+# caracteres). Se recorta a un tamaño seguro (el español ronda 3,5 caracteres por token), como hace Voyage con su
+# truncamiento por defecto.
+AZURE_MAX_CHARS = 22000
+
+
 def embed_azure_openai(textos: list[str], tipo: str = "document", modelo: str = "text-embedding-3-large",
                        dims: int = DIMS) -> list[list[float]]:
     """Azure OpenAI: el despliegue se llama como el modelo (o AZURE_OPENAI_DEPLOYMENT)."""
@@ -187,6 +193,7 @@ def embed_azure_openai(textos: list[str], tipo: str = "document", modelo: str = 
     despliegue = os.environ.get("AZURE_OPENAI_DEPLOYMENT") or modelo
     url = f"{base}/openai/deployments/{despliegue}/embeddings?api-version=2024-10-21"
     vectores = []
+    textos = [t[:AZURE_MAX_CHARS] for t in textos]
     for lote in _lotes_por_tokens(textos, 20000, max_textos=16):
         for intento in range(5):
             try:
@@ -194,10 +201,17 @@ def embed_azure_openai(textos: list[str], tipo: str = "document", modelo: str = 
                                    {"input": lote, "dimensions": dims})
                 break
             except urllib.error.HTTPError as e:
-                if e.code != 429 or intento == 4:
+                if (e.code != 429 and e.code < 500) or intento == 4:
                     raise
                 espera = _espera_429(e, intento, 10)
-                print(f"Azure OpenAI: límite de uso (429), espero {espera:.0f} s", flush=True)
+                print(f"Azure OpenAI: HTTP {e.code}, espero {espera:.0f} s", flush=True)
+                time.sleep(espera)
+            except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+                # Fallas transitorias de red o DNS (sin respuesta del servicio): se reintenta con espera creciente.
+                if intento == 4:
+                    raise
+                espera = 10 * (intento + 1)
+                print(f"Azure OpenAI: error de red ({type(e).__name__}), espero {espera} s", flush=True)
                 time.sleep(espera)
         _tokens(out.get("usage"))
         vectores += [d["embedding"] for d in sorted(out["data"], key=lambda d: d["index"])]
