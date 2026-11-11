@@ -73,9 +73,10 @@ aunque no tenga el mapa. Un artículo retirado cambia su `firma`, así que cada 
 `vigente=false`.
 
 **Punto de metadatos.** Cada colección tiene el punto `00000000-0000-0000-0000-000000000000` con payload
-`{"tipo":"meta","vigente":false,"version_corpus":int,"modelo":str,"actualizado_en":iso}`, actualizado al final de
-cada sincronización con cambios. `version_corpus` es el contador `meta/_id:"corpus"` de Mongo, que `extraer_bcn.py`
-incrementa una vez por corrida si hubo fragmentos nuevos, cambiados o retirados.
+`{"tipo":"meta","vigente":false,"version_corpus":int,"modelo":str,"actualizado_en":iso}`, que cada corrida deja
+al día: se escribe si falta o si su versión no es la de Mongo. `version_corpus` es el contador `meta/_id:"corpus"` de Mongo, que `extraer_bcn.py`
+incrementa una vez por corrida si hubo fragmentos nuevos, cambiados o retirados. Un corpus con fragmentos y sin
+contador empieza en 1.
 
 **Regla de disparo (`run.sh`: diario, semanal, vigencia-21719).** `extraer_bcn.py --resultado ARCHIVO` escribe
 `{ok, errores, nuevos, cambiados, retirados, cambios, version_corpus}`. Luego `embed_sync.py --todas --si-cambios
