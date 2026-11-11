@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit, inject} from "@angular/core";
+import {Component, HostListener, OnDestroy, OnInit, inject, signal} from "@angular/core";
 import {TranslateService} from "@ngx-translate/core";
 import {KernaService} from "./kerna.service";
 import {KernaIconoComponent} from "./kerna-icono.component";
@@ -29,7 +29,8 @@ export class KernaIndicadorComponent implements OnInit, OnDestroy {
   private enFoco = false;
   protected descartado = false;
   private retraso: ReturnType<typeof setTimeout> | null = null;
-  protected visible = false;
+  // Señal: el cambio desde setTimeout se pinta también bajo OnPush (antes el tooltip podía quedar visible).
+  protected visible = signal(false);
 
   ngOnInit(): void {
     this.k.iniciar();
@@ -66,7 +67,7 @@ export class KernaIndicadorComponent implements OnInit, OnDestroy {
   }
 
   private actualizarVisible(): void {
-    this.visible = (this.enPuntero || this.enFoco) && !this.descartado;
+    this.visible.set((this.enPuntero || this.enFoco) && !this.descartado);
     if (!this.enPuntero && !this.enFoco) {
       this.descartado = false;
     }
@@ -83,7 +84,12 @@ export class KernaIndicadorComponent implements OnInit, OnDestroy {
     this.retraso = setTimeout(() => { this.enPuntero = false; this.actualizarVisible(); }, 200);
   }
 
-  protected alTenerFoco(): void {
+  protected alTenerFoco(evento: FocusEvent): void {
+    // Solo foco de teclado: tras un clic el botón conserva el foco y el tooltip no se ocultaba al salir el puntero.
+    const el = evento.target as HTMLElement | null;
+    if (el && typeof el.matches === "function" && !el.matches(":focus-visible")) {
+      return;
+    }
     this.enFoco = true;
     this.actualizarVisible();
   }
@@ -96,7 +102,7 @@ export class KernaIndicadorComponent implements OnInit, OnDestroy {
   /** Esc descarta el tooltip sin mover el foco (WCAG 1.4.13, "descartable"). */
   @HostListener("document:keydown.escape")
   protected descartar(): void {
-    if (this.visible) {
+    if (this.visible()) {
       this.descartado = true;
       this.actualizarVisible();
     }
