@@ -216,7 +216,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [ ] **Casos en revisión manual**: 7 denuncias sintéticas del 11-11 quedaron en `revision_manual` (límite de
       peticiones del proveedor de embeddings). El contrato no define reproceso; decidir si se agrega.
 - [ ] **Firewall de PostgreSQL de Veridy**: la regla `host-veridy` no cubre la IP actual de este servidor.
-- [ ] **PR-30 (P95 de 15 s) no se cumple**: con `gemini-3.8-flash` sin responder todo sale en modo respaldo (28 a 120 s
+- [ ] **PR-30 (P95 de 15 s) no se cumple**: con `gemini-3.8-flash` respondiendo 429 `RESOURCE_EXHAUSTED` (cuota del nivel gratuito) todo sale en modo respaldo (28 a 120 s
       por caso) y el núcleo tarda ~25 s en despertar (escala a cero). Opciones: otra clave o nivel de pago de Gemini,
       otro modelo oficial, o `min_replicas = 1` en el núcleo (costo fijo).
 - [ ] **Migraciones SQLite de Veridy**: 16 pruebas de `test_migration` fallan (línea base conocida, también en
