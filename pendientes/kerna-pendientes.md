@@ -222,3 +222,21 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [ ] **Migraciones SQLite de Veridy**: 16 pruebas de `test_migration` fallan (línea base conocida, también en
       `stable`): tras migrar, `sync_clean_untracked_files` consulta una base sin tablas. Viene del soporte de
       PostgreSQL (`a9f5f5dae`). No afecta al despliegue de Azure.
+
+## Pospuesto del MVP (con su motivo)
+- RF25, CU-06 (corte y umbral de consumo por cliente): un solo cliente y capa gratuita; el consumo se ve en el Workbook.
+- RF28 (alertas por correo): definidas en Terraform, sin crear; tienen costo fijo y esperan decisión (arriba).
+- RF29 (panel de uso): lo cubre el Workbook por modo.
+- Avisos entre Veridy y Kerna (emisor y receptor): el conector reconcilia cada 30 s sin avisos.
+- Gestión del negocio, clientes y tarifas; PR-20, PR-22, PR-23, PR-37, PR-38: un cliente fijo. Sí se prueba el rechazo
+  sin credencial.
+- PR-03 (latencia del modelo local en servidor propio): Gemma se usa por API.
+- PR-09 (reconstrucción del índice local en 4 h): la colección local se rehace con el job; sin medición.
+- PR-27 (aceptación con auditores): requiere auditores.
+- PR-32, PR-33, PR-35 (estrés, 9 h continuas, recuperación con carga): fuera del tamaño del MVP.
+- RNF18, RNF19, RNF21, RNF23; PR-05, PR-06, PR-08, PR-11: dependen del servidor propio, la VPN o la UPS; no aplican en
+  Azure.
+- Embedding de nube definitivo: ningún candidato llega a 0,80 de recall@5 por artículo (mejor: voyage-law-2, 0,557). Se
+  mantiene voyage-4-large; las variantes de `texto_embedding` están propuestas en
+  `kerna/evaluacion/analisis-recall-articulo.md`.
+- Reproceso de casos en `revision_manual`: el contrato no lo define (arriba).
