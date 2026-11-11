@@ -22,6 +22,12 @@ else
   terraform -chdir="$TF" init -input=false >/dev/null
 fi
 
+# Veridy: la contraseña del admin de PostgreSQL (write-only) se lee de Key Vault solo para este proceso.
+if [ "$1" = "veridy" ] && [ -z "${TF_VAR_postgres_admin_password:-}" ]; then
+  KV="$(terraform -chdir="$TF" output -raw key_vault_name 2>/dev/null || az keyvault list -g rg-veridy-dev --query '[0].name' -o tsv)"
+  export TF_VAR_postgres_admin_password="$(az keyvault secret show --vault-name "$KV" --name veridy-db-admin-password --query value -o tsv)"
+fi
+
 PLAN="aplicar.tfplan"
 set +e
 terraform -chdir="$TF" plan -input=false -detailed-exitcode -out="$PLAN"

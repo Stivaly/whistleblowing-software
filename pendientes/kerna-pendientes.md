@@ -218,7 +218,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       iniciar sesión a mano con `kerna-conector`.
 - [x] **Casos en revisión manual** (2026-11-11, decidido: sin reproceso; vienen de las pruebas masivas de embeddings): 7 denuncias sintéticas del 11-11 quedaron en `revision_manual` (límite de
       peticiones del proveedor de embeddings). El contrato no define reproceso; decidir si se agrega.
-- [ ] **Firewall de PostgreSQL de Veridy**: IP de `host-veridy` actualizada en `terraform.tfvars` (181.43.217.156); falta `infra/aplicar.sh veridy`.
+- [x] **Firewall de PostgreSQL de Veridy**: `host-veridy` = 181.43.217.156, aplicado con `infra/aplicar.sh veridy` (2026-11-11).
 - [ ] **PR-30 (P95 de 15 s) no se cumple**: con `gemini-3.8-flash` respondiendo 429 `RESOURCE_EXHAUSTED` (cuota del nivel gratuito) todo sale en modo respaldo (28 a 120 s
       por caso) y el núcleo tarda ~25 s en despertar (escala a cero). Opciones: otra clave o nivel de pago de Gemini,
       otro modelo oficial, o `min_replicas = 1` en el núcleo (costo fijo).
@@ -227,8 +227,8 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       PostgreSQL (`a9f5f5dae`). No afecta al despliegue de Azure.
 - [ ] **Embeddings** (fase 3 cerrada, `kerna/evaluacion/informe-embeddings.md`): producción sigue con `voyage-4-large`.
   Quedan a decisión: cambiar a `voyage-law-2` (mide 0,557 frente a 0,393 por artículo, diferencia no significativa;
-  exige rehacer el índice), medir Qwen3 con GPU (no corre en el job de CPU; tiene costo) y revisar la regla de
-  conversión a la escala de 1 a 5, que se fijó después de medir.
+  exige rehacer el índice) y medir Qwen3 con GPU (no corre en el job de CPU; tiene costo). La conversión a la escala
+  de 1 a 5 usa una regla fijada a priori (interpolación lineal hasta la meta 0,80; ver el informe).
 
 ## Pospuesto del MVP (con su motivo)
 - RF25, CU-06 (corte y umbral de consumo por cliente): un solo cliente y capa gratuita; el consumo se ve en el Workbook.

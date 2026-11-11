@@ -148,9 +148,11 @@ def test_corridas_sin_mapeo_cuentan_como_directo_y_el_informe_muestra_antes_y_de
     assert "| M1 | 0.250 | 4 | 0.500 | 4 |" in md and "hit@8" in md
 
 
-def test_puntaje_calidad_por_tramos_hasta_la_meta():
+def test_puntaje_calidad_interpolacion_lineal_hasta_la_meta():
     from comparar_embeddings import META, puntaje_calidad
+    assert META == 0.80
     assert puntaje_calidad(META) == 5 and puntaje_calidad(0.95) == 5
-    assert puntaje_calidad(META * 0.75) == 4 and puntaje_calidad(0.557) == 3
-    assert puntaje_calidad(0.393) == 2 and puntaje_calidad(0.311) == 2
-    assert puntaje_calidad(0.19) == 1 and puntaje_calidad(0.0) == 1
+    assert puntaje_calidad(0.79) == 4 and puntaje_calidad(0.50) == 4 and puntaje_calidad(0.557) == 4
+    assert puntaje_calidad(0.49) == 3 and puntaje_calidad(0.30) == 3 and puntaje_calidad(0.393) == 3
+    assert puntaje_calidad(0.29) == 2 and puntaje_calidad(0.10) == 2 and puntaje_calidad(0.230) == 2
+    assert puntaje_calidad(0.09) == 1 and puntaje_calidad(0.0) == 1

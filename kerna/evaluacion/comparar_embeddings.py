@@ -84,16 +84,32 @@ def resumen(cand: dict, e: dict) -> dict:
             "por_ley": e["por_ley"], "metricas_ley": e.get("metricas_articulo", {}), "por_caso": detalle}
 
 
-TRAMOS_PUNTAJE = [(5, f"≥ {META:.2f}"), (4, f"≥ {META * 0.75:.2f}"), (3, f"≥ {META * 0.5:.2f}"),
-                  (2, f"≥ {META * 0.25:.2f}"), (1, f"< {META * 0.25:.2f}")]
+# Regla de conversión de recall@5 por artículo a la escala de 1 a 5 (fijada a priori, sin mirar resultados).
+# Definición: interpolación lineal entre los dos extremos que ya tienen significado propio:
+#   recall 0 (no recupera nada) = 1  y  recall = META (cumple el criterio de aceptación) = 5,
+# redondeada al entero más cercano (mitades hacia arriba). Un 5 se reserva a quien cumple la meta: por debajo
+# de ella el máximo es 4. No hay umbrales elegidos a mano: todo se deduce de META y de los extremos 1 y 5.
+# Con META = 0,80 los cortes son 2: ≥ 0,10; 3: ≥ 0,30; 4: ≥ 0,50; 5: ≥ 0,80.
+PUNTAJE_MIN, PUNTAJE_MAX = 1, 5
+
+
+def _corte_puntaje(puntos: int) -> float:
+    """Recall@5 mínimo para obtener `puntos` (2 a 4): punto medio entre ese puntaje y el anterior en la interpolación."""
+    return META * ((puntos - 0.5) - PUNTAJE_MIN) / (PUNTAJE_MAX - PUNTAJE_MIN)
+
+
+TRAMOS_PUNTAJE = [(5, f"≥ {META:.2f}")] + [(n, f"≥ {_corte_puntaje(n):.2f}") for n in (4, 3, 2)] + \
+                 [(1, f"< {_corte_puntaje(2):.2f}")]
 
 
 def puntaje_calidad(recall5: float) -> int:
-    """Recall@5 por artículo convertido a la escala de 1 a 5: tramos iguales hasta la meta."""
-    for puntos, fraccion in ((5, 1.0), (4, 0.75), (3, 0.5), (2, 0.25)):
-        if recall5 >= META * fraccion - 1e-9:
+    """Recall@5 por artículo en la escala de 1 a 5 (ver la regla arriba)."""
+    if recall5 >= META - 1e-9:
+        return PUNTAJE_MAX
+    for puntos in (PUNTAJE_MAX - 1, 3, 2):
+        if recall5 >= _corte_puntaje(puntos) - 1e-9:
             return puntos
-    return 1
+    return PUNTAJE_MIN
 
 
 def solapan(a: list[float], b: list[float]) -> bool:
@@ -248,7 +264,8 @@ def generar_informe(entradas: list[dict], candidatos: list[dict], campo: str, ma
     L += ["", "## Candidatos no medidos", ""]
     L += [f"- {c['etiqueta']}: {why}." for c, why in no_medidos] or ["Todos medidos."]
     L += ["", "## Calidad de recuperación medida, en escala de 1 a 5", "",
-          f"Regla: el recall@5 por artículo se divide en cinco tramos iguales hasta la meta de {META:.2f} "
+          f"Regla: interpolación lineal del recall@5 por artículo, de 1 (recall 0) a 5 (recall igual a la meta de {META:.2f}), "
+          "redondeada al entero más cercano; el 5 se reserva a quien cumple la meta "
           "(" + "; ".join(f"{n}: {t}" for n, t in TRAMOS_PUNTAJE) + "). Reemplaza al puntaje de calidad basado en cifras del "
           "proveedor al recalcular el análisis ponderado del modelo de embeddings.", "",
           "| Candidato | recall@5 artículo | Puntaje |", "|---|---|---|"]
