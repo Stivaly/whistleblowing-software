@@ -1,0 +1,11 @@
+{
+ "A": {"nombre":"Códice","pagina":"#FFFFFF","tarjeta":"#FBF8F2",
+  "fijos":[["título / tarjeta","#1B1A17","#FBF8F2",4.5],["texto secundario / tarjeta","#55504A","#FBF8F2",4.5],["enlace burdeos / tarjeta","#7A1F2B","#FBF8F2",4.5],["botón: blanco / burdeos","#FFFFFF","#7A1F2B",4.5],["regla burdeos / página","#7A1F2B","#FFFFFF",3.0]],
+  "estados":{"lista":["#E6EFE3","#1F3D1C","#3F6B3A"],"generando":["#EDE6D3","#3F3314","#7A6420"],"sin-normativa":["#E9E4EE","#3B2750","#6B4A8C"],"valorada":["#7A1F2B","#FFFFFF","#FFFFFF"],"sin-conexion":["#2B2A27","#FFFFFF","#FFFFFF"]}},
+ "B": {"nombre":"Meridiano","pagina":"#11151B","tarjeta":"#11151B",
+  "fijos":[["título / panel","#F4F6FA","#11151B",4.5],["texto secundario / panel","#A9B2C0","#11151B",4.5],["enlace / panel","#8FB4FF","#11151B",4.5],["botón: oscuro / azul","#0B1630","#8FB4FF",4.5],["cita mono / panel","#D3D9E3","#11151B",4.5]],
+  "estados":{"lista":["#123326","#CDEFD9","#4FD08A"],"generando":["#11284A","#CFE0FF","#6FA3FF"],"sin-normativa":["#2A2440","#E0D9FF","#A590F5"],"valorada":["#8FB4FF","#0B1630","#0B1630"],"sin-conexion":["#3A3F4A","#FFFFFF","#FFD166"]}},
+ "C": {"nombre":"Sello","pagina":"#FFFFFF","tarjeta":"#FAF6EC",
+  "fijos":[["título verde / tarjeta","#0E3B34","#FAF6EC",4.5],["texto / tarjeta","#2A2F2D","#FAF6EC",4.5],["texto secundario / tarjeta","#59605D","#FAF6EC",4.5],["dorado (línea y sello) / tarjeta","#8A6410","#FAF6EC",3.0],["cabecera: crema / verde","#F7EFD6","#0E3B34",4.5],["dorado claro / verde","#E2C26A","#0E3B34",3.0]],
+  "estados":{"lista":["#E3EEE7","#0E3B2C","#1F6B4E"],"generando":["#F2E8CC","#4A3708","#8A6410"],"sin-normativa":["#E4E8EE","#1F2F45","#4A6285"],"valorada":["#0E3B34","#F7EFD6","#E2C26A"],"sin-conexion":["#3A3F3D","#FFFFFF","#FFFFFF"]}}
+}

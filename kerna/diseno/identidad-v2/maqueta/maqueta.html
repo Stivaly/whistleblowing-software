@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maqueta identidad v2 de Kerna</title>
+<!-- Maqueta estática y autocontenida (fuentes auto-alojadas en ../fuentes, licencia OFL). Parámetros: ?dir=A|B|C &estado=lista|generando|sin-normativa|valorada|sin-conexion -->
+<style>
+@font-face{font-family:"Newsreader";font-weight:400;src:url(../fuentes/newsreader-400.woff2)}
+@font-face{font-family:"Newsreader";font-weight:600;src:url(../fuentes/newsreader-600.woff2)}
+@font-face{font-family:"IBM Plex Sans";font-weight:400;src:url(../fuentes/ibm-plex-sans-400.woff2)}
+@font-face{font-family:"IBM Plex Sans";font-weight:600;src:url(../fuentes/ibm-plex-sans-600.woff2)}
+@font-face{font-family:"Space Grotesk";font-weight:600;src:url(../fuentes/space-grotesk-600.woff2)}
+@font-face{font-family:"Inter";font-weight:400;src:url(../fuentes/inter-400.woff2)}
+@font-face{font-family:"Inter";font-weight:600;src:url(../fuentes/inter-600.woff2)}
+@font-face{font-family:"IBM Plex Mono";font-weight:400;src:url(../fuentes/ibm-plex-mono-400.woff2)}
+@font-face{font-family:"Cormorant Garamond";font-weight:500;src:url(../fuentes/cormorant-garamond-500.woff2)}
+@font-face{font-family:"Cormorant Garamond";font-weight:600;src:url(../fuentes/cormorant-garamond-600.woff2)}
+@font-face{font-family:"Libre Franklin";font-weight:400;src:url(../fuentes/libre-franklin-400.woff2)}
+@font-face{font-family:"Libre Franklin";font-weight:600;src:url(../fuentes/libre-franklin-600.woff2)}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#1D1F24;font:15px/1.5 system-ui,sans-serif}
+.pagina{max-width:760px;margin:0 auto;padding:0 16px 28px}
+.sitio{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #DDE3ED;margin-bottom:16px;font:600 13px system-ui;color:#58606E}
+.sitio b{color:#205782;font-size:16px}
+.caso{font:13px system-ui;color:#58606E;margin:0 0 10px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* ===== Bloque común ===== */
+.bloque{--fondo:#fff;--texto:#000;--acento:#000;position:relative}
+.logo{width:34px;height:34px;flex:none}
+.marca{display:flex;align-items:center;gap:10px}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;background:var(--fondo);color:var(--texto);border:1.5px solid var(--borde,var(--acento))}
+.badge i{width:9px;height:9px;border-radius:50%;background:var(--acento);flex:none}
+.badge i.gira{border:2px solid var(--acento);border-right-color:transparent;background:none;width:12px;height:12px;animation:g 1.6s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}} @media (prefers-reduced-motion:reduce){.badge i.gira{animation:none}}
+.titulo{margin:0}
+.resumen{margin:0}
+.art{margin:0}
+.art .num{display:block}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:8px 16px;font:inherit;font-weight:600;border:1.5px solid var(--b-bg);background:var(--b-bg);color:var(--b-fg)}
+.btn.sec{background:transparent;color:var(--b-bg)}
+.aviso{margin:0}
+/* ===== A · Códice ===== */
+[data-dir=A] .bloque{background:#FBF8F2;border-top:4px solid #7A1F2B;border-bottom:1px solid #7A1F2B;padding:0 0 22px;font:15px/1.6 "IBM Plex Sans";color:#1B1A17;--b-bg:#7A1F2B;--b-fg:#fff}
+[data-dir=A] .bloque::before{content:"";display:block;height:2px;background:#7A1F2B;margin-top:3px}
+[data-dir=A] .cab{display:flex;justify-content:space-between;align-items:center;padding:18px 26px 14px;border-bottom:1px solid #D9D0BF}
+[data-dir=A] .logo{color:#7A1F2B}
+[data-dir=A] .nombre{font:600 30px/1 Newsreader,serif;letter-spacing:.01em;color:#1B1A17}
+[data-dir=A] .lema{display:block;margin-top:4px;font:600 11px "IBM Plex Sans";letter-spacing:.16em;text-transform:uppercase;color:#55504A}
+[data-dir=A] .badge{border-radius:2px;font:600 12px "IBM Plex Sans";letter-spacing:.08em;text-transform:uppercase}
+[data-dir=A] .cuerpo{padding:22px 26px 0}
+[data-dir=A] .titulo{font:600 34px/1.12 Newsreader,serif;letter-spacing:-.01em;color:#1B1A17;max-width:600px}
+[data-dir=A] .resumen{font:400 italic 18px/1.4 Newsreader,serif;color:#55504A;margin-top:6px}
+[data-dir=A] .aviso{margin-top:16px;padding:10px 14px;border-left:3px solid #7A1F2B;background:#fff;font-size:13px;color:#55504A}
+[data-dir=A] .arts{margin-top:18px;border-top:1px solid #D9D0BF}
+[data-dir=A] .art{display:grid;grid-template-columns:96px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid #D9D0BF}
+[data-dir=A] .art .num{font:600 40px/1 Newsreader,serif;color:#7A1F2B}
+[data-dir=A] .art small{font:600 10px "IBM Plex Sans";letter-spacing:.14em;text-transform:uppercase;color:#55504A;display:block}
+[data-dir=A] .art h3{margin:0 0 4px;font:600 18px/1.3 Newsreader,serif}
+[data-dir=A] .art p{margin:0 0 6px;font-size:14px;color:#1B1A17}
+[data-dir=A] .art blockquote{margin:6px 0 0;padding-left:12px;border-left:2px solid #D9D0BF;font:italic 15px/1.5 Newsreader,serif;color:#55504A}
+[data-dir=A] .btns{margin-top:18px} [data-dir=A] .btn{border-radius:2px;letter-spacing:.04em}
+[data-dir=A] .pie{margin:16px 26px 0;font-size:12px;color:#55504A}
+/* ===== B · Meridiano ===== */
+[data-dir=B] body,body[data-dir=B]{background:#fff}
+[data-dir=B] .bloque{background:#11151B;color:#F4F6FA;border-radius:12px;border:1px solid #232A35;padding:0 0 22px;font:15px/1.55 Inter,sans-serif;--b-bg:#8FB4FF;--b-fg:#0B1630;overflow:hidden}
+[data-dir=B] .cab{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid #232A35}
+[data-dir=B] .logo{color:#8FB4FF}
+[data-dir=B] .nombre{font:600 24px/1 "Space Grotesk",sans-serif;letter-spacing:-.02em}
+[data-dir=B] .lema{display:block;margin:2px 0 0;font:12px "IBM Plex Mono",monospace;color:#A9B2C0;margin-left:4px}
+[data-dir=B] .badge{border-radius:999px;font:600 12.5px Inter;border-width:1px}
+[data-dir=B] .cuerpo{padding:24px 22px 0}
+[data-dir=B] .titulo{font:600 36px/1.08 "Space Grotesk",sans-serif;letter-spacing:-.03em;max-width:620px}
+[data-dir=B] .resumen{font:13px "IBM Plex Mono",monospace;color:#A9B2C0;margin-top:10px}
+[data-dir=B] .aviso{margin-top:16px;padding:10px 14px;border:1px solid #232A35;border-radius:8px;font-size:13px;color:#A9B2C0}
+[data-dir=B] .arts{margin-top:20px;display:grid;gap:10px}
+[data-dir=B] .art{border:1px solid #232A35;border-radius:10px;padding:14px 16px;background:#161B23}
+[data-dir=B] .art .num{font:13px "IBM Plex Mono",monospace;color:#8FB4FF;margin-bottom:4px}
+[data-dir=B] .art small{display:none}
+[data-dir=B] .art h3{margin:0 0 4px;font:600 18px/1.3 "Space Grotesk"}
+[data-dir=B] .art p{margin:0 0 8px;font-size:14px;color:#A9B2C0}
+[data-dir=B] .art blockquote{margin:0;padding:8px 12px;background:#0D1116;border-radius:6px;font:13px/1.55 "IBM Plex Mono",monospace;color:#D3D9E3}
+[data-dir=B] .btns{margin-top:18px} [data-dir=B] .btn{border-radius:8px}
+[data-dir=B] .pie{margin:16px 22px 0;font:12px "IBM Plex Mono";color:#A9B2C0}
+/* ===== C · Sello ===== */
+[data-dir=C] .bloque{background:#FAF6EC;border:1px solid #8A6410;outline:1px solid #8A6410;outline-offset:3px;padding:0 0 24px;font:15px/1.6 "Libre Franklin",sans-serif;color:#2A2F2D;--b-bg:#0E3B34;--b-fg:#F7EFD6}
+[data-dir=C] .cab{background:#0E3B34;color:#F7EFD6;display:flex;justify-content:space-between;align-items:center;padding:16px 26px;border-bottom:3px double #E2C26A}
+[data-dir=C] .logo{color:#E2C26A;width:42px;height:42px}
+[data-dir=C] .nombre{font:600 34px/1 "Cormorant Garamond",serif;letter-spacing:.14em;text-transform:uppercase}
+[data-dir=C] .lema{display:block;font:italic 500 15px "Cormorant Garamond",serif;color:#E2C26A;letter-spacing:.04em;margin-top:2px}
+[data-dir=C] .badge{border-radius:0;font:600 11.5px "Libre Franklin";letter-spacing:.12em;text-transform:uppercase;clip-path:polygon(0 0,100% 0,calc(100% - 10px) 50%,100% 100%,0 100%);padding-right:22px}
+[data-dir=C] .cuerpo{padding:26px 28px 0;text-align:left}
+[data-dir=C] .titulo{font:600 38px/1.08 "Cormorant Garamond",serif;color:#0E3B34;max-width:600px}
+[data-dir=C] .titulo::after{content:"";display:block;width:64px;height:2px;background:#8A6410;margin-top:12px}
+[data-dir=C] .resumen{font:400 15px "Libre Franklin";color:#59605D;margin-top:12px}
+[data-dir=C] .aviso{margin-top:16px;padding:10px 14px;background:#fff;border:1px solid #8A6410;font-size:13px;color:#59605D}
+[data-dir=C] .arts{margin-top:20px;display:grid;gap:14px}
+[data-dir=C] .art{background:#fff;border:1px solid #E5DCC4;padding:16px 20px;border-radius:2px}
+[data-dir=C] .art .num{font:600 26px/1 "Cormorant Garamond",serif;color:#0E3B34}
+[data-dir=C] .art small{font:600 10px "Libre Franklin";letter-spacing:.16em;text-transform:uppercase;color:#8A6410;display:block;margin-bottom:2px}
+[data-dir=C] .art h3{display:none}
+[data-dir=C] .art p{margin:6px 0;font-size:14px}
+[data-dir=C] .art blockquote{margin:6px 0 0;font:italic 500 18px/1.4 "Cormorant Garamond",serif;color:#2A2F2D}
+[data-dir=C] .btns{margin-top:20px} [data-dir=C] .btn{border-radius:0;letter-spacing:.06em;text-transform:uppercase;font-size:12.5px}
+[data-dir=C] .pie{margin:16px 28px 0;font-size:12px;color:#59605D}
+</style></head>
+<body><div class="pagina"><div class="sitio"><b>Veridy</b><span>Caso · detalle</span></div><p class="caso" id="caso">Denuncia 2026-0142 · Ley N.° 21.643</p><div id="raiz"></div></div>
+<script>
+"use strict";
+const LOGOS={
+A:'<svg class="logo" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h14.5L26 8v20.5H7z"/><path d="M21.5 3.5V8H26"/><path d="M12 11v13M20 11l-8 6.5 8 6.5"/></svg>',
+B:'<svg class="logo" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5v22M9 16 23 6M9 16l14 10"/><circle cx="9" cy="5" r="2" fill="currentColor" stroke="none"/><circle cx="9" cy="27" r="2" fill="currentColor" stroke="none"/><circle cx="23" cy="6" r="2.2" fill="currentColor" stroke="none"/><circle cx="23" cy="26" r="2.2" fill="currentColor" stroke="none"/></svg>',
+C:'<svg class="logo" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="16" r="13.5"/><circle cx="16" cy="16" r="10.6" stroke-dasharray="1 2.2" stroke-width="1.3"/><path d="M12.4 10v12M20 10l-7.6 6 7.6 6" stroke-width="2.2"/></svg>'};
+const LEMA={A:"Sugerencia normativa",B:"normative.suggest()",C:"Sugerencia normativa"};
+/* Colores de estado: [fondo, texto, acento]; iguales a ../paletas.json (verificados con ../calcular_contraste_v2.py) */
+const PAL={
+A:{"lista":["#E6EFE3","#1F3D1C","#3F6B3A"],"generando":["#EDE6D3","#3F3314","#7A6420"],"sin-normativa":["#E9E4EE","#3B2750","#6B4A8C"],"valorada":["#7A1F2B","#FFFFFF","#FFFFFF"],"sin-conexion":["#2B2A27","#FFFFFF","#FFFFFF"]},
+B:{"lista":["#123326","#CDEFD9","#4FD08A"],"generando":["#11284A","#CFE0FF","#6FA3FF"],"sin-normativa":["#2A2440","#E0D9FF","#A590F5"],"valorada":["#8FB4FF","#0B1630","#0B1630"],"sin-conexion":["#3A3F4A","#FFFFFF","#FFD166"]},
+C:{"lista":["#E3EEE7","#0E3B2C","#1F6B4E"],"generando":["#F2E8CC","#4A3708","#8A6410"],"sin-normativa":["#E4E8EE","#1F2F45","#4A6285"],"valorada":["#0E3B34","#F7EFD6","#E2C26A"],"sin-conexion":["#3A3F3D","#FFFFFF","#FFFFFF"]}};
+const EST={
+"lista":{et:"Sugerencia lista",ti:"Tres artículos podrían aplicarse a este caso",re:"Ley N.° 21.643 · 3 artículos · Modo habitual",arts:1,btn:["Incluir en la clasificación","Agregar otro artículo"]},
+"generando":{et:"Preparando sugerencia",ti:"Kerna está preparando la sugerencia",re:"Suele tardar pocos minutos. Puedes seguir trabajando en el caso; la sugerencia aparecerá aquí.",gira:1},
+"sin-normativa":{et:"Sin normativa encontrada",ti:"Kerna no encontró normas aplicables",re:"Eso no significa que no exista normativa aplicable. Clasifica el caso según tu criterio.",btn:["Clasificar manualmente"]},
+"valorada":{et:"Clasificación guardada",ti:"Tu clasificación quedó guardada",re:"2 artículos sugeridos aplicados · 1 agregado por ti. Si necesitas corregirla, guarda una nueva: vale la última.",arts:1,fin:1},
+"sin-conexion":{et:"Sin conexión",ti:"No se pudo actualizar la información de este caso",re:"Lo que ves puede estar desactualizado. Reintenta en unos minutos; lo que ya guardaste no se pierde.",btn:["Reintentar"],aviso:"Último estado conocido: sugerencia lista."}};
+const ARTS=[["2","Definición","Explicación de ejemplo: por qué este artículo se relaciona con los hechos descritos en el caso.","Texto de ejemplo de la cita literal del artículo, tal como figura en la ley."],["3","Ámbito de aplicación","Explicación de ejemplo para el segundo artículo sugerido.","Texto de ejemplo de la cita literal del segundo artículo."],["5","Canal de denuncia","Explicación de ejemplo para el tercer artículo sugerido.","Texto de ejemplo de la cita literal del tercer artículo."]];
+const q=new URLSearchParams(location.search), D=["A","B","C"].includes(q.get("dir"))?q.get("dir"):"A", S=EST[q.get("estado")]?q.get("estado"):"lista", E=EST[S], [f,t,a]=PAL[D][S];
+document.body.dataset.dir=D; document.documentElement.dataset.dir=D;
+const borde=(S==="valorada"||(S==="sin-conexion"&&D!=="B"))?f:a;
+const arts=E.arts?ARTS.map((x,i)=>`<div class="art"><div><small>Artículo</small><span class="num">${D==="A"?"Art. ":D==="B"?"Ley 21.643 · art. ":"N.° "}${x[0]}</span></div><div><h3>${x[1]}</h3><p>${x[2]}</p><blockquote>${x[3]} <span style="font-size:.8em">(ejemplo)</span></blockquote></div></div>`).join(""):"";
+document.getElementById("raiz").innerHTML=`<section class="bloque" aria-label="Kerna" style="--fondo:${f};--texto:${t};--acento:${a};--borde:${borde}">
+<div class="cab"><div class="marca">${LOGOS[D]}<div><span class="nombre">Kerna</span>${D==="B"?`<span class="lema">${LEMA[D]}</span>`:`<span class="lema">${LEMA[D]}</span>`}</div></div>
+<span class="badge" role="status"><i class="${E.gira?"gira":""}"></i>${E.et}</span></div>
+<div class="cuerpo"><h2 class="titulo">${E.ti}</h2><p class="resumen">${E.re}</p>${E.aviso?`<p class="aviso">${E.aviso}</p>`:""}
+${E.arts?`<div class="arts">${arts}</div>`:""}${E.btn?`<div class="btns">${E.btn.map((b,i)=>`<button class="btn ${i?"sec":""}">${b}</button>`).join("")}</div>`:""}</div>
+<p class="pie">Sugerencia asistida: no es un dictamen jurídico. La decisión y la clasificación final son tuyas.</p></section>`;
+</script></body></html>
