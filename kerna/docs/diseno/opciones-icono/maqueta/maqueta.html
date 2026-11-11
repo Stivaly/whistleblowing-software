@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maqueta: indicador y bloque de Kerna</title>
+<!--
+  Maqueta estática y autocontenida (sin recursos externos). No es código del cliente: solo sirve para ver y
+  fotografiar la propuesta. Parámetros en la URL:
+    ?icono=robot|v-veridy|articulo-marcado|balanza   (por defecto robot)
+    &estado=sin-info|generando|lista|contingencia|revision-tiempo|revision-citas|sin-normativa|cadena-agotada|
+            nucleo-no-disponible|conector-inactivo|sin-conexion|valorada   (por defecto lista)
+    &variante=respaldo|local|recuperacion-local   (solo estado contingencia)
+    &tooltip=1|0   (por defecto 1)   &panel=1|0   (por defecto 1)   &vista=iconos   (hoja de tamaños de los íconos)
+  Los íconos de ICONOS son copia de ../svg/*.svg; los colores de ESTADOS, de ../../calcular_contraste.py.
+-->
+<style>
+:root {
+  /* Identidad de Veridy (bootstrap.scss del cliente) */
+  --v-azul: #205782; --v-rojo: #DE1B1B; --v-amarillo: #FFD644;
+  --v-g100: #F5F7FA; --v-g200: #EBEFF5; --v-g300: #DDE3ED; --v-g400: #C8D1E0; --v-g700: #707A8A; --v-g800: #58606E; --v-g900: #434A54; --v-negro: #1D1F24;
+  /* Estado activo (se reemplaza según el estado) */
+  --k-fondo: #DDF3E4; --k-texto: #11432A; --k-acento: #2E7D4F;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #fff; color: var(--v-negro); font: 15px/1.45 "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+.pagina { max-width: 1080px; margin: 0 auto; padding: 0 16px 32px; }
+.cabecera-sitio { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--v-g300); margin-bottom: 14px; }
+.cabecera-sitio img { max-height: 3rem; }
+.barra { display: flex; justify-content: space-between; gap: 4px; margin-bottom: 8px; }
+.barra .grupo { display: flex; gap: 4px; }
+.btn-o { width: 38px; height: 38px; border: 1px solid var(--v-g800); border-radius: 6px; background: #fff; color: var(--v-g800); display: inline-flex; align-items: center; justify-content: center; }
+.btn-o svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Fila del indicador de Kerna (encima de la denuncia) */
+.fila-kerna { display: flex; align-items: center; gap: 12px; margin: 10px 0 10px; position: relative; min-height: 36px; flex-wrap: wrap; }
+.kerna-ind { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 8px; border-radius: 18px; border: 1.5px solid var(--k-borde, var(--k-acento)); background: var(--k-fondo); color: var(--k-texto); font: inherit; font-weight: 600; font-size: 14px; cursor: pointer; }
+.kerna-ind:hover { filter: brightness(.97); }
+.kerna-ind:focus-visible { outline: 3px solid var(--v-azul); outline-offset: 2px; }
+.kerna-ico { position: relative; width: 24px; height: 24px; color: var(--k-acento); display: inline-flex; }
+.kerna-ico > svg.icono { width: 24px; height: 24px; }
+.kerna-glifo { position: absolute; right: -7px; bottom: -7px; width: 16px; height: 16px; border-radius: 50%; background: var(--k-fondo); box-shadow: 0 0 0 1.5px var(--k-fondo); }
+.kerna-glifo svg { width: 16px; height: 16px; display: block; }
+.kerna-lbl { white-space: nowrap; }
+.kerna-ind[data-estado="sin-info"] { border-style: dashed; }
+.kerna-ind[data-estado="sin-conexion"], .kerna-ind[data-estado="valorada"] { --k-borde: var(--k-fondo); }
+.kerna-ind[data-estado="sin-conexion"] .kerna-ico, .kerna-ind[data-estado="valorada"] .kerna-ico { color: #fff; }
+.fila-kerna .nota-fila { color: var(--v-g800); font-size: 13px; }
+/* Espera: pulso suave del anillo del glifo; desactivado con prefers-reduced-motion */
+@keyframes k-giro { to { transform: rotate(360deg); } }
+@keyframes k-pulso { 0%,100% { opacity: 1; } 50% { opacity: .72; } }
+.kerna-ind[data-estado="generando"] .kerna-glifo svg { animation: k-giro 1.6s linear infinite; transform-origin: 50% 50%; }
+.kerna-ind[data-estado="generando"] { animation: k-pulso 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .kerna-ind[data-estado="generando"], .kerna-ind[data-estado="generando"] .kerna-glifo svg { animation: none; }
+}
+
+/* Tooltip */
+.kerna-tt { position: absolute; top: 44px; left: 0; z-index: 20; width: 320px; background: var(--v-negro); color: #fff; border-radius: 6px; padding: 10px 12px; font-size: 13px; line-height: 1.4; box-shadow: 0 6px 18px rgba(0,0,0,.28); }
+.kerna-tt::before { content: ""; position: absolute; top: -6px; left: 22px; border: 6px solid transparent; border-top: 0; border-bottom-color: var(--v-negro); }
+.kerna-tt .t { font-weight: 700; margin-bottom: 4px; }
+.kerna-tt dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; }
+.kerna-tt dt { color: #C8D1E0; font-weight: 400; } .kerna-tt dd { margin: 0; }
+.kerna-tt .abrir { margin-top: 6px; color: #C8D1E0; }
+.kerna-tt kbd { background: #434A54; color: #fff; border-radius: 3px; padding: 0 4px; font: inherit; font-size: 12px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Tarjetas (como TipInfoBox y TipCommentsBox) */
+.card { border: 1px solid var(--v-g300); border-radius: 6px; background: #fff; margin-bottom: 12px; }
+.card-h { padding: 10px 14px; background: var(--v-g100); border-bottom: 1px solid var(--v-g300); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.card-b { padding: 14px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 700; padding: 6px 8px; } td { padding: 6px 8px; } tbody tr { background: var(--v-g100); }
+.centro { text-align: center; margin-bottom: 8px; }
+
+/* Panel */
+.k-panel { border-color: var(--k-acento); border-width: 1.5px; }
+.k-panel .card-h { background: var(--k-fondo); color: var(--k-texto); font-weight: 700; }
+.k-panel h2 { font-size: 16px; margin: 0; display: flex; align-items: center; gap: 8px; }
+.k-panel h2 .icono { width: 22px; height: 22px; color: var(--k-acento); }
+.k-chip { font-size: 12px; font-weight: 600; border: 1px solid var(--v-g800); color: var(--v-g900); border-radius: 10px; padding: 1px 8px; background: #fff; }
+.aviso { background: var(--v-g200); color: var(--v-negro); border-left: 4px solid var(--v-g800); padding: 8px 12px; border-radius: 4px; margin-bottom: 10px; font-size: 14px; }
+.aviso.cont { background: #FFF2BF; color: #4D3A00; border-left-color: #8F6B00; }
+.msg { margin: 0 0 10px; } .msg b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--v-g800); }
+.msg p { margin: 0 0 8px; }
+.acciones { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.btn { border: 1px solid var(--v-azul); background: var(--v-azul); color: #fff; border-radius: 6px; padding: 6px 14px; font: inherit; }
+.btn.sec { background: #fff; color: var(--v-azul); }
+.art { border: 1px solid var(--v-g300); border-radius: 6px; margin-bottom: 8px; }
+.art-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; font-weight: 700; }
+.art-b { padding: 0 12px 10px; }
+.art-b p { margin: 0 0 6px; }
+blockquote { margin: 6px 0; padding: 6px 10px; border-left: 3px solid var(--v-g500, #AFBACC); background: var(--v-g100); font-style: italic; }
+.ej { font-size: 12px; color: var(--v-g800); font-style: normal; }
+a { color: var(--v-azul); }
+.fila { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+.val { display: inline-flex; gap: 4px; }
+.val button { width: 34px; height: 34px; border: 1px solid var(--v-g800); border-radius: 6px; background: #fff; color: var(--v-g800); display: inline-flex; align-items: center; justify-content: center; }
+.val button[aria-pressed="true"] { background: var(--v-azul); color: #fff; border-color: var(--v-azul); }
+.val svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+textarea { width: 100%; border: 1px solid var(--v-g800); border-radius: 6px; padding: 6px 8px; font: inherit; min-height: 52px; }
+.cnt { font-size: 12px; color: var(--v-g800); text-align: right; }
+.chk { display: inline-flex; align-items: center; gap: 6px; }
+.pie { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border-top: 1px solid var(--v-g300); margin-top: 10px; padding-top: 8px; font-size: 13px; color: var(--v-g900); }
+code { background: var(--v-g200); border-radius: 3px; padding: 1px 6px; }
+.hoja { display: grid; grid-template-columns: 140px repeat(3, 80px); gap: 16px; align-items: center; padding: 24px 0; }
+.hoja .i { color: var(--v-azul); } .hoja .oscuro { background: #323A49; color: #fff; padding: 8px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="pagina" id="raiz"></div>
+<script>
+"use strict";
+/* ---- Íconos de marca (copia de ../svg/*.svg). En el cliente real viven en UN solo archivo. ---- */
+const A = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"';
+const ICONOS = {
+  "robot": `<svg class="icono" ${A}><rect x="4" y="8" width="16" height="11.5" rx="3"/><path d="M12 8V4.6"/><circle cx="12" cy="3.4" r="1.2" fill="currentColor" stroke="none"/><path d="M2 12.5v3M22 12.5v3"/><circle cx="9" cy="13" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.3" fill="currentColor" stroke="none"/><path d="M9 16.6h6"/></svg>`,
+  "v-veridy": `<svg class="icono" ${A}><path d="M4.5 5.5 12 19l7.5-13.5" stroke-width="2.6"/></svg>`,
+  "articulo-marcado": `<svg class="icono" ${A}><path d="M6 2.8h8.4L19 7.4v13.8H6z"/><path d="M14.4 2.8v4.6H19"/><path d="M9.6 12.6h5.8M9.6 16.2h5.8"/><path d="M8.6 2.8v6.6l1.9-1.5 1.9 1.5V2.8" fill="currentColor" stroke="none"/></svg>`,
+  "balanza": `<svg class="icono" ${A}><path d="M12 3.8v15.8M8 20h8M4.5 6.6h15"/><path d="M4.5 6.6 2 13.2h5z"/><path d="M2 13.2a2.5 2.5 0 0 0 5 0"/><path d="M19.5 6.6 17 13.2h5z"/><path d="M17 13.2a2.5 2.5 0 0 0 5 0"/></svg>`
+};
+/* ---- Glifos secundarios: una silueta distinta por estado (14 px, dentro de un círculo blanco no: relleno del acento) ---- */
+const G = (inner) => `<svg viewBox="0 0 14 14" aria-hidden="true" focusable="false">${inner}</svg>`;
+const GLIFOS = {
+  "sin-info": G(`<circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.2 1.8"/>`),
+  "generando": G(`<circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="23 8.4" stroke-linecap="round"/>`),
+  "lista": G(`<circle cx="7" cy="7" r="6.2" fill="currentColor"/><path d="M4 7.2 6.2 9.3 10 5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`),
+  "contingencia": G(`<path d="M7 .6 13.4 7 7 13.4.6 7z" fill="currentColor"/><path d="M4.4 7h5.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>`),
+  "revision-tiempo": G(`<path d="M3 1.2h8M3 12.8h8M3.8 1.2c0 3 2.4 4 3.2 5.8-.8 1.800-3.200 2.800-3.200 5.800M10.200 1.200c0 3-2.400 4-3.200 5.800.8 1.800 3.200 2.800 3.200 5.800" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M4.600 11.800c.6-1.200 1.400-1.800 2.400-1.800s1.800.6 2.400 1.800z" fill="currentColor"/>`),
+  "revision-citas": G(`<rect x=".8" y=".8" width="12.4" height="12.4" rx="2.4" fill="currentColor"/><path d="M5.200 5.400c0-1.100.8-1.800 1.900-1.800s1.800.7 1.800 1.600c0 1.500-1.800 1.500-1.800 3" fill="none" stroke="#fff" stroke-width="1.500" stroke-linecap="round"/><circle cx="7.100" cy="10.600" r=".95" fill="#fff"/>`),
+  "sin-normativa": G(`<circle cx="6" cy="6" r="4.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9.300 9.300 13 13" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 6h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>`),
+  "cadena-agotada": G(`<path d="M4.200.8h5.600l3.400 3.400v5.600l-3.400 3.400H4.200L.8 9.800V4.200z" fill="currentColor"/><path d="M4 7h6" stroke="#fff" stroke-width="1.800" stroke-linecap="round"/>`),
+  "nucleo-no-disponible": G(`<path d="M7 .8 13.400 12.600H.6z" fill="currentColor" stroke="currentColor" stroke-width="1.200" stroke-linejoin="round"/><path d="M7 5.200v3.400" stroke="#fff" stroke-width="1.600" stroke-linecap="round"/><circle cx="7" cy="10.500" r=".9" fill="#fff"/>`),
+  "conector-inactivo": G(`<path d="M3.900.8h6.200l3.100 6.200-3.100 6.200H3.900L.8 7z" fill="currentColor"/><circle cx="4.300" cy="7" r="1" fill="#fff"/><circle cx="7" cy="7" r="1" fill="#fff"/><circle cx="9.700" cy="7" r="1" fill="#fff"/>`),
+  "sin-conexion": G(`<circle cx="7" cy="7" r="5.600" fill="none" stroke="currentColor" stroke-width="1.800"/><path d="M3 11 11 3" stroke="currentColor" stroke-width="1.800" stroke-linecap="round"/>`),
+  "valorada": G(`<path d="M3 13V1.200M3 1.800h8l-2 3 2 3H3" fill="currentColor" stroke="currentColor" stroke-width="1.500" stroke-linejoin="round" stroke-linecap="round"/>`)
+};
+/* ---- Estados: colores (iguales a calcular_contraste.py) y textos BORRADOR (la redacción final la decide otra persona) ---- */
+const ESTADOS = {
+  "sin-info": { fondo:"#F5F7FA", texto:"#434A54", acento:"#707A8A", etiqueta:"Sin información de Kerna", titulo:"Aún no hay información de Kerna para este caso", resumen:"Sin resultados todavía", modo:"No disponible",
+    que:"Todavía no hay información de Kerna sobre este caso.", significa:"Puede que el caso sea reciente o que Kerna aún no lo haya tomado.", puedes:"Puedes clasificarlo como siempre. Si Kerna lo toma, la sugerencia aparecerá aquí.", acciones:["Actualizar"] },
+  "generando": { fondo:"#DCEBF8", texto:"#12324F", acento:"#2A6496", etiqueta:"Preparando sugerencia", titulo:"Kerna está preparando la sugerencia", resumen:"Aún sin resultados", modo:"Se indicará cuando esté lista",
+    que:"Kerna está revisando el caso para sugerir artículos de la normativa. Suele tardar unos minutos.", significa:"Todavía no hay sugerencia, pero tu trabajo no se bloquea.", puedes:"Puedes seguir con el caso y clasificarlo manualmente. La sugerencia aparecerá aquí cuando esté lista.", acciones:["Actualizar"] },
+  "lista": { fondo:"#DDF3E4", texto:"#11432A", acento:"#2E7D4F", etiqueta:"Sugerencia lista", titulo:"Sugerencia lista", resumen:"Ley N.° 21.643 · 3 artículos", modo:"Modo oficial" },
+  "contingencia": { fondo:"#FFF2BF", texto:"#4D3A00", acento:"#8F6B00", etiqueta:"Lista · modo de respaldo", titulo:"Sugerencia lista, con aviso", resumen:"Ley N.° 21.643 · 3 artículos", modo:"Modo de respaldo",
+    aviso:"Esta sugerencia se preparó con un método alternativo porque el servicio principal no estaba disponible. Puede ser menos precisa: revisa cada artículo con especial atención." },
+  "revision-tiempo": { fondo:"#FFE2C4", texto:"#5C2C05", acento:"#A85400", etiqueta:"Revisión manual · demoró", titulo:"Kerna no alcanzó a terminar a tiempo", resumen:"Sin sugerencia", modo:"Revisión manual",
+    que:"La sugerencia tardó más de lo previsto y se detuvo.", significa:"Para este caso no habrá sugerencia de Kerna.", puedes:"Clasifícalo manualmente como siempre.", acciones:["Clasificar manualmente"] },
+  "revision-citas": { fondo:"#EAE4F7", texto:"#2E1F63", acento:"#6A4FB3", etiqueta:"Revisión manual · citas sin confirmar", titulo:"La sugerencia no pasó la revisión de citas", resumen:"Sin sugerencia", modo:"Revisión manual",
+    que:"Kerna preparó una sugerencia, pero no se pudo comprobar que sus citas coincidieran con el texto de las leyes.", significa:"Por seguridad no se muestra ningún artículo para este caso.", puedes:"Clasifícalo manualmente como siempre.", acciones:["Clasificar manualmente"] },
+  "sin-normativa": { fondo:"#DDEFF0", texto:"#0F4249", acento:"#2C7C86", etiqueta:"Sin normativa encontrada", titulo:"Kerna no encontró normativa aplicable", resumen:"Sin artículos sugeridos", modo:"Revisión manual",
+    que:"Kerna no encontró en su base de normas artículos que correspondan con claridad a este caso.", significa:"No quiere decir que no exista normativa aplicable, sino que Kerna no puede sugerir una.", puedes:"Clasifícalo según tu criterio.", acciones:["Clasificar manualmente"] },
+  "cadena-agotada": { fondo:"#FDE0DD", texto:"#7A1212", acento:"#C62828", etiqueta:"Revisión manual · sin sugerencia", titulo:"Kerna no pudo preparar la sugerencia", resumen:"Sin sugerencia", modo:"Revisión manual",
+    que:"Kerna no pudo preparar una sugerencia para este caso por un problema en sus servicios.", significa:"Para este caso no habrá sugerencia.", puedes:"Clasifícalo manualmente. Si el problema se repite, informa el código de seguimiento.", acciones:["Clasificar manualmente"] },
+  "nucleo-no-disponible": { fondo:"#FBDCEA", texto:"#6B0F3B", acento:"#B02A6B", etiqueta:"Kerna no disponible", titulo:"Kerna no está disponible ahora", resumen:"Sin resultados todavía", modo:"Se sigue intentando",
+    que:"Kerna no está disponible en este momento.", significa:"El caso quedó en espera; se sigue intentando automáticamente.", puedes:"Puedes clasificar el caso como siempre; la sugerencia aparecerá aquí cuando Kerna vuelva.", acciones:["Actualizar","Clasificar manualmente"] },
+  "conector-inactivo": { fondo:"#E7E2D6", texto:"#433818", acento:"#7D6D45", etiqueta:"Kerna sin respuesta", titulo:"Kerna aún no ha tomado este caso", resumen:"Sin resultados", modo:"No disponible",
+    que:"Ya pasó el tiempo habitual y Kerna no ha tomado este caso. Puede que la conexión con Kerna esté detenida o que no tenga acceso a este caso.", significa:"Por ahora no habrá sugerencia.", puedes:"Clasifícalo como siempre. Si pasa en varios casos, avisa a la persona administradora.", acciones:["Actualizar","Clasificar manualmente"] },
+  "sin-conexion": { fondo:"#323A49", texto:"#FFFFFF", acento:"#FFFFFF", etiqueta:"Sin conexión", titulo:"No se pudo actualizar la información", resumen:"Último estado conocido: sugerencia lista", modo:"Puede estar desactualizado",
+    que:"No se pudo actualizar este caso: la conexión se interrumpió o la plataforma está en mantenimiento.", significa:"Lo que ves puede estar desactualizado.", puedes:"Espera unos minutos y vuelve a intentarlo. Tu trabajo ya guardado no se pierde.", acciones:["Reintentar"] },
+  "valorada": { fondo:"#205782", texto:"#FFFFFF", acento:"#FFFFFF", etiqueta:"Clasificación guardada", titulo:"Clasificación final guardada", resumen:"2 sugeridos aplicados · 1 agregado por ti", modo:"Modo oficial" }
+};
+const VARIANTES = { "respaldo": ["Lista · modo de respaldo", "Modo de respaldo"], "local": ["Lista · modo local", "Modo local"], "recuperacion-local": ["Lista · búsqueda local", "Búsqueda de normativa en modo local"] };
+const ARTS = [
+  ["Ley N.° 21.643 · Art. 2", "Explicación de ejemplo: por qué este artículo se relaciona con los hechos descritos en el caso.", "Texto de ejemplo de la cita literal del artículo, tal como figura en la ley."],
+  ["Ley N.° 21.643 · Art. 3", "Explicación de ejemplo para el segundo artículo sugerido.", "Texto de ejemplo de la cita literal del segundo artículo."],
+  ["Ley N.° 21.643 · Art. 5", "Explicación de ejemplo para el tercer artículo sugerido.", "Texto de ejemplo de la cita literal del tercer artículo."]
+];
+const q = new URLSearchParams(location.search);
+const icono = ICONOS[q.get("icono")] ? q.get("icono") : "robot";
+const estadoId = ESTADOS[q.get("estado")] ? q.get("estado") : "lista";
+const variante = VARIANTES[q.get("variante")] ? q.get("variante") : "respaldo";
+const conTooltip = q.get("tooltip") !== "0", conPanel = q.get("panel") !== "0";
+const E = Object.assign({}, ESTADOS[estadoId]);
+if (estadoId === "contingencia") { E.etiqueta = VARIANTES[variante][0]; E.modo = VARIANTES[variante][1]; }
+const root = document.documentElement;
+root.style.setProperty("--k-fondo", E.fondo); root.style.setProperty("--k-texto", E.texto); root.style.setProperty("--k-acento", E.acento);
+
+const SV = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+const T = { atras: SV('<path d="M19 12H5M11 6l-6 6 6 6"/>'), est: SV('<path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.200 9.400l6.100-.8z"/>'), camp: SV('<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/>'), usr: SV('<circle cx="9" cy="8" r="3.500"/><path d="M2.500 20c.5-4 3-6 6.500-6s6 2 6.500 6M16 5a3 3 0 0 1 0 6M18 14c2 .6 3.300 2.500 3.500 6"/>'), eng: SV('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'), desc: SV('<path d="M12 3v12M6 10l6 6 6-6M4 20h16"/>'), rec: SV('<path d="M20 11a8 8 0 1 0-2.300 5.700M20 4v7h-7"/>'), arr: SV('<path d="M7 11V20M7 11l4-8c2 0 3 1 3 3v3h6l-1 9H7"/>'), abj: SV('<path d="M7 13V4M7 13l4 8c2 0 3-1 3-3v-3h6l-1-9H7"/>') };
+
+function indicador() {
+  return `<button type="button" class="kerna-ind" id="kerna-ind" data-estado="${estadoId}" aria-describedby="kerna-tt" aria-expanded="${conPanel}" aria-controls="kerna-panel">
+    <span class="kerna-ico">${ICONOS[icono]}<span class="kerna-glifo" style="color:${E.acento}">${GLIFOS[estadoId]}</span></span>
+    <span class="kerna-lbl"><span class="sr-only">Kerna: </span>${E.etiqueta}</span></button>`;
+}
+function tooltip() {
+  return `<div class="kerna-tt" id="kerna-tt" role="tooltip"><div class="t">${E.titulo}</div>
+  <dl><dt>Resumen</dt><dd>${E.resumen}</dd><dt>Modo</dt><dd>${E.modo}</dd></dl>
+  <div class="abrir">Abre el detalle con clic o <kbd>Enter</kbd>. <kbd>Esc</kbd> cierra este aviso.</div></div>`;
+}
+function articulos() {
+  return ARTS.map((a, i) => `<div class="art"><div class="art-h"><span>${a[0]}</span><label class="chk"><input type="checkbox" ${estadoId === "valorada" && i < 2 ? "checked" : ""} ${estadoId === "valorada" ? "disabled" : ""}> ${estadoId === "valorada" ? "Aplicado" : "Incluir en la clasificación"}</label></div>
+   <div class="art-b"><p>${a[1]}</p><blockquote>${a[2]} <span class="ej">(texto de ejemplo)</span></blockquote>
+   <div class="fila"><a href="#" onclick="return false">Ver el artículo en la Biblioteca del Congreso Nacional</a>
+   <span class="val" role="group" aria-label="¿Es útil esta sugerencia?"><button type="button" aria-pressed="${i === 0}" aria-label="Útil">${T.arr}</button><button type="button" aria-pressed="false" aria-label="No útil">${T.abj}</button></span></div>
+   ${i === 0 && estadoId !== "valorada" ? `<label for="obs" style="display:block;margin-top:6px;font-size:13px">Observación (opcional)</label><textarea id="obs" maxlength="500" aria-describedby="cnt">Observación de ejemplo.</textarea><div class="cnt" id="cnt">23/500</div>` : ""}</div></div>`).join("");
+}
+function panel() {
+  const sug = ["lista", "contingencia", "valorada"].includes(estadoId);
+  let cuerpo = "";
+  if (estadoId === "contingencia") cuerpo += `<div class="aviso cont" role="note"><b>Modo alternativo.</b> ${E.aviso}</div>`;
+  cuerpo += `<div class="aviso" role="note">Sugerencia asistida: no es un dictamen jurídico. La decisión y la clasificación final son tuyas.</div>`;
+  if (sug) {
+    cuerpo += articulos() + `<div class="fila"><label for="otro">Agregar otro artículo</label><input id="otro" style="border:1px solid #58606E;border-radius:6px;padding:5px 8px;font:inherit" placeholder="Ej.: Ley N.° 20.393, art. 3" ${estadoId === "valorada" ? "disabled" : ""}></div>`;
+    cuerpo += estadoId === "valorada" ? `<p style="margin-top:10px"><b>Clasificación guardada:</b> 2 artículos sugeridos aplicados y 1 agregado por ti. No sugeridos por Kerna: 1.</p>` : `<div class="acciones"><button class="btn" type="button">Guardar clasificación</button><button class="btn sec" type="button">Ninguno aplica</button></div>`;
+  } else {
+    cuerpo += `<div class="msg"><b>Qué pasó</b><p>${E.que}</p><b>Qué significa para este caso</b><p>${E.significa}</p><b>Qué puedes hacer</b><p>${E.puedes}</p></div><div class="acciones">${E.acciones.map((x, i) => `<button class="btn ${i ? "sec" : ""}" type="button">${x}</button>`).join("")}</div>`;
+  }
+  const codigo = estadoId === "sin-info" || estadoId === "conector-inactivo" ? "" : `<div class="pie"><span>Código de seguimiento (para reportar un problema): <code>8f3a2c1e-9b47</code></span><button class="btn sec" type="button">Copiar código</button></div>`;
+  return `<section class="card k-panel" id="kerna-panel" aria-labelledby="kerna-h"><div class="card-h"><h2 id="kerna-h">${ICONOS[icono]} Sugerencia normativa de Kerna</h2><span class="k-chip">${E.etiqueta}</span></div><div class="card-b">${cuerpo}${codigo}</div></section>`;
+}
+function hojaIconos() {
+  let h = `<div class="hoja"><b>Opción</b><b>24 px</b><b>20 px</b><b>16 px</b>`;
+  for (const k of Object.keys(ICONOS)) {
+    const ic = (px) => ICONOS[k].replace('class="icono"', `class="icono" width="${px}" height="${px}" style="width:${px}px;height:${px}px"`);
+    h += `<span>${k}</span><span class="i">${ic(24)}</span><span class="i">${ic(20)}</span><span class="i">${ic(16)}</span>`;
+  }
+  h += `</div><div class="hoja"><b>Sobre fondo oscuro</b>` + Object.keys(ICONOS).map(k => `<span class="oscuro">${ICONOS[k].replace('class="icono"', 'class="icono" style="width:24px;height:24px"')}</span>`).join("") + `</div>`;
+  return h;
+}
+const barra = `<div class="barra"><div class="grupo"><span class="btn-o">${T.atras}</span><span class="btn-o">${T.est}</span><span class="btn-o">${T.camp}</span><span class="btn-o">${T.usr}</span><span class="btn-o">${T.eng}</span></div><div class="grupo"><span class="btn-o">${T.desc}</span><span class="btn-o">${T.rec}</span></div></div>`;
+if (q.get("vista") === "iconos") {
+  document.getElementById("raiz").innerHTML = `<h1 style="font-size:18px">Opciones de ícono a 24, 20 y 16 px</h1>` + hojaIconos();
+} else {
+  document.getElementById("raiz").innerHTML = `
+  <div class="cabecera-sitio"><img alt="Logo de la instalación (ejemplo)" src="data:image/png;base64,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"></div>
+  ${barra}
+  <div class="fila-kerna">${indicador()}${conTooltip ? tooltip() : ""}</div>
+  <div class="card"><div class="card-h"><b>Caso de ejemplo</b></div><div class="card-b"><div class="centro"><b>ID:</b> 0b6f1c2a-…-d41</div>
+   <table><thead><tr><th>#</th><th>Fecha</th><th>Última actualización</th><th>Vencimiento</th><th>Estado</th></tr></thead><tbody><tr><td>12</td><td>10-11-2026 09:14</td><td>10-11-2026 09:20</td><td>10-11-2027</td><td>Nuevo</td></tr></tbody></table></div></div>
+  ${conPanel ? panel() : ""}
+  <div class="card"><div class="card-h"><b>Respuestas del cuestionario</b></div><div class="card-b" style="color:#58606E">… la denuncia, sin cambios …</div></div>`;
+}
+</script>
+</body>
+</html>
