@@ -9,3 +9,8 @@ Revisa cada fila y, si apruebas, bórralo tú manualmente (`rm -r .papelera/...`
 | 2026-10-18 | Azure: entorno de Container Apps `cae-kerna-dev` (modo Express, vacío) | — (recurso de Azure, sin copia) | Express no admite jobs; se recreó con el mismo nombre en modo `WorkloadProfiles`. Eliminado con autorización explícita de la usuaria. | Hecho (autorizado) |
 | 2026-10-18 | Azure: contenido de la base `veridy` (PostgreSQL de Veridy) | `~/backups/veridy-azure-2026-10-18.dump` (pg_dump completo) | Reemplazado por la instalación local (personalización y pruebas) con `infra/veridy/migrar_sqlite.py`, a pedido de la usuaria. Restaurar: `pg_restore --clean`. | Hecho (autorizado) |
 | 2026-11-10 | `kerna/evaluacion/datos/denuncias_veridy.json` (versión de un intento fallido) | `.papelera/2026-11-10/kerna/evaluacion/datos/denuncias_veridy_intento_fallido.json` | Registro local de un primer intento del generador de denuncias que no llegó a enviar nada a Veridy; lo sustituye el registro actual. | Pendiente de decisión |
+
+## 2026-11-11 — Limpieza de Docker del host (autorizada por la usuaria)
+- La usuaria pidió eliminar todo lo histórico de Docker. El clasificador de permisos bloquea a Claude; queda el script
+  `infra/limpiar_docker.sh` para que lo ejecute ella (contenedores de prueba detenidos, imágenes viejas, caché de build).
+  No toca imágenes desplegadas, contenedores en ejecución ni volúmenes.
