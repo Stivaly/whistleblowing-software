@@ -55,6 +55,7 @@ class Proveedores:
     def __init__(self, monkeypatch):
         self.llamadas = []   # (proveedor, cantidad de textos)
         self.upserts = []    # (coleccion, puntos)
+        self.metas = {}      # coleccion -> [punto meta guardado]
         monkeypatch.setattr(s, "crear_embedder", self.crear)
         monkeypatch.setattr(s, "asegurar_coleccion", lambda *a, **k: None)
         monkeypatch.setattr(s, "qdrant", self.qdrant)
@@ -66,8 +67,14 @@ class Proveedores:
         return embed
 
     def qdrant(self, path, body=None, method="PUT"):
+        col = path.split("/")[2]
+        if method == "POST" and body and "ids" in body:   # lectura del punto meta
+            return {"result": [p for p in self.metas.get(col, [])]}
         if "/points" in path and body and "points" in body:
-            self.upserts.append((path.split("/")[2], body["points"]))
+            self.upserts.append((col, body["points"]))
+            for p in body["points"]:
+                if p["id"] == s.PUNTO_META_ID:
+                    self.metas[col] = [p]
 
 
 def resultado(tmp_path, **kw):
