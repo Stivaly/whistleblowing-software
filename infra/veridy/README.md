@@ -16,7 +16,8 @@ infra/veridy/veridy.sh logs          # registros de Veridy (también: vigia, pue
 
 - **Encender es manual.** Apagar es automático: el vigía apaga Veridy y PostgreSQL tras 60 minutos sin uso
   (`inactividad_min`). "Uso" = una llamada exitosa a `/api/` que no sea `/api/health`; los bots que recorren IPs
-  públicas no ejecutan la aplicación y no la mantienen encendida.
+  públicas no ejecutan la aplicación y no la mantienen encendida. Las peticiones del conector de Kerna (llevan
+  `kerna_conector=1` en la URL) tampoco cuentan: sondea cada 30 s y impediría el apagado.
 - HTTPS con certificado de Let's Encrypt (administración > red > HTTPS), guardado en la base. Veridy lo renueva
   solo si está encendido en los días previos al vencimiento; si vence apagado, "Reset" y volver a pedirlo.
 - Inicio de sesión de administración y destinatarios: `<link>/#/login`.
@@ -29,6 +30,8 @@ infra/veridy/veridy.sh logs          # registros de Veridy (también: vigia, pue
 |---|---|---|
 | Grupo de contenedores `aci-veridy-dev` | Veridy (1 vCPU, 1,5 GB) + `puertos` (443→8443, 80→8080) + `vigia` | ~US$0,08/hora encendido; nada apagado |
 | PostgreSQL Flexible Server B1ms | Base de Veridy (32 GB) | ~US$0,024/hora encendido + almacenamiento (~US$4/mes) |
+| Contenedor `conector` (con `crear_conector = true`) | Conector Veridy de Kerna (0,5 vCPU, 0,5 GB), dentro del mismo grupo | incluido en el grupo (~US$0,02/hora más) |
+| Base `kerna_conector` | Estado del conector, en el mismo PostgreSQL, con su propio rol sin acceso a `veridy` | sin costo adicional |
 | Storage + Azure Files | `adjuntos` (10 GB), `archivos` (1 GB), `control` (1 GB) | < US$1/mes |
 | Key Vault `kv-veridy-dev-*` | `veridy-db-admin-password`, `veridy-db-app-password` | centavos |
 | Identidad `id-veridy-dev` + rol propio | Leer sus secretos, bajar la imagen, apagarse y apagar su PostgreSQL, autorizar su IP | gratis |
@@ -42,6 +45,7 @@ Cómo arranca el grupo:
    memoria**, se pierden al apagar (no se conservan IPs).
 3. **puertos**: `socat` reenvía 443 y 80 a Veridy sin abrir el TLS (Veridy maneja su certificado).
 4. **vigia** (`contenedor/vigia.py`): apagado por inactividad.
+5. **conector** (opcional, `conector.tf`): ver "Conector Veridy de Kerna".
 
 Lo único sensible que queda en el estado de Terraform es la clave de la cuenta de Storage: Container Instances la
 exige para montar Azure Files. El estado vive en Azure Storage con acceso solo por Entra ID.
@@ -144,3 +148,44 @@ terraform -chdir=infra/veridy/terraform plan -out=v2.tfplan && terraform -chdir=
 ```
 
 Cambiar la imagen recrea el grupo de contenedores. Adjuntos y archivos (Azure Files) y la base no se tocan.
+
+## Conector Veridy de Kerna
+
+Con `crear_conector = true` el grupo suma el contenedor `conector` (imagen `kerna-conector:<conector_tag>` del mismo
+registro; código en `kerna/conector/`). Variables: `conector_tag`, `kerna_api_url` (URL del núcleo:
+`terraform -chdir=infra/terraform output -raw nucleo_url`), `kerna_id_empresa` (`veridy`), `conector_intervalo_s` (30).
+Agregar o quitar un contenedor **recrea el grupo** (Veridy se reinicia; la base, Key Vault y los shares no se tocan);
+la base `kerna_conector` la crea el mismo `apply`.
+
+- **Cómo habla con Veridy:** dentro del grupo, por `https://<fqdn público>:8443`. No sirve `127.0.0.1` ni HTTP: con el
+  Host como IP Veridy redirige todo a `https://<hostname>`, y el puerto 8080 redirige a HTTPS; además el certificado es
+  del nombre público. `entrada.py` hace que ese nombre resuelva a 127.0.0.1 solo dentro de su proceso (el tráfico no
+  sale del grupo).
+- **Secretos:** `entrada.py` los lee de Key Vault con la identidad del grupo al arrancar (como `arranque.py`):
+  `veridy-kerna-conector-password`, `kerna-client-id`, `kerna-client-secret` y `conector-pg-password` (este último lo
+  genera `conector.tf`). No van en las variables de entorno del grupo.
+- **Estado:** base `kerna_conector` del PostgreSQL de Veridy, rol `kerna_conector` (`infra/sql/conector_roles.sql`)
+  sin acceso a la base `veridy`; conexión con TLS verificado. El firewall lo abre `arranque.py` (misma IP de salida).
+- **Vigía:** ignora las líneas del `access.log` con `kerna_conector=1`.
+
+Alta (una vez; la cuenta `kerna-conector` y su contraseña ya existen en Veridy y Key Vault):
+
+```bash
+cd infra/veridy/terraform
+KV=$(terraform output -raw key_vault_nombre)
+# 1. imagen del conector y de Veridy ya en el registro; plan y apply (reinicia Veridy y genera conector-pg-password)
+export TF_VAR_postgres_admin_password="$(az keyvault secret show --vault-name $KV --name veridy-db-admin-password --query value -o tsv)"
+terraform plan -out=conector.tfplan && terraform apply conector.tfplan
+unset TF_VAR_postgres_admin_password
+# 2. rol en la base kerna_conector (PostgreSQL encendido: veridy.sh encender)
+H=$(terraform output -raw postgres_servidor); umask 077; P=$(mktemp)
+printf '%s:5432:*:veridyadmin:%s\n' "$H" "$(az keyvault secret show --vault-name $KV --name veridy-db-admin-password --query value -o tsv)" > $P
+{ printf "\\\\set conector_password '%s'\n" "$(az keyvault secret show --vault-name $KV --name conector-pg-password --query value -o tsv)"; cat ../../sql/conector_roles.sql; } \
+  | docker run -i --rm --user "$(id -u):$(id -g)" -e PGPASSFILE=/pgpass -v $P:/pgpass:ro postgres:15 \
+      psql "host=$H dbname=kerna_conector user=veridyadmin sslmode=require" -f -
+: > $P
+```
+
+El conector reintenta solo hasta que el rol exista. Debe terminar mostrando `kerna_conector` con `rolsuper = f` y
+`conecta_a_veridy = f`. Logs: `infra/veridy/veridy.sh logs conector`. Imagen: `infra/scripts/subir_imagen_kerna.sh conector --tag <tag>`
+y subir `conector_tag` en `terraform.tfvars`.

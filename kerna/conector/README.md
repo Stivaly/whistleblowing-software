@@ -24,6 +24,13 @@ python -m kerna_conector --una-pasada # una pasada; salida 0 ok, 1 errores o nú
 
 Imagen: `docker build -f conector/Dockerfile kerna/` (contexto = carpeta `kerna/`; usuario sin privilegios).
 
+Despliegue: contenedor `conector` del grupo de Veridy en Azure (`infra/veridy/terraform/conector.tf`, alta en
+`infra/veridy/README.md`). El grupo ejecuta `entrada.py`, que lee de Key Vault `veridy-kerna-conector-password`,
+`kerna-client-id`, `kerna-client-secret` y `conector-pg-password` con la identidad administrada, arma
+`CONECTOR_ESTADO` (base `kerna_conector`, rol `kerna_conector`, TLS verificado), hace que `VERIDY_RESOLVER_LOCAL`
+(nombre público de Veridy) resuelva a 127.0.0.1 y ejecuta el conector. `VERIDY_URL` es `https://<nombre público>:8443`.
+Todas las peticiones a Veridy llevan `?kerna_conector=1` para que el vigía de inactividad no las cuente como uso.
+
 Variables: `VERIDY_URL`, `VERIDY_USUARIO`, `VERIDY_PASSWORD`, `VERIDY_TID` (0), `KERNA_API_URL`, `KERNA_CLIENT_ID`,
 `KERNA_CLIENT_SECRET`, `KERNA_ID_EMPRESA` (`veridy`), `CONECTOR_INTERVALO_S` (30), `CONECTOR_ESTADO`
 (`sqlite:///ruta` o URI de PostgreSQL; por defecto `sqlite:///conector.db`), `APPLICATIONINSIGHTS_CONNECTION_STRING`.

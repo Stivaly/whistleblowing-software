@@ -49,6 +49,15 @@ def prueba_de_trabajo(id_token: str, salt_b64: str, tope: int = 5_000_000) -> in
     raise ErrorVeridy("prueba de trabajo sin solución")
 
 
+MARCA_PETICION = "kerna_conector=1"
+
+
+def _marca(ruta: str) -> str:
+    """Parámetro inocuo que identifica las peticiones del conector en el access.log de Veridy: el vigía de
+    inactividad no las cuenta como uso."""
+    return ("&" if "?" in ruta else "?") + MARCA_PETICION
+
+
 class ClienteVeridy:
     def __init__(self, url: str, usuario: str, password: str, tid: int = 0,
                  http: Optional[httpx.Client] = None, reloj=time.monotonic, vida_sesion_s: float = VIDA_SESION_S):
@@ -67,7 +76,7 @@ class ClienteVeridy:
     # ---- sesión -------------------------------------------------------------------------------------------
     def _crudo(self, metodo: str, ruta: str, json: Any = None, cabeceras: Optional[dict] = None) -> httpx.Response:
         try:
-            return self._http.request(metodo, self._url + ruta, json=json, headers=cabeceras or {})
+            return self._http.request(metodo, self._url + ruta + _marca(ruta), json=json, headers=cabeceras or {})
         except httpx.HTTPError as exc:
             raise ErrorVeridy("error de red hacia Veridy (%s)" % type(exc).__name__) from None
 

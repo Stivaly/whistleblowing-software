@@ -7,7 +7,8 @@ administrada. Encender es manual (infra/veridy/veridy.sh encender).
 
 "Uso" = una petición exitosa (2xx/3xx) a /api/ distinta de /api/health. Los bots que
 recorren IPs públicas piden páginas sueltas o rutas inexistentes, pero no ejecutan la
-aplicación, así que no la mantienen encendida.
+aplicación, así que no la mantienen encendida. Tampoco cuentan las peticiones del Conector Veridy
+(llevan el parámetro kerna_conector=1): sondea cada 30 s y impediría el apagado.
 
 Si existe /control/mantener_hasta con una fecha ISO futura (veridy.sh mantener), no apaga.
 Solo usa la biblioteca estándar de Python.
@@ -27,6 +28,11 @@ LOG = os.environ.get("VERIDY_ACCESS_LOG", "/var/globaleaks/log/access.log")
 MANTENER = os.environ.get("VERIDY_MANTENER", "/control/mantener_hasta")
 INACTIVIDAD = int(os.environ.get("VERIDY_INACTIVIDAD_MIN", "60")) * 60
 USO = re.compile(r'"[A-Z]+ /api/(?!health[ ?/])[^"]*" [23]\d\d ')
+CONECTOR = "kerna_conector=1"
+
+
+def hay_uso(texto: str) -> bool:
+    return any(USO.search(l) and CONECTOR not in l for l in texto.splitlines())
 
 
 def decir(msg: str):
@@ -78,7 +84,7 @@ def main():
                 f.seek(posicion)
                 nuevo = f.read().decode(errors="replace")
                 posicion = f.tell()
-            if USO.search(nuevo):
+            if hay_uso(nuevo):
                 ultimo_uso = time.time()
 
         if mantener_activo():

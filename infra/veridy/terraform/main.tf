@@ -273,6 +273,19 @@ resource "azurerm_container_group" "veridy" {
     }
   }
 
+  # Conector Veridy (conector.tf): solo con crear_conector = true
+  dynamic "container" {
+    for_each = local.conector == null ? [] : [local.conector]
+    content {
+      name                  = "conector"
+      image                 = container.value.imagen
+      cpu                   = 0.5
+      memory                = 0.5
+      commands              = ["python", "/app/conector/entrada.py"]
+      environment_variables = container.value.entorno
+    }
+  }
+
   depends_on = [
     azurerm_role_assignment.veridy_acr_pull,
     azurerm_role_assignment.veridy_kv_lectura,
