@@ -3,8 +3,10 @@ import {FormsModule} from "@angular/forms";
 import {TranslateService} from "@ngx-translate/core";
 import {KernaService} from "./kerna.service";
 import {KernaIconoComponent} from "./kerna-icono.component";
+import {KernaDibujoComponent} from "./kerna-dibujo.component";
+import {SEGMENTOS_ANILLO} from "./kerna-ilustraciones";
 import {KernaArticulo, KernaArticuloClasificado, MAX_OBSERVACION} from "./kerna-notas";
-import {ResultadoEstado, claveTexto, codigoSeguimiento, esProvisional, tieneArticulos} from "./kerna-estados";
+import {ResultadoEstado, claveEscena, claveTexto, materiaDe, numeroArticulo, segmentosConfianza, codigoSeguimiento, esProvisional, tieneArticulos} from "./kerna-estados";
 
 interface Valoracion {
   valor: "arriba" | "abajo" | null;
@@ -21,7 +23,7 @@ interface Valoracion {
 @Component({
   selector: "src-kerna-panel",
   standalone: true,
-  imports: [FormsModule, KernaIconoComponent],
+  imports: [FormsModule, KernaIconoComponent, KernaDibujoComponent],
   templateUrl: "./kerna-panel.component.html"
 })
 export class KernaPanelComponent {
@@ -31,6 +33,23 @@ export class KernaPanelComponent {
   protected readonly maxObservacion = MAX_OBSERVACION;
   protected claveTexto = claveTexto;
   protected tieneArticulos = tieneArticulos;
+  protected segmentosDibujo = SEGMENTOS_ANILLO;
+
+  protected escena(e: ResultadoEstado): string {
+    return claveEscena(e.id, e.variante);
+  }
+
+  protected materia(a: KernaArticulo) {
+    return materiaDe(a.norma);
+  }
+
+  protected numero(a: KernaArticulo): string {
+    return numeroArticulo(a.articulo);
+  }
+
+  protected segmentos(a: KernaArticulo): number {
+    return segmentosConfianza(a.confianza);
+  }
 
   protected incluidos = new Set<string>();
   protected agregados: string[] = [];

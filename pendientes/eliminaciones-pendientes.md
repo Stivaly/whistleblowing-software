@@ -14,3 +14,8 @@ Revisa cada fila y, si apruebas, bórralo tú manualmente (`rm -r .papelera/...`
 - La usuaria pidió eliminar todo lo histórico de Docker. El clasificador de permisos bloquea a Claude; queda el script
   `infra/limpiar_docker.sh` para que lo ejecute ella (contenedores de prueba detenidos, imágenes viejas, caché de build).
   No toca imágenes desplegadas, contenedores en ejecución ni volúmenes.
+
+## 2026-11-11 — Identidad v3 "Núcleo" en el bloque de Kerna
+- No se movió ningún archivo. Se sustituyó la sección `.kerna-*` de `client/app/css/main.css` por `client/app/css/components/kerna.css`.
+  Copia de la versión anterior de `main.css` (con la sección vieja) en `.papelera/2026-11-11/client/app/css/main.css`. Motivo: estilos del bloque Kerna acotados a su propio archivo.
+- Las siluetas SVG de `kerna-glifo.component.ts` y el ícono "artículo marcado" de `kerna-icono.component.ts` fueron reemplazados por las escenas/logo de Núcleo (quedan en el historial de git).

@@ -1,9 +1,13 @@
 @if (k.resultado(); as e) {
   @if (k.abierto()) {
     <section class="card card-default kerna-panel" id="kerna-panel" data-cy="kerna-panel" [attr.data-estado]="e.id" aria-labelledby="kerna-panel-titulo">
-      <div class="card-header d-flex justify-content-between align-items-center kerna-panel-cabecera">
-        <h2 id="kerna-panel-titulo" class="kerna-panel-titulo"><src-kerna-icono></src-kerna-icono><span>{{ t('kerna.panel.titulo') }}</span></h2>
-        <span class="kerna-chip">{{ t(claveTexto(e, 'etiqueta')) }}</span>
+      <div class="card-header kerna-panel-cabecera">
+        <h2 id="kerna-panel-titulo" class="kerna-panel-titulo"><src-kerna-icono></src-kerna-icono><span class="kerna-marca" aria-hidden="true">Kerna</span><span class="visually-hidden">{{ t('kerna.panel.titulo') }}</span></h2>
+        <span class="kerna-chip"><i aria-hidden="true"></i>{{ t(claveTexto(e, 'etiqueta')) }}</span>
+      </div>
+      <div class="kerna-hero" aria-hidden="true">
+        <div class="kerna-parche"><src-kerna-dibujo [escena]="escena(e)"></src-kerna-dibujo></div>
+        <p class="kerna-etq">{{ t(claveTexto(e, 'etiqueta')) }}</p>
       </div>
       <div class="card-body">
         <div class="kerna-aviso" role="note" data-cy="kerna-aviso-permanente">{{ t('kerna.aviso.permanente') }}</div>
@@ -20,7 +24,11 @@
             @for (a of articulos(e); track a.id_sugerencia) {
               <article class="kerna-articulo" data-cy="kerna-articulo">
                 <div class="kerna-articulo-cab">
-                  <h3 class="kerna-articulo-titulo">{{ a.norma }} · {{ a.articulo }}</h3>
+                  <src-kerna-dibujo class="kerna-mat" [materia]="materia(a)"></src-kerna-dibujo>
+                  <h3 class="kerna-articulo-titulo"><span class="kerna-num" aria-hidden="true"><small>Art.</small>{{ numero(a) }}</span><span class="kerna-norma">{{ a.norma }} · {{ a.articulo }}</span></h3>
+                  <svg class="kerna-anillo kerna-svg" viewBox="0 0 36 36" role="img" [attr.aria-label]="t('kerna.confianza', {n: segmentos(a)})">
+                    @for (d of segmentosDibujo; track $index) { <path [attr.d]="d" [class]="$index < segmentos(a) ? 'seg' : 'seg vac'"/> }
+                  </svg>
                   <label class="kerna-casilla">
                     <input type="checkbox" [checked]="incluidos.has(a.id_articulo)" [disabled]="deshabilitado(e)"
                            (change)="alternarIncluido(a.id_articulo, $any($event.target).checked)">

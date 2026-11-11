@@ -643,6 +643,7 @@
   "Anonymous": "Anónimo",
   "Subscribed": "Suscrito",
   "kerna.panel.titulo": "Sugerencia normativa de Kerna",
+  "kerna.confianza": "Confianza {{n}} de 10",
   "kerna.aviso.permanente": "Sugerencia asistida: no es un dictamen jurídico. La decisión y la clasificación final son tuyas.",
   "kerna.tooltip.resumen": "Resumen",
   "kerna.tooltip.modo": "Modo",

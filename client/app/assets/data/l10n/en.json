@@ -596,6 +596,7 @@
   "Role: {Role}": "Role: {Role}",
   "Password: {Password}": "Password: {Password}",
   "kerna.panel.titulo": "Sugerencia normativa de Kerna",
+  "kerna.confianza": "Confidence {{n}} of 10",
   "kerna.aviso.permanente": "Sugerencia asistida: no es un dictamen jurídico. La decisión y la clasificación final son tuyas.",
   "kerna.tooltip.resumen": "Resumen",
   "kerna.tooltip.modo": "Modo",

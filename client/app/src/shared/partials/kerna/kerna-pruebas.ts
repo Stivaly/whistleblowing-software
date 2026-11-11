@@ -10,7 +10,8 @@ import * as assert from "assert";
 import {extraerNotas, esNotaKerna, idCuentaKerna, parsearNota, ComentarioEntrada, DestinatarioEntrada} from "./kerna-notas";
 import {
   ESTADOS, EstadoId, UMBRAL_CONECTOR_MS, UMBRAL_ESPERA_MS, VENTANA_CASO_NUEVO_MS, ResultadoEstado,
-  claveModo, claveTexto, codigoSeguimiento, deducirEstado, esProvisional, resumen, tieneArticulos
+  claveModo, claveTexto, codigoSeguimiento, deducirEstado, esProvisional, resumen, tieneArticulos,
+  claveEscena, materiaDe, numeroArticulo, segmentosConfianza
 } from "./kerna-estados";
 
 const KERNA = "u-kerna";
@@ -223,6 +224,20 @@ caso("si hay dos sugerencias vale la de generado_en más reciente", () => {
   const vieja = sugerencia({generado_en: new Date(CREACION + 10 * 1000).toISOString(), id_solicitud: "vieja"});
   const nueva = sugerencia({generado_en: new Date(CREACION + 20 * 1000).toISOString(), id_solicitud: "nueva"});
   assert.equal(extraerNotas([comentario(KERNA, nueva), comentario(KERNA, vieja)], DEST).sugerencia?.id_solicitud, "nueva");
+});
+caso("materia según la ley, segmentos del anillo y número de artículo", () => {
+  assert.equal(materiaDe("Ley 21.643 (Ley Karin)"), "karin");
+  assert.equal(materiaDe("Ley 19.628"), "datos");
+  assert.equal(materiaDe("Ley N° 20.393"), "penal");
+  assert.equal(materiaDe("Código del Trabajo"), "otra");
+  assert.equal(segmentosConfianza(0.87), 9);
+  assert.equal(segmentosConfianza(2), 10);
+  assert.equal(segmentosConfianza(NaN), 0);
+  assert.equal(numeroArticulo("Artículo 5 bis"), "5 bis");
+  assert.equal(numeroArticulo("Art. 160"), "160");
+  assert.equal(claveEscena("contingencia", "busqueda"), "contingencia-busqueda");
+  assert.equal(claveEscena("conector-inactivo", "en-proceso"), "conector-en-proceso");
+  assert.equal(claveEscena("lista", null), "lista");
 });
 
 if (casos.length) {

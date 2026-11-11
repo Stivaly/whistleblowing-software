@@ -1,0 +1,4 @@
+Unbounded - Copyright 2022 The Unbounded Project Authors (https://github.com/w3nu/Unbounded)
+JetBrains Mono - Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+Ambas se distribuyen bajo la SIL Open Font License, Version 1.1 (https://openfontlicense.org).
+Se sirven desde esta carpeta (sin CDN) porque Veridy tambien corre por Tor.

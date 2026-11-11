@@ -184,3 +184,41 @@ export function codigoSeguimiento(r: ResultadoEstado): string | null {
   }
   return null;
 }
+
+/** Escena ilustrada (kerna-ilustraciones.ts) de un estado; las variantes con texto propio tienen escena propia. */
+export function claveEscena(id: EstadoId, variante: Variante): string {
+  if (id === "contingencia") {
+    return variante === "busqueda" ? "contingencia-busqueda" : "contingencia-modelo";
+  }
+  if (id === "conector-inactivo") {
+    return variante === "en-proceso" ? "conector-en-proceso" : "conector-sin-nota";
+  }
+  return id;
+}
+
+/** Pictograma de materia según la ley del artículo: Ley Karin (21.643), datos personales (19.628), responsabilidad penal (20.393). */
+export function materiaDe(norma: string): "karin" | "datos" | "penal" | "otra" {
+  const n = norma.toLowerCase();
+  if (n.includes("21.643") || n.includes("21643") || n.includes("karin")) {
+    return "karin";
+  }
+  if (n.includes("19.628") || n.includes("19628")) {
+    return "datos";
+  }
+  if (n.includes("20.393") || n.includes("20393")) {
+    return "penal";
+  }
+  return "otra";
+}
+
+/** Segmentos encendidos (de 10) del anillo de confianza; la confianza del contrato va de 0 a 1. */
+export function segmentosConfianza(confianza: number): number {
+  const c = Number.isFinite(confianza) ? Math.min(Math.max(confianza, 0), 1) : 0;
+  return Math.round(c * 10);
+}
+
+/** Número de artículo para mostrar en grande ("Artículo 5 bis" -> "5 bis"); si no hay número, el texto completo. */
+export function numeroArticulo(articulo: string): string {
+  const m = /(\d+(?:\s?[-–]?\s?(?:bis|ter|quáter|quater|[a-z]))?)/i.exec(articulo);
+  return m ? m[1] : articulo;
+}
