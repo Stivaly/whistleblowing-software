@@ -19,4 +19,5 @@
 - Veridy corre en Azure Container Instances con su PostgreSQL, ambos en `rg-veridy-dev` (Terraform en `infra/veridy/terraform`, separado del de Kerna). Se controla con `infra/veridy/veridy.sh encender | apagar | estado | mantener 3d | logs`.
 - Encender lo decide la usuaria (excepción: Fable mientras ejecuta el plan del MVP, ver `kerna-vault/reglas.md`). El vigía del grupo (`infra/veridy/contenedor/vigia.py`) apaga Veridy y PostgreSQL tras 60 min sin uso.
 - Si aparece un error de conexión a Veridy o a su base (`OperationalError`, `could not connect`, `Connection refused`, `timeout`): `infra/veridy/veridy.sh estado`. Si está apagado, decírselo a la usuaria y darle el comando `infra/veridy/veridy.sh encender` (Fable, en el MVP, lo enciende él mismo).
+- Cambios de Terraform (Veridy o Kerna): no dar a la usuaria comandos `terraform` sueltos; dejar el cambio en los `.tf`/`tfvars` y que ejecute `infra/aplicar.sh veridy|kerna` (init + plan + confirmación + apply).
 - Si `az` responde `AADSTS50076` (MFA), pedir a la usuaria que repita `az login`.
