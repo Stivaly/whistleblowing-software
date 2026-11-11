@@ -42,7 +42,7 @@ con `extra="ignore"` al leer. `version` actual: 1.
 | `motivo_revision` | str \| null | `tiempo_agotado`, `cadena_agotada`, `validacion_fallida`, `sin_normativa_aplicable` |
 | `modo` | `"oficial"` \| `"respaldo"` \| `"local"` \| `"manual"` | Modo de generación |
 | `recuperacion` | `"nube"` \| `"local"` | Índice con que se recuperó |
-| `contingencia` | bool | `true` si `modo` no es `oficial` o `recuperacion` es `local` |
+| `contingencia` | bool | `true` si `modo` no es `oficial` o `recuperacion` es `local`. Toda `revision_manual` lleva `modo: "manual"` |
 | `generado_en` | str ISO 8601 UTC | |
 | `articulos` | lista | Vacía si `estado` es `revision_manual` |
 | `articulos[].id_sugerencia` | str UUID | |
@@ -92,7 +92,7 @@ Autenticación: OAuth 2.0 *client credentials*. El núcleo emite un JWT HS256 de
 |---|---|---|
 | `GET /salud` | — | `200 {"estado":"ok","version":...}`. Sin autenticación ni llamadas a proveedores |
 | `POST /oauth/token` | Formulario `grant_type=client_credentials`, `client_id`, `client_secret` | `200 {"access_token","token_type":"bearer","expires_in":600}`; `401` si no coincide |
-| `POST /v1/casos` | `{"ref_opaca": uuid, "id_empresa": str, "texto": str}` | `202 {"id_solicitud","estado":"pendiente"}`. Idempotente por (`cliente`, `ref_opaca`): repetirla devuelve la misma solicitud y no la procesa otra vez |
+| `POST /v1/casos` | `{"ref_opaca": uuid, "id_empresa": str, "texto": str}` | `202 {"id_solicitud","estado":"pendiente"}`. Idempotente por (`cliente`, `ref_opaca`): repetirla devuelve la misma solicitud con su estado actual y no la procesa otra vez |
 | `GET /v1/casos/{ref_opaca}/sugerencia` | — | `200` con el objeto de resultado (abajo); `404` si no existe |
 | `POST /v1/casos/{ref_opaca}/feedback` | `{"id_nota": str, "id_sugerencia": str, "valoracion": "arriba"\|"abajo", "observacion": str?}` | `201`; `200` si `id_nota` ya estaba (idempotente); `404` |
 | `POST /v1/casos/{ref_opaca}/clasificacion` | `{"id_nota": str, "articulos": [{"id_articulo","origen"}], "observacion": str?}` | `201 {"resultado": "aceptada"\|"corregida"\|"rechazada"}`; idempotente por `id_nota` |
@@ -133,8 +133,8 @@ Orden fijo, ejecutado en segundo plano tras aceptar la solicitud:
   usa `gemini-3.5-flash-lite` con la misma cadena de respaldo.
 - Por cada nivel: hasta 3 reintentos con esperas de 1, 2 y 4 s ante error del servidor (5xx), límite de tasa (429) o
   silencio; cada llamada se corta a los 30 s. Agotados, pasa al nivel siguiente.
-- Cortocircuito: un proveedor con 3 fallas en 5 minutos queda excluido 10 minutos y se readmite tras una
-  comprobación de salud correcta.
+- Cortocircuito por nivel de la cadena (modelo): con 3 fallas en 5 minutos queda excluido 10 minutos y se
+  readmite tras una comprobación de salud correcta.
 - Plazo global de 240 s por solicitud: al vencer, `revision_manual` con motivo `tiempo_agotado`.
 - El reloj y las esperas se inyectan (`reloj`, `dormir`) para probar con tiempo controlado.
 

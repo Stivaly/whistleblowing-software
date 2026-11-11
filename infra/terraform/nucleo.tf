@@ -128,7 +128,7 @@ resource "azurerm_container_app" "nucleo" {
 
   ingress {
     external_enabled           = true
-    target_port                = 8000
+    target_port                = 8080
     allow_insecure_connections = false
 
     traffic_weight {
@@ -185,12 +185,12 @@ resource "azurerm_container_app" "nucleo" {
       liveness_probe {
         transport = "HTTP"
         path      = "/salud"
-        port      = 8000
+        port      = 8080
       }
       startup_probe {
         transport = "HTTP"
         path      = "/salud"
-        port      = 8000
+        port      = 8080
       }
     }
   }
