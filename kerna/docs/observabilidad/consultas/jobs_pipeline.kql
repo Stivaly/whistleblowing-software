@@ -1,0 +1,11 @@
+// Resultado de los jobs del pipeline y de la evaluación (Container Apps): una fila por ejecución.
+// Una ejecución falló si algún contenedor terminó con código distinto de 0 o el job agotó reintentos o plazo.
+ContainerAppSystemLogs_CL
+| where TimeGenerated > ago(7d) and isnotempty(JobName_s)
+| extend fallo = Reason_s in ("BackoffLimitExceeded", "DeadlineExceeded")
+                 or (Reason_s == "ContainerTerminated" and Log_s !has "exit code '0'"),
+         completado = Reason_s == "Completed" or (Reason_s == "ContainerTerminated" and Log_s has "exit code '0'")
+| summarize inicio = min(TimeGenerated), fin = max(TimeGenerated), fallo = max(toint(fallo)), completado = max(toint(completado)) by job = JobName_s, ejecucion = ExecutionName_s
+| extend resultado = case(fallo == 1, "fallida", completado == 1, "completada", "en curso"), duracion_min = round((fin - inicio) / 1m, 1)
+| project inicio, job, ejecucion, resultado, duracion_min
+| order by inicio desc

@@ -1,0 +1,9 @@
+// Errores por proveedor: niveles de la cadena que fallaron (nivel_fallido), recuperación en la nube o local que falló
+// y cortocircuitos abiertos. nivel_fallido trae el modelo y el modo; los demás, el proveedor.
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo"
+| where Message in ("nivel_fallido", "recuperacion_nube_fallida", "recuperacion_local_fallida", "cortocircuito_abierto")
+| extend proveedor = coalesce(tostring(Properties.proveedor), "generacion"), modelo = tostring(Properties.modelo),
+         codigo = tostring(Properties.codigo)
+| summarize eventos = count() by evento = Message, proveedor, modelo, codigo
+| order by eventos desc

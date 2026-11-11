@@ -1,0 +1,8 @@
+// Latencia por etapa de la cadena (anonimizacion, clasificacion, recuperacion, generacion, validacion): P50, P95 y máximo.
+// Fuente: AppTraces del núcleo, eventos de clase "etapa" (propiedades duracion_ms y etapa).
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo"
+| where tostring(Properties.clase) == "etapa"
+| extend etapa = tostring(Properties.etapa), duracion_ms = todouble(Properties.duracion_ms)
+| summarize solicitudes = count(), p50_ms = percentile(duracion_ms, 50), p95_ms = percentile(duracion_ms, 95), max_ms = max(duracion_ms) by etapa
+| order by p95_ms desc

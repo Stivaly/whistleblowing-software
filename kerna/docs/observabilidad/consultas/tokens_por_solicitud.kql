@@ -1,0 +1,8 @@
+// Tokens por solicitud (suma de la cadena: clasificación, embedding de consulta y generación), por modo.
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| extend modo = coalesce(tostring(Properties.modo), "manual"), entrada = todouble(Properties.tokens_entrada), salida = todouble(Properties.tokens_salida)
+| where isnotnull(entrada)
+| summarize solicitudes = count(), tokens_entrada_prom = round(avg(entrada)), tokens_salida_prom = round(avg(salida)),
+            tokens_entrada_total = sum(entrada), tokens_salida_total = sum(salida) by modo
+| order by solicitudes desc

@@ -1,0 +1,7 @@
+// Tasa de conmutación por día: solicitudes terminadas fuera del camino oficial (modo no oficial o recuperación local).
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| extend modo = coalesce(tostring(Properties.modo), "manual"), recuperacion = coalesce(tostring(Properties.recuperacion), "nube")
+| summarize solicitudes = count(), conmutadas = countif(modo != "oficial" or recuperacion == "local") by bin(TimeGenerated, 1d)
+| extend tasa_conmutacion_pct = round(100.0 * conmutadas / solicitudes, 1)
+| order by TimeGenerated asc

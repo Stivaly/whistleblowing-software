@@ -1,0 +1,7 @@
+// ALERTA: tasa de conmutación sobre 10 % en las últimas 6 horas (con al menos 5 solicitudes).
+AppTraces
+| where TimeGenerated > ago(6h) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| extend modo = coalesce(tostring(Properties.modo), "manual"), recuperacion = coalesce(tostring(Properties.recuperacion), "nube")
+| summarize solicitudes = count(), conmutadas = countif(modo != "oficial" or recuperacion == "local")
+| extend tasa_pct = round(100.0 * conmutadas / solicitudes, 1)
+| where solicitudes >= 5 and tasa_pct > 10

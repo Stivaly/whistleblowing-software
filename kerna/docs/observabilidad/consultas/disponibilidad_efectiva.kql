@@ -1,0 +1,9 @@
+// Disponibilidad efectiva = solicitudes con sugerencia (estado completada) / solicitudes válidas.
+// Válidas: todas las terminadas salvo las sin_normativa_aplicable (respuesta legítima sin sugerencia).
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| extend estado = tostring(Properties.estado), motivo = tostring(Properties.motivo)
+| where motivo != "sin_normativa_aplicable"
+| summarize validas = count(), con_sugerencia = countif(estado == "completada") by bin(TimeGenerated, 1d)
+| extend disponibilidad_pct = round(100.0 * con_sugerencia / validas, 1)
+| order by TimeGenerated asc

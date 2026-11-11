@@ -1,0 +1,12 @@
+// Calidad de la generación: JSON válido (etapa generacion) y citas rechazadas por la validación (etapa validacion).
+let json = AppTraces
+    | where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "generacion"
+    | summarize generaciones = count(), json_valido = countif(tostring(Properties.json_valido) =~ "true") by dia = bin(TimeGenerated, 1d);
+let citas = AppTraces
+    | where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "validacion"
+    | summarize validaciones = count(), articulos_aceptados = sum(toint(Properties.articulos)), citas_rechazadas = sum(toint(Properties.citas_rechazadas)) by dia = bin(TimeGenerated, 1d);
+json
+| join kind=fullouter citas on dia
+| project dia = coalesce(dia, dia1), generaciones, json_valido, json_valido_pct = round(100.0 * json_valido / generaciones, 1),
+          validaciones, articulos_aceptados, citas_rechazadas
+| order by dia asc
