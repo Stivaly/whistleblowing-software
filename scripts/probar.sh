@@ -101,7 +101,7 @@ capa_e2e() {
   DENTRO+=("$CONT_E2E")
   docker exec "$CONT_E2E" sh -c 'PYTHONPATH=/tmp/pylib python3 -c "import pytest, pytest_timeout, playwright" 2>/dev/null || python3 -m pip install -q --target /tmp/pylib pytest pytest-timeout playwright==1.64.0' \
     > "$OUT/salida-e2e-preparar.log" 2>&1
-  docker exec -e VERIDY_URL="$url" -e VERIDY_USUARIO -e VERIDY_PASSWORD -e KERNA_ARTEFACTOS=/reporte/artefactos-e2e \
+  docker exec -e VERIDY_URL="$url" -e VERIDY_USUARIO -e VERIDY_PASSWORD -e VERIDY_RECIBO -e KERNA_ARTEFACTOS=/reporte/artefactos-e2e \
     -e KERNA_MARCAS_JSON=/reporte/marcas-e2e.json -e KERNA_SEMILLA -e PYTHONDONTWRITEBYTECODE=1 \
     -e PYTHONPATH=/tmp/pylib:/repo/kerna/pruebas -w /repo/kerna "$CONT_E2E" \
     python3 -m pytest -c /repo/kerna/pytest.ini --rootdir /repo/kerna -p plugin_resumen -p no:cacheprovider -q \

@@ -1,0 +1,30 @@
+{
+  "commit": "80d0d8b34+cambios",
+  "fecha_utc": "2026-11-11T15:14:29Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "unitarias": {
+      "total": 308,
+      "pasadas": 308,
+      "fallidas": 0,
+      "omitidas": 0,
+      "duracion_s": 24.7,
+      "lista_fallidas": [],
+      "conocidas": 0,
+      "error": null,
+      "estado": "ok"
+    },
+    "e2e": {
+      "total": 22,
+      "pasadas": 1,
+      "fallidas": 0,
+      "omitidas": 21,
+      "duracion_s": 710.0,
+      "lista_fallidas": [],
+      "conocidas": 0,
+      "error": null,
+      "estado": "ok"
+    }
+  },
+  "ok": true
+}

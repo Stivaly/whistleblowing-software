@@ -48,7 +48,7 @@ def pagina(navegador, request):
     nombre = request.node.nodeid.replace("/", "_").replace("::", "__")
     carpeta = ARTEFACTOS / nombre
     carpeta.mkdir(parents=True, exist_ok=True)
-    ctx = navegador.new_context(record_video_dir=str(carpeta), ignore_https_errors=False,
+    ctx = navegador.new_context(record_video_dir=str(carpeta), bypass_csp=True, ignore_https_errors=False,
                                 viewport={"width": 1280, "height": 800}, locale="es-CL")
     ctx.tracing.start(screenshots=True, snapshots=True)
     pag = ctx.new_page()

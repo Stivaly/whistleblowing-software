@@ -111,14 +111,19 @@ def _instalar_simulacion(pagina, edad_min, notas, cuenta_kerna=True):
         resp = ruta.fetch()
         datos = resp.json()
         ahora = datetime.now(timezone.utc)
-        receptores = [r for r in datos.get("receivers", []) if r.get("id") not in (ID_KERNA, ID_AUDITOR_SIM)]
+        # La instancia puede tener ya la cuenta y notas reales de Kerna: se retiran para que mande la simulación.
+        reales = {r.get("id") for r in datos.get("receivers", []) if (r.get("name") or "").strip().lower().startswith("kerna")}
+        receptores = [r for r in datos.get("receivers", [])
+                      if r.get("id") not in (ID_KERNA, ID_AUDITOR_SIM) and r.get("id") not in reales]
         if cuenta_kerna:
             receptores.append({"id": ID_KERNA, "name": NOMBRE_KERNA, "active": True})
         receptores.append({"id": ID_AUDITOR_SIM, "name": "Auditor simulado", "active": True})
         datos["receivers"] = receptores
         if edad_min is not None:
             datos["creation_date"] = _iso(ahora - timedelta(minutes=edad_min))
-        comentarios = [c for c in datos.get("comments", []) if c.get("author_id") not in (ID_KERNA, ID_AUDITOR_SIM)]
+        comentarios = [c for c in datos.get("comments", [])
+                       if c.get("author_id") not in (ID_KERNA, ID_AUDITOR_SIM) and c.get("author_id") not in reales
+                       and '"tipo": "kerna_' not in (c.get("content") or "") and '"tipo":"kerna_' not in (c.get("content") or "")]
         for i, (autor, nota) in enumerate(notas):
             comentarios.append({
                 "id": str(uuid.uuid4()), "creation_date": _iso(ahora - timedelta(seconds=90 - i)),
@@ -152,8 +157,11 @@ def caso_abierto(pagina, url_veridy, credenciales):
     def abrir(edad_min=3, notas=(), cuenta_kerna=True, esperar=True):
         pagina.unroute_all()
         _instalar_simulacion(pagina, edad_min, list(notas), cuenta_kerna)
-        pagina.goto(url_veridy + f"/#/reports/{id_caso}", wait_until="domcontentloaded")
-        pagina.reload(wait_until="domcontentloaded")
+        # Sin recargar: Veridy guarda la sesión en memoria y una recarga la cierra. Se vuelve a la lista y se
+        # entra otra vez al caso para que la vista lo pida de nuevo (ya con la simulación instalada).
+        pagina.evaluate("location.hash = '#/recipient/reports'")
+        pagina.wait_for_selector("tr.tip-action-open", timeout=30_000)
+        pagina.evaluate(f"location.hash = '#/reports/{id_caso}'")
         if esperar:
             try:
                 pagina.wait_for_selector("#kerna-indicador", timeout=25_000)

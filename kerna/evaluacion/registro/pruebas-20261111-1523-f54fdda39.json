@@ -1,0 +1,213 @@
+{
+  "commit": "f54fdda39+cambios",
+  "fecha_utc": "2026-11-11T15:29:29Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "e2e": {
+      "total": 22,
+      "pasadas": 5,
+      "fallidas": 15,
+      "omitidas": 2,
+      "duracion_s": 351.2,
+      "lista_fallidas": [
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_animacion_de_espera_respeta_reduced_motion",
+          "ids": {
+            "pr": [
+              "PR-13",
+              "PR-16",
+              "PR-17"
+            ]
+          },
+          "duracion_s": 1.2655
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[cadena-agotada]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 1.6704
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[conector-inactivo-en-proceso]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 1.6675
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[contingencia-busqueda-local]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 0.7539
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[contingencia-local]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 1.2534
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[contingencia-respaldo]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 1.4159
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[generando]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 1.5694
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[lista]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 1.7232
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[nucleo-no-disponible]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 1.3874
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[revision-tiempo]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 1.4738
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[valorada]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 1.6943
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_sin_conexion",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 1.2694
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_sin_cuenta_de_kerna_no_hay_indicador",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 2.6559
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_tooltip_hover_foco_esc_y_persistencia",
+          "ids": {
+            "pr": [
+              "PR-13",
+              "PR-16",
+              "PR-17"
+            ]
+          },
+          "duracion_s": 1.7324
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_valoracion_y_clasificacion_se_envian_como_notas_internas",
+          "ids": {
+            "cu": [
+              "CU-03",
+              "CU-04"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16",
+              "PR-18"
+            ]
+          },
+          "duracion_s": 30.9718
+        }
+      ],
+      "conocidas": 0,
+      "error": null,
+      "estado": "falla"
+    }
+  },
+  "ok": false
+}
