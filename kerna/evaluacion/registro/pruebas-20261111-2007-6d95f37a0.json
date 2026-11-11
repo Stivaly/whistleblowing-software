@@ -1,0 +1,44 @@
+{
+  "commit": "6d95f37a0+cambios",
+  "fecha_utc": "2026-11-11T20:14:25Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "e2e": {
+      "total": 23,
+      "pasadas": 20,
+      "fallidas": 2,
+      "omitidas": 1,
+      "duracion_s": 376.4,
+      "lista_fallidas": [
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_animacion_de_espera_respeta_reduced_motion",
+          "ids": {
+            "pr": [
+              "PR-13",
+              "PR-16",
+              "PR-17"
+            ]
+          },
+          "duracion_s": 46.1162
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[valorada]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 46.3388
+        }
+      ],
+      "conocidas": 0,
+      "error": null,
+      "estado": "falla"
+    }
+  },
+  "ok": false
+}

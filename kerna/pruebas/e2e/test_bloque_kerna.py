@@ -335,6 +335,42 @@ def test_valoracion_y_clasificacion_se_envian_como_notas_internas(pagina, caso_a
                                  {"id_articulo": "Otra norma, art. 5", "origen": "agregado_por_auditor"}]
 
 
+@pytest.mark.cu("CU-03")
+@pytest.mark.cu("CU-04")
+def test_voto_positivo_y_ninguno_aplica(pagina, caso_abierto):
+    id_caso = caso_abierto(3, [("kerna", _sugerencia(datetime.now(timezone.utc)))])
+    enviados = []
+
+    def capturar(ruta):
+        cuerpo = json.loads(ruta.request.post_data)
+        enviados.append(cuerpo)
+        ruta.fulfill(json={"id": str(uuid.uuid4()), "creation_date": _iso(datetime.now(timezone.utc)), "content": cuerpo["content"],
+                           "author_id": ID_AUDITOR_SIM, "visibility": cuerpo["visibility"], "type": None, "data": None})
+
+    pagina.route(re.compile(rf".*/api/recipient/rtips/{re.escape(id_caso)}/comments$"), capturar)
+    _indicador(pagina).click()
+    panel = pagina.locator("#kerna-panel")
+    panel.wait_for(state="visible")
+    # cada artículo tiene su propia valoración: se vota el segundo y solo ese queda marcado
+    arriba = panel.locator("[data-cy=kerna-voto-arriba]")
+    assert arriba.count() == 3
+    arriba.nth(1).click()
+    assert arriba.nth(1).get_attribute("aria-pressed") == "true"
+    assert arriba.nth(0).get_attribute("aria-pressed") == "false"
+    panel.locator("[data-cy=kerna-enviar-valoracion]").click()
+    pagina.wait_for_function("document.querySelectorAll('#kerna-panel .kerna-ok').length > 0")
+    assert len(enviados) == 1 and enviados[0]["visibility"] == "internal"
+    nota = json.loads(enviados[0]["content"])
+    assert nota["tipo"] == "kerna_feedback" and nota["valoracion"] == "arriba" and nota["id_sugerencia"] == "s-2"
+    # «ninguno aplica»: clasificación final sin artículos, aunque haya uno marcado
+    panel.locator(".kerna-casilla input").first.check()
+    panel.locator("[data-cy=kerna-ninguno]").click()
+    pagina.wait_for_timeout(500)
+    assert len(enviados) == 2 and enviados[1]["visibility"] == "internal"
+    nota = json.loads(enviados[1]["content"])
+    assert nota["tipo"] == "kerna_clasificacion" and nota["articulos"] == []
+
+
 # ---------------------------------------------------------------- el denunciante no ve nada de Kerna
 @pytest.mark.pr("PR-17")
 def test_el_denunciante_no_ve_nada_de_kerna(pagina, url_veridy):
