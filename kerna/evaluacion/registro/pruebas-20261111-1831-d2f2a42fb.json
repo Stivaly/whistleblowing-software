@@ -1,0 +1,19 @@
+{
+  "commit": "d2f2a42fb+cambios",
+  "fecha_utc": "2026-11-11T18:31:27Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "unitarias": {
+      "total": 313,
+      "pasadas": 313,
+      "fallidas": 0,
+      "omitidas": 0,
+      "duracion_s": 17.7,
+      "lista_fallidas": [],
+      "conocidas": 0,
+      "error": null,
+      "estado": "ok"
+    }
+  },
+  "ok": true
+}

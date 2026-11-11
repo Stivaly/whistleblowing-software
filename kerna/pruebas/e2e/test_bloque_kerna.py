@@ -164,9 +164,9 @@ def caso_abierto(pagina, url_veridy, credenciales):
         pagina.evaluate(f"location.hash = '#/reports/{id_caso}'")
         if esperar:
             try:
-                pagina.wait_for_selector("#kerna-indicador", timeout=25_000)
+                pagina.wait_for_selector("#kerna-indicador", timeout=45_000)
             except TiempoAgotado:
-                pytest.skip("la instancia desplegada aún no trae el bloque de Kerna (no existe #kerna-indicador)")
+                pytest.fail("no apareció #kerna-indicador en 45 s (instancia sin el bloque de Kerna o caso sin cargar)")
         return id_caso
 
     return abrir

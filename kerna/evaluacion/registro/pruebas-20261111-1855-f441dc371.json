@@ -1,0 +1,29 @@
+{
+  "commit": "f441dc371+cambios",
+  "fecha_utc": "2026-11-11T18:56:10Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "carga": {
+      "total": 2,
+      "pasadas": 1,
+      "fallidas": 1,
+      "omitidas": 0,
+      "duracion_s": 61.0,
+      "lista_fallidas": [
+        {
+          "nodeid": "carga::p95_sugerencia_lista",
+          "ids": {
+            "pr": [
+              "PR-30"
+            ]
+          },
+          "duracion_s": 0.0
+        }
+      ],
+      "conocidas": 0,
+      "error": null,
+      "estado": "falla"
+    }
+  },
+  "ok": false
+}

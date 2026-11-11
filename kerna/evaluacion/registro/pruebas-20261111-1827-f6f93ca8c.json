@@ -1,0 +1,150 @@
+{
+  "commit": "f6f93ca8c",
+  "fecha_utc": "2026-11-11T18:50:51Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "unitarias": {
+      "total": 313,
+      "pasadas": 311,
+      "fallidas": 2,
+      "omitidas": 0,
+      "duracion_s": 18.9,
+      "lista_fallidas": [
+        {
+          "nodeid": "pruebas/unitarias/test_pipeline_disparo.py::test_punto_meta_al_final_con_cambios",
+          "ids": {
+            "pr": [
+              "PR-07"
+            ]
+          },
+          "duracion_s": 0.0457
+        },
+        {
+          "nodeid": "pruebas/unitarias/test_pipeline_disparo.py::test_sin_cambios_no_llama_a_ningun_proveedor",
+          "ids": {
+            "pr": [
+              "PR-21"
+            ]
+          },
+          "duracion_s": 0.0673
+        }
+      ],
+      "conocidas": 0,
+      "error": null,
+      "estado": "falla"
+    },
+    "integracion": {
+      "total": 2,
+      "pasadas": 0,
+      "fallidas": 2,
+      "omitidas": 0,
+      "duracion_s": 120.4,
+      "lista_fallidas": [
+        {
+          "nodeid": "pruebas/integracion/test_conector_veridy_real.py::test_sesion_listado_y_lectura_reales",
+          "ids": {},
+          "duracion_s": 59.9999
+        },
+        {
+          "nodeid": "pruebas/integracion/test_nucleo_real.py::test_cadena_completa_real",
+          "ids": {
+            "pr": [
+              "PR-02"
+            ]
+          },
+          "duracion_s": 60.0037
+        }
+      ],
+      "conocidas": 0,
+      "error": null,
+      "estado": "falla"
+    },
+    "e2e": {
+      "total": 22,
+      "pasadas": 18,
+      "fallidas": 4,
+      "omitidas": 0,
+      "duracion_s": 356.8,
+      "lista_fallidas": [
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[contingencia-respaldo]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 30.0403
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[generando]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 30.0449
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[lista]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 30.0473
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[sin-info]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 30.6658
+        }
+      ],
+      "conocidas": 0,
+      "error": null,
+      "estado": "falla"
+    },
+    "carga": {
+      "total": 0,
+      "pasadas": 0,
+      "fallidas": 0,
+      "omitidas": 0,
+      "duracion_s": 0.0,
+      "lista_fallidas": [],
+      "conocidas": 0,
+      "error": null,
+      "estado": "ok"
+    },
+    "veridy": {
+      "total": 707,
+      "pasadas": 690,
+      "fallidas": 0,
+      "omitidas": 17,
+      "duracion_s": 945.1,
+      "lista_fallidas": [],
+      "conocidas": 0,
+      "error": null,
+      "estado": "ok"
+    }
+  },
+  "ok": false
+}
