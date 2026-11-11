@@ -121,7 +121,19 @@ Entre los abiertos:
 
 ## Candidatos no medidos
 
-- Qwen3-Embedding 8B: sin corrida registrada para este campo.
-- Qwen3-Embedding 4B (solo si el 8B no cabe): sin corrida registrada para este campo.
+- Qwen3-Embedding 8B: no cabe en el job de Azure (4 vCPU, 8 GiB, sin GPU): Ollama responde 500 al cargarlo.
+- Qwen3-Embedding 4B (solo si el 8B no cabe): en el job de Azure (4 vCPU, 8 GiB, sin GPU) no termina los 145 fragmentos y las 226 consultas en 60 min (dos intentos); a esa velocidad tampoco cumpliría la latencia de consulta.
 
-Pendiente: convertir los puntajes medidos a la escala de 1 a 5 (Tabla 28) para revisar la Tabla 9.
+## Calidad de recuperación medida, en escala de 1 a 5
+
+Regla: el recall@5 por artículo se divide en cinco tramos iguales hasta la meta de 0.80 (5: ≥ 0.80; 4: ≥ 0.60; 3: ≥ 0.40; 2: ≥ 0.20; 1: < 0.20). Reemplaza al puntaje de calidad basado en cifras del proveedor al recalcular el análisis ponderado del modelo de embeddings.
+
+| Candidato | recall@5 artículo | Puntaje |
+|---|---|---|
+| voyage-4-large | 0.393 | 2 |
+| voyage-law-2 | 0.557 | 3 |
+| text-embedding-3-large (Azure OpenAI) | 0.311 | 2 |
+| asimétrica: corpus voyage-4-large, consultas voyage-4-lite | 0.328 | 2 |
+| BGE-M3 | 0.311 | 2 |
+| EmbeddingGemma 300M (768 dims) | 0.230 | 2 |
+| multilingual-e5-large-instruct | 0.279 | 2 |

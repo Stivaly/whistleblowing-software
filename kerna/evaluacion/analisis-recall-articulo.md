@@ -99,6 +99,27 @@ Orden recomendado: probar A, A+B1, B2 y C sobre `text-embedding-3-large` (Azure 
 
 Antes de elegir modelo conviene además: (1) revisión jurídica de 30 casos fallidos para saber cuántos de los artículos recuperados son relevantes aunque no estén etiquetados (el dataset fija un único candidato en 33 de 61 casos, así que 0,80 puede ser inalcanzable con esa etiqueta); (2) decidir qué texto de la Ley 19.628 mide el dataset (el reformado, vigente desde el 2026-12-01, o el previo, que rige hasta entonces); (3) ampliar el corpus con los artículos del Código del Trabajo y del Código Penal que el dataset cita, o excluir esos casos de la meta.
 
+## 8. Variantes medidas (`text-embedding-3-large`, 1.024 dimensiones)
+
+Variantes del texto vectorizado por fragmento (§7) construidas con `variantes_texto.py` a partir de los 145 fragmentos vigentes de `job_embeddings/datos/fragmentos.json`, vectorizadas con Azure OpenAI en colecciones propias (`normativa_cl_eval_te3l_varA`, `normativa_cl_eval_te3l_varAB`; las de producción y `texto_embedding` no se tocan) y medidas con `recall_retriever.py` (mismas 113 consultas, mismo mapeo `concordancia`, 61 casos evaluables). `medir_variantes.py` ejecuta los tres pasos (`resumenes`, `vectorizar A|AB`, `medir A|AB`); las mediciones quedan en `registro/recall_retriever.jsonl`.
+
+- Base: `texto_embedding` actual.
+- A: `Ley N (nombre corto) · Art. N · <título> · Materias: ...` (hasta 6 materias BCN, sin la etiqueta "Ley no. N") y el texto sin el prefijo "Artículo N.- <título>.".
+- AB: A con una línea `Resumen: ...` (2 a 3 oraciones, 377 caracteres de media, en lenguaje de denuncia) entre el encabezado y el texto. Los resúmenes los generó `gemini-3.5-flash-lite` (temperatura 0,2) solo a partir del texto del artículo, sin consultas del dataset; cobertura 145 de 145 fragmentos, guardados en `datos/resumenes_materia.json` (no versionado). Sin revisión jurídica.
+
+| Variante | recall@5 por artículo [IC 95 %] | 19.628 | 20.393 | 21.643 | cobertura@5 | nDCG@10 | MRR | recall@5 por ley |
+|---|---|---|---|---|---|---|---|---|
+| Base | 0,311 [0,197; 0,426] | 0,304 | 0,000 | 0,429 | 0,199 | 0,181 | 0,167 | 0,879 |
+| A | 0,344 [0,230; 0,459] | 0,348 | 0,100 | 0,429 | 0,232 | 0,179 | 0,173 | 0,879 |
+| A + B (resumen) | 0,295 [0,180; 0,410] | 0,304 | 0,000 | 0,393 | 0,220 | 0,199 | 0,163 | 0,923 |
+
+Aciertos de 61 casos: base 19, A 21, A + B 18. Diferencia pareada frente a la base (bootstrap, 2.000 remuestreos): A +0,033 [0,000; +0,082] (2 casos ganados, ninguno perdido); A + B -0,016 (1 caso perdido, ninguno ganado). El recall@5 por ley (acierto de la ley correcta, 91 casos) es 0,879, 0,879 y 0,923.
+
+Lectura:
+- Ninguna variante se acerca a 0,80 ni separa su intervalo del de la base: A suma 2 aciertos de 61 (la Ley 20.393 pasa de 0 a 1 de 10 casos) y A + B no mejora el recall@5 por artículo.
+- El resumen no resuelve el caso de §3: el artículo 1 de la Ley 20.393 sigue sin entrar al top 5 de ninguno de sus casos (0 de 10). Sí sube el nDCG@10 (0,181 a 0,199, sobre todo en la Ley 21.643: 0,229 a 0,281) y la cobertura@5 frente a la base (0,199 a 0,220) y el recall por ley (0,879 a 0,923), es decir, acerca los candidatos al top 10 sin llevarlos al top 5.
+- Con 61 casos y un único candidato en 33 de ellos, diferencias de uno o dos casos no son concluyentes. El texto por fragmento no resuelve la brecha; las palancas de §6 (enrutar por ley, BM25) y de etiqueta o corpus (§1 a §3) pesan más.
+
 ## Azure OpenAI
 
 `embed_sync.py --proveedor azure-openai` falló por dos causas del lado del cliente, ambas corregidas en `pipeline_bcn/embed_sync.py`:
