@@ -202,27 +202,27 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
   código. No se modificó. Al retirarlo, rotar esa credencial.
 - `docs-auditoria-denuncias/03-puntos-extension.md`: se omitieron el host de Supabase y la contraseña antes de commitear.
 - `fable upgrades/` queda en `.gitignore` (referencia, puede estar desactualizada). Si se quiere versionar, quitar la línea.
-- [ ] `client/app/assets/data/l10n/es.json` (commit `i18n(es)`) parece de otra versión de GlobaLeaks: le faltan 14 claves
+- [x] (2026-11-11, 48 claves agregadas y «Specify» traducida) `client/app/assets/data/l10n/es.json` (commit `i18n(es)`) parece de otra versión de GlobaLeaks: le faltan 14 claves
       que la interfaz usa ("Analyst", "Reopen", "Mask", "Act on behalf of a whistleblower", "Unselect"…) y deja
       "Specify" sin traducir. Revisar o restaurar el de 5.0.85 y agregar encima las claves nuevas.
 - `docker/docker-compose.yml` y `pendientes/analisis-veridy/` mencionan la IP privada de la red local: no es un secreto.
 
 ## Decisiones de la usuaria (MVP, 2026-11-11)
-- [ ] **Alertas de Kerna**: `infra/terraform/observabilidad.tf` crea 4 reglas de consulta programada y un grupo de
+- [x] **Alertas de Kerna** (2026-11-11, decidido: no se crean; entorno de prueba, basta el Workbook): `infra/terraform/observabilidad.tf` crea 4 reglas de consulta programada y un grupo de
       acción por correo solo si `correo_alertas` tiene valor en `terraform.tfvars`. Las reglas tienen costo mensual
       fijo (bajo, por regla), por eso no se crearon. El Workbook «Kerna AI: resultados» ya está aplicado.
-- [ ] **Cuenta de destinatario para pruebas e2e** (bloquea que la capa e2e sea estable): hoy corren con `kerna-conector`
+- [ ] **Cuenta de destinatario para pruebas e2e** (2026-11-11: decidido usar `kerna-e2e`; falta crearla, no hay credencial de admin disponible para los agentes) (bloquea que la capa e2e sea estable): hoy corren con `kerna-conector`
       y fallan de forma intermitente (de 0 a 8 de 22 según la corrida). Veridy cierra las sesiones anteriores de un
       usuario en cada ingreso y el conector reingresa cada ~95 s. Hace falta crear en Veridy un destinatario de
       pruebas con acceso a los casos sintéticos y pasar `VERIDY_USUARIO` / `VERIDY_PASSWORD`. Por lo mismo, nadie debe
       iniciar sesión a mano con `kerna-conector`.
-- [ ] **Casos en revisión manual**: 7 denuncias sintéticas del 11-11 quedaron en `revision_manual` (límite de
+- [x] **Casos en revisión manual** (2026-11-11, decidido: sin reproceso; vienen de las pruebas masivas de embeddings): 7 denuncias sintéticas del 11-11 quedaron en `revision_manual` (límite de
       peticiones del proveedor de embeddings). El contrato no define reproceso; decidir si se agrega.
-- [ ] **Firewall de PostgreSQL de Veridy**: la regla `host-veridy` no cubre la IP actual de este servidor.
+- [ ] **Firewall de PostgreSQL de Veridy**: IP de `host-veridy` actualizada en `terraform.tfvars` (181.43.217.156); falta `infra/aplicar.sh veridy`.
 - [ ] **PR-30 (P95 de 15 s) no se cumple**: con `gemini-3.8-flash` respondiendo 429 `RESOURCE_EXHAUSTED` (cuota del nivel gratuito) todo sale en modo respaldo (28 a 120 s
       por caso) y el núcleo tarda ~25 s en despertar (escala a cero). Opciones: otra clave o nivel de pago de Gemini,
       otro modelo oficial, o `min_replicas = 1` en el núcleo (costo fijo).
-- [ ] **Migraciones SQLite de Veridy**: 16 pruebas de `test_migration` fallan (línea base conocida, también en
+- [x] **Migraciones SQLite de Veridy** (2026-11-11, corregido: `wal_checkpoint` antes de mover `new.db`; 17/17; el fallo era anterior a `a9f5f5dae`): 16 pruebas de `test_migration` fallan (línea base conocida, también en
       `stable`): tras migrar, `sync_clean_untracked_files` consulta una base sin tablas. Viene del soporte de
       PostgreSQL (`a9f5f5dae`). No afecta al despliegue de Azure.
 - [ ] **Embeddings** (fase 3 cerrada, `kerna/evaluacion/informe-embeddings.md`): producción sigue con `voyage-4-large`.

@@ -1,6 +1,7 @@
 import importlib
 import os
 import shutil
+import sqlite3
 import sys
 from collections import OrderedDict
 
@@ -261,6 +262,14 @@ def perform_migration(version):
             version += 1
 
         perform_data_update(new_db_file)
+
+        # The new database runs in WAL mode and its pooled connections are still open:
+        # flush the WAL into the main file, as only that file is moved below.
+        conn = sqlite3.connect(new_db_file)
+        try:
+            conn.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+        finally:
+            conn.close()
     except:
         raise
     else:
