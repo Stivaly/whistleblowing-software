@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="320" height="240" style="--fondo:#F6D7E6;--txt:#6B0F3B;--acc:#B02A6B;--pi:#1E1B2E;--pf:#FBF6EA"><style>
+svg{display:block;overflow:visible}.o,.o2,.of,.oz,.th,.th2,.thz,.err,.chk,.chk2,.chk3,.puntada,.seg{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.o{stroke:var(--pi);stroke-width:3}.o2{stroke:var(--pi);stroke-width:2}.of{stroke:var(--pi);stroke-width:3;fill:var(--pf)}.oz{stroke:var(--pi);stroke-width:2;stroke-dasharray:4 4;fill:none}
+.th{stroke:var(--acc);stroke-width:4}.th2{stroke:var(--acc);stroke-width:2.5}.thz{stroke:var(--acc);stroke-width:3;stroke-dasharray:2 6}.err{stroke:var(--acc);stroke-width:3}
+.fa{fill:var(--acc)}.fi{fill:var(--pi)}.chk{stroke:var(--pf);stroke-width:3}.chk2{stroke:var(--pf);stroke-width:4}.chk3{stroke:var(--pf);stroke-width:7}
+.zt{font:700 14px Fraunces,serif;fill:var(--acc)}.puntada{stroke:var(--acc);stroke-width:3.2}.puntada.vac{stroke:var(--pi);stroke-width:1.6;stroke-dasharray:1.5 3;opacity:.7}
+.seg{stroke:var(--acc);stroke-width:3.4;stroke-linecap:butt}.seg.vac{stroke:var(--pi);stroke-width:2;opacity:.35}
+</style><g class="resp"><g ><circle class="of" cx="70" cy="66" r="30"/><path class="th2" d="M48.400000000000006,51.0 Q70,69.0 93.4,54.0"/><path class="th2" d="M44.5,69.0 Q73.0,87.0 86.5,84.0"/><path class="th2" d="M62.5,39.0 Q88.0,63.0 74.5,94.5"/></g></g><g class="zz"><text x="108" y="44" class="zt">z</text><text x="120" y="32" class="zt" style="font-size:20px">Z</text></g><g><circle class="of" cx="108" cy="86" r="14"/><rect class="fi" x="102" y="79" width="4.5" height="14" rx="1"/><rect class="fi" x="110.5" y="79" width="4.5" height="14" rx="1"/></g></svg>

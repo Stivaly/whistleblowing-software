@@ -1,0 +1,244 @@
+{
+ "A": {
+  "nombre": "Hilo",
+  "pagina": "#FFFFFF",
+  "panel": "#FBF6EA",
+  "tinta": "#1E1B2E",
+  "tonos": {
+   "neutro": [
+    "#ECE5D5",
+    "#3B3650",
+    "#6F6A86"
+   ],
+   "azul": [
+    "#DDE3F7",
+    "#1C2760",
+    "#3B4FB4"
+   ],
+   "verde": [
+    "#D7EBD2",
+    "#123D1B",
+    "#2F7A33"
+   ],
+   "ambar": [
+    "#F8E4AE",
+    "#4A3300",
+    "#8A5C00"
+   ],
+   "naranja": [
+    "#FADCC2",
+    "#5A2A06",
+    "#A34D00"
+   ],
+   "violeta": [
+    "#E8DAF1",
+    "#43185C",
+    "#8A3FB0"
+   ],
+   "cian": [
+    "#D3E9EB",
+    "#0F3F46",
+    "#2A7480"
+   ],
+   "rojo": [
+    "#F9D6CE",
+    "#6E1408",
+    "#B8321A"
+   ],
+   "magenta": [
+    "#F6D7E6",
+    "#6B0F3B",
+    "#B02A6B"
+   ],
+   "arena": [
+    "#E6DFCB",
+    "#433818",
+    "#7D6D45"
+   ],
+   "gris": [
+    "#3A3F4C",
+    "#FFFFFF",
+    "#FFC9A8"
+   ],
+   "fin": [
+    "#1F4F7A",
+    "#FFFFFF",
+    "#FFD36B"
+   ]
+  },
+  "fijos": [
+   [
+    "etiqueta grande: tinta / papel",
+    "#1E1B2E",
+    "#FBF6EA",
+    4.5
+   ],
+   [
+    "texto secundario / papel",
+    "#4A4560",
+    "#FBF6EA",
+    4.5
+   ],
+   [
+    "tarjeta: tinta / fondo tarjeta",
+    "#1E1B2E",
+    "#FFFDF7",
+    4.5
+   ],
+   [
+    "botón: papel / tinta",
+    "#FBF6EA",
+    "#1E1B2E",
+    4.5
+   ],
+   [
+    "hilo bermellón (gráficos) / papel",
+    "#B8321A",
+    "#FBF6EA",
+    3.0
+   ],
+   [
+    "hilo bermellón / tarjeta",
+    "#B8321A",
+    "#FFFDF7",
+    3.0
+   ],
+   [
+    "número de artículo bermellón / tarjeta",
+    "#B8321A",
+    "#FFFDF7",
+    4.5
+   ],
+   [
+    "borde de tarjeta / papel",
+    "#6F6A86",
+    "#FBF6EA",
+    3.0
+   ],
+   [
+    "panel / página blanca",
+    "#FBF6EA",
+    "#FFFFFF",
+    1.0
+   ]
+  ]
+ },
+ "B": {
+  "nombre": "Núcleo",
+  "pagina": "#FFFFFF",
+  "panel": "#0B1020",
+  "tinta": "#F2F5FF",
+  "tonos": {
+   "neutro": [
+    "#1A2036",
+    "#E4E8F5",
+    "#8D98BC"
+   ],
+   "azul": [
+    "#14244F",
+    "#E6EEFF",
+    "#7FA2FF"
+   ],
+   "verde": [
+    "#0F3A2A",
+    "#E3FBEF",
+    "#4EE08F"
+   ],
+   "ambar": [
+    "#3F3008",
+    "#FFF4D1",
+    "#FFC93C"
+   ],
+   "naranja": [
+    "#44230A",
+    "#FFEBDD",
+    "#FF9A4D"
+   ],
+   "violeta": [
+    "#2E1B52",
+    "#F3EAFF",
+    "#B58CFF"
+   ],
+   "cian": [
+    "#0C3A42",
+    "#E1FAFF",
+    "#4FD8E8"
+   ],
+   "rojo": [
+    "#4A1515",
+    "#FFE9E6",
+    "#FF6B5E"
+   ],
+   "magenta": [
+    "#4A1236",
+    "#FFE8F4",
+    "#FF6FB5"
+   ],
+   "arena": [
+    "#33301F",
+    "#F7F1DC",
+    "#C9BE8A"
+   ],
+   "gris": [
+    "#2A2F3D",
+    "#F2F5FF",
+    "#9AA6C4"
+   ],
+   "fin": [
+    "#CFFF5E",
+    "#0B1020",
+    "#0B1020"
+   ]
+  },
+  "fijos": [
+   [
+    "etiqueta grande / panel",
+    "#F2F5FF",
+    "#0B1020",
+    4.5
+   ],
+   [
+    "texto secundario / panel",
+    "#A9B4D6",
+    "#0B1020",
+    4.5
+   ],
+   [
+    "tarjeta: texto / fondo tarjeta",
+    "#F2F5FF",
+    "#131B35",
+    4.5
+   ],
+   [
+    "botón: panel / lima",
+    "#0B1020",
+    "#CFFF5E",
+    4.5
+   ],
+   [
+    "lima (gráficos) / panel",
+    "#CFFF5E",
+    "#0B1020",
+    3.0
+   ],
+   [
+    "lima / tarjeta",
+    "#CFFF5E",
+    "#131B35",
+    3.0
+   ],
+   [
+    "borde de tarjeta / panel",
+    "#5B6EB0",
+    "#0B1020",
+    3.0
+   ],
+   [
+    "panel / página blanca",
+    "#0B1020",
+    "#FFFFFF",
+    3.0
+   ]
+  ]
+ }
+}
