@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from kerna_comun import anonimizador, telemetria
 
 from . import prompts
+from .evaluador import Evaluador
 from .enrutador import CadenaAgotada, Enrutador, PlazoAgotado
 from .retriever import RecuperacionFallida, Retriever
 from .validador import validar
@@ -120,6 +121,8 @@ class Orquestador:
                     "modo": "manual", "articulos": [], **parcial}
         # 4. generación
         fragmentos = rec.fragmentos[: self.config.top_k]
+        if getattr(self.config, "evaluador", False) and len(rec.fragmentos) > 1:
+            fragmentos = await self._evaluar(limpio, rec.fragmentos, inicio, reg, base)
         with telemetria.etapa("generacion", **base) as a:
             gen = await self.enrutador.generar(prompts.SISTEMA_GENERADOR,
                                                prompts.usuario_generador(limpio, fragmentos, clasif["materia"], clasif["riesgo"]),
@@ -145,6 +148,20 @@ class Orquestador:
                               "articulo": _articulo(f), "explicacion": ac["explicacion"], "cita": ac["cita"],
                               "enlace_fuente": str(f.get("url_fuente") or ""), "confianza": ac["confianza"]})
         return {"estado": "completada", "motivo_revision": None, "articulos": articulos, **parcial}
+
+    async def _evaluar(self, limpio: str, candidatos: list, inicio: float, reg: dict, base: dict) -> list:
+        """Agente evaluador (KERNA_EVALUADOR): reordena los candidatos y entrega los top_k al agente final.
+        Cualquier falla conserva el orden del retriever; solo el plazo global se propaga."""
+        n = max(self.config.evaluador_candidatos, self.config.top_k)
+        ev = Evaluador(self.enrutador.generar, variante=self.config.evaluador_variante, salida=self.config.top_k)
+        with telemetria.etapa("evaluacion", **base) as a:
+            r = await ev.evaluar(limpio, candidatos[:n], inicio)
+            a.update(usado=r.usado, motivo=r.motivo, aplican=r.aplican, descartados_id=r.descartados_id,
+                     descartados_cita=r.descartados_cita, tokens_entrada=r.tokens_entrada,
+                     tokens_salida=r.tokens_salida)
+        reg["tokens_entrada"] += r.tokens_entrada
+        reg["tokens_salida"] += r.tokens_salida
+        return r.fragmentos
 
     @staticmethod
     def _sumar(reg: dict, r) -> None:

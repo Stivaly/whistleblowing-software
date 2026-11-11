@@ -84,3 +84,7 @@ python3 pipeline_bcn/embed_sync.py --coleccion normativa_cl_eval_text-embedding-
   Medirlos requiere un perfil con GPU o más memoria.
 - Disco efímero: el job borra cada modelo de Ollama al terminar con él.
 - e5 (sentence-transformers) trunca a 512 tokens, su límite; los artículos largos quedan recortados.
+
+## Reranker abierto (bge-reranker-v2-m3)
+
+`MODELOS=bge-reranker-v2-m3` hace que `evaluar.py` ejecute `rerank.py`: puntúa con el cross-encoder BAAI/bge-reranker-v2-m3 (CPU) los candidatos de `datos/rerank_candidatos.json` (los escribe `medir_rerank.py --accion preparar`) y deja el orden en la colección `normativa_cl_eval_rerank_bge-reranker-v2-m3_<base>`. Dura unos 60 min (≈40 s por consulta). Se lanza con `az containerapp job update --set-env-vars MODELOS=bge-reranker-v2-m3` y `az containerapp job start`; después se restaura `MODELOS`.

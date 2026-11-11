@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
     && pip install --no-cache-dir sentence-transformers==3.3.1
 
 WORKDIR /app
-COPY evaluar.py ./
+COPY evaluar.py rerank.py ./
 COPY datos/ ./datos/
 RUN useradd --create-home kerna && chown -R kerna /app
 USER kerna

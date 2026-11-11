@@ -239,6 +239,11 @@ def evaluar_modelo(nombre: str, fragmentos: list[dict], consultas: list[str], li
 
 def main() -> int:
     inicio = time.monotonic()
+    if os.environ.get("MODELOS", "").strip() == "bge-reranker-v2-m3":   # reranker: otro flujo (rerank.py)
+        import rerank
+        r = rerank.ejecutar("bge-reranker-v2-m3", qdrant, asegurar_coleccion, subir, log)
+        log(evento="fin", segundos=round(time.monotonic() - inicio, 1), resultados=[r])
+        return 0
     total = float(os.environ.get("TIEMPO_TOTAL_S", "8700"))
     por_modelo = float(os.environ.get("TIEMPO_MODELO_S", "3600"))
     modelos = [m.strip() for m in os.environ.get("MODELOS", POR_DEFECTO).split(",") if m.strip()]

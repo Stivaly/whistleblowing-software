@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from kerna_comun import telemetria
 
 from .proveedores import ErrorProveedor
+from .proveedores.bge_reranker import es_bge
 
 
 class RecuperacionFallida(Exception):
@@ -30,7 +31,8 @@ class Recuperacion:
 class Retriever:
     def __init__(self, voyage, qdrant, local, coleccion: str, embedding: str, top_k: int, umbral: float,
                  esperas_429=(3.0, 8.0, 15.0), dormir=None,
-                 rerank_modelo: str = "", rerank_candidatos: int = 30):
+                 rerank_modelo: str = "", rerank_candidatos: int = 30, reranker_local=None):
+        self._reranker_local = reranker_local
         self._voyage, self._qdrant, self._local = voyage, qdrant, local
         self.coleccion, self.embedding, self.top_k, self.umbral = coleccion, embedding, top_k, umbral
         # Reranking por API (desactivado con rerank_modelo vacío): recupera `rerank_candidatos` y se queda con top_k.
@@ -75,7 +77,8 @@ class Retriever:
     async def _reordenar(self, texto: str, rec: Recuperacion) -> None:
         """Reordena con el reranker; si falla, conserva el orden del embedding (top_k primeros)."""
         try:
-            orden, tokens = await self._voyage.rerank(texto, [f.get("texto", "") for f in rec.fragmentos],
+            motor = self._reranker_local if self._reranker_local and es_bge(self.rerank_modelo) else self._voyage
+            orden, tokens = await motor.rerank(texto, [f.get("texto", "") for f in rec.fragmentos],
                                                       self.rerank_modelo, self.top_k)
         except ErrorProveedor as e:
             telemetria.evento("rerank_fallido", proveedor=e.proveedor, codigo=str(e.codigo or "silencio"))

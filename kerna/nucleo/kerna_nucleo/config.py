@@ -26,8 +26,11 @@ class Config:
     local_url: str = ""
     local_token: str = ""
     top_k: int = 8
-    rerank_modelo: str = ""        # vacío = sin reranking (voyage rerank-2.5 / rerank-2.5-lite)
+    rerank_modelo: str = ""        # vacío = sin reranking (rerank-2.5, rerank-2.5-lite de Voyage o bge-reranker-v2-m3 local)
     rerank_candidatos: int = 30
+    evaluador: bool = False        # KERNA_EVALUADOR: agente evaluador LLM sobre los candidatos (apagado por defecto)
+    evaluador_candidatos: int = 30
+    evaluador_variante: str = "1"
     concurrencia: int = 2
     umbral_similitud: float = 0.0
     cadena: list = field(default_factory=lambda: [dict(n) for n in CADENA_POR_DEFECTO])
@@ -59,6 +62,9 @@ class Config:
         c.top_k = int(e.get("KERNA_TOP_K", c.top_k))
         c.rerank_modelo = e.get("KERNA_RERANK_MODELO", c.rerank_modelo)
         c.rerank_candidatos = int(e.get("KERNA_RERANK_CANDIDATOS", c.rerank_candidatos))
+        c.evaluador = e.get("KERNA_EVALUADOR", "").strip().lower() in ("1", "true", "si", "sí", "on")
+        c.evaluador_candidatos = int(e.get("KERNA_EVALUADOR_CANDIDATOS", c.evaluador_candidatos))
+        c.evaluador_variante = e.get("KERNA_EVALUADOR_VARIANTE", c.evaluador_variante)
         c.concurrencia = int(e.get("KERNA_CONCURRENCIA", c.concurrencia))
         c.umbral_similitud = float(e.get("KERNA_UMBRAL_SIMILITUD", c.umbral_similitud))
         if e.get("KERNA_CADENA"):

@@ -1,5 +1,6 @@
 """
-Medición del reranker por API (Voyage rerank-2.5 / rerank-2.5-lite) sobre los 30 primeros del retriever.
+Medición del reranker (Voyage rerank-2.5 / rerank-2.5-lite por API, o bge-reranker-v2-m3 abierto que corre en el
+job de Azure) sobre los 30 primeros del retriever.
 
 Base: voyage-4-large (normativa_cl, producción) o voyage-law-2 (normativa_cl_eval_voyage-law-2), con los vectores
 de consulta guardados (sin volver a vectorizar). Se recuperan los 30 más cercanos con filtro vigente=true, se
@@ -9,6 +10,12 @@ La diferencia contra la base sin reranker usa bootstrap pareado con la semilla 2
 
 Uso (desde kerna/, con VOYAGE_API_KEY y QDRANT_* en el entorno):
   python3 evaluacion/medir_rerank.py --base voyage-4-large --reranker rerank-2.5 [--campo texto_original]
+
+bge-reranker-v2-m3 no corre en este equipo: en dos pasos,
+  python3 evaluacion/medir_rerank.py --base voyage-4-large --reranker bge-reranker-v2-m3 --accion preparar
+      (escribe job_embeddings/datos/rerank_candidatos.json; reconstruir la imagen del job y lanzarlo con
+       MODELOS=bge-reranker-v2-m3, ver job_embeddings/README.md; el job deja su orden en Qdrant)
+  python3 evaluacion/medir_rerank.py --base voyage-4-large --reranker bge-reranker-v2-m3   (lee ese resultado)
 Las respuestas del reranker se guardan en datos/rerank_<...>.json (excluido de git) para repetir sin pagar.
 """
 from __future__ import annotations
@@ -29,7 +36,10 @@ import recall_retriever as rr  # noqa: E402
 CANDIDATOS = 30
 SALIDA_TOP = 10
 URL = "https://api.voyageai.com/v1/rerank"
-PRECIOS_RERANK = {"rerank-2.5": 0.05, "rerank-2.5-lite": 0.02}   # USD por millón de tokens (precio de lista de Voyage)
+PRECIOS_RERANK = {"rerank-2.5": 0.05, "rerank-2.5-lite": 0.02,    # USD por millón de tokens (precio de lista de Voyage)
+                  "bge-reranker-v2-m3": 0.0}                       # abierto: sin costo por token (cómputo del contenedor)
+ABIERTOS = {"bge-reranker-v2-m3"}
+CANDIDATOS_JOB = AQUI / "job_embeddings" / "datos" / "rerank_candidatos.json"
 BASES = {"voyage-4-large": ("normativa_cl", "voyage", "voyage-4-large"),
          "voyage-law-2": ("normativa_cl_eval_voyage-law-2", "voyage", "voyage-law-2")}
 
@@ -67,15 +77,43 @@ def llamar_rerank(consulta: str, docs: list[str], modelo: str, clave: str, inten
             time.sleep(5 * (i + 1))
 
 
+def preparar_candidatos(casos, textos, base_tops, frag, reranker, base) -> int:
+    """Escribe los candidatos (texto de cada fragmento) que el job de Azure reordenará; no ejecuta ningún modelo."""
+    sel = [{"id": c["id"], "consulta": t, "ids": [x["fragmento_id"] for x in top],
+            "docs": [frag[x["fragmento_id"]] for x in top]}
+           for c, t, top in zip(casos, textos, base_tops) if c["ley_principal"] != "ninguna"]
+    CANDIDATOS_JOB.parent.mkdir(exist_ok=True)
+    CANDIDATOS_JOB.write_text(json.dumps({"reranker": reranker, "base": base, "casos": sel}, ensure_ascii=False))
+    print(f"{len(sel)} casos x {CANDIDATOS} candidatos -> {CANDIDATOS_JOB}")
+    return 0
+
+
+def leer_resultado_job(reranker: str, base: str) -> dict:
+    """Orden y tiempo que dejó el job en Qdrant: {caso_id: {"ms", "tokens", "orden"}}."""
+    col, out, offset = f"normativa_cl_eval_rerank_{reranker}_{base}", {}, None
+    while True:
+        body = {"limit": 256, "with_payload": True, "with_vector": False}
+        if offset is not None:
+            body["offset"] = offset
+        r = rr.qdrant(f"/collections/{col}/points/scroll", body, method="POST")["result"]
+        out.update({p["payload"]["caso_id"]: {"ms": p["payload"]["ms"], "tokens": 0, "orden": p["payload"]["orden"]}
+                    for p in r["points"]})
+        offset = r.get("next_page_offset")
+        if offset is None:
+            return out
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", choices=list(BASES), required=True)
     ap.add_argument("--reranker", choices=list(PRECIOS_RERANK), required=True)
+    ap.add_argument("--accion", choices=["medir", "preparar"], default="medir")
     ap.add_argument("--campo", default="texto_original", choices=["texto_original", "resumen_parafraseado"])
     ap.add_argument("--mapeo", choices=rr.MAPEOS, default="concordancia")
     args = ap.parse_args(argv)
     coleccion, proveedor, modelo = BASES[args.base]
-    clave = os.environ["VOYAGE_API_KEY"]
+    abierto = args.reranker in ABIERTOS
+    clave = "" if abierto else os.environ["VOYAGE_API_KEY"]
     inicio = time.monotonic()
     crudo = rr.DATASET.read_bytes()
     casos = json.loads(crudo)["casos"]
@@ -84,11 +122,18 @@ def main(argv=None):
     vectores = rr.embeber(textos, rr.ruta_cache(proveedor, modelo), None, modelo, rr.embed_sync.DIMS)
     base_tops = rr.buscar(vectores, k=CANDIDATOS, coleccion=coleccion)
     frag = textos_fragmentos(coleccion)
+    if args.accion == "preparar":
+        if not abierto:
+            ap.error("--accion preparar es solo para rerankers abiertos")
+        return preparar_candidatos(casos, textos, base_tops, frag, args.reranker, args.base)
     cache_path = AQUI / "datos" / f"rerank_{args.base}_{args.reranker}_{args.campo}.json"
     cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}
+    if abierto and not cache:
+        cache = leer_resultado_job(args.reranker, args.base)
+        cache_path.write_text(json.dumps(cache))
     tops_rr = []
     for caso, texto, top in zip(casos, textos, base_tops):
-        if caso["ley_principal"] != "ninguna" and caso["id"] not in cache:
+        if caso["ley_principal"] != "ninguna" and caso["id"] not in cache and not abierto:
             cache[caso["id"]] = llamar_rerank(texto, [frag[t["fragmento_id"]] for t in top], args.reranker, clave)
             cache_path.write_text(json.dumps(cache))
             time.sleep(0.5)
@@ -114,6 +159,7 @@ def main(argv=None):
                           "latencia_rerank": {"p95_ms": rr.percentil(ms, 95), "mediana_ms": rr.percentil(ms, 50),
                                               "muestras": len(ms)},
                           "tokens": {"total": tokens, "por_consulta": tokens / len(ms) if ms else None},
+                          "ejecucion": "job de Azure, CPU" if abierto else "API",
                           "costo_usd": tokens / 1e6 * PRECIOS_RERANK[args.reranker],
                           "usd_por_millon_tokens": PRECIOS_RERANK[args.reranker],
                           "base_sin_reranker": res_base["metricas_articulo"].get("global"),

@@ -21,6 +21,7 @@ from .config import Config
 from .enrutador import Enrutador, Nivel
 from .orquestador import Orquestador, iso
 from .proveedores import Proveedores
+from .proveedores.bge_reranker import ClienteBGE, es_bge
 from .proveedores.gemini import ClienteGemini
 from .proveedores.qdrant import ClienteQdrant
 from .proveedores.servicio_local import ClienteLocal
@@ -67,6 +68,13 @@ def resultado_derivado(sugeridos: set[str], aplicados: set[str]) -> str:
     return "corregida"
 
 
+def _reranker_local(config: Config, proveedores: Proveedores):
+    """Reranker abierto (dentro del contenedor) solo si la configuración lo pide; las pruebas lo inyectan."""
+    if not es_bge(config.rerank_modelo):
+        return None
+    return proveedores.reranker or ClienteBGE()
+
+
 def crear_app(config: Config | None = None, almacen: Almacen | None = None, proveedores: Proveedores | None = None,
               reloj=None) -> FastAPI:
     config = config or Config.desde_entorno()
@@ -79,8 +87,11 @@ def crear_app(config: Config | None = None, almacen: Almacen | None = None, prov
                           plazo_llamada=proveedores.plazo_llamada, plazo_global=config.plazo_global_s,
                           corte=config.corte_llamada_s, esperas=config.esperas_s)
     retriever = Retriever(proveedores.voyage, proveedores.qdrant, proveedores.local, config.coleccion,
-                          config.embedding, config.top_k, config.umbral_similitud,
-                          rerank_modelo=config.rerank_modelo, rerank_candidatos=config.rerank_candidatos)
+                          config.embedding,
+                          max(config.top_k, config.evaluador_candidatos) if config.evaluador else config.top_k,
+                          config.umbral_similitud,
+                          rerank_modelo=config.rerank_modelo, rerank_candidatos=config.rerank_candidatos,
+                          reranker_local=_reranker_local(config, proveedores))
     orquestador = Orquestador(config, almacen, enrutador, retriever, reloj)
 
     app = FastAPI(title="Kerna AI núcleo", version=VERSION)

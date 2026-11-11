@@ -96,3 +96,42 @@ def test_rerank_fallido_conserva_orden_del_embedding():
     v, qd = _VoyageRerank(falla=503), _QdrantN()
     r = asyncio.run(_rr(v, qd).recuperar("x"))
     assert [f["fragmento_id"] for f in r.fragmentos] == ["f0", "f1", "f2"] and r.reranker == ""
+
+
+# ---- reranker abierto bge-reranker-v2-m3 (dentro del contenedor)
+class _ModeloFalso:
+    def __init__(self, puntajes):
+        self.puntajes, self.pares = puntajes, None
+
+    def predict(self, pares, batch_size=8):
+        self.pares = pares
+        return self.puntajes
+
+
+def test_cliente_bge_ordena_por_puntaje_y_corta():
+    from kerna_nucleo.proveedores.bge_reranker import ClienteBGE
+    m = _ModeloFalso([0.1, 0.9, 0.5, 0.7])
+    c = ClienteBGE(cargar=lambda ruta: m)
+    orden, tokens = asyncio.run(c.rerank("q", ["a", "b", "c", "d"], "bge-reranker-v2-m3", 3))
+    assert orden == [(1, 0.9), (3, 0.7), (2, 0.5)] and tokens == 0 and m.pares[0] == ["q", "a"]
+
+
+def test_cliente_bge_error_se_convierte_en_error_de_proveedor():
+    from kerna_nucleo.proveedores.bge_reranker import ClienteBGE
+
+    def falla(ruta):
+        raise OSError("sin modelo")
+    with pytest.raises(ErrorProveedor):
+        asyncio.run(ClienteBGE(cargar=falla).rerank("q", ["a"], "bge-reranker-v2-m3", 1))
+
+
+def test_retriever_usa_reranker_local_para_bge_y_voyage_para_los_demas():
+    v, qd = _VoyageRerank(orden=[(0, 0.1)]), _QdrantN()
+    local = _VoyageRerank(orden=[(4, 0.8), (0, 0.5), (2, 0.1)])
+    r = asyncio.run(Retriever(v, qd, None, "c", "m", 3, 0.0, rerank_modelo="bge-reranker-v2-m3", rerank_candidatos=5,
+                              reranker_local=local).recuperar("x"))
+    assert [f["fragmento_id"] for f in r.fragmentos] == ["f4", "f0", "f2"] and not v.rerank_llamadas
+    assert r.reranker == "bge-reranker-v2-m3"
+    r2 = asyncio.run(Retriever(v, qd, None, "c", "m", 3, 0.0, rerank_modelo="rerank-2.5", rerank_candidatos=5,
+                               reranker_local=local).recuperar("x"))
+    assert v.rerank_llamadas and r2.reranker == "rerank-2.5"

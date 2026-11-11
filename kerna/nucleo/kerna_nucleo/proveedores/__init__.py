@@ -29,3 +29,4 @@ class Proveedores:
     local: Any
     dormir: Any = None
     plazo_llamada: Any = None  # corutina(awaitable, segundos); por defecto asyncio.wait_for
+    reranker: Any = None       # reranker abierto (ClienteBGE); por defecto se crea al configurarlo
