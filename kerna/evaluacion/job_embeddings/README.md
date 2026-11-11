@@ -79,7 +79,8 @@ python3 pipeline_bcn/embed_sync.py --coleccion normativa_cl_eval_text-embedding-
 
 ## Límites a tener presentes
 
-- Disco efímero: Qwen3 8B pesa ~4,7 GB; el job borra cada modelo de Ollama al terminar con él. Si Azure rechaza el
-  almacenamiento, medir `qwen3-embedding-4b`.
-- Tiempo: Qwen3 8B en CPU es el más lento y va al final; si no alcanza queda como `tiempo_excedido` y el resto se conserva.
+- Qwen3 no es medible en este job (4 vCPU, 8 GiB, sin GPU): con el 8B Ollama responde 500 al cargarlo y el 4B no
+  termina los 145 fragmentos y las 226 consultas en los 60 min de `TIEMPO_MODELO_S` (queda `tiempo_excedido`).
+  Medirlos requiere un perfil con GPU o más memoria.
+- Disco efímero: el job borra cada modelo de Ollama al terminar con él.
 - e5 (sentence-transformers) trunca a 512 tokens, su límite; los artículos largos quedan recortados.

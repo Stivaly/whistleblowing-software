@@ -84,6 +84,18 @@ def resumen(cand: dict, e: dict) -> dict:
             "por_ley": e["por_ley"], "metricas_ley": e.get("metricas_articulo", {}), "por_caso": detalle}
 
 
+TRAMOS_PUNTAJE = [(5, f"≥ {META:.2f}"), (4, f"≥ {META * 0.75:.2f}"), (3, f"≥ {META * 0.5:.2f}"),
+                  (2, f"≥ {META * 0.25:.2f}"), (1, f"< {META * 0.25:.2f}")]
+
+
+def puntaje_calidad(recall5: float) -> int:
+    """Recall@5 por artículo convertido a la escala de 1 a 5: tramos iguales hasta la meta."""
+    for puntos, fraccion in ((5, 1.0), (4, 0.75), (3, 0.5), (2, 0.25)):
+        if recall5 >= META * fraccion - 1e-9:
+            return puntos
+    return 1
+
+
 def solapan(a: list[float], b: list[float]) -> bool:
     return not (a[1] < b[0] or b[1] < a[0])
 
@@ -154,7 +166,7 @@ def generar_informe(entradas: list[dict], candidatos: list[dict], campo: str, ma
         elif ultimas.get(c["id"]):
             no_medidos.append((c, "su última corrida es de otro dataset o no trae métricas por artículo"))
         else:
-            no_medidos.append((c, "sin corrida registrada para este campo"))
+            no_medidos.append((c, c.get("motivo_no_medido") or "sin corrida registrada para este campo"))
     d = decidir(medidos)
     L = ["# Informe de la prueba comparativa de embeddings", "",
          "Generado por `comparar_embeddings.py` a partir de `registro/recall_retriever.jsonl`. Sin textos de denuncias.", "",
@@ -235,7 +247,13 @@ def generar_informe(entradas: list[dict], candidatos: list[dict], campo: str, ma
             L += ["", "Entre los abiertos:"] + [f"- {c}" for c in d["criterios_local"]]
     L += ["", "## Candidatos no medidos", ""]
     L += [f"- {c['etiqueta']}: {why}." for c, why in no_medidos] or ["Todos medidos."]
-    L += ["", "Pendiente: convertir los puntajes medidos a la escala de 1 a 5 (Tabla 28) para revisar la Tabla 9.", ""]
+    L += ["", "## Calidad de recuperación medida, en escala de 1 a 5", "",
+          f"Regla: el recall@5 por artículo se divide en cinco tramos iguales hasta la meta de {META:.2f} "
+          "(" + "; ".join(f"{n}: {t}" for n, t in TRAMOS_PUNTAJE) + "). Reemplaza al puntaje de calidad basado en cifras del "
+          "proveedor al recalcular el análisis ponderado del modelo de embeddings.", "",
+          "| Candidato | recall@5 artículo | Puntaje |", "|---|---|---|"]
+    L += [f"| {m['etiqueta']} | {_f(m['recall5'])} | {puntaje_calidad(m['recall5'])} |" for m in medidos]
+    L.append("")
     return "\n".join(L)
 
 

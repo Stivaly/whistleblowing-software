@@ -146,3 +146,11 @@ def test_corridas_sin_mapeo_cuentan_como_directo_y_el_informe_muestra_antes_y_de
     assert c.ultima_corrida([antes, despues], cand, "texto_original") is despues
     md = c.generar_informe([antes, despues], [cand], "texto_original")
     assert "| M1 | 0.250 | 4 | 0.500 | 4 |" in md and "hit@8" in md
+
+
+def test_puntaje_calidad_por_tramos_hasta_la_meta():
+    from comparar_embeddings import META, puntaje_calidad
+    assert puntaje_calidad(META) == 5 and puntaje_calidad(0.95) == 5
+    assert puntaje_calidad(META * 0.75) == 4 and puntaje_calidad(0.557) == 3
+    assert puntaje_calidad(0.393) == 2 and puntaje_calidad(0.311) == 2
+    assert puntaje_calidad(0.19) == 1 and puntaje_calidad(0.0) == 1
