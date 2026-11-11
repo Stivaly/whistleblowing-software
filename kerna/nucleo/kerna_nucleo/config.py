@@ -26,6 +26,8 @@ class Config:
     local_url: str = ""
     local_token: str = ""
     top_k: int = 8
+    rerank_modelo: str = ""        # vacío = sin reranking (voyage rerank-2.5 / rerank-2.5-lite)
+    rerank_candidatos: int = 30
     concurrencia: int = 2
     umbral_similitud: float = 0.0
     cadena: list = field(default_factory=lambda: [dict(n) for n in CADENA_POR_DEFECTO])
@@ -55,6 +57,8 @@ class Config:
         c.local_url = e.get("KERNA_LOCAL_URL", "")
         c.local_token = e.get("KERNA_LOCAL_TOKEN", "")
         c.top_k = int(e.get("KERNA_TOP_K", c.top_k))
+        c.rerank_modelo = e.get("KERNA_RERANK_MODELO", c.rerank_modelo)
+        c.rerank_candidatos = int(e.get("KERNA_RERANK_CANDIDATOS", c.rerank_candidatos))
         c.concurrencia = int(e.get("KERNA_CONCURRENCIA", c.concurrencia))
         c.umbral_similitud = float(e.get("KERNA_UMBRAL_SIMILITUD", c.umbral_similitud))
         if e.get("KERNA_CADENA"):

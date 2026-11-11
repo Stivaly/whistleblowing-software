@@ -137,3 +137,9 @@ Regla: interpolación lineal del recall@5 por artículo, de 1 (recall 0) a 5 (re
 | BGE-M3 | 0.311 | 3 |
 | EmbeddingGemma 300M (768 dims) | 0.230 | 2 |
 | multilingual-e5-large-instruct | 0.279 | 2 |
+
+## Reranker por API (Voyage rerank-2.5 / rerank-2.5-lite) sobre el top 30
+
+- Implementado en el retriever del núcleo, desactivado por defecto: `KERNA_RERANK_MODELO` (vacío = sin reranking; `rerank-2.5` o `rerank-2.5-lite`) y `KERNA_RERANK_CANDIDATOS` (30). Con el modelo definido, el retriever pide 30 candidatos a Qdrant, los reordena con `POST /v1/rerank` (consulta = texto anonimizado, documento = `texto` del fragmento) y entrega los `top_k` primeros (8). El umbral de similitud sigue midiendo el coseno del embedding. Si el rerank falla, conserva el orden del embedding.
+- Medición: `medir_rerank.py` (226 consultas guardadas, mapeo `concordancia`, 61 casos evaluables, bases voyage-4-large y voyage-law-2, IC pareado con semilla 20261110).
+- Estado: sin resultados. La cuenta de Voyage no tiene método de pago (3 RPM, 10 K TPM) y una petición de rerank con 30 fragmentos supera los 10 K TPM; el servicio responde 429 siempre. Criterio de adopción (mejora de recall@5 por artículo >= 0,05 con IC que excluye 0 y P95 total < 15 s) sin evaluar, por lo que el reranker queda desactivado.

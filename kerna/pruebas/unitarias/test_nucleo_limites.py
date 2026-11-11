@@ -44,3 +44,55 @@ def test_otro_error_no_se_reintenta_en_nube():
     with pytest.raises(Exception):
         asyncio.run(_retriever(v, esperas).recuperar("x"))
     assert v.llamadas == 1 and esperas == []
+
+
+# ---- reranking por API (desactivado por defecto)
+class _VoyageRerank(_Voyage):
+    def __init__(self, orden=None, falla=None):
+        super().__init__([])
+        self.orden, self.falla, self.rerank_llamadas = orden, falla, []
+
+    async def rerank(self, consulta, documentos, modelo, top_k):
+        self.rerank_llamadas.append((consulta, list(documentos), modelo, top_k))
+        if self.falla:
+            raise ErrorProveedor("voyage", self.falla)
+        return self.orden, 42
+
+
+class _QdrantN:
+    def __init__(self, n=6):
+        self.pedidos = []
+        self.n = n
+
+    async def buscar(self, coleccion, vector, k):
+        self.pedidos.append(k)
+        return [{"fragmento_id": f"f{i}", "texto": f"t{i}", "puntaje": 0.9 - i / 100} for i in range(self.n)][:k]
+
+    async def version_corpus(self, coleccion):
+        return 1
+
+
+def _rr(voyage, qd, modelo="rerank-2.5"):
+    return Retriever(voyage, qd, None, "c", "m", 3, 0.0, rerank_modelo=modelo, rerank_candidatos=5)
+
+
+def test_sin_rerank_no_lo_llama_y_pide_top_k():
+    v, qd = _VoyageRerank(), _QdrantN()
+    r = asyncio.run(_rr(v, qd, "").recuperar("x"))
+    assert qd.pedidos == [3] and not v.rerank_llamadas and len(r.fragmentos) == 3 and r.reranker == ""
+
+
+def test_rerank_reordena_candidatos_y_corta_a_top_k():
+    v, qd = _VoyageRerank(orden=[(4, 0.8), (0, 0.5), (2, 0.1)]), _QdrantN()
+    r = asyncio.run(_rr(v, qd).recuperar("x"))
+    assert qd.pedidos == [5]
+    assert v.rerank_llamadas == [("x", ["t0", "t1", "t2", "t3", "t4"], "rerank-2.5", 3)]
+    assert [f["fragmento_id"] for f in r.fragmentos] == ["f4", "f0", "f2"]
+    assert r.tokens_rerank == 42 and r.reranker == "rerank-2.5" and r.fragmentos[0]["puntaje"] == 0.8
+    assert r.mejor_puntaje == 0.9          # el umbral sigue midiendo similitud del embedding
+
+
+def test_rerank_fallido_conserva_orden_del_embedding():
+    v, qd = _VoyageRerank(falla=503), _QdrantN()
+    r = asyncio.run(_rr(v, qd).recuperar("x"))
+    assert [f["fragmento_id"] for f in r.fragmentos] == ["f0", "f1", "f2"] and r.reranker == ""

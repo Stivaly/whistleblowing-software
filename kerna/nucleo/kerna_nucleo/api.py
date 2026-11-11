@@ -79,7 +79,8 @@ def crear_app(config: Config | None = None, almacen: Almacen | None = None, prov
                           plazo_llamada=proveedores.plazo_llamada, plazo_global=config.plazo_global_s,
                           corte=config.corte_llamada_s, esperas=config.esperas_s)
     retriever = Retriever(proveedores.voyage, proveedores.qdrant, proveedores.local, config.coleccion,
-                          config.embedding, config.top_k, config.umbral_similitud)
+                          config.embedding, config.top_k, config.umbral_similitud,
+                          rerank_modelo=config.rerank_modelo, rerank_candidatos=config.rerank_candidatos)
     orquestador = Orquestador(config, almacen, enrutador, retriever, reloj)
 
     app = FastAPI(title="Kerna AI núcleo", version=VERSION)
