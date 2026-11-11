@@ -32,6 +32,8 @@ import {ChangeSubmissionStatusComponent} from "@app/shared/modals/change-submiss
 import {TranslateService, TranslateModule} from "@ngx-translate/core";
 import {NgClass, NgTemplateOutlet} from "@angular/common";
 import {TipInfoComponent} from "@app/shared/partials/tip-info/tip-info.component";
+import {KernaIndicadorComponent} from "@app/shared/partials/kerna/kerna-indicador.component";
+import {KernaPanelComponent} from "@app/shared/partials/kerna/kerna-panel.component";
 import {TipReceiverListComponent} from "@app/shared/partials/tip-receiver-list/tip-receiver-list.component";
 import {TipQuestionnaireAnswersComponent} from "@app/shared/partials/tip-questionnaire-answers/tip-questionnaire-answers.component";
 import {WhistleBlowerIdentityReceiverComponent} from "../whistleblower-identity-receiver/whistleblower-identity-receiver.component";
@@ -48,6 +50,8 @@ import {TranslatorPipe} from "@app/shared/pipes/translate";
     imports: [
     NgClass,
     TipInfoComponent,
+    KernaIndicadorComponent,
+    KernaPanelComponent,
     TipReceiverListComponent,
     TipQuestionnaireAnswersComponent,
     WhistleBlowerIdentityReceiverComponent,

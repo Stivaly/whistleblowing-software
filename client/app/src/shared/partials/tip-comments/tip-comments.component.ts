@@ -14,6 +14,7 @@ import {TranslateModule} from "@ngx-translate/core";
 import {TranslatorPipe} from "@app/shared/pipes/translate";
 import {AutoExpandDirective} from "@app/shared/directive/auto-expand.directive";
 import {PaginatedInterfaceComponent} from "@app/shared/components/paginated-interface/paginated-interface.component";
+import {esNotaKerna} from "@app/shared/partials/kerna/kerna-notas";
 
 
 @Component({
@@ -65,6 +66,27 @@ export class TipCommentsComponent implements OnInit {
 
   getSortedComments(data: Comment[]): Comment[] {
     return data;
+  }
+
+  private cacheOrigen: Comment[] | null = null;
+  private cacheLongitud = -1;
+  private cacheVisibles: Comment[] = [];
+
+  /**
+   * Comentarios a mostrar. Para el destinatario se omiten las notas JSON de Kerna (sugerencia, estado, valoración y
+   * clasificación), que muestra el bloque de Kerna en lugar de texto crudo. El denunciante no cambia: nunca las recibe.
+   */
+  get comentariosVisibles(): Comment[] {
+    const todos = this.tipService.tip.comments;
+    if (!todos || this.authenticationService.session?.role !== "receiver") {
+      return todos;
+    }
+    if (todos !== this.cacheOrigen || todos.length !== this.cacheLongitud) {
+      this.cacheOrigen = todos;
+      this.cacheLongitud = todos.length;
+      this.cacheVisibles = todos.filter(c => c.type || !esNotaKerna(c.content));
+    }
+    return this.cacheVisibles;
   }
 
   redactInformation(type:string, id:string, entry:string, content:string){

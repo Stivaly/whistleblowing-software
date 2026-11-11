@@ -1,7 +1,7 @@
 # Propuesta: indicador y bloque de Kerna en la vista del caso del auditor
 
-Estado: **propuesta de diseño, sin implementar**. Los textos son **borradores**: la redacción final la decide otra
-persona. Las fuentes de cada decisión están en `investigacion-asistente-ia.md` (códigos `S`, `A`, `P`). Las opciones de
+Estado: **implementado en el cliente** (ver la sección 9, que recoge lo que difiere de lo propuesto). Los textos
+vigentes están en `textos-finales.md` y reemplazan los borradores de la sección 2.5. Las fuentes de cada decisión están en `investigacion-asistente-ia.md` (códigos `S`, `A`, `P`). Las opciones de
 ícono y las capturas están en `opciones-icono/`.
 
 ## 1. Dónde va cada pieza en el cliente Angular
@@ -37,9 +37,8 @@ línea. Los colores son variables CSS `--kerna-*` (sección 4). Sin CDN, sin fue
 2. **Panel, junto a la clasificación manual**: justo después de la fila de `<src-tip-info>` (que contiene la etiqueta
    y el estado del caso) y antes de las respuestas del cuestionario, `<src-kerna-panel>` como tarjeta plegable con el
    mismo aspecto de `TipCommentsBox` (`card card-default`). Se abre en el sitio (no en ventana modal) para poder leer
-   la denuncia y la sugerencia a la vez. La acción "Clasificar manualmente" del panel emite un evento que
-   `tip.component.html` conecta con el `openModalChangeState()` que ya existe: el panel no duplica la clasificación
-   manual.
+   la denuncia y la sugerencia a la vez. El panel no duplica ni oculta la clasificación manual (el cambio
+   de estado del caso que ya existe, `openModalChangeState()`): los mensajes dicen "clasifícalo como siempre".
 3. **Retirar las notas JSON del hilo de comentarios**: en
    `client/app/src/shared/partials/tip-comments/tip-comments.component.{ts,html}`, un único cambio: sustituir
    `[items]="tipService.tip.comments"` por un getter `comentariosVisibles` que, **solo si la sesión es de rol
@@ -294,3 +293,34 @@ SVG en `opciones-icono/svg/`: `robot.svg`, `v-veridy.svg`, `articulo-marcado.svg
 8. Señal de mantenimiento de Veridy: no se verificó que el servidor entregue una distinta de un fallo de conexión.
 9. Elección del ícono: de la usuaria.
 10. Si la Ley de IA de la UE aplica a Kerna (referencia usada en la investigación) es una cuestión legal pendiente.
+
+## 9. Implementación: lo que difiere de la propuesta
+
+Archivos nuevos en `client/app/src/shared/partials/kerna/`: `kerna-notas.ts`, `kerna-estados.ts`, `kerna-icono.component.ts`
+(ícono `articulo-marcado`, único lugar), `kerna-glifo.component.ts`, `kerna-indicador.component.{ts,html}`,
+`kerna-panel.component.{ts,html}`, `kerna.service.ts` y `kerna-pruebas.ts` (pruebas de la lógica pura). Cambios mínimos en
+`tip.component.{ts,html}` (dos componentes y dos líneas de plantilla), `tip-comments.component.{ts,html}` (getter
+`comentariosVisibles`, solo rol `receiver`), `es.json` y `en.json` (claves nuevas `kerna.*`) y `css/main.css` (sección
+final, sin estilos en línea).
+
+- **Cuenta de servicio**: el destinatario del caso (`tip.receivers`, campos `id` y `name`) cuyo nombre empieza con
+  "Kerna AI" (`PREFIJO_CUENTA_KERNA` en `kerna-notas.ts`). `kerna_sugerencia` y `kerna_estado` valen solo si su `author_id` es
+  esa cuenta; `kerna_feedback` y `kerna_clasificacion`, solo si son de otro destinatario del caso. Todas deben ser notas
+  `internal` comunes. Sin esa cuenta no se muestra nada.
+- **Textos**: los de `textos-finales.md`, con sus dos variantes de `contingencia` y de `conector-inactivo`. Se agregaron
+  claves que ese archivo no trae: título del panel, etiquetas "Resumen" y "Modo" del tooltip, "Valoración de la
+  sugerencia", "Enviar valoración", "Valoración enviada", "Agregar", "Quitar" y el resumen de un solo artículo
+  ("{norma} · 1 artículo"). Las claves están en `en.json` con el mismo texto en español (si no, un idioma sin
+  traducción mostraría la clave); los demás idiomas muestran la clave hasta que se traduzcan.
+- **Tooltip**: sin la antigüedad ("hace 2 min") de la propuesta; está siempre en el DOM (oculto) para que
+  `aria-describedby` apunte a él, y se muestra con puntero (tras 200 ms) o foco.
+- **Panel**: cerrado por defecto; sin botón "Clasificar manualmente"; en `valorada` muestra la clasificación guardada y deja
+  guardar una nueva (vale la última); la valoración usa un botón "Enviar valoración" y la observación aparece al elegir.
+- **Consulta periódica** (20 s mientras el estado es provisional): usa un `HttpClient` sin interceptores, porque el
+  interceptor global muestra el panel de carga que bloquea la pantalla en cada petición. `sin-conexion` se activa con dos
+  fallos seguidos, con el evento `offline` del navegador o si falla un envío.
+- **Valoración**: "Este artículo corresponde / no corresponde al caso" (arriba/abajo) por artículo.
+- **Verificación**: el cliente compila (`ng build --configuration development`); 40 casos de la lógica pura; un arnés
+  temporal con el cliente real compilado (indicador y panel con las dependencias simuladas) comprobó los 13 estados, el
+  tooltip (hover, foco, Esc, persistencia), el envío de notas y la ausencia del bloque para el denunciante;
+  `kerna/pruebas/e2e/test_bloque_kerna.py` (21 pruebas) solo se ha recolectado, no ejecutado contra una instancia.

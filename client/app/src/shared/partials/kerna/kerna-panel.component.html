@@ -1,0 +1,109 @@
+@if (k.resultado(); as e) {
+  @if (k.abierto()) {
+    <section class="card card-default kerna-panel" id="kerna-panel" data-cy="kerna-panel" [attr.data-estado]="e.id" aria-labelledby="kerna-panel-titulo">
+      <div class="card-header d-flex justify-content-between align-items-center kerna-panel-cabecera">
+        <h2 id="kerna-panel-titulo" class="kerna-panel-titulo"><src-kerna-icono></src-kerna-icono><span>{{ t('kerna.panel.titulo') }}</span></h2>
+        <span class="kerna-chip">{{ t(claveTexto(e, 'etiqueta')) }}</span>
+      </div>
+      <div class="card-body">
+        <div class="kerna-aviso" role="note" data-cy="kerna-aviso-permanente">{{ t('kerna.aviso.permanente') }}</div>
+
+        @if (e.id === 'contingencia') {
+          <div class="kerna-aviso kerna-aviso-contingencia" role="note" data-cy="kerna-aviso-contingencia">{{ t(claveTexto(e, 'mensaje')) }}</div>
+        }
+        @if (muestraMensaje(e)) {
+          <p class="kerna-mensaje" data-cy="kerna-mensaje">{{ t(claveTexto(e, 'mensaje')) }}</p>
+        }
+
+        @if (tieneArticulos(e)) {
+          <div class="kerna-articulos">
+            @for (a of articulos(e); track a.id_sugerencia) {
+              <article class="kerna-articulo" data-cy="kerna-articulo">
+                <div class="kerna-articulo-cab">
+                  <h3 class="kerna-articulo-titulo">{{ a.norma }} · {{ a.articulo }}</h3>
+                  <label class="kerna-casilla">
+                    <input type="checkbox" [checked]="incluidos.has(a.id_articulo)" [disabled]="deshabilitado(e)"
+                           (change)="alternarIncluido(a.id_articulo, $any($event.target).checked)">
+                    {{ t('kerna.clasificacion.incluir') }}
+                  </label>
+                </div>
+                <p class="kerna-explicacion">{{ a.explicacion }}</p>
+                <blockquote class="kerna-cita">{{ a.cita }}</blockquote>
+                @if (enlaceSeguro(a.enlace_fuente)) {
+                  <a class="kerna-enlace" [href]="a.enlace_fuente" target="_blank" rel="noopener noreferrer">{{ t('kerna.enlace') }}</a>
+                }
+                <div class="kerna-valoracion" role="group" [attr.aria-label]="t('kerna.valoracion.grupo')">
+                  <button type="button" class="kerna-voto" [class.activo]="valoracion(a).valor === 'arriba'" [attr.aria-pressed]="valoracion(a).valor === 'arriba'"
+                          [attr.aria-label]="t('kerna.valoracion.arriba')" [attr.title]="t('kerna.valoracion.arriba')" [disabled]="deshabilitado(e)" (click)="elegir(a, 'arriba')" data-cy="kerna-voto-arriba">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 11V20M7 11l4-8c2 0 3 1 3 3v3h6l-1 9H7"/></svg>
+                  </button>
+                  <button type="button" class="kerna-voto" [class.activo]="valoracion(a).valor === 'abajo'" [attr.aria-pressed]="valoracion(a).valor === 'abajo'"
+                          [attr.aria-label]="t('kerna.valoracion.abajo')" [attr.title]="t('kerna.valoracion.abajo')" [disabled]="deshabilitado(e)" (click)="elegir(a, 'abajo')" data-cy="kerna-voto-abajo">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 13V4M7 13l4 8c2 0 3-1 3-3v-3h6l-1-9H7"/></svg>
+                  </button>
+                </div>
+                @if (valoracion(a).valor) {
+                  <div class="kerna-observacion">
+                    <label [for]="'kerna-obs-' + a.id_sugerencia">{{ t('kerna.observacion') }}</label>
+                    <textarea class="form-control" [id]="'kerna-obs-' + a.id_sugerencia" [maxlength]="maxObservacion" rows="2"
+                              [(ngModel)]="valoracion(a).obs" [disabled]="deshabilitado(e)"></textarea>
+                    <div class="kerna-observacion-pie">
+                      <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="deshabilitado(e)" (click)="enviarValoracion(a)" data-cy="kerna-enviar-valoracion">{{ t('kerna.valoracion.enviar') }}</button>
+                      <span class="kerna-contador">{{ valoracion(a).obs.length }}/{{ maxObservacion }}</span>
+                      @if (valoracion(a).enviada) { <span class="kerna-ok" role="status">{{ t('kerna.valoracion.enviada') }}</span> }
+                    </div>
+                  </div>
+                }
+              </article>
+            }
+          </div>
+
+          <div class="kerna-clasificacion">
+            <div class="kerna-agregar">
+              <label for="kerna-otro">{{ t('kerna.clasificacion.agregar-otro') }}</label>
+              <div class="input-group">
+                <input id="kerna-otro" type="text" class="form-control" [(ngModel)]="otro" maxlength="200" [disabled]="deshabilitado(e)" (keydown.enter)="agregarOtro()">
+                <button type="button" class="btn btn-outline-secondary" [disabled]="deshabilitado(e) || !otro.trim()" (click)="agregarOtro()">{{ t('kerna.clasificacion.agregar') }}</button>
+              </div>
+              @if (agregados.length) {
+                <ul class="kerna-agregados">
+                  @for (x of agregados; track x) {
+                    <li>{{ x }} <button type="button" class="btn btn-link btn-sm" [disabled]="deshabilitado(e)" (click)="quitar(x)">{{ t('kerna.clasificacion.quitar') }}</button></li>
+                  }
+                </ul>
+              }
+            </div>
+            <div class="kerna-observacion">
+              <label for="kerna-obs-clasificacion">{{ t('kerna.observacion') }}</label>
+              <textarea class="form-control" id="kerna-obs-clasificacion" [maxlength]="maxObservacion" rows="2" [(ngModel)]="obsClasificacion" [disabled]="deshabilitado(e)"></textarea>
+              <span class="kerna-contador">{{ obsClasificacion.length }}/{{ maxObservacion }}</span>
+            </div>
+            <div class="kerna-acciones">
+              <button type="button" class="btn btn-primary" [disabled]="deshabilitado(e)" (click)="guardarClasificacion(e)" data-cy="kerna-guardar-clasificacion">{{ t('kerna.clasificacion.guardar') }}</button>
+              <button type="button" class="btn btn-outline-secondary" [disabled]="deshabilitado(e)" (click)="guardarClasificacion(e, true)" data-cy="kerna-ninguno">{{ t('kerna.clasificacion.ninguno') }}</button>
+            </div>
+          </div>
+        }
+
+        @if (muestraActualizar(e)) {
+          <div class="kerna-acciones">
+            <button type="button" class="btn btn-primary" (click)="k.actualizar(true)" data-cy="kerna-actualizar">{{ t('kerna.accion.actualizar') }}</button>
+          </div>
+        }
+        @if (e.id === 'sin-conexion') {
+          <div class="kerna-acciones">
+            <button type="button" class="btn btn-primary" (click)="k.actualizar(true)" data-cy="kerna-reintentar">{{ t('kerna.accion.reintentar') }}</button>
+          </div>
+        }
+
+        @if (codigo(e); as c) {
+          <div class="kerna-pie">
+            <span>{{ t('kerna.codigo.titulo') }}: <code data-cy="kerna-codigo">{{ c }}</code></span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="copiarCodigo(c)">{{ t('kerna.codigo.copiar') }}</button>
+            <span class="kerna-ok" role="status">{{ codigoCopiado ? t('kerna.codigo.copiado') : '' }}</span>
+          </div>
+        }
+      </div>
+    </section>
+  }
+}

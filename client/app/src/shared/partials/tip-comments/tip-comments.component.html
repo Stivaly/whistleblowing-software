@@ -25,7 +25,7 @@
         </div>
       </div>
       @if (tipService.tip.comments && tipService.tip.comments.length) {
-        <app-paginated-interface data-cy="SubmissionComments" id="SubmissionComments" [items]="tipService.tip.comments" [filterField]="'content'" [itemsPerPage]="10"   [filter]="{ visibility: key }" orderBy="creation_date" [orderDesc]="true">
+        <app-paginated-interface data-cy="SubmissionComments" id="SubmissionComments" [items]="comentariosVisibles" [filterField]="'content'" [itemsPerPage]="10"   [filter]="{ visibility: key }" orderBy="creation_date" [orderDesc]="true">
           <ng-template #content let-comment="item" let-index="index">
             <div id="comment-{{index}}" class="mt-2">
               @if (!comment.author_id && !comment.type) {

@@ -1,0 +1,25 @@
+@if (k.resultado(); as e) {
+  <div class="row mt-2" id="KernaIndicador">
+    <div class="col-md-12">
+      <div class="kerna-caja" (mouseenter)="alEntrarPuntero()" (mouseleave)="alSalirPuntero()">
+        <button type="button" class="kerna-ind" id="kerna-indicador" [attr.data-estado]="e.id"
+                [attr.aria-describedby]="idTooltip" [attr.aria-expanded]="k.abierto()" [attr.aria-controls]="idPanel"
+                (click)="k.alternar()" (focus)="alTenerFoco()" (blur)="alPerderFoco()">
+          <span class="kerna-ico">
+            <src-kerna-icono></src-kerna-icono>
+            <span class="kerna-glifo"><src-kerna-glifo [estado]="e.id"></src-kerna-glifo></span>
+          </span>
+          <span class="kerna-lbl"><span class="visually-hidden">Kerna: </span>{{ t(claveTexto(e, 'etiqueta')) }}</span>
+        </button>
+        <div class="kerna-tt" [class.kerna-tt-visible]="visible" role="tooltip" [id]="idTooltip" data-cy="kerna-tooltip">
+            <div class="kerna-tt-titulo">{{ t(claveTexto(e, 'titulo')) }}</div>
+            <dl class="kerna-tt-datos">
+              <dt>{{ t('kerna.tooltip.resumen') }}</dt><dd>{{ resumenTexto() }}</dd>
+              <dt>{{ t('kerna.tooltip.modo') }}</dt><dd>{{ modoTexto() }}</dd>
+            </dl>
+            <div class="kerna-tt-pie">{{ t('kerna.tooltip.abrir') }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

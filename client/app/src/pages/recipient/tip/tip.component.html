@@ -126,11 +126,13 @@
         </div>
       </div>
     </div>
+    <src-kerna-indicador></src-kerna-indicador>
     <div class="row mt-2">
       <div class="col-md-12">
         <src-tip-info [loading]="loading" [tipService]="RTipService"></src-tip-info>
       </div>
     </div>
+    <src-kerna-panel></src-kerna-panel>
     @if (tip && tip.receivers) {
       @if (tip.receivers.length > 1) {
         <div class="row">
