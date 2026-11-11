@@ -1,6 +1,8 @@
 """Recuperación: nube (Voyage + Qdrant) con respaldo en el servicio local."""
 from __future__ import annotations
 
+import asyncio
+
 from dataclasses import dataclass, field
 
 from kerna_comun import telemetria
@@ -24,13 +26,15 @@ class Recuperacion:
 
 
 class Retriever:
-    def __init__(self, voyage, qdrant, local, coleccion: str, embedding: str, top_k: int, umbral: float):
+    def __init__(self, voyage, qdrant, local, coleccion: str, embedding: str, top_k: int, umbral: float,
+                 esperas_429=(3.0, 8.0, 15.0), dormir=None):
         self._voyage, self._qdrant, self._local = voyage, qdrant, local
         self.coleccion, self.embedding, self.top_k, self.umbral = coleccion, embedding, top_k, umbral
+        self._esperas_429, self._dormir = tuple(esperas_429), dormir or asyncio.sleep
 
     async def recuperar(self, texto: str) -> Recuperacion:
         try:
-            return await self._nube(texto)
+            return await self._nube_con_reintento(texto)
         except ErrorProveedor as e:
             telemetria.evento("recuperacion_nube_fallida", proveedor=e.proveedor, codigo=str(e.codigo or "silencio"))
         try:
@@ -38,6 +42,18 @@ class Retriever:
         except ErrorProveedor as e:
             telemetria.evento("recuperacion_local_fallida", proveedor=e.proveedor, codigo=str(e.codigo or "silencio"))
             raise RecuperacionFallida() from None
+
+    async def _nube_con_reintento(self, texto: str) -> Recuperacion:
+        """El límite de peticiones del proveedor (429) se espera y se reintenta; lo demás pasa al respaldo local."""
+        for espera in self._esperas_429:
+            try:
+                return await self._nube(texto)
+            except ErrorProveedor as e:
+                if e.codigo != 429:
+                    raise
+                telemetria.evento("recuperacion_nube_espera", proveedor=e.proveedor, codigo="429", espera_s=espera)
+                await self._dormir(espera)
+        return await self._nube(texto)
 
     async def _nube(self, texto: str) -> Recuperacion:
         vector, tokens = await self._voyage.embed_consulta(texto)

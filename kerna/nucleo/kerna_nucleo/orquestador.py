@@ -1,6 +1,8 @@
 """Cadena por caso, en orden fijo: anonimización, clasificación, recuperación, generación, validación, registro."""
 from __future__ import annotations
 
+import asyncio
+
 import logging
 import uuid
 from datetime import datetime, timezone
@@ -42,9 +44,15 @@ def _norma(f: dict) -> str:
 class Orquestador:
     def __init__(self, config, almacen, enrutador: Enrutador, retriever: Retriever, reloj):
         self.config, self.almacen, self.enrutador, self.retriever, self.reloj = config, almacen, enrutador, retriever, reloj
+        # Cadenas simultáneas: el resto espera su turno (los proveedores limitan las peticiones por minuto).
+        self._turnos = asyncio.Semaphore(max(1, int(getattr(config, "concurrencia", 2))))
 
     async def procesar(self, solicitud: dict, texto: str) -> None:
         """Ejecuta la cadena y deja el resultado en el almacén. Nunca propaga errores ni registra el texto."""
+        async with self._turnos:  # la espera del turno no cuenta para el plazo global
+            await self._procesar(solicitud, texto)
+
+    async def _procesar(self, solicitud: dict, texto: str) -> None:
         cliente, ref, ids = solicitud["cliente"], solicitud["ref_opaca"], solicitud["id_solicitud"]
         inicio = self.reloj()
         reg: dict = {"tokens_entrada": 0, "tokens_salida": 0, "citas_rechazadas": 0}

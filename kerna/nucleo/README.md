@@ -31,7 +31,7 @@ python3 -m pytest pruebas/integracion/test_nucleo_real.py -m integracion   # ser
 
 ## Variables
 
-`KERNA_CLIENTES`, `KERNA_JWT_SECRETO`, `GEMINI_API_KEY`, `VOYAGE_API_KEY`, `QDRANT_URL`, `QDRANT_API_KEY`, `KERNA_COLECCION` (normativa_cl), `KERNA_EMBEDDING` (voyage-4-large), `KERNA_DIMS` (1024), `KERNA_LOCAL_URL`, `KERNA_LOCAL_TOKEN`, `KERNA_TOP_K` (8), `KERNA_UMBRAL_SIMILITUD`, `KERNA_CADENA` (JSON de niveles `{modo, proveedor, modelo, esquema, sistema}`), `KERNA_ALMACEN` (memoria | tablas), `KERNA_TABLAS_URL` o `KERNA_TABLAS_CONEXION`, `APPLICATIONINSIGHTS_CONNECTION_STRING`, `PORT` (8080).
+`KERNA_CLIENTES`, `KERNA_JWT_SECRETO`, `GEMINI_API_KEY`, `VOYAGE_API_KEY`, `QDRANT_URL`, `QDRANT_API_KEY`, `KERNA_COLECCION` (normativa_cl), `KERNA_EMBEDDING` (voyage-4-large), `KERNA_DIMS` (1024), `KERNA_LOCAL_URL`, `KERNA_LOCAL_TOKEN`, `KERNA_TOP_K` (8), `KERNA_CONCURRENCIA` (2: cadenas simultáneas; el resto espera turno), `KERNA_UMBRAL_SIMILITUD`, `KERNA_CADENA` (JSON de niveles `{modo, proveedor, modelo, esquema, sistema}`), `KERNA_ALMACEN` (memoria | tablas), `KERNA_TABLAS_URL` o `KERNA_TABLAS_CONEXION`, `APPLICATIONINSIGHTS_CONNECTION_STRING`, `PORT` (8080).
 
 ## Estado
 

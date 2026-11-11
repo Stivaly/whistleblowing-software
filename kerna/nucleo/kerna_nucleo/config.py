@@ -26,6 +26,7 @@ class Config:
     local_url: str = ""
     local_token: str = ""
     top_k: int = 8
+    concurrencia: int = 2
     umbral_similitud: float = 0.0
     cadena: list = field(default_factory=lambda: [dict(n) for n in CADENA_POR_DEFECTO])
     modelo_clasificador: str = "gemini-3.5-flash-lite"
@@ -54,6 +55,7 @@ class Config:
         c.local_url = e.get("KERNA_LOCAL_URL", "")
         c.local_token = e.get("KERNA_LOCAL_TOKEN", "")
         c.top_k = int(e.get("KERNA_TOP_K", c.top_k))
+        c.concurrencia = int(e.get("KERNA_CONCURRENCIA", c.concurrencia))
         c.umbral_similitud = float(e.get("KERNA_UMBRAL_SIMILITUD", c.umbral_similitud))
         if e.get("KERNA_CADENA"):
             c.cadena = json.loads(e["KERNA_CADENA"])

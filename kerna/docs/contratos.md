@@ -113,7 +113,7 @@ Orden fijo, ejecutado en segundo plano tras aceptar la solicitud:
 
 1. **Segunda anonimización** (`kerna_comun.anonimizador`) del texto recibido.
 2. **Clasificación previa** con el modelo de menor costo: `{"materia": str, "riesgo": "bajo"|"medio"|"alto"}`.
-3. **Recuperación**: embedding de la consulta y búsqueda de los `KERNA_TOP_K` (8) fragmentos vigentes. Nube: Voyage
+3. **Recuperación**: embedding de la consulta y búsqueda de los `KERNA_TOP_K` (8) fragmentos vigentes. Nube: Voyage Un 429 del proveedor de embeddings se reintenta (3, 8 y 15 s) antes de pasar al respaldo local.
    (`input_type: "query"`) + Qdrant Cloud con filtro `vigente = true`. Si Voyage o Qdrant no responden: servicio
    local (`POST {KERNA_LOCAL_URL}/buscar`). Si el mejor puntaje queda bajo `KERNA_UMBRAL_SIMILITUD`, la solicitud
    termina en `revision_manual` con motivo `sin_normativa_aplicable`.
@@ -166,7 +166,7 @@ observación en claro más allá de lo necesario: el texto anonimizado se descar
 
 `KERNA_CLIENTES` (JSON `{client_id: {"secreto_sha256": str, "cliente": str}}`), `KERNA_JWT_SECRETO`,
 `GEMINI_API_KEY`, `VOYAGE_API_KEY`, `QDRANT_URL`, `QDRANT_API_KEY`, `KERNA_COLECCION` (`normativa_cl`),
-`KERNA_EMBEDDING` (`voyage-4-large`), `KERNA_DIMS` (1024), `KERNA_LOCAL_URL`, `KERNA_LOCAL_TOKEN`, `KERNA_TOP_K`,
+`KERNA_EMBEDDING` (`voyage-4-large`), `KERNA_DIMS` (1024), `KERNA_LOCAL_URL`, `KERNA_LOCAL_TOKEN`, `KERNA_TOP_K`, `KERNA_CONCURRENCIA` (2),
 `KERNA_UMBRAL_SIMILITUD`, `KERNA_CADENA` (JSON opcional), `KERNA_ALMACEN` (`memoria` \| `tablas`),
 `KERNA_TABLAS_URL` o `KERNA_TABLAS_CONEXION`, `APPLICATIONINSIGHTS_CONNECTION_STRING`.
 
