@@ -81,7 +81,7 @@ class ClienteVeridy:
     def iniciar_sesion(self) -> str:
         with self._cerrojo:
             r = self._crudo("POST", "/api/auth/type", {"username": self._usuario})
-            if r.status_code != 200:
+            if r.status_code not in (200, 201):
                 raise ErrorVeridy("no se pudo consultar el tipo de acceso", r.status_code)
             tipo = self._json(r)
             clave = self._password
