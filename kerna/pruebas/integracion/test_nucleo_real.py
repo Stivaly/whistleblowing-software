@@ -18,6 +18,7 @@ TEXTO = ("Un supervisor ficticio del área de bodega ha hostigado de forma reite
          "con gritos y amenazas de despido frente a sus compañeros, y ella teme represalias si denuncia.")
 
 
+@pytest.mark.timeout(300)   # el plazo global de la cadena es de 240 s
 @pytest.mark.skipif(any(not os.environ.get(v) for v in REQUERIDAS), reason="faltan variables de servicios reales")
 def test_cadena_completa_real():
     cfg = Config.desde_entorno()

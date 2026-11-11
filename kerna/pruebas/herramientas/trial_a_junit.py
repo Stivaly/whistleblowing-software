@@ -20,7 +20,7 @@ def convertir(texto: str, nombre: str) -> ET.Element:
             modulo_clase, _, prueba = completo.rpartition(".")
             caso = ET.SubElement(suite, "testcase", classname=modulo_clase, name=prueba, time="0")
             n += 1
-            if resultado == "FAIL":
+            if resultado in ("FAIL", "FAILURE"):
                 ET.SubElement(caso, "failure", message="ver salida completa en el reporte")
                 cuentas["failures"] += 1
             elif resultado == "ERROR":
@@ -29,6 +29,9 @@ def convertir(texto: str, nombre: str) -> ET.Element:
             elif resultado in ("SKIPPED", "TODO"):
                 ET.SubElement(caso, "skipped", message=resultado)
                 cuentas["skipped"] += 1
+            elif resultado not in ("OK", "SUCCESS"):   # resultado desconocido: nunca cuenta como aprobado
+                ET.SubElement(caso, "error", message=f"resultado no reconocido: {resultado}")
+                cuentas["errors"] += 1
             continue
         t = TOTAL.match(linea)
         if t:
