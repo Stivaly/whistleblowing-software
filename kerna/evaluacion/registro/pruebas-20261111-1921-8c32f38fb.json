@@ -1,0 +1,83 @@
+{
+  "commit": "8c32f38fb+cambios",
+  "fecha_utc": "2026-11-11T19:29:40Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "e2e": {
+      "total": 25,
+      "pasadas": 17,
+      "fallidas": 8,
+      "omitidas": 0,
+      "duracion_s": 468.4,
+      "lista_fallidas": [
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[conector-inactivo-en-proceso]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 46.7241
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[contingencia-busqueda-local]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 30.5931
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[sin-normativa]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 46.353
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[valorada]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 46.7437
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_tooltip_hover_foco_esc_y_persistencia",
+          "ids": {
+            "pr": [
+              "PR-13",
+              "PR-16",
+              "PR-17"
+            ]
+          },
+          "duracion_s": 46.209
+        }
+      ],
+      "conocidas": 0,
+      "error": null,
+      "estado": "falla"
+    }
+  },
+  "ok": false
+}

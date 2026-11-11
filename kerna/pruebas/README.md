@@ -29,7 +29,8 @@ En la terminal solo salen una línea por capa y las fallidas; el código de sali
 | Variable | Uso |
 | --- | --- |
 | `VERIDY_URL` | URL de Veridy para e2e (por defecto, la que informa `infra/veridy/veridy.sh estado`) |
-| `VERIDY_USUARIO`, `VERIDY_PASSWORD` | Credenciales para pruebas e2e con sesión |
+| `VERIDY_USUARIO`, `VERIDY_PASSWORD` | Credenciales de un destinatario para las e2e con sesión. Debe ser una cuenta propia de pruebas, no `kerna-conector`: Veridy cierra las sesiones anteriores de un usuario en cada ingreso y el conector reingresa cada ~95 s, lo que corta la sesión del navegador a mitad de prueba |
+| `VERIDY_RECIBO` | Recibo de una denuncia de prueba (vista del denunciante) |
 | `PROBAR_ENCENDER_VERIDY=1` | Si Veridy no está Running, lo enciende con `veridy.sh encender` y espera `/api/health` (tope 3 min). Sin esto, e2e falla con un mensaje claro |
 | `KERNA_API_URL`, `KERNA_CLIENT_ID`, `KERNA_CLIENT_SECRET`, `KERNA_ID_EMPRESA` | API del núcleo para carga e integración |
 | `CARGA_USUARIOS` (3), `CARGA_TASA` (1), `CARGA_DURACION` (60s) | Parámetros de locust |

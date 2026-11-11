@@ -52,7 +52,7 @@ def pagina(navegador, request):
                                 viewport={"width": 1280, "height": 800}, locale="es-CL")
     ctx.tracing.start(screenshots=True, snapshots=True)
     pag = ctx.new_page()
-    pag.set_default_timeout(30_000)
+    pag.set_default_timeout(60_000)   # la instancia de pruebas es pequeña: 30 s no siempre alcanzan
     yield pag
     falla = getattr(request.node, "_kerna_fallo", False)
     if falla:

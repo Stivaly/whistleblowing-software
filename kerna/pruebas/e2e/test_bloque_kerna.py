@@ -12,13 +12,15 @@ usuaria lo pida (el despliegue actual no trae este código). Los textos son los 
 import json
 import os
 import re
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 
 import pytest
 from playwright.sync_api import TimeoutError as TiempoAgotado
 
-pytestmark = [pytest.mark.e2e, pytest.mark.pr("PR-13"), pytest.mark.pr("PR-16")]
+pytestmark = [pytest.mark.e2e, pytest.mark.pr("PR-13"), pytest.mark.pr("PR-16"),
+              pytest.mark.timeout(180)]   # ingreso, lista y caso con esperas de hasta 60 s cada una
 
 ID_KERNA = "kerna-simulada-0001"
 NOMBRE_KERNA = "Kerna AI (cuenta de servicio simulada)"
@@ -108,7 +110,15 @@ def _instalar_simulacion(pagina, edad_min, notas, cuenta_kerna=True):
         if ruta.request.method != "GET":
             ruta.fallback()
             return
-        resp = ruta.fetch()
+        resp = None
+        for intento in range(4):   # el DNS del servidor de pruebas falla a ratos (EAI_AGAIN): se reintenta
+            try:
+                resp = ruta.fetch()
+                break
+            except Exception:
+                if intento == 3:
+                    raise
+                time.sleep(1.5)
         datos = resp.json()
         ahora = datetime.now(timezone.utc)
         # La instancia puede tener ya la cuenta y notas reales de Kerna: se retiran para que mande la simulación.

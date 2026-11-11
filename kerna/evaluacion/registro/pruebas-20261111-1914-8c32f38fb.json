@@ -1,0 +1,46 @@
+{
+  "commit": "8c32f38fb",
+  "fecha_utc": "2026-11-11T19:20:55Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "e2e": {
+      "total": 22,
+      "pasadas": 20,
+      "fallidas": 2,
+      "omitidas": 0,
+      "duracion_s": 333.3,
+      "lista_fallidas": [
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[lista]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 38.7219
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_sin_cuenta_de_kerna_no_hay_indicador",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 40.3204
+        }
+      ],
+      "conocidas": 0,
+      "error": null,
+      "estado": "falla"
+    }
+  },
+  "ok": false
+}

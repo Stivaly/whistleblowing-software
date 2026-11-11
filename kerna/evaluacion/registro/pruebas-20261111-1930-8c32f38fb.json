@@ -1,0 +1,59 @@
+{
+  "commit": "8c32f38fb+cambios",
+  "fecha_utc": "2026-11-11T19:37:34Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "e2e": {
+      "total": 22,
+      "pasadas": 19,
+      "fallidas": 3,
+      "omitidas": 0,
+      "duracion_s": 404.4,
+      "lista_fallidas": [
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[conector-inactivo-en-proceso]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 46.1891
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[lista]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 60.0016
+        },
+        {
+          "nodeid": "pruebas/e2e/test_bloque_kerna.py::test_estado_del_indicador[revision-tiempo]",
+          "ids": {
+            "cu": [
+              "CU-01"
+            ],
+            "pr": [
+              "PR-13",
+              "PR-16"
+            ]
+          },
+          "duracion_s": 59.9999
+        }
+      ],
+      "conocidas": 0,
+      "error": null,
+      "estado": "falla"
+    }
+  },
+  "ok": false
+}

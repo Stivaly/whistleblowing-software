@@ -26,6 +26,15 @@ RED_PG="kerna-probar-net"
 DENTRO=()   # contenedores que esta corrida inició (se detienen al final; nunca se eliminan)
 
 log() { printf '%s\n' "$*" >> "$OUT/proceso.log"; }
+# espera_salida SEGUNDOS comando...: repite el comando hasta que escriba algo (o venza el plazo) y lo imprime.
+espera_salida() {
+  local tope=$(( $(date +%s) + $1 )) r; shift
+  while :; do
+    r="$("$@" 2>/dev/null)" && [ -n "$r" ] && { printf '%s\n' "$r"; return 0; }
+    [ "$(date +%s)" -ge "$tope" ] && return 1
+    read -r -t 2 < /dev/null <> <(:) || true
+  done
+}
 error_capa() { printf '%s\n' "$2" > "$OUT/error-$1.txt"; }
 espera() {  # espera <segundos> <comando...>: reintenta hasta que el comando tenga éxito o venza el tope
   local fin=$(( $(date +%s) + $1 )); shift
@@ -82,8 +91,13 @@ capa_e2e() {
   espera 180 curl -sf --max-time 5 "$url/api/health" || { error_capa e2e "Veridy no responde en $url/api/health."; return; }
   docker image inspect "$PLAYWRIGHT_IMAGEN" >/dev/null 2>&1 || docker pull -q "$PLAYWRIGHT_IMAGEN" >/dev/null 2>&1 \
     || { error_capa e2e "No se pudo obtener la imagen $PLAYWRIGHT_IMAGEN."; return; }
+  # El nombre de Veridy se resuelve una vez y se fija en el contenedor: el navegador no depende del DNS del host.
+  local nombre ip fijar=()
+  nombre="$(sed -E 's#^https?://([^/:]+).*#\1#' <<<"$url")"
+  ip="$(espera_salida 60 getent ahostsv4 "$nombre" | awk 'NR==1{print $1}')"
+  [ -n "$ip" ] && fijar=(--add-host "$nombre:$ip")
   if ! docker inspect "$CONT_E2E" >/dev/null 2>&1; then
-    docker run -d --name "$CONT_E2E" --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp \
+    docker run -d --name "$CONT_E2E" "${fijar[@]}" --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp \
       -v "$RAIZ/kerna:/repo/kerna:ro" -v "$OUT:/reporte" --entrypoint tail "$PLAYWRIGHT_IMAGEN" -f /dev/null >/dev/null 2>&1 \
       || { error_capa e2e "No se pudo crear el contenedor $CONT_E2E."; return; }
   else
@@ -91,7 +105,7 @@ capa_e2e() {
     if ! docker inspect "$CONT_E2E" --format '{{range .Mounts}}{{.Source}} {{end}}' | grep -q "^$OUT \| $OUT "; then
       docker stop "$CONT_E2E" >/dev/null 2>&1
       CONT_E2E="${CONT_E2E}-$(date -u +%Y%m%d%H%M)"
-      docker run -d --name "$CONT_E2E" --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp \
+      docker run -d --name "$CONT_E2E" "${fijar[@]}" --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp \
         -v "$RAIZ/kerna:/repo/kerna:ro" -v "$OUT:/reporte" --entrypoint tail "$PLAYWRIGHT_IMAGEN" -f /dev/null >/dev/null 2>&1 \
         || { error_capa e2e "No se pudo crear el contenedor de e2e."; return; }
     else
