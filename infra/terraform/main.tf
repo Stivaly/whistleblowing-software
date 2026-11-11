@@ -24,6 +24,12 @@ locals {
     ATLAS_PROJECT_ID      = var.atlas_proyecto_id
   }
 
+  # Con el servicio local desplegado, los jobs también vectorizan su colección (normativa_cl_local).
+  secretos_job = merge(local.secretos, var.crear_servicio_local ? { "kerna-local-token" = "KERNA_LOCAL_TOKEN" } : {})
+  entorno_job = merge(local.entorno, var.crear_servicio_local ? {
+    KERNA_LOCAL_URL = "https://${azurerm_container_app.servicio_local[0].ingress[0].fqdn}"
+  } : {})
+
   jobs = {
     diario = {
       cron = var.cron_diario
@@ -71,9 +77,9 @@ resource "azurerm_container_registry" "acr" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   # Standard: 1 registro incluido gratis en Azure for Students (Basic se cobra).
-  sku                 = "Standard"
-  admin_enabled       = false
-  tags                = local.etiquetas
+  sku           = "Standard"
+  admin_enabled = false
+  tags          = local.etiquetas
 }
 
 # Permite a quien corre Terraform subir la imagen con docker push.
@@ -192,7 +198,7 @@ resource "azurerm_container_app_job" "pipeline" {
   }
 
   dynamic "secret" {
-    for_each = local.secretos
+    for_each = local.secretos_job
     content {
       name                = secret.key
       key_vault_secret_id = "${azurerm_key_vault.kv.vault_uri}secrets/${secret.key}"
@@ -209,7 +215,7 @@ resource "azurerm_container_app_job" "pipeline" {
       memory = "1Gi"
 
       dynamic "env" {
-        for_each = local.secretos
+        for_each = local.secretos_job
         content {
           name        = env.value
           secret_name = env.key
@@ -217,7 +223,7 @@ resource "azurerm_container_app_job" "pipeline" {
       }
 
       dynamic "env" {
-        for_each = local.entorno
+        for_each = local.entorno_job
         content {
           name  = env.key
           value = env.value

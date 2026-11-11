@@ -361,6 +361,20 @@ def actualizar_meta(col: dict, db) -> dict:
     return payload
 
 
+def asegurar_meta(col: dict, db) -> bool:
+    """Escribe el punto meta si falta o si su `version_corpus` no es la de Mongo. Un corpus con fragmentos y sin
+    contador empieza en la versión 1. -> True si lo escribió."""
+    if version_corpus(db) == 0 and db.fragmentos.count_documents({}, limit=1):
+        db.meta.update_one({"_id": "corpus"}, {"$setOnInsert": {"version_corpus": 1}}, upsert=True)
+    r = qdrant(f"/collections/{col['nombre']}/points", {"ids": [PUNTO_META_ID], "with_payload": True}, "POST")
+    puntos = (r or {}).get("result") or []
+    actual = (puntos[0].get("payload") or {}).get("version_corpus") if puntos else None
+    if actual == version_corpus(db):
+        return False
+    actualizar_meta(col, db)
+    return True
+
+
 def sincronizar_coleccion(db, col: dict, batch: int = 64, embed=None) -> int:
     """Vectoriza los fragmentos pendientes de `col` y los sube. -> cantidad sincronizada."""
     from pymongo import UpdateOne
@@ -391,8 +405,7 @@ def sincronizar_coleccion(db, col: dict, batch: int = 64, embed=None) -> int:
         db.fragmentos.bulk_write(ops, ordered=False)
         total += len(lote)
         print(f"[{col['nombre']}] embebidos {total} fragmentos...", flush=True)
-    if total:
-        actualizar_meta(col, db)
+    asegurar_meta(col, db)
     print(f"[{col['nombre']}] listo: {total} fragmentos sincronizados ({col['proveedor']}/{col['modelo']}).")
     return total
 
@@ -477,6 +490,11 @@ def disparar(db, colecciones: list[dict], ruta_resultado: Path | str, batch: int
     pendientes = {c["nombre"]: contar_pendientes(db, c) for c in colecciones}
     if cambios == 0 and not any(pendientes.values()):
         print("sin cambios: ningún fragmento nuevo, modificado ni pendiente; no se llama a ningún proveedor.")
+        for col in colecciones:   # solo Qdrant: deja el punto meta al día (por ejemplo, tras un retiro)
+            try:
+                asegurar_meta(col, db)
+            except Exception as e:  # noqa: BLE001
+                print(f"[{col['nombre']}] meta sin actualizar: {type(e).__name__}", file=sys.stderr)
         return 0
     print(f"Cambios en la extracción: {cambios}; pendientes por colección: {pendientes}")
     return sincronizar_todas(db, colecciones, batch)

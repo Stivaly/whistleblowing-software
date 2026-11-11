@@ -247,7 +247,7 @@ def test_main_sincroniza_pendientes_con_voyage(db, monkeypatch, reloj):
     peticiones, upserts = [], []
     monkeypatch.setattr(s, "_post", lambda url, h, body: peticiones.append(body) or respuesta_voyage(body, 10))
     monkeypatch.setattr(s, "asegurar_coleccion", lambda *a, **k: None)
-    monkeypatch.setattr(s, "qdrant", lambda path, body=None, method="PUT": upserts.append(body))
+    monkeypatch.setattr(s, "qdrant", lambda path, body=None, method="PUT": upserts.append(body) if method == "PUT" else {})
     monkeypatch.setattr("sys.argv", ["embed_sync.py", "--batch", "2"])
 
     s.main()
@@ -276,3 +276,59 @@ def test_main_no_marca_ok_si_faltan_dimensiones(db, monkeypatch, reloj):
     with pytest.raises(RuntimeError):
         s.main()
     assert db.fragmentos.find_one({"_id": "555-art-1"})["estado_embedding"] == "pendiente"
+
+
+# ---------------------------------------------------------------- punto meta al día
+class _Col:
+    def __init__(self, docs):
+        self.docs = docs
+
+    def count_documents(self, filtro, limit=0):
+        return len(self.docs)
+
+    def find_one(self, filtro):
+        return next((d for d in self.docs if d["_id"] == filtro["_id"]), None)
+
+    def update_one(self, filtro, cambio, upsert=False):
+        if self.find_one(filtro) is None and upsert:
+            self.docs.append({"_id": filtro["_id"], **cambio["$setOnInsert"]})
+
+
+class _DbMeta:
+    def __init__(self, version=None):
+        self.fragmentos = _Col([{"_id": 1}])
+        self.meta = _Col([] if version is None else [{"_id": "corpus", "version_corpus": version}])
+
+
+def _qdrant_falso(monkeypatch, version_en_qdrant):
+    escritos = []
+
+    def falso(path, body=None, method="PUT"):
+        if method == "POST":
+            punto = [{"payload": {"version_corpus": version_en_qdrant}}] if version_en_qdrant is not None else []
+            return {"result": punto}
+        escritos.append(body)
+        return {}
+    monkeypatch.setattr(s, "qdrant", falso)
+    return escritos
+
+
+COL_META = {"nombre": "c", "modelo": "m", "dims": 4}
+
+
+def test_meta_se_crea_si_falta_y_el_corpus_empieza_en_version_1(monkeypatch):
+    escritos, db = _qdrant_falso(monkeypatch, None), _DbMeta()
+    assert s.asegurar_meta(COL_META, db) is True
+    assert escritos[0]["points"][0]["id"] == s.PUNTO_META_ID
+    assert escritos[0]["points"][0]["payload"]["version_corpus"] == 1
+
+
+def test_meta_al_dia_no_se_reescribe(monkeypatch):
+    escritos = _qdrant_falso(monkeypatch, 3)
+    assert s.asegurar_meta(COL_META, _DbMeta(3)) is False and escritos == []
+
+
+def test_meta_se_actualiza_si_cambia_la_version(monkeypatch):
+    escritos = _qdrant_falso(monkeypatch, 3)
+    assert s.asegurar_meta(COL_META, _DbMeta(4)) is True
+    assert escritos[0]["points"][0]["payload"]["version_corpus"] == 4
