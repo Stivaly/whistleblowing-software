@@ -80,6 +80,8 @@ def _leer_capa(carpeta: pathlib.Path, capa: str, base: dict) -> dict | None:
             codigo = rc.read_text().strip()
             if codigo not in ("0", "1"):
                 r["error"] = f"pytest/herramienta terminó con código {codigo} ({rc.stem})"
+            elif codigo == "1" and r["total"] == 0:   # falló antes de producir resultados: no es un «ok» vacío
+                r["error"] = f"la herramienta terminó con código 1 sin resultados ({rc.stem}); ver su salida"
     r["estado"] = "error" if r["error"] else ("falla" if r["fallidas"] else "ok")
     return r
 
