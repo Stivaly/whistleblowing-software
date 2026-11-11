@@ -1,0 +1,37 @@
+{
+  "commit": "e541e2d91+cambios",
+  "fecha_utc": "2026-11-11T02:36:58Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "unitarias": {
+      "total": 251,
+      "pasadas": 249,
+      "fallidas": 2,
+      "omitidas": 0,
+      "duracion_s": 42.3,
+      "lista_fallidas": [
+        {
+          "nodeid": "pruebas/unitarias/test_anonimizador.py::test_estabilidad_y_numeracion",
+          "ids": {
+            "pr": [
+              "PR-24"
+            ],
+            "rf": [
+              "RF01"
+            ]
+          },
+          "duracion_s": 0.0034
+        },
+        {
+          "nodeid": "pruebas/unitarias/test_conector_clientes.py::test_nucleo_no_reintenta_4xx_y_renueva_token_ante_401",
+          "ids": {},
+          "duracion_s": 0.0986
+        }
+      ],
+      "conocidas": 0,
+      "error": null,
+      "estado": "falla"
+    }
+  },
+  "ok": false
+}

@@ -1,0 +1,5 @@
+{
+  "descripcion": "Fallos previos de la suite del backend de Veridy que también ocurren en la rama stable (no son regresión).",
+  "prefijos_conocidos": ["globaleaks.tests.test_migration."],
+  "maximo_conocidos": 16
+}

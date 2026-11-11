@@ -32,3 +32,6 @@ fable upgrades/
 
 # Papelera del proyecto (regla de no eliminación)
 .papelera/
+
+# Reportes de pruebas (scripts/probar.sh)
+reportes/

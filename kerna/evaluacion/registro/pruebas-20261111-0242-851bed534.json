@@ -1,0 +1,19 @@
+{
+  "commit": "851bed534+cambios",
+  "fecha_utc": "2026-11-11T02:46:04Z",
+  "sha256_datos": "af7fe14955589ae25b481937d27cc255433ef9c31e4e70eb7afb5b3f5137bf0b",
+  "capas": {
+    "e2e": {
+      "total": 1,
+      "pasadas": 1,
+      "fallidas": 0,
+      "omitidas": 0,
+      "duracion_s": 4.3,
+      "lista_fallidas": [],
+      "conocidas": 0,
+      "error": null,
+      "estado": "ok"
+    }
+  },
+  "ok": true
+}
