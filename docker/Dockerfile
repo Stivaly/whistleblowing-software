@@ -20,7 +20,7 @@ RUN apt-get update -q && \
 
 WORKDIR /src/client
 COPY client/package.json client/npm-shrinkwrap.json client/.npmrc ./
-RUN npm ci --no-audit --no-fund
+RUN CYPRESS_INSTALL_BINARY=0 npm ci --no-audit --no-fund
 COPY LICENSE /src/LICENSE
 COPY client ./
 RUN ./node_modules/grunt/bin/grunt build
