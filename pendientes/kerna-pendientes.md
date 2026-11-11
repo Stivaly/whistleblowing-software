@@ -206,3 +206,13 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       que la interfaz usa ("Analyst", "Reopen", "Mask", "Act on behalf of a whistleblower", "Unselect"…) y deja
       "Specify" sin traducir. Revisar o restaurar el de 5.0.85 y agregar encima las claves nuevas.
 - `docker/docker-compose.yml` y `pendientes/analisis-veridy/` mencionan la IP privada de la red local: no es un secreto.
+
+## Decisiones de la usuaria (MVP, 2026-11-11)
+- [ ] **Alertas de Kerna**: `infra/terraform/observabilidad.tf` crea 4 reglas de consulta programada y un grupo de
+      acción por correo solo si `correo_alertas` tiene valor en `terraform.tfvars`. Las reglas tienen costo mensual
+      fijo (bajo, por regla), por eso no se crearon. El Workbook «Kerna AI: resultados» ya está aplicado.
+- [ ] **Cuenta de destinatario para pruebas e2e**: las 22 pruebas del bloque corren con la cuenta `kerna-conector`.
+      Con una cuenta de auditor de prueba (`VERIDY_USUARIO`, `VERIDY_PASSWORD`) cubrirían la vista real del auditor.
+- [ ] **Casos en revisión manual**: 7 denuncias sintéticas del 11-11 quedaron en `revision_manual` (límite de
+      peticiones del proveedor de embeddings). El contrato no define reproceso; decidir si se agrega.
+- [ ] **Firewall de PostgreSQL de Veridy**: la regla `host-veridy` no cubre la IP actual de este servidor.

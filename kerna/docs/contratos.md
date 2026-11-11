@@ -113,10 +113,11 @@ Orden fijo, ejecutado en segundo plano tras aceptar la solicitud:
 
 1. **Segunda anonimización** (`kerna_comun.anonimizador`) del texto recibido.
 2. **Clasificación previa** con el modelo de menor costo: `{"materia": str, "riesgo": "bajo"|"medio"|"alto"}`.
-3. **Recuperación**: embedding de la consulta y búsqueda de los `KERNA_TOP_K` (8) fragmentos vigentes. Nube: Voyage Un 429 del proveedor de embeddings se reintenta (3, 8 y 15 s) antes de pasar al respaldo local.
+3. **Recuperación**: embedding de la consulta y búsqueda de los `KERNA_TOP_K` (8) fragmentos vigentes. Nube: Voyage
    (`input_type: "query"`) + Qdrant Cloud con filtro `vigente = true`. Si Voyage o Qdrant no responden: servicio
    local (`POST {KERNA_LOCAL_URL}/buscar`). Si el mejor puntaje queda bajo `KERNA_UMBRAL_SIMILITUD`, la solicitud
    termina en `revision_manual` con motivo `sin_normativa_aplicable`.
+   Un 429 del proveedor de embeddings se reintenta (esperas de 3, 8 y 15 s) antes de pasar al respaldo local.
 4. **Generación** con JSON validado: `{"articulos":[{"fragmento_id","explicacion","cita","confianza"}]}`. El modelo
    solo puede citar `fragmento_id` de los fragmentos recuperados. El texto del caso va delimitado como dato y el
    prompt indica que no contiene instrucciones.
