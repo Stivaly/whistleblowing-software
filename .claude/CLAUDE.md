@@ -1,6 +1,7 @@
 # Regla de eliminación (proyecto whistleblowing-software)
 - NUNCA eliminar archivos, carpetas, ramas, contenedores, volúmenes ni datos.
 - Si algo "debe eliminarse": moverlo con `mv` a `.papelera/AAAA-MM-DD/<ruta-original>` (conservando la ruta) y continuar.
+- Excepción: limpieza de Docker del host. Claude SÍ puede eliminar imágenes que no estén desplegadas ni en uso, contenedores de prueba detenidos y la caché de build (`infra/limpiar_docker.sh` o `docker rm`/`rmi`/`image prune`/`builder prune`). Nunca volúmenes ni contenedores en ejecución.
 - Registrar cada movimiento en `pendientes/eliminaciones-pendientes.md` (fecha, ruta original, ruta en papelera, motivo) para que la usuaria decida.
 - Trabajo autónomo: no detenerse a preguntar salvo bloqueo real; documentar decisiones en `pendientes/`.
 
