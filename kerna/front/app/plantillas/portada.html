@@ -32,7 +32,7 @@
 <p class="eyebrow">Cómo funciona</p>
 <h2 class="disp h-sec">Cuatro pasos, ninguno expone a nadie</h2>
 <ol class="orb-steps" data-rvs>
-{% for ico, t, d in (('inbox','Llega la denuncia','Una persona denuncia en Veridy, como siempre.'),('eye-off','Se anonimiza','Se tapan nombres, RUT, correos y teléfonos.'),('search','Se busca en la ley','Kerna encuentra los artículos más parecidos.'),('quote','Sugerencia con cita','Ves la ley, el artículo y el texto que lo respalda.')) %}
+{% for ico, t, d in (('inbox','Llega la denuncia','Una persona denuncia en Veridy, como siempre.'),('user','Se anonimiza','Se tapan nombres, RUT, correos y teléfonos.'),('target','Se busca en la ley','Kerna encuentra los artículos más parecidos.'),('sparkles','Sugerencia con cita','Ves la ley, el artículo y el texto que lo respalda.')) %}
 <li class="ostep"><span class="node{% if loop.last %} lima{% endif %}">{{ ic(ico) }}</span><div><span class="pn">Paso {{ loop.index }}</span><b class="block text-[19px] mt-0.5">{{ t }}</b><p class="m-0 mt-1 text-[16px] muted">{{ d }}</p></div></li>
 {% endfor %}</ol></section>
 
@@ -49,7 +49,7 @@
 <h2 class="disp h-sec">Normativa chilena vigente</h2>
 <div class="grid md:grid-cols-3 gap-5 mt-8" data-rvs>
 {% for n, t, d in (('21.643','Ley Karin','Acoso laboral, sexual y violencia en el trabajo.'),('19.628','Datos personales','Protección de la vida privada, con la reforma de la Ley 21.719.'),('20.393','Responsabilidad penal','De las personas jurídicas y modelos de prevención de delitos.')) %}
-<div class="card p-6 ley"><span class="ley-n disp">{{ n }}</span><b class="block text-[19px] mt-4">{{ t }}</b><p class="m-0 mt-1.5 text-[16px] muted">{{ d }}</p></div>{% endfor %}
+<div class="card p-6 ley"><div class="flex items-center gap-4"><span class="ley-n disp">{{ n }}</span>{{ ley_icono(n, 44) }}</div><b class="block text-[19px] mt-4">{{ t }}</b><p class="m-0 mt-1.5 text-[16px] muted">{{ d }}</p></div>{% endfor %}
 </div>
 <div class="card p-6 mt-6 flex gap-4 items-start bd-warn"><span style="width:28px;height:28px;color:var(--warn);display:inline-flex;flex:none">{{ ic('e-contingencia-modelo') }}</span><div><b class="text-[18px]">Es una sugerencia, no un dictamen</b><p class="m-0 text-[16px] muted">Kerna orienta a quien analiza el caso; no reemplaza el criterio ni la asesoría jurídica. La decisión siempre es de una persona.</p></div></div>
 </section>

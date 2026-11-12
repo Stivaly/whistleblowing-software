@@ -21,10 +21,8 @@
     ['role', 'aria-label', 'aria-hidden'].forEach((k) => { if (svg.hasAttribute(k)) host.setAttribute(k, svg.getAttribute(k)); });
     const w = svg.getAttribute('width'), h = svg.getAttribute('height'); if (w) host.style.width = w + 'px'; if (h) host.style.height = h + 'px';
     if (hero) {
-      const x1 = layer(host, 'xr1', vb);
-      el('circle', { class: 'orb anillo', cx: 32, cy: 32, r: 42 }, x1); el('circle', { class: 'sat-s', cx: 74, cy: 32, r: 2.4 }, x1);
-      const x2 = layer(host, 'xr2', vb);
-      el('circle', { class: 'orb anillo', cx: 32, cy: 32, r: 37 }, x2); el('circle', { class: 'nuc', cx: 69, cy: 32, r: 1.3 }, x2);
+      el('circle', { class: 'orb anillo', cx: 32, cy: 32, r: 42 }, layer(host, 'xr1', vb, 1));
+      el('circle', { class: 'orb anillo', cx: 32, cy: 32, r: 37 }, layer(host, 'xr2', vb, 1));
     }
     el('circle', { class: 'orb anillo', cx: 32, cy: 32, r: 30.5 }, layer(host, 'base', vb, 1));
     const ros = layer(host, 'lg-a roseta', vb);
@@ -239,8 +237,8 @@
     const col = (k) => (k === 'ok' ? css('--c-verde') : k === 'coral' ? css('--c-coral') : css('--bad-bar')), ink = css('--ink'), mu = css('--muted'), vacio = { color: 'transparent' };
     const seg = (d) => d.map((x, i) => ({ value: x, itemStyle: { color: col(c.cols[i]), borderRadius: 2 } }));
     mk('ch-casc', {
-      ...base(), grid: { left: 4, right: 4, top: 8, bottom: 36 }, tooltip: { trigger: 'item', formatter: (p) => (p.seriesIndex % 2 ? c.labels[p.dataIndex].replace('\n', ': ') + ' UF' : ''), confine: true },
-      xAxis: { type: 'category', data: c.labels, axisLabel: { color: ink, fontSize: 10.5, interval: 0, lineHeight: 14, margin: 8 }, axisTick: { show: false }, axisLine: { lineStyle: { color: '#B9C1DA' } } },
+      ...base(), grid: { left: 4, right: 4, top: 8, bottom: innerWidth < 600 ? 62 : 36 }, tooltip: { trigger: 'item', formatter: (p) => (p.seriesIndex % 2 ? c.labels[p.dataIndex].replace('\n', ': ') + ' UF' : ''), confine: true },
+      xAxis: { type: 'category', data: c.labels, axisLabel: { color: ink, fontSize: innerWidth < 600 ? 9.5 : 10.5, interval: 0, lineHeight: 13, margin: 8, ...(innerWidth < 600 ? { width: 44, overflow: 'break' } : {}) }, axisTick: { show: false }, axisLine: { lineStyle: { color: '#B9C1DA' } } },
       yAxis: { type: 'value', show: false },
       series: [{ type: 'bar', stack: 'p', data: c.bp, itemStyle: vacio, silent: true, barMaxWidth: 44 }, { type: 'bar', stack: 'p', data: seg(c.sp), barMaxWidth: 44 },
         { type: 'bar', stack: 'n', data: c.bn, itemStyle: vacio, silent: true, barMaxWidth: 44 }, { type: 'bar', stack: 'n', data: seg(c.sn), barMaxWidth: 44 }],

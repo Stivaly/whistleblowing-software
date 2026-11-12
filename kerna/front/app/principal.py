@@ -47,7 +47,9 @@ async def cabeceras_seguras(request: Request, call_next):
     if ruta.startswith(("/panel", "/api", "/acceso")):
         r.headers["Cache-Control"] = "no-store"
     elif ruta.startswith("/estaticos/"):  # con ?v=<versión> el nombre cambia al cambiar el contenido: inmutable un año
-        r.headers["Cache-Control"] = "public, max-age=31536000, immutable" if "v=" in request.url.query else "public, max-age=604800"
+        # los sprites se referencian sin ?v=: se revalidan (304 con ETag) para que un cambio llegue de inmediato
+        r.headers["Cache-Control"] = ("public, max-age=31536000, immutable" if "v=" in request.url.query
+                                      else "no-cache" if ruta.endswith(".svg") else "public, max-age=604800")
     return r
 
 

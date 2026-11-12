@@ -121,7 +121,7 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 .kl .roseta{animation:rot 50s linear infinite}
 .kl .camino{animation:rot 15s linear infinite reverse}
 .kl .latido{animation:bt 5s ease-in-out infinite}
-.kl .xr1{animation:rot 120s linear infinite reverse}.kl .xr2{animation:rot 180s linear infinite}
+.kl .xr1,.kl .xr2{animation:none}
 .kl.rapido .roseta{animation-duration:20s}.kl.rapido .camino{animation-duration:6s}
 .kl:not(.vis) .ly,.orb-wrap:not(.vis) .orb-lay{animation-play-state:paused}
 .kl .orb{fill:none;stroke:#1C2A6B;stroke-linecap:round}
@@ -141,7 +141,7 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 .brand-lk:hover .kl{scale:1.14;rotate:18deg}
 .brand-t{font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--brand)}
 .brand-t small{font-family:Inter;font-size:11px;margin-left:5px;vertical-align:top;color:var(--lime-ink);letter-spacing:.1em}
-.hero-logo{position:relative;width:min(80vw,480px);aspect-ratio:1;justify-self:center;display:grid;place-items:center}
+.hero-logo{overflow:clip;position:relative;width:min(80vw,480px);aspect-ratio:1;justify-self:center;display:grid;place-items:center}
 .hero-logo::before{content:"";position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,rgba(207,255,94,.6),rgba(207,255,94,0) 66%);opacity:.6}
 .hero-logo .kl{position:relative;width:100%;height:100%;cursor:pointer}
 .hero-logo:hover .lg-a{scale:1.05}
@@ -215,7 +215,7 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 .card:hover{--bc:var(--brand-2)}
 /* ficha destacada: borde doble de órbita y satélite que recorre el borde */
 .card.card-hi{clip-path:none;border:2px solid var(--brand);--bc:var(--brand);outline:2px dotted var(--brand-2);outline-offset:5px;overflow:hidden}
-.card.card-hi::before{content:"";position:absolute;right:-90px;top:-100px;left:auto;bottom:auto;width:280px;height:280px;background:url(img/guil.webp) center/contain no-repeat;pointer-events:none}
+.card.card-hi::before{content:"";position:absolute;right:-150px;top:-160px;left:auto;bottom:auto;width:280px;height:280px;background:url(img/guil.webp) center/contain no-repeat;pointer-events:none}
 .card.card-hi::after{content:"";position:absolute;left:0;top:0;right:auto;width:14px;height:14px;border-radius:50%;background:var(--lime);border:2.5px solid var(--brand);offset-path:inset(7px round 0);offset-rotate:0deg;display:none}
 .card.card-hi>*{position:relative;z-index:1}
 /* ficha de indicador: un solo corte grande, trama guilloché y satélite al pasar el cursor */
@@ -252,7 +252,7 @@ body .rounded-xl,body .rounded-2xl{border-radius:3px}
 .orb-steps::after{content:"";position:absolute;top:30px;left:36px;width:16px;height:16px;border-radius:50%;background:var(--lime);border:3px solid var(--brand)}
 .ostep{position:relative;display:grid;gap:18px;align-content:start}
 .node{position:relative;z-index:1;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:#fff;border:2px solid var(--brand);color:var(--brand);transition:transform .35s var(--ease),background .25s}
-.node k-ic{width:30px;height:30px}
+.node k-ic{width:30px;height:30px}.node k-n{--s:38px}
 .node::before{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px dotted var(--brand-2)}
 .node.lima{background:var(--lime)}
 .ostep:hover .node{transform:scale(1.12) rotate(-6deg);background:var(--lime)}
@@ -794,13 +794,13 @@ k-n,k-lx{--pi:#1C2A6B;--ac2:#3B4FB4;--sat:#CFFF5E}
 /* IDENTIDAD-FIN */
 
 /* ===== v5 · Identidad Núcleo: elementos base (los colores por estado/categoría/ley están en el bloque IDENTIDAD, generado) ===== */
-k-st{display:inline-grid;place-items:center;flex:none;width:var(--s,28px);height:var(--s,28px);border-radius:0;background:var(--fondo);vertical-align:middle;overflow:visible;
+k-st{display:inline-block;line-height:0;flex:none;width:var(--s,28px);height:var(--s,28px);border-radius:0;background:var(--fondo);vertical-align:middle;overflow:visible;
   clip-path:polygon(18% 0,100% 0,100% 82%,82% 100%,0 100%,0 18%);box-shadow:none}
 k-st svg{display:block;width:100%;height:100%;overflow:visible}
 k-st.sm{background:none;clip-path:none;width:var(--s,20px);height:var(--s,20px)}
-k-n,k-lx{display:inline-grid;place-items:center;flex:none;width:var(--s,24px);height:var(--s,24px);vertical-align:middle}
+k-n,k-lx{display:inline-block;line-height:0;flex:none;width:var(--s,24px);height:var(--s,24px);vertical-align:middle}
 k-n svg,k-lx svg{display:block;width:100%;height:100%;overflow:visible}
-.lx{display:inline-grid;place-items:center;flex:none;width:var(--s,32px);height:var(--s,32px)}.lx svg{display:block;width:100%;height:100%;overflow:visible}
+.lx{display:inline-block;line-height:0;flex:none;width:var(--s,32px);height:var(--s,32px)}.lx svg{display:block;width:100%;height:100%;overflow:visible}
 .ti{display:block;line-height:0;flex:none}.ti svg{display:block;width:100%;height:auto;overflow:visible}
 
 /* =====================================================================
@@ -891,7 +891,7 @@ k-n svg,k-lx svg{display:block;width:100%;height:100%;overflow:visible}
 .ani-b{fill:none;stroke:#E3E7F2;stroke-width:6}.ani-a{fill:none;stroke-width:6;stroke-linecap:round}.ani-m{stroke:#0B1020;stroke-width:2.2;stroke-linecap:round}.ani-t{font:700 11px Unbounded,Inter,sans-serif;letter-spacing:-.04em}
 .ch-l{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .ch-l li{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line-strong);background:#fff;font-size:13px}.ch-l li b{font:700 13px Unbounded,Inter,sans-serif;color:var(--brand)}
-.cch{height:200px;width:100%}
+.cch{height:170px;width:100%}
 /* Negocio */
 .cr{display:grid;grid-template-columns:44px minmax(150px,1.1fr) minmax(0,1.6fr) minmax(0,1.5fr) auto;gap:6px 14px;align-items:center;padding:6px 0;border-top:1px dotted var(--line-strong);font-size:13px}
 .cr:first-of-type{border-top:0}
@@ -923,10 +923,10 @@ k-n svg,k-lx svg{display:block;width:100%;height:100%;overflow:visible}
 #app .ctl:first-child{border-top:0}
 @media(min-width:1100px){#app .gi>.ctl:nth-child(2){border-top:0}}
 .ctl-w{grid-column:1/-1}
-.ct-l{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-width:0}.ct-n{font-weight:600;font-size:14px}
+.ct-l{display:block;min-width:0}.ct-l>k-tip,.ct-l>.chip{display:inline-flex;vertical-align:middle;margin-left:4px}.ct-n{font-weight:600;font-size:14px}
 .ct-c{display:flex;align-items:center;justify-content:flex-end;gap:10px}
-.ct-v{font:700 14px Unbounded,Inter,sans-serif;color:var(--brand);white-space:nowrap;min-width:76px;text-align:right}
-.rg-w{position:relative;display:inline-block;width:200px;max-width:42vw}.rg-w .range{display:block;width:100%}
+.ct-v{font:700 14px Unbounded,Inter,sans-serif;color:var(--brand);white-space:nowrap;min-width:64px;text-align:right}
+.rg-w{position:relative;display:inline-block;width:130px;max-width:34vw}.rg-w .range{display:block;width:100%}
 .rc{position:absolute;top:50%;width:3px;height:16px;margin:-8px 0 0 -1.5px;background:var(--c-coral);border-radius:1px;pointer-events:none}
 .ct-av{grid-column:1/-1;display:flex;align-items:center;gap:6px;margin:0;font-size:12px;color:var(--warn);font-weight:600}.ct-av[hidden]{display:none}
 .ct-w{grid-column:1/-1;display:grid;gap:4px;padding-bottom:4px}
@@ -944,3 +944,19 @@ html,body{max-width:100%}
 .tabla{max-width:100%;overflow-x:auto}.tabs2{max-width:100%}
 .stats,.stt{max-width:100%}
 @media(max-width:599px){.vw-main{padding:10px 14px 20px}.bar-p{display:none}.pr-d{width:230px}.kb{padding:2px 8px}.cm span{font-size:11px}.h1{font-size:20px}.stt li{flex:1 1 40%}}
+
+/* v7 · Ajustes en móvil: la etiqueta ocupa su línea y el control (deslizador + valor) la siguiente; panel orbital más bajo */
+@media(max-width:600px){
+  #app .ctl:has(.rg-w){grid-template-columns:minmax(0,1fr)}
+  #app .ctl:has(.rg-w) .ct-c{justify-content:flex-start}
+  #app .ctl:has(.rg-w) .rg-w{flex:1;width:auto;max-width:none}
+  .ap{height:96px}.ap-svg{width:84px;height:84px}
+}
+@media(min-width:900px){.ley-b .ch-l{flex-direction:column;gap:6px;margin-left:auto;align-self:center}}
+.bn{padding:10px 0}
+/* Datos: filas planas (no todo necesita tarjeta) */
+.dat{gap:0}.dat-d{border-bottom:1px dotted var(--line-strong)}.dat-d summary{padding:4px 2px;min-height:34px}.dat-h{margin:14px 0 2px}
+.dat-d[open]{padding-bottom:8px}.dat-d summary:hover{background:var(--brand-soft)}
+.vdh .ti-w{flex:none}.vdh .ti{max-width:100%}
+@media(max-width:560px){.vdh .ti{width:64px!important}}
+.pr-w{grid-template-columns:minmax(0,1fr);gap:4px}.pr-w .cch{height:150px}

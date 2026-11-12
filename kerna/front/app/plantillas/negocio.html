@@ -10,7 +10,7 @@
 {% if error %}<p class="vac bad" role="alert">{{ ic('e-cadena-agotada', px=24, mini=True) }}<span>Sin conexión con los datos de negocio ({{ error }})</span></p>
 {% elif not V %}{{ vacio('Sin clientes') }}
 {% else %}
-<section class="bn pr" aria-label="Del ingreso a la utilidad">
+<section class="bn pr pr-w" aria-label="Del ingreso a la utilidad">
 <div class="pr-t pr-t1"><p class="frase">{{ P.frase }}</p><p class="mk">Del ingreso a la utilidad, en UF{{ tip('neg_resultado') }}</p></div>
 <div class="pr-g"><div id="ch-casc" class="cch" role="img" aria-label="Cascada del ingreso a la utilidad en UF"></div></div>
 </section>

@@ -7,7 +7,7 @@ from playwright.sync_api import sync_playwright
 base, clave, pref, salida = sys.argv[1:5]
 anchos = [int(a) for a in sys.argv[5:]] or [1366, 390]
 VISTAS = [("resumen", "/panel", None), ("informe", "/panel/informe", "informe"), ("negocio", "/panel/negocio", None), ("ajustes", "/panel/ajustes", None)]
-PESTANAS = ["resumen", "calidad", "rapidez", "costos", "rentabilidad", "incidentes", "datos"]
+PESTANAS = ["calidad", "desempeno", "costo", "rentabilidad", "incidentes", "datos"]
 JS_DESB = """() => { let st=document.getElementById("__ov"); if(!st){st=document.createElement("style");st.id="__ov";st.textContent="html,body{overflow-x:visible!important}.bgfx{display:none!important}";document.head.appendChild(st)} const de=document.documentElement, cw=de.clientWidth; const out=[];
  for (const e of document.querySelectorAll('body *')) { const r=e.getBoundingClientRect(); if (r.width && r.right>cw+1) { let p=e, oculto=false; while((p=p.parentElement)&&p!==document.body){const s=getComputedStyle(p); if(['auto','scroll','hidden','clip'].includes(s.overflowX)&&p.getBoundingClientRect().right<=cw+1){oculto=true;break}} if(!oculto) out.push([e.tagName.toLowerCase()+(e.id?'#'+e.id:'')+(e.className&&typeof e.className==='string'?'.'+e.className.trim().split(/\\s+/).slice(0,3).join('.'):''), Math.round(r.right), Math.round(r.width)]); } }
  out.sort((a,b)=>b[1]-a[1]); return {sw:de.scrollWidth, cw, h:de.scrollHeight, top:out.slice(0,6)}; }"""
@@ -25,6 +25,7 @@ with sync_playwright() as p:
             for clave_v, tab in hay:
                 if tab:
                     pg.evaluate("t => document.getElementById('t-'+t)?.click()", tab); pg.wait_for_timeout(1200)
+                pg.evaluate("async()=>{for(let y=0;y<document.documentElement.scrollHeight;y+=500){scrollTo(0,y);await new Promise(r=>setTimeout(r,120))}scrollTo(0,0)}"); pg.wait_for_timeout(600)  # activa los gráficos perezosos
                 d = pg.evaluate(JS_DESB); d.update(nav_t if tab is None else {})
                 res[f"{clave_v}@{w}"] = d
                 if pref != "-":

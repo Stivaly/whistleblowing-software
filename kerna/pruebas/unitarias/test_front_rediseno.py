@@ -255,6 +255,13 @@ def _ids(archivo: str) -> set:
     return set(re.findall(r'<(?:symbol|g|svg)[^>]*\sid="([^"]+)"', (EST / archivo).read_text()))
 
 
+@pytest.mark.parametrize("archivo", ["identidad.svg", "iconos.svg", "estados.svg"])
+def test_sprites_son_xml_valido(archivo):
+    """Un atributo duplicado corta el sprite en ese símbolo y los siguientes se ven vacíos."""
+    import xml.etree.ElementTree as ET
+    ET.parse(EST / archivo)
+
+
 def test_todo_use_apunta_a_un_id_que_existe(monkeypatch):
     ids = {"identidad.svg": _ids("identidad.svg"), "iconos.svg": _ids("iconos.svg")}
     c = TestClient(principal.app, base_url="https://t")
