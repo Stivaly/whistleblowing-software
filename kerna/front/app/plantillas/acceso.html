@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block titulo %}Acceso al panel · Kerna AI{% endblock %}{% block nav %}{% endblock %}
+{% block cuerpo %}<form class="acceso hoja" method="post" action="/acceso">
+<h2 style="font-size:16px">Panel de Kerna AI</h2><label class="eti" for="c">Clave de acceso</label>
+<input id="c" type="password" name="clave" autocomplete="current-password" required autofocus>
+{% if error %}<p class="vacio" role="alert">Clave incorrecta o demasiados intentos.</p>{% endif %}
+<button class="btn" type="submit">Entrar</button></form>{% endblock %}

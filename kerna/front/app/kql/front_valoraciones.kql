@@ -1,0 +1,8 @@
+// Front /panel: valoraciones. útil = feedback arriba; no útil = feedback abajo; ninguno aplica = clasificación del auditor "rechazada".
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo"
+| where (Message == "feedback" and tostring(Properties.resultado) in ("arriba", "abajo"))
+     or (Message == "clasificacion_auditor" and tostring(Properties.resultado) == "rechazada")
+| extend valoracion = case(Message == "feedback" and tostring(Properties.resultado) == "arriba", "util",
+                           Message == "feedback", "no_util", "ninguno_aplica")
+| summarize total = count() by valoracion

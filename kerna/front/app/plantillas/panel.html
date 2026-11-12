@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block titulo %}Panel · Kerna AI{% endblock %}{% block nav %}<a class="btn sec" href="/">Portada</a>{% endblock %}
+{% block cuerpo %}
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+<h1 style="font-size:22px">Panel de resultados</h1>
+<div class="rangos"><a class="btn{% if dias==7 %} act{% endif %}" href="/panel?dias=7">7 días</a><a class="btn{% if dias==30 %} act{% endif %}" href="/panel?dias=30">30 días</a></div></div>
+<p class="eti">Solo cifras agregadas. Sin texto de denuncias ni identificadores.</p>
+{% if error %}<div class="error" role="alert"><b>No se pudo consultar Log Analytics</b> ({{ error }}). Revisa la identidad de la app y su rol Log Analytics Reader.</div>
+{% else %}
+<div class="kpis sec">
+<div class="hoja kpi"><b>{{ m.total_casos }}</b><span>casos procesados</span></div>
+<div class="hoja kpi"><b>{{ m.latencia.p50_ms }} ms</b><span>latencia P50</span></div>
+<div class="hoja kpi"><b>{{ m.latencia.p95_ms }} ms</b><span>latencia P95 (máx. diario)</span></div>
+<div class="hoja kpi"><b>{{ '{:,.0f}'.format(m.tokens.total).replace(',', '.') }}</b><span>tokens ({{ '{:,.0f}'.format(m.tokens.entrada).replace(',', '.') }} entrada / {{ '{:,.0f}'.format(m.tokens.salida).replace(',', '.') }} salida)</span></div></div>
+<div class="sec rejilla dos">
+<div class="hoja"><span class="eti">Casos procesados por día</span>{{ barras_v(m.casos_por_dia|map(attribute='dia')|zip(m.casos_por_dia|map(attribute='casos'))|list) }}</div>
+<div class="hoja"><span class="eti">Distribución por modo</span>{{ barras_h([('oficial', m.modos.oficial), ('respaldo', m.modos.respaldo), ('local', m.modos.local), ('revisión manual', m.modos.manual)]) }}</div>
+<div class="hoja"><span class="eti">Artículos sugeridos por ley</span>{{ barras_h(m.leyes|map(attribute='norma')|zip(m.leyes|map(attribute='articulos'))|list) }}</div>
+<div class="hoja"><span class="eti">Valoraciones</span>{{ barras_h([('útil', m.valoraciones.util), ('no útil', m.valoraciones.no_util), ('ninguno aplica', m.valoraciones.ninguno_aplica)]) }}</div></div>
+{% endif %}{% endblock %}

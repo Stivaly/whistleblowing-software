@@ -1,0 +1,35 @@
+{% extends "base.html" %}{% block cuerpo %}
+<section class="hoja heroe"><span style="display:contents">{% include "_simbolo.html" %}</span>
+<div><span class="eti">Veridy · canal de denuncias</span>
+<h1 style="margin:8px 0 12px">KERNA<span>AI</span></h1>
+<p style="margin:0;max-width:52ch">Lee una denuncia dentro de Veridy y sugiere qué leyes y artículos chilenos podrían aplicar, con la cita exacta que los respalda.</p></div></section>
+
+<section class="sec"><span class="eti">Qué hace</span><h2>De los hechos a la norma</h2>
+<div class="hoja"><svg class="flujo" viewBox="0 0 760 150" role="img" aria-label="Flujo: denuncia, anonimizador, búsqueda en la normativa, artículos sugeridos con cita">
+<g fill="none" stroke="#1C2A6B" stroke-width="1.6">
+<rect x="6" y="40" width="130" height="70" fill="#fff"/><rect x="186" y="40" width="130" height="70" fill="#fff"/>
+<rect x="366" y="40" width="130" height="70" fill="#fff"/><rect x="546" y="40" width="130" height="70" fill="#CFFF5E"/>
+<path d="M136 75h50M316 75h50M496 75h50M540 69l6 6-6 6" stroke-linecap="round"/></g>
+<g font-family="JetBrains Mono,monospace" font-size="12" fill="#1C2A6B" text-anchor="middle">
+<text x="71" y="70">Denuncia</text><text x="71" y="88" fill="#4A5578" font-size="11">en Veridy</text>
+<text x="251" y="70">Anonimizador</text><text x="251" y="88" fill="#4A5578" font-size="11">sin datos personales</text>
+<text x="431" y="70">Normativa</text><text x="431" y="88" fill="#4A5578" font-size="11">búsqueda vectorial</text>
+<text x="611" y="70">Sugerencia</text><text x="611" y="88" font-size="11">artículo + cita</text></g></svg></div></section>
+
+<section class="sec"><span class="eti">Cómo protege la denuncia</span><h2>Primero se anonimiza, siempre</h2>
+<div class="rejilla dos">
+<div class="hoja"><svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="12" width="44" height="40" fill="#fff" stroke="#1C2A6B" stroke-width="2"/><rect x="16" y="22" width="22" height="6" fill="#1C2A6B"/><rect x="16" y="34" width="32" height="4" fill="#DCE1EC"/><rect x="16" y="42" width="26" height="4" fill="#CFFF5E" stroke="#1C2A6B"/></svg>
+<h3>Anonimizador antes de cualquier modelo</h3><p>Nombres, RUT, correos y teléfonos se reemplazan antes de que el texto llegue a un modelo de IA. Ningún modelo ve datos que identifiquen a las personas.</p></div>
+<div class="hoja"><svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><rect x="14" y="28" width="36" height="26" fill="#CFFF5E" stroke="#1C2A6B" stroke-width="2"/><path d="M22 28v-8a10 10 0 0 1 20 0v8" fill="none" stroke="#1C2A6B" stroke-width="2"/><circle cx="32" cy="41" r="3.5" fill="#1C2A6B"/></svg>
+<h3>Cifrado de Veridy</h3><p>La denuncia solo existe en claro en memoria. Todo lo derivado de ella queda cifrado con la clave del caso en Veridy.</p></div></div></section>
+
+<section class="sec"><span class="eti">Leyes cubiertas</span><h2>Normativa chilena vigente</h2>
+<div class="rejilla">
+<div class="hoja ley"><span class="num">21.643</span><div><h3>Ley Karin</h3><p>Acoso laboral, sexual y violencia en el trabajo (Código del Trabajo).</p></div></div>
+<div class="hoja ley"><span class="num">19.628</span><div><h3>Datos personales</h3><p>Protección de la vida privada, con la reforma de la Ley 21.719.</p></div></div>
+<div class="hoja ley"><span class="num">20.393</span><div><h3>Responsabilidad penal</h3><p>De las personas jurídicas y modelos de prevención de delitos.</p></div></div></div></section>
+
+<section class="sec"><div class="aviso"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" fill="#fff" stroke="#1C2A6B" stroke-width="2"/><path d="M32 18v18" stroke="#1C2A6B" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="45" r="3" fill="#CFFF5E" stroke="#1C2A6B" stroke-width="1.6"/></svg>
+<div><h3 style="font-size:15px;margin-bottom:4px">Es una sugerencia, no un dictamen</h3><p style="margin:0;color:var(--sec)">Kerna orienta a quien analiza el caso; no reemplaza el criterio ni la asesoría jurídica. La decisión siempre es de una persona.</p></div></div></section>
+<p class="pie">Kerna AI · parte de Veridy · normativa vigente según la Biblioteca del Congreso Nacional de Chile</p>
+{% endblock %}

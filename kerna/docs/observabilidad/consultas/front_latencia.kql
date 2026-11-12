@@ -1,0 +1,7 @@
+// Front /panel: latencia de la solicitud completa, P50 y P95 globales y por día.
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| extend duracion_ms = todouble(Properties.duracion_ms)
+| where isnotnull(duracion_ms)
+| summarize solicitudes = count(), p50_ms = percentile(duracion_ms, 50), p95_ms = percentile(duracion_ms, 95) by dia = bin(TimeGenerated, 1d)
+| order by dia asc

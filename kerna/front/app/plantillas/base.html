@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block titulo %}Kerna AI{% endblock %}</title>
+<meta name="description" content="Kerna AI sugiere las leyes y artículos chilenos aplicables a una denuncia dentro de Veridy.">
+<link rel="icon" type="image/svg+xml" href="/estaticos/img/favicon.svg">
+<link rel="preload" href="/estaticos/fuentes/unbounded-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/estaticos/kerna.css"></head>
+<body><div class="pag">
+<header class="barra"><a class="marca" href="/">{% with %}{% include "_simbolo.html" %}{% endwith %}KERNA<i>AI</i></a>
+<nav>{% block nav %}<a class="btn sec" href="/panel">Panel</a>{% endblock %}</nav></header>
+{% block cuerpo %}{% endblock %}
+</div></body></html>

@@ -1,0 +1,49 @@
+@font-face{font-family:"Unbounded";font-weight:500;font-display:swap;src:url(fuentes/unbounded-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Unbounded";font-weight:700;font-display:swap;src:url(fuentes/unbounded-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-weight:500;font-display:swap;src:url(fuentes/jetbrains-mono-latin-500-normal.woff2) format("woff2")}
+:root{--papel:#F5F7FB;--hoja:#fff;--azul:#1C2A6B;--sec:#4A5578;--linea:#DCE1EC;--lima:#CFFF5E;--oliva:#3F6212;
+--display:"Unbounded","Arial Black",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--azul);font-family:var(--mono);font-size:14px;line-height:1.65}
+a{color:var(--azul)} h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;font-weight:700}
+.pag{max-width:1040px;margin:0 auto;padding:20px 16px 56px}
+.barra{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0 20px}
+.marca{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:700;letter-spacing:.06em}
+.marca .sim{width:34px;height:34px}.marca i{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--oliva);letter-spacing:.16em;align-self:flex-start}
+.btn{display:inline-block;padding:8px 14px;border:1.5px solid var(--azul);background:var(--lima);color:var(--azul);font:500 13px var(--mono);text-decoration:none;cursor:pointer}
+.btn.sec{background:#fff}
+.hoja{background:var(--hoja);border:1px solid var(--linea);padding:20px}
+.eti{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sec)}
+.heroe{display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding:32px}
+.heroe .sim{width:200px;height:200px}
+.heroe h1{font-size:clamp(34px,6vw,56px);letter-spacing:.04em}
+.heroe h1 span{font:500 .26em var(--mono);letter-spacing:.14em;color:var(--oliva);vertical-align:top;margin-left:.3em}
+.sec{margin-top:36px}.sec>h2{font-size:18px;margin:6px 0 14px}
+.rejilla{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.rejilla.dos{grid-template-columns:repeat(2,minmax(0,1fr))}
+.rejilla svg.ico{width:64px;height:64px;display:block;margin-bottom:10px}
+.rejilla h3{font-size:14px;margin-bottom:6px}.rejilla p{margin:0;color:var(--sec);font-size:13px}
+.ley{display:flex;gap:14px;align-items:center}.ley .num{font:700 15px var(--display);background:var(--lima);border:1.5px solid var(--azul);padding:6px 10px;white-space:nowrap}
+.aviso{display:flex;gap:16px;align-items:center;border:1.5px solid var(--azul);background:#fff;padding:16px 20px}
+.aviso svg{width:56px;height:56px;flex:none}
+.pie{margin-top:40px;color:var(--sec);font-size:12px}
+.flujo{width:100%;height:auto}
+/* panel */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.kpi b{display:block;font:700 26px var(--display)}.kpi span{font-size:12px;color:var(--sec)}
+.rangos{display:flex;gap:8px}.rangos .btn.act{background:var(--lima)}.rangos .btn:not(.act){background:#fff}
+.hoja svg{width:100%;height:auto;display:block}.vacio{color:var(--sec);margin:0}
+.error{border:1.5px solid var(--azul);background:#fff;padding:16px}
+form.acceso{max-width:360px;margin:60px auto;display:grid;gap:12px}
+input[type=password]{padding:10px;border:1.5px solid var(--azul);font:500 14px var(--mono);background:#fff}
+/* símbolo */
+.orb{fill:none;stroke:var(--azul);stroke-linecap:round}.ros{stroke-width:.75;stroke-dasharray:.1 2.2}
+.anillo{stroke-width:.9;stroke-dasharray:.1 2.4;opacity:.6}.guia{stroke-width:1.6}
+.nuc{fill:var(--azul)}.nuc-l{fill:var(--lima)}.sat{fill:var(--lima);stroke:var(--azul);stroke-width:1.6}
+.vivo .roseta{transform-origin:32px 32px;animation:g 80s linear infinite}
+.vivo .camino{transform-origin:32px 32px;animation:g 14s linear infinite reverse}
+.vivo .latido{transform-origin:32px 32px;animation:l 3.5s ease-in-out infinite}
+@keyframes g{to{transform:rotate(360deg)}}@keyframes l{50%{transform:scale(1.12)}}
+@media (prefers-reduced-motion:reduce){.vivo .roseta,.vivo .camino,.vivo .latido{animation:none}}
+@media (max-width:760px){.heroe{grid-template-columns:1fr;padding:22px;justify-items:start}.heroe .sim{width:130px;height:130px}.rejilla,.rejilla.dos,.kpis{grid-template-columns:1fr 1fr}.aviso{flex-direction:column;align-items:flex-start}}
+@media (max-width:480px){.rejilla,.rejilla.dos,.kpis{grid-template-columns:1fr}}

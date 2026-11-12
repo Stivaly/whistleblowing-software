@@ -1,0 +1,5 @@
+// Front /panel: artículos sugeridos por norma (evento articulo_sugerido; solo el nombre público de la norma).
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "articulo_sugerido"
+| summarize articulos = count() by norma = tostring(Properties.norma)
+| order by articulos desc
