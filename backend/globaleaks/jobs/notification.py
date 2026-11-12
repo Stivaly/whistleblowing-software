@@ -3,6 +3,7 @@ import itertools
 
 from datetime import datetime, timedelta
 from sqlalchemy import not_
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.sql.expression import func
 from twisted.internet import defer
 
@@ -201,7 +202,11 @@ class MailGenerator(object):
                 data['tip'] = serializers.serialize_rtip(session, itip, rtip, user.language)
 
                 self.process_mail_creation(session, tid, data)
-            except:
+            except DBAPIError:
+                # Conflicto de serialización (PostgreSQL) u otro error de base: se propaga para que @transact
+                # haga rollback y reintente. Tragarlo dejaba la sesión inválida (PendingRollbackError).
+                raise
+            except Exception:
                 pass
 
         if now < datetime.fromtimestamp(timestamp_daily_notifications) + timedelta(1):
