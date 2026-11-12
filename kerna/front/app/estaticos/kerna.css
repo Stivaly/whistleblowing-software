@@ -986,7 +986,7 @@ html,body{max-width:100%}
   .frase{font-size:17px;margin:0 0 8px}
   .pr{gap:6px}
   .orb-w{flex-direction:column;align-items:center;gap:6px}.orb-w svg{width:200px}
-  .orb-lg{flex-wrap:nowrap;gap:8px;justify-content:center}.orb-lg li{font-size:10px;letter-spacing:.02em;gap:5px;white-space:nowrap}
+  .orb-lg{flex-wrap:wrap;gap:6px 8px;justify-content:center}.orb-lg li{font-size:10px;letter-spacing:.02em;gap:5px;white-space:nowrap}
   .orb-lg i{min-width:22px;height:22px;font-size:9px}
   .cola{padding:6px 10px;gap:2px}
   .cola-l{gap:2px 12px}
