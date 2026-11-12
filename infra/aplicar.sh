@@ -28,6 +28,11 @@ if [ "$1" = "veridy" ] && [ -z "${TF_VAR_postgres_admin_password:-}" ]; then
   export TF_VAR_postgres_admin_password="$(az keyvault secret show --vault-name "$KV" --name veridy-db-admin-password --query value -o tsv)"
 fi
 
+# Veridy: telemetría del conector hacia el Application Insights de Kerna (si existe). Sin esto, el apply la vaciaría.
+if [ "$1" = "veridy" ] && [ -z "${TF_VAR_kerna_appinsights_conexion:-}" ]; then
+  export TF_VAR_kerna_appinsights_conexion="$(az monitor app-insights component show -g rg-kerna-dev -a appi-kerna-dev --query connectionString -o tsv 2>/dev/null || true)"
+fi
+
 PLAN="aplicar.tfplan"
 set +e
 terraform -chdir="$TF" plan -input=false -detailed-exitcode -out="$PLAN"
