@@ -33,7 +33,7 @@ class Config:
     rerank_candidatos: int = 30
     evaluador: bool = False        # KERNA_EVALUADOR: agente evaluador LLM sobre los candidatos (apagado por defecto)
     evaluador_candidatos: int = 30
-    evaluador_variante: str = "1"
+    evaluador_variante: str = "1"   # 1 y 2: citas literales; 3*: por identificadores con puntaje (evaluador_ids.py)
     concurrencia: int = 2
     umbral_similitud: float = 0.0
     cadena: list = field(default_factory=lambda: [dict(n) for n in CADENA_POR_DEFECTO])

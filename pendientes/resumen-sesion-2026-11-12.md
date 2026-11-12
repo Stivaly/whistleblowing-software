@@ -14,7 +14,7 @@
 
 ## Calidad (recall@5 por artículo, meta 0,80)
 - Base 0,393; evaluador con nano 0,426 (en producción); con Gemini Flash-Lite 0,557 (sin cuota); reranker bge empeoró (0,344).
-- **En curso al cerrar**: agente que rediseña el evaluador (citas por ID de frase/hecho, puntaje 0–3, memoria de hechos) iterando con nano y midiendo con mini, tope 4 USD. Revisar su informe en `kerna/evaluacion/informe-embeddings.md` y `registro-pruebas.md`.
+- Evaluador por IDs (variante 3: citas por ID de frase/hecho, puntaje 0–3, hechos extraídos) **en producción con nano**: 0,475 (prueba 0,429); con mini 0,492 a ~0,012 USD/denuncia (4,6× nano), sin ventaja clara. Techo con 70 candidatos 0,902. Gasto 1,45 USD. Decisión abierta: mini o seguir afinando.
 
 ## Pendientes de la usuaria
 - Ingresos de Negocio en UF (ver `kerna-pendientes.md`).

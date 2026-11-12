@@ -11,6 +11,7 @@ from kerna_comun import anonimizador, telemetria
 
 from . import prompts
 from .evaluador import Evaluador
+from .evaluador_ids import EvaluadorIds
 from .enrutador import CadenaAgotada, Enrutador, PlazoAgotado
 from .retriever import RecuperacionFallida, Retriever
 from .validador import validar
@@ -155,7 +156,8 @@ class Orquestador:
         """Agente evaluador (KERNA_EVALUADOR): reordena los candidatos y entrega los top_k al agente final.
         Cualquier falla conserva el orden del retriever; solo el plazo global se propaga."""
         n = max(self.config.evaluador_candidatos, self.config.top_k)
-        ev = Evaluador(self.enrutador.generar, variante=self.config.evaluador_variante, salida=self.config.top_k)
+        clase = EvaluadorIds if str(self.config.evaluador_variante).startswith("3") else Evaluador
+        ev = clase(self.enrutador.generar, variante=self.config.evaluador_variante, salida=self.config.top_k)
         with telemetria.etapa("evaluacion", **base) as a:
             r = await ev.evaluar(limpio, candidatos[:n], inicio)
             a.update(usado=r.usado, motivo=r.motivo, aplican=r.aplican, descartados_id=r.descartados_id,

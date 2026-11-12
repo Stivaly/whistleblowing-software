@@ -17,6 +17,15 @@ class RespuestaLLM:
         self.tokens_salida = tokens_salida
 
 
+def _sin_adicionales(e):
+    """Gemini no acepta `additionalProperties` en responseSchema (sí lo usa el modo estricto de Azure OpenAI)."""
+    if isinstance(e, dict):
+        return {k: _sin_adicionales(v) for k, v in e.items() if k != "additionalProperties"}
+    if isinstance(e, list):
+        return [_sin_adicionales(x) for x in e]
+    return e
+
+
 class ClienteGemini:
     proveedor = "gemini"
 
@@ -37,7 +46,7 @@ class ClienteGemini:
         cuerpo: dict = {"generationConfig": {"temperature": temperatura}}
         if esquema is not None:
             cuerpo["generationConfig"]["responseMimeType"] = "application/json"
-            cuerpo["generationConfig"]["responseSchema"] = esquema
+            cuerpo["generationConfig"]["responseSchema"] = _sin_adicionales(esquema)
         if con_sistema:
             cuerpo["systemInstruction"] = {"parts": [{"text": sistema}]}
             texto_usuario = usuario

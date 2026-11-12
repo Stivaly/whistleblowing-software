@@ -158,3 +158,19 @@ Regla: interpolación lineal del recall@5 por artículo, de 1 (recall 0) a 5 (re
 - Producción: ENCENDIDO con Azure OpenAI `gpt-5-nano` (despliegue GlobalStandard del recurso `oai-kerna-dev-g6mzy`, 250K TPM), N = 70 candidatos, variante 1, anonimizando antes de buscar y evaluar. Cadena del núcleo: `gpt-5-nano` (oficial, también clasificador) -> Gemini (respaldo). Plazo global 420 s y corte por llamada 150 s (`KERNA_PLAZO_GLOBAL_S`, `KERNA_CORTE_LLAMADA_S`). Proveedor `azure-openai` en `proveedores/azure_openai.py` (clave y endpoint desde Key Vault).
 - Medición con gpt-5-nano (texto anonimizado, 61 casos): recall@5 por artículo 0,393 -> 0,426 (variante 1, N=70); variante 2 N=70 0,377; variante 1 N=50 0,377; sin anonimizar 0,410. nDCG@10 0,217 -> 0,267 y MRR 0,195 -> 0,295 (pareadas con IC sobre 0). No llega a 0,80. Menos que gemini-3.5-flash-lite en N=30 (0,557, sin anonimizar): nano marca pocos artículos como aplicables y se descartan muchas citas no literales. Costo real ~0,15 USD por corrida de 61 casos (~26.000 tokens de entrada por consulta).
 - `gpt-5-mini` también está desplegado (50K TPM) y no se usa.
+
+### Evaluador por identificadores (variante 3)
+
+- Implementado en `nucleo/kerna_nucleo/evaluador_ids.py`, activo con `KERNA_EVALUADOR_VARIANTE=3` (las variantes 1 y 2 siguen disponibles). El modelo no copia texto: la denuncia anonimizada se segmenta en hechos H1..Hn y cada artículo en frases/incisos A<k>.<j>; el modelo responde con IDs. Un primer paso extrae los hechos jurídicamente relevantes (conductas, partes, relación laboral, datos personales, posibles delitos) y se pasa a cada lote; cada candidato lleva ley, título/párrafo y epígrafe derivados del corpus sin LLM. Puntaje 0-3 con structured outputs estrictos (JSON schema con enum de candidatos y hechos; `proveedores/azure_openai.py`) y 3 ejemplos sintéticos. Guardias: candidatos, hecho_ids y frase_ids deben existir (los inexistentes se descartan) y un puntaje >= 2 sin hecho y frase válidos baja a 1. Orden por puntaje y luego por retriever; nunca menos de 5 resultados (relleno con el orden del retriever).
+- Evaluación sin sobreajuste: 61 casos evaluables divididos de forma fija (semilla 20261110) en 40 de desarrollo y 21 de prueba; se iteró solo sobre desarrollo (6 corridas válidas con nano) y prueba se corrió al final.
+- Resultados (recall@5 por artículo, N=70, anonimizado, base voyage-4-large):
+
+| Conjunto | Base | nano, evaluador anterior | nano, IDs (variante 3) | mini, IDs |
+| --- | --- | --- | --- | --- |
+| Desarrollo (40) | 0,425 | 0,475 | 0,500 | no corrido |
+| Prueba (21) | 0,333 | 0,333 | 0,429 | 0,429 |
+| Todos (61) | 0,393 | 0,426 | 0,475 (nDCG 0,309; MRR 0,318) | 0,492 (hit@8 0,672; nDCG 0,355; MRR 0,331) |
+
+  Las diferencias contra la base tienen IC pareado que toca 0 en recall@5 (nano +0,082 [0,00; 0,16]; mini +0,098 [-0,03; 0,23]); nDCG@10 y MRR sí son significativas. Variantes con criterio más generoso (3c), con recorrido por conducta (3d), lotes de 24 o esfuerzo de razonamiento medium no superaron a la variante 3 en desarrollo. La meta 0,80 no se alcanza (techo de candidatos hit@70 0,902).
+- Costo y latencia: nano 0,162 USD por 61 casos (~0,003 USD por denuncia, 2 llamadas); mini 0,748 USD por 61 casos (~0,012 USD por denuncia), latencia por caso mediana 22 s y P95 91 s con esperas por cuota. Gasto total de la tarea 1,45 USD.
+- Producción: variante 3 con gpt-5-nano, N=70 (imagen `kerna-nucleo:6c1da9bad-ids3`). gpt-5-mini no está en producción: +0,017 de recall@5 y mejor hit@8 por 4,6 veces el costo, a decisión de la usuaria.

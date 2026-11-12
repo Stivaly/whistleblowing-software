@@ -26,13 +26,18 @@ class ClienteAzureOpenAI:
     async def generar(self, modelo: str, sistema: str, usuario: str, esquema: dict | None = None,
                       con_sistema: bool = True, temperatura: float = 0.2,
                       degradar: bool = False) -> RespuestaLLM:
-        """`esquema` solo activa el modo JSON (el esquema ya viaja descrito en el prompt); la temperatura
-        no se envía (los modelos de razonamiento solo aceptan la predeterminada)."""
+        """`esquema` activa el modo JSON (el esquema ya viaja descrito en el prompt) o, si es un objeto con
+        `additionalProperties: false`, structured outputs con JSON schema estricto; la temperatura no se envía
+        (los modelos de razonamiento solo aceptan la predeterminada)."""
         cuerpo: dict = {"messages": [{"role": "system" if con_sistema else "user", "content": sistema},
                                      {"role": "user", "content": usuario}],
                         "max_completion_tokens": self._max}
         if esquema is not None:
-            cuerpo["response_format"] = {"type": "json_object"}
+            if esquema.get("type") == "object" and esquema.get("additionalProperties") is False:
+                cuerpo["response_format"] = {"type": "json_schema",
+                                             "json_schema": {"name": "respuesta", "strict": True, "schema": esquema}}
+            else:
+                cuerpo["response_format"] = {"type": "json_object"}
         if self._esfuerzo:
             cuerpo["reasoning_effort"] = self._esfuerzo
         try:
