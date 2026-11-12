@@ -46,9 +46,11 @@ def main(argv=None) -> int:
     try:
         while not parar.is_set():
             try:
-                r = ejecutar_pasada(veridy, nucleo, estado, cfg.id_empresa, compartir_con=cfg.compartir_con)
-                log.info("pasada: %s casos=%d enviados=%d sugerencias=%d decisiones=%d errores=%d",
-                         r.resultado, r.casos, r.enviados, r.sugerencias, r.decisiones, r.errores)
+                r = ejecutar_pasada(veridy, nucleo, estado, cfg.id_empresa, compartir_con=cfg.compartir_con,
+                                 reprocesar=cfg.reprocesar, reintentos_max=cfg.reintentos_max,
+                                 reintento_horas=cfg.reintento_horas)
+                log.info("pasada: %s casos=%d enviados=%d sugerencias=%d reenviados=%d reprocesados=%d decisiones=%d errores=%d",
+                         r.resultado, r.casos, r.enviados, r.sugerencias, r.reenviados, r.reprocesados, r.decisiones, r.errores)
                 codigo = 3 if r.omitida else (0 if r.exitosa else 1)
             except Exception as exc:  # el bucle no muere por una pasada
                 log.error("pasada fallida: %s", type(exc).__name__)

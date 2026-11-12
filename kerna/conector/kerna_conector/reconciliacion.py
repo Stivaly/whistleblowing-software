@@ -8,6 +8,7 @@ from __future__ import annotations
 import logging
 import time
 import uuid
+from datetime import datetime
 from dataclasses import dataclass
 from typing import Callable, Optional
 
@@ -24,12 +25,15 @@ log = logging.getLogger("kerna.conector")
 MAX_TEXTO = 60_000
 CERROJO = "pasada"
 TTL_CERROJO_S = 900
+MOTIVOS_REINTENTABLES = {"cadena_agotada", "tiempo_agotado"}
 
 
 @dataclass
 class ResultadoPasada:
     casos: int = 0
     enviados: int = 0
+    reenviados: int = 0
+    reprocesados: int = 0
     sugerencias: int = 0
     estados: int = 0
     decisiones: int = 0
@@ -46,7 +50,10 @@ class ResultadoPasada:
 
 class _Pasada:
     def __init__(self, veridy, nucleo, estado: est.Estado, id_empresa: str, ahora: Callable[[], float],
-                 compartir_con: str = ""):
+                 compartir_con: str = "", reprocesar: bool = False, reintentos_max: int = 3,
+                 reintento_horas: float = 24.0):
+        self.reprocesar = reprocesar
+        self.reintentos_max, self.reintento_horas = reintentos_max, reintento_horas
         self.v, self.n, self.e, self.ahora = veridy, nucleo, estado, ahora
         self.compartir_con = compartir_con
         self.id_receptor: Optional[str] = None
@@ -128,6 +135,7 @@ class _Pasada:
                 self.v.compartir_caso(id_caso, self.id_receptor)
                 self.r.compartidos += 1
                 telemetria.contador("conector_caso_compartido")
+                telemetria.evento("conector_caso_compartido")
             self.e.marcar_procesado(id_caso, "compartido", self.id_receptor)
         except CasoNoAccesible as exc:
             if exc.codigo == 403:  # sin permiso can_grant_access_to_reports: no insistir en esta pasada
@@ -152,6 +160,8 @@ class _Pasada:
         elif corr.estado == est.PENDIENTE:
             self._pendiente(corr)
         elif corr.estado == est.COMPLETADO:
+            if self.reintentos_max > 0:
+                self._reproceso(corr)
             self._decisiones(corr)
 
     def _leer(self, id_caso: str, meta: Optional[dict] = None) -> Optional[dict]:
@@ -244,6 +254,108 @@ class _Pasada:
                           id_solicitud=res.get("id_solicitud") or corr.id_solicitud,
                           intentos=0, proximo_intento=0, ultimo_error=None)
 
+    # ---- reintento automático de revision_manual por fallo de modelos ---------------------------------------
+    @staticmethod
+    def _ref_reproceso(ref_opaca: str, k: int = 1) -> str:
+        """Referencia derivada y estable por ronda: el núcleo la ve como un caso nuevo y repetirla es seguro."""
+        return str(uuid.uuid5(uuid.NAMESPACE_OID, "%s/reproceso%d" % (ref_opaca, k)))
+
+    @staticmethod
+    def _epoch(iso: Optional[str]) -> float:
+        try:
+            return datetime.fromisoformat(str(iso).replace("Z", "+00:00")).timestamp()
+        except ValueError:
+            return 0.0
+
+    def _reproceso(self, corr: est.Correspondencia) -> None:
+        """Reintenta (hasta `reintentos_max`, uno cada `reintento_horas`) los casos cuya última sugerencia es
+        `revision_manual` por fallo de modelos. Cada ronda k usa una ref_opaca derivada; al completar se publica
+        una nota nueva (el cliente muestra la más reciente). El estado guarda intentos y fecha en `objeto_procesado`
+        (`enviado<k>` con su fecha, `resuelto<k>`, `final`). `reprocesar` salta la espera de la 1.ª ronda."""
+        id_caso, e = corr.id_caso, self.e
+        if e.objeto_procesado(id_caso, "reproceso", "final"):
+            return
+        k = sum(1 for i in range(1, self.reintentos_max + 1) if e.objeto_procesado(id_caso, "reproceso", "enviado%d" % i))
+        en_vuelo = k > 0 and not e.objeto_procesado(id_caso, "reproceso", "resuelto%d" % k)
+        espera = self.reintento_horas * 3600
+        if not en_vuelo:
+            if k >= self.reintentos_max:
+                e.marcar_procesado(id_caso, "reproceso", "final")
+                return
+            if k > 0 and self.ahora() - float(e.id_nota_procesado(id_caso, "reproceso", "ts%d" % k) or 0) < espera:
+                return
+        caso = self._leer(id_caso)
+        if caso is None:
+            return
+        if not en_vuelo:
+            propias = lector_casos.notas_de_cuenta(caso, self.id_cuenta, "kerna_sugerencia")
+            ultima = max(propias, key=lambda n: n.nota.generado_en, default=None)
+            if ultima is None or ultima.nota.estado != "revision_manual" or \
+                    ultima.nota.motivo_revision not in MOTIVOS_REINTENTABLES:
+                e.marcar_procesado(id_caso, "reproceso", "final")
+                return
+            if k == 0 and not self.reprocesar and self.ahora() - self._epoch(ultima.nota.generado_en) < espera:
+                return
+            try:
+                relato = lector_casos.extraer_relato(caso)
+            except Exception as exc:
+                self._fallo(id_caso, "ilegible_" + type(exc).__name__)
+                return
+            if not relato.strip():
+                self._fallo(id_caso, "sin_texto")
+                return
+            texto = anonimizar(relato).texto[:MAX_TEXTO]
+            del relato
+            ref = self._ref_reproceso(corr.ref_opaca, k + 1)
+            try:
+                self._llamar(self.n.enviar_caso, ref, texto)
+            except NucleoNoDisponible:
+                self.r.nucleo_caido = True
+                return
+            except ErrorNucleo as exc:
+                self._fallo(id_caso, "nucleo_%s" % exc.codigo)
+                return
+            finally:
+                del texto
+            e.marcar_procesado(id_caso, "reproceso", "ts%d" % (k + 1), str(self.ahora()))
+            e.marcar_procesado(id_caso, "reproceso", "enviado%d" % (k + 1), ref)
+            self.r.reenviados += 1
+            telemetria.contador("conector_caso_reenviado", intento=k + 1)
+            telemetria.evento("conector_reintento", ref_opaca=corr.ref_opaca, intento=k + 1,
+                              motivo=str(ultima.nota.motivo_revision) if not en_vuelo else None)
+            log.info("reintento %d/%d enviado", k + 1, self.reintentos_max)
+            return
+        try:
+            res = self._llamar(self.n.consultar_sugerencia, self._ref_reproceso(corr.ref_opaca, k))
+        except NucleoNoDisponible:
+            self.r.nucleo_caido = True
+            return
+        except ErrorNucleo as exc:
+            self._fallo(id_caso, "nucleo_%s" % exc.codigo)
+            return
+        if res is None or res.get("estado") not in ("completada", "revision_manual"):
+            return
+        e.marcar_procesado(id_caso, "reproceso", "resuelto%d" % k)
+        if res.get("estado") == "revision_manual" and res.get("motivo_revision") in MOTIVOS_REINTENTABLES:
+            log.info("reintento %d/%d: sigue en revision_manual", k, self.reintentos_max)
+            if k >= self.reintentos_max:
+                e.marcar_procesado(id_caso, "reproceso", "final")
+            return
+        id_nota = self.v.publicar_nota(id_caso, publicador.contenido(publicador.armar_sugerencia(res))).get("id")
+        e.marcar_procesado(id_caso, "reproceso", "final", str(id_nota or ""))
+        self.r.reprocesados += 1
+        log.info("reintento %d: nueva sugerencia estado=%s modo=%s", k, res.get("estado"), res.get("modo"))
+        telemetria.contador("conector_caso_reprocesado", estado=str(res.get("estado")), modo=str(res.get("modo")))
+        telemetria.evento("conector_reproceso", ref_opaca=corr.ref_opaca, intento=k, estado=str(res.get("estado")),
+                          modo=str(res.get("modo")))
+
+    @staticmethod
+    def _valoracion(d) -> str:
+        """util / no_util (feedback) o ninguno_aplica (clasificación sin artículos); nunca texto libre."""
+        if d.tipo == "feedback":
+            return "util" if str(d.nota.valoracion) == "arriba" else "no_util"
+        return "clasificado" if d.nota.articulos else "ninguno_aplica"
+
     def _sugerencia_propia(self, caso: dict) -> Optional[str]:
         propias = lector_casos.notas_de_cuenta(caso, self.id_cuenta, "kerna_sugerencia")
         return propias[0].id_nota if propias else None
@@ -272,10 +384,14 @@ class _Pasada:
             self.e.marcar_procesado(id_caso, d.tipo, d.id_nota, None if ok else "sin_solicitud")
             self.r.decisiones += 1
             telemetria.contador("conector_decision_enviada", tipo=d.tipo)
+            telemetria.evento("conector_valoracion", ref_opaca=corr.ref_opaca, tipo=d.tipo,
+                              valoracion=self._valoracion(d))
 
 
 def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "veridy",
-                    ahora: Callable[[], float] = time.time, compartir_con: str = "") -> ResultadoPasada:
+                    ahora: Callable[[], float] = time.time, compartir_con: str = "",
+                    reprocesar: bool = False, reintentos_max: int = 3,
+                    reintento_horas: float = 24.0) -> ResultadoPasada:
     dueno = str(uuid.uuid4())
     if not estado.tomar_cerrojo(CERROJO, dueno, ahora(), TTL_CERROJO_S):
         return ResultadoPasada(omitida=True, resultado="omitida")
@@ -283,7 +399,7 @@ def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "verid
     t0 = time.monotonic()
     r = ResultadoPasada()
     try:
-        p = _Pasada(veridy, nucleo, estado, id_empresa, ahora, compartir_con)
+        p = _Pasada(veridy, nucleo, estado, id_empresa, ahora, compartir_con, reprocesar, reintentos_max, reintento_horas)
         r = p.r
         casos = sorted(veridy.listar_casos(), key=lambda c: (str(c.get("creation_date") or ""), str(c.get("id"))))
         r.casos = len(casos)

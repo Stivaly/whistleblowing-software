@@ -47,6 +47,12 @@ variable "conector_intervalo_s" {
   default = 30
 }
 
+variable "conector_reprocesar" {
+  description = "true activa una vez el reintento inmediato de revision_manual (KERNA_REPROCESAR_REVISION_MANUAL); luego volver a false"
+  type        = bool
+  default     = false
+}
+
 locals {
   veridy_fqdn = "${local.base}-${local.sufijo}.${var.region}.azurecontainer.io" # = fqdn del grupo
 
@@ -63,6 +69,7 @@ locals {
       KERNA_API_URL         = var.kerna_api_url
       KERNA_ID_EMPRESA      = var.kerna_id_empresa
       CONECTOR_INTERVALO_S  = tostring(var.conector_intervalo_s)
+      KERNA_REPROCESAR_REVISION_MANUAL = var.conector_reprocesar ? "1" : "0"
     }
   } : null
 }

@@ -26,6 +26,9 @@ class Config:
     intervalo_s: float = 30.0
     estado: str = "sqlite:///conector.db"
     compartir_con: str = ""
+    reprocesar: bool = False
+    reintentos_max: int = 3
+    reintento_horas: float = 24.0
 
     @classmethod
     def desde_entorno(cls, entorno=None) -> "Config":
@@ -35,6 +38,8 @@ class Config:
             raise ErrorConfiguracion("faltan variables: " + ", ".join(faltan))
         try:
             tid = int(e.get("VERIDY_TID", "0"))
+            maxr = int(e.get("KERNA_REINTENTOS_MAX", "3"))
+            horas = float(e.get("KERNA_REINTENTO_HORAS", "24"))
             intervalo = float(e.get("CONECTOR_INTERVALO_S", "30"))
         except ValueError as exc:
             raise ErrorConfiguracion("VERIDY_TID o CONECTOR_INTERVALO_S no son numéricos") from exc
@@ -52,4 +57,7 @@ class Config:
             intervalo_s=intervalo,
             estado=e.get("CONECTOR_ESTADO", "sqlite:///conector.db"),
             compartir_con=e.get("VERIDY_COMPARTIR_CON", "").strip(),
+            reintentos_max=maxr,
+            reintento_horas=horas,
+            reprocesar=e.get("KERNA_REPROCESAR_REVISION_MANUAL", "").strip() in ("1", "true", "si"),
         )

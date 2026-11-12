@@ -365,3 +365,81 @@ def test_compartir_receptor_inexistente(mundo):
     v, n, e = mundo
     v.agregar("c1")
     assert pasada_c(v, n, e, con="NoExiste").compartidos == 0
+
+
+T0 = 1794312000.0 + 3600  # una hora después de generado_en de los resultados simulados
+H = 3600.0
+
+
+def pasada_t(v, n, e, t, **kw):
+    return ejecutar_pasada(v, n, e, "emp", ahora=lambda: t, **kw)
+
+
+def _agotar(n, ref):
+    n.completar(ref, estado="revision_manual", motivo_revision="cadena_agotada", modo="manual", articulos=[])
+
+
+def _caso_agotado(mundo):
+    v, n, e = mundo
+    v.agregar("c1", relato="Mi jefe me grita todos los días.")
+    pasada(v, n, e)
+    ref = next(iter(n.solicitudes))
+    _agotar(n, ref)
+    pasada(v, n, e)
+    return v, n, e, ref
+
+
+def test_reproceso_inmediato_cuenta_como_primer_reintento_y_publica(mundo):
+    v, n, e, ref = _caso_agotado(mundo)
+    r = pasada_t(v, n, e, T0, reprocesar=True)
+    assert r.reenviados == 1 and len(n.solicitudes) == 2
+    assert not any("\"c1\"" in c for c in n.cuerpos_enviados)
+    nueva = [x for x in n.solicitudes if x != ref][0]
+    n.completar(nueva)
+    r = pasada_t(v, n, e, T0 + 1, reprocesar=True)
+    assert r.reprocesados == 1
+    assert [s.estado for s in v.notas_publicadas("kerna_sugerencia")] == ["revision_manual", "completada"]
+    r = pasada_t(v, n, e, T0 + 99 * H, reprocesar=True)  # idempotente
+    assert r.reenviados == 0 and len(n.solicitudes) == 2 and len(v.notas_publicadas("kerna_sugerencia")) == 2
+
+
+def test_reintento_automatico_respeta_intervalo_y_maximo_3(mundo):
+    v, n, e, ref = _caso_agotado(mundo)
+    assert pasada_t(v, n, e, T0).reenviados == 0            # el fallo es reciente: aún no se reintenta
+    assert pasada_t(v, n, e, T0 + 25 * H).reenviados == 1     # >24 h desde la nota: 1.er reintento
+    for k in (1, 2, 3):
+        refs = [x for x in n.solicitudes if x != ref and not n.solicitudes[x].get("estado") == "revision_manual"
+                and n.solicitudes[x].get("estado") == "pendiente"]
+        assert len(refs) == 1
+        _agotar(n, refs[0])
+        t = T0 + 25 * H + (k - 1) * 25 * H
+        pasada_t(v, n, e, t + 1)                               # registra el fallo
+        if k < 3:
+            assert pasada_t(v, n, e, t + 23 * H).reenviados == 0   # menos de 24 h: espera
+            assert pasada_t(v, n, e, t + 25 * H).reenviados == 1   # pasadas 24 h: siguiente
+    assert len(n.solicitudes) == 4                              # original + 3 reintentos
+    assert pasada_t(v, n, e, T0 + 999 * H).reenviados == 0      # tras el 3.º fallo queda en revisión manual
+    assert len(n.solicitudes) == 4
+    assert [s.estado for s in v.notas_publicadas("kerna_sugerencia")] == ["revision_manual"]
+
+
+def test_reintentos_max_configurable(mundo):
+    v, n, e, ref = _caso_agotado(mundo)
+    pasada_t(v, n, e, T0, reintentos_max=1, reprocesar=True)
+    nueva = [x for x in n.solicitudes if x != ref][0]
+    _agotar(n, nueva)
+    pasada_t(v, n, e, T0 + 1, reintentos_max=1)
+    assert pasada_t(v, n, e, T0 + 50 * H, reintentos_max=1).reenviados == 0
+
+
+def test_no_reintenta_decision_de_contenido_ni_completadas(mundo):
+    v, n, e = mundo
+    v.agregar("c1")
+    v.agregar("c2", fecha="2026-11-01T11:00:00Z")
+    pasada(v, n, e)
+    refs = list(n.solicitudes)
+    n.completar(refs[0], estado="revision_manual", motivo_revision="sin_normativa_aplicable", modo="manual", articulos=[])
+    n.completar(refs[1])
+    pasada(v, n, e)
+    assert pasada_t(v, n, e, T0 + 99 * H, reprocesar=True).reenviados == 0
+    assert len(n.solicitudes) == 2
