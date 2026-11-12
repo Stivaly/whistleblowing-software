@@ -911,9 +911,9 @@ k-n svg,k-lx svg{display:block;width:100%;height:100%;overflow:visible}
 /* Ajustes: una sola superficie, panel azul orbital por sección (órbitas fijas; los satélites cambian con los controles) */
 .as{background:#fff;border:1px solid var(--line-strong);clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%)}
 .as-s{display:grid;grid-template-columns:280px minmax(0,1fr);border-top:1px solid var(--line-strong)}.as-s:first-child{border-top:0}
-.ap{position:relative;background:var(--brand);display:grid;place-items:center;padding:12px;overflow:hidden;min-height:150px}
+.ap{position:relative;background:var(--brand);display:grid;place-items:center;padding:12px;overflow:hidden;min-height:136px}
 .ap::before{content:"";position:absolute;left:-110px;top:-110px;width:340px;height:340px;background:url(img/guil-l.webp) center/contain no-repeat;pointer-events:none}
-.ap-svg{position:relative;width:150px;height:150px;overflow:visible}
+.ap-svg{position:relative;width:132px;height:132px;overflow:visible}
 .as-r{padding:8px 18px 10px;min-width:0;display:grid;align-content:center}
 .as-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 2px;font:700 14px Unbounded,Inter,sans-serif;color:var(--brand)}
 #app .as-ch.ctl{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin-left:auto;min-height:0;padding:0;border:0;font:500 13px Inter,sans-serif;color:var(--ink);background:none}

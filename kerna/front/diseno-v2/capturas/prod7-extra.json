@@ -1,0 +1,98 @@
+{
+ "portada-frio@1366": {
+  "ttfb": 73,
+  "kb": 322,
+  "n": 15,
+  "sw": 1366,
+  "cw": 1366,
+  "h": 2821
+ },
+ "portada-caliente@1366": {
+  "ttfb": 12,
+  "kb": 9,
+  "n": 15,
+  "sw": 1366,
+  "cw": 1366,
+  "h": 2821
+ },
+ "resumen@1366": {
+  "ttfb": 14,
+  "html_kb": 9,
+  "kb": 10,
+  "n": 14,
+  "lcp": null,
+  "cpu_reposo_pct": 0.0
+ },
+ "informe@1366": {
+  "ttfb": 27,
+  "html_kb": 10,
+  "kb": 219,
+  "n": 15,
+  "lcp": null,
+  "cpu_reposo_pct": 0.0
+ },
+ "negocio@1366": {
+  "ttfb": 29,
+  "html_kb": 9,
+  "kb": 9,
+  "n": 15,
+  "lcp": null,
+  "cpu_reposo_pct": 0.0
+ },
+ "ajustes@1366": {
+  "ttfb": 180,
+  "html_kb": 8,
+  "kb": 13,
+  "n": 17,
+  "lcp": null,
+  "cpu_reposo_pct": 0.3
+ },
+ "portada-frio@390": {
+  "ttfb": 31,
+  "kb": 322,
+  "n": 15,
+  "sw": 390,
+  "cw": 390,
+  "h": 4613
+ },
+ "portada-caliente@390": {
+  "ttfb": 15,
+  "kb": 9,
+  "n": 15,
+  "sw": 390,
+  "cw": 390,
+  "h": 4613
+ },
+ "resumen@390": {
+  "ttfb": 13,
+  "html_kb": 9,
+  "kb": 10,
+  "n": 14,
+  "lcp": null,
+  "cpu_reposo_pct": 0.0
+ },
+ "informe@390": {
+  "ttfb": 15,
+  "html_kb": 10,
+  "kb": 219,
+  "n": 15,
+  "lcp": null,
+  "cpu_reposo_pct": 0.0
+ },
+ "negocio@390": {
+  "ttfb": 11,
+  "html_kb": 9,
+  "kb": 9,
+  "n": 15,
+  "lcp": null,
+  "cpu_reposo_pct": 0.0
+ },
+ "ajustes@390": {
+  "ttfb": 78,
+  "html_kb": 8,
+  "kb": 13,
+  "n": 17,
+  "lcp": null,
+  "cpu_reposo_pct": 0.0
+ }
+}
