@@ -23,7 +23,8 @@ def _casos(n=30):
 @pytest.mark.pr("PR-13")
 def test_relato_completo_incluye_texto_original():
     r = cd.armar_relato(CASO)
-    assert r.splitlines()[0] == "[PRUEBA SINTÉTICA DEN-0001]" and "DATO PERSONAL NO DEBE APARECER" in r
+    assert r == CASO["texto_original"].strip()
+    assert "PRUEBA" not in r and "Título" not in r and "Relato" not in r
 
 
 @pytest.mark.pr("PR-13")
@@ -68,7 +69,7 @@ def test_cuerpo_con_cuestionario_de_ejemplo():
     assert set(ans) == set(campos)
     for cid, c in campos.items():
         if c["type"] == "textarea":
-            assert ans[cid][0]["value"].startswith("[PRUEBA SINTÉTICA")
+            assert ans[cid][0]["value"] == CASO["texto_original"].strip()
         if c["type"] == "fileupload" or c["label"].startswith("Indica la forma"):
             assert ans[cid] == [{}]  # no activados con "No me es posible proporcionar evidencias"
     tipo = next(c for c in campos.values() if c["label"] == "Tipo de denuncia")

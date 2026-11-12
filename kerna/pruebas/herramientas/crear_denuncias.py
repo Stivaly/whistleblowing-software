@@ -25,7 +25,7 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parents[2]
 DATASET = RAIZ / "evaluacion" / "datos" / "denuncias_publicas.json"
 REGISTRO = RAIZ / "evaluacion" / "datos" / "denuncias_veridy.json"
-REGISTRO_COMPLETO = RAIZ / "evaluacion" / "datos" / "denuncias_veridy_texto_completo.json"
+REGISTRO_COMPLETO = RAIZ / "evaluacion" / "datos" / "denuncias_veridy_solo_relato.json"
 SEMILLA = 20261110
 MAX_RELATO = 2000
 
@@ -35,16 +35,13 @@ MAX_RELATO = 2000
 def armar_relato(caso, modo="completo"):
     """Relato del envío.
 
-    completo (por defecto): marca visible + título + texto_original íntegro (relato real con PII; el entorno
+    completo (por defecto): solo el texto_original íntegro, sin rótulos (relato real con PII; el entorno
     es cerrado y es el caso de prueba del anonimizador). resumen: forma antigua, marca + título + resumen
     parafraseado + submateria, truncada a MAX_RELATO.
     """
     if modo == "completo":
-        return "\n".join([
-            "[PRUEBA SINTÉTICA %s]" % caso["id"],
-            "Título: %s" % (caso.get("titulo") or "").strip(),
-            "Relato: %s" % (caso.get("texto_original") or "").strip(),
-        ])
+        # Solo el relato, tal como lo escribiría quien denuncia: sin título, rótulos ni marca de prueba.
+        return (caso.get("texto_original") or "").strip()
     resumen = (caso.get("resumen_parafraseado") or "").replace("[Resumen parafraseado]", "").strip()
     partes = [
         "[PRUEBA SINTÉTICA %s]" % caso["id"],
