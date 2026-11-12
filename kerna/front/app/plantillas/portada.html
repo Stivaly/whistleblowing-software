@@ -1,35 +1,57 @@
-{% extends "base.html" %}{% block cuerpo %}
-<section class="hoja heroe"><span style="display:contents">{% include "_simbolo.html" %}</span>
-<div><span class="eti">Veridy · canal de denuncias</span>
-<h1 style="margin:8px 0 12px">KERNA<span>AI</span></h1>
-<p style="margin:0;max-width:52ch">Lee una denuncia dentro de Veridy y sugiere qué leyes y artículos chilenos podrían aplicar, con la cita exacta que los respalda.</p></div></section>
+{% extends "base_pub.html" %}
+{% block fondo_pub %}bg-p{% endblock %}
+{% block cuerpo %}
+<section class="hero max-w-7xl mx-auto px-4 md:px-8 pt-4 md:pt-10 pb-12 md:pb-20 grid lg:grid-cols-[1.05fr_1fr] gap-4 lg:gap-10 items-center">
+<div class="hero-logo order-first lg:order-last"><svg class="kl hero-svg" viewBox="-14 -14 92 92" data-logo="hero" role="img" aria-label="Símbolo de Kerna AI: una roseta de órbitas con un satélite que viaja por la órbita elegida"></svg></div>
+<div class="hero-in relative">
+<span class="chip brand mb-5" style="--i:0">{{ ic('shield-check') }} Para el canal de denuncias Veridy</span>
+<h1 class="disp h-hero" style="--i:1">De los hechos a la norma, en <span class="hl">segundos</span>.</h1>
+<p class="lead" style="--i:2">Kerna lee cada denuncia dentro de Veridy y sugiere qué leyes y artículos chilenos podrían aplicar, con la cita exacta que los respalda. Una persona decide siempre.</p>
+<div class="flex flex-wrap gap-4" style="--i:3"><a href="/panel" class="btn btn-pri">Ver el panel {{ ic('layout-dashboard') }}</a><a href="#como" class="btn btn-sec">Cómo funciona</a></div>
+<ul class="flex flex-wrap gap-x-6 gap-y-2 mt-7 p-0 list-none muted text-[16px]" style="--i:4"><li class="flex items-center gap-2">{{ ic('eye-off') }} Sin datos personales</li><li class="flex items-center gap-2">{{ ic('lock') }} Cifrado de punta a punta</li><li class="flex items-center gap-2">{{ ic('quote') }} Siempre con cita</li></ul>
+</div></section>
 
-<section class="sec"><span class="eti">Qué hace</span><h2>De los hechos a la norma</h2>
-<div class="hoja"><svg class="flujo" viewBox="0 0 760 150" role="img" aria-label="Flujo: denuncia, anonimizador, búsqueda en la normativa, artículos sugeridos con cita">
-<g fill="none" stroke="#1C2A6B" stroke-width="1.6">
-<rect x="6" y="40" width="130" height="70" fill="#fff"/><rect x="186" y="40" width="130" height="70" fill="#fff"/>
-<rect x="366" y="40" width="130" height="70" fill="#fff"/><rect x="546" y="40" width="130" height="70" fill="#CFFF5E"/>
-<path d="M136 75h50M316 75h50M496 75h50M540 69l6 6-6 6" stroke-linecap="round"/></g>
-<g font-family="JetBrains Mono,monospace" font-size="12" fill="#1C2A6B" text-anchor="middle">
-<text x="71" y="70">Denuncia</text><text x="71" y="88" fill="#4A5578" font-size="11">en Veridy</text>
-<text x="251" y="70">Anonimizador</text><text x="251" y="88" fill="#4A5578" font-size="11">sin datos personales</text>
-<text x="431" y="70">Normativa</text><text x="431" y="88" fill="#4A5578" font-size="11">búsqueda vectorial</text>
-<text x="611" y="70">Sugerencia</text><text x="611" y="88" font-size="11">artículo + cita</text></g></svg></div></section>
+<div class="osep" aria-hidden="true"><svg class="kl" width="46" height="46" viewBox="-1 -1 66 66" data-logo="mini"></svg></div>
 
-<section class="sec"><span class="eti">Cómo protege la denuncia</span><h2>Primero se anonimiza, siempre</h2>
-<div class="rejilla dos">
-<div class="hoja"><svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="12" width="44" height="40" fill="#fff" stroke="#1C2A6B" stroke-width="2"/><rect x="16" y="22" width="22" height="6" fill="#1C2A6B"/><rect x="16" y="34" width="32" height="4" fill="#DCE1EC"/><rect x="16" y="42" width="26" height="4" fill="#CFFF5E" stroke="#1C2A6B"/></svg>
-<h3>Anonimizador antes de cualquier modelo</h3><p>Nombres, RUT, correos y teléfonos se reemplazan antes de que el texto llegue a un modelo de IA. Ningún modelo ve datos que identifiquen a las personas.</p></div>
-<div class="hoja"><svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><rect x="14" y="28" width="36" height="26" fill="#CFFF5E" stroke="#1C2A6B" stroke-width="2"/><path d="M22 28v-8a10 10 0 0 1 20 0v8" fill="none" stroke="#1C2A6B" stroke-width="2"/><circle cx="32" cy="41" r="3.5" fill="#1C2A6B"/></svg>
-<h3>Cifrado de Veridy</h3><p>La denuncia solo existe en claro en memoria. Todo lo derivado de ella queda cifrado con la clave del caso en Veridy.</p></div></div></section>
+<section class="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16" data-rv>
+<div class="grid lg:grid-cols-[.85fr_1.15fr] gap-8 lg:gap-14 items-center">
+<div><p class="eyebrow">La sugerencia</p><h2 class="disp h-sec">Cada sugerencia llega con su cita</h2><p class="lead2 muted">Kerna muestra la ley, el artículo y el texto exacto que lo respalda, para que quien analiza el caso lo verifique.</p></div>
+<div class="card card-hi p-5 md:p-7">
+<div class="flex items-center justify-between mb-3 relative"><span class="chip brand">{{ ic('sparkles') }} Sugerencia de Kerna</span></div>
+<div class="rounded-xl border p-4 mb-3 relative bg-white" style="border-color:var(--line)">
+<div class="flex items-center justify-between gap-2 mb-1 flex-wrap"><b class="text-base">Ley 21.643 (Ley Karin) · art. 2</b><span class="chip ok">{{ ic('circle-check') }} Alta coincidencia</span></div>
+<p class="text-sm m-0" style="color:var(--ink)">«…el acoso laboral es toda conducta que constituya agresión u hostigamiento ejercida por el empleador o por uno o más trabajadores…»</p></div>
+<div class="rounded-xl border p-4 relative bg-white" style="border-color:var(--line)">
+<div class="flex items-center justify-between gap-2 mb-1 flex-wrap"><b class="text-base">Código del Trabajo · art. 160</b><span class="chip warn">{{ ic('triangle-alert') }} Revisar</span></div>
+<p class="text-sm m-0 muted">Posible causal de término del contrato por conducta indebida.</p></div>
+</div></div></section>
 
-<section class="sec"><span class="eti">Leyes cubiertas</span><h2>Normativa chilena vigente</h2>
-<div class="rejilla">
-<div class="hoja ley"><span class="num">21.643</span><div><h3>Ley Karin</h3><p>Acoso laboral, sexual y violencia en el trabajo (Código del Trabajo).</p></div></div>
-<div class="hoja ley"><span class="num">19.628</span><div><h3>Datos personales</h3><p>Protección de la vida privada, con la reforma de la Ley 21.719.</p></div></div>
-<div class="hoja ley"><span class="num">20.393</span><div><h3>Responsabilidad penal</h3><p>De las personas jurídicas y modelos de prevención de delitos.</p></div></div></div></section>
+<div class="osep" aria-hidden="true"><svg class="kl" width="46" height="46" viewBox="-1 -1 66 66" data-logo="mini"></svg></div>
 
-<section class="sec"><div class="aviso"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" fill="#fff" stroke="#1C2A6B" stroke-width="2"/><path d="M32 18v18" stroke="#1C2A6B" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="45" r="3" fill="#CFFF5E" stroke="#1C2A6B" stroke-width="1.6"/></svg>
-<div><h3 style="font-size:15px;margin-bottom:4px">Es una sugerencia, no un dictamen</h3><p style="margin:0;color:var(--sec)">Kerna orienta a quien analiza el caso; no reemplaza el criterio ni la asesoría jurídica. La decisión siempre es de una persona.</p></div></div></section>
-<p class="pie">Kerna AI · parte de Veridy · normativa vigente según la Biblioteca del Congreso Nacional de Chile</p>
+<section id="como" class="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16" data-rv>
+<p class="eyebrow">Cómo funciona</p>
+<h2 class="disp h-sec">Cuatro pasos, ninguno expone a nadie</h2>
+<ol class="orb-steps" data-rvs>
+{% for ico, t, d in (('inbox','Llega la denuncia','Una persona denuncia en Veridy, como siempre.'),('eye-off','Se anonimiza','Se tapan nombres, RUT, correos y teléfonos.'),('search','Se busca en la ley','Kerna encuentra los artículos más parecidos.'),('quote','Sugerencia con cita','Ves la ley, el artículo y el texto que lo respalda.')) %}
+<li class="ostep"><span class="node{% if loop.last %} lima{% endif %}">{{ ic(ico) }}</span><div><span class="pn">Paso {{ loop.index }}</span><b class="block text-[19px] mt-0.5">{{ t }}</b><p class="m-0 mt-1 text-[16px] muted">{{ d }}</p></div></li>
+{% endfor %}</ol></section>
+
+<section id="proteccion" class="max-w-7xl mx-auto px-4 md:px-8 py-10" data-rv>
+<div class="band p-7 md:p-14 grid md:grid-cols-2 gap-8 md:gap-12">
+<div><p class="eyebrow" style="color:var(--lime)">Protección</p><h2 class="disp h-sec" style="color:#fff">Primero se anonimiza, siempre</h2><p class="m-0 mt-4 text-[17px]" style="color:#DCE2FA">Ningún modelo de IA ve nombres, RUT, correos ni teléfonos: se reemplazan antes de enviar el texto. Lo que Kerna produce queda cifrado con la clave del caso en Veridy.</p></div>
+<ul class="list-none p-0 m-0 grid gap-4 content-center">
+<li class="band-li flex gap-4 items-start p-5"><span style="width:30px;height:30px;color:var(--lime);display:inline-flex;flex:none">{{ ic('eye-off') }}</span><div><b class="text-[18px]">Anonimizador previo</b><p class="m-0 text-[16px]" style="color:#DCE2FA">Datos personales fuera antes de cualquier modelo.</p></div></li>
+<li class="band-li flex gap-4 items-start p-5"><span style="width:30px;height:30px;color:var(--lime);display:inline-flex;flex:none">{{ ic('lock') }}</span><div><b class="text-[18px]">Cifrado de Veridy</b><p class="m-0 text-[16px]" style="color:#DCE2FA">La denuncia solo existe en claro en memoria.</p></div></li>
+</ul></div></section>
+
+<section id="leyes" class="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16" data-rv>
+<p class="eyebrow">Leyes cubiertas</p>
+<h2 class="disp h-sec">Normativa chilena vigente</h2>
+<div class="grid md:grid-cols-3 gap-5 mt-8" data-rvs>
+{% for n, t, d in (('21.643','Ley Karin','Acoso laboral, sexual y violencia en el trabajo.'),('19.628','Datos personales','Protección de la vida privada, con la reforma de la Ley 21.719.'),('20.393','Responsabilidad penal','De las personas jurídicas y modelos de prevención de delitos.')) %}
+<div class="card p-6 ley"><span class="ley-n disp">{{ n }}</span><b class="block text-[19px] mt-4">{{ t }}</b><p class="m-0 mt-1.5 text-[16px] muted">{{ d }}</p></div>{% endfor %}
+</div>
+<div class="card p-6 mt-6 flex gap-4 items-start bd-warn"><span style="width:28px;height:28px;color:var(--warn);display:inline-flex;flex:none">{{ ic('triangle-alert') }}</span><div><b class="text-[18px]">Es una sugerencia, no un dictamen</b><p class="m-0 text-[16px] muted">Kerna orienta a quien analiza el caso; no reemplaza el criterio ni la asesoría jurídica. La decisión siempre es de una persona.</p></div></div>
+</section>
+<footer class="osep-f max-w-7xl mx-auto px-4 md:px-8 pb-12 pt-6 text-[15px] muted">Kerna AI · parte de Veridy · normativa vigente según la Biblioteca del Congreso Nacional de Chile</footer>
 {% endblock %}

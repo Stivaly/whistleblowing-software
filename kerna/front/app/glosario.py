@@ -1,0 +1,62 @@
+"""Textos de los tooltips «?» (lenguaje simple). Las metas y precios salen de la configuración existente, no se repiten a mano."""
+from __future__ import annotations
+
+from . import formato as f
+from . import informe as inf
+
+
+def glosario() -> dict:
+    meta_r = f.dec_corto(inf.META_RECALL * 100, 0)
+    meta_t = f.dec_corto(inf.META_P95_MS / 1000, 0)
+    pr = inf.PRECIOS_CLAUDE
+    h, s = pr["Claude Haiku 5.5"], pr["Claude Sonnet 5.5"]
+    precios = (f"Precios de la API de Anthropic al {inf.PRECIOS_FECHA}: Haiku 5.5, US$ {f.dec_corto(h[0], 2)} de entrada y {f.dec_corto(h[1], 2)} de salida por millón de tokens; "
+               f"Sonnet 5.5, US$ {f.dec_corto(s[0], 0)} y {f.dec_corto(s[1], 0)}.")
+    L = "Cómo leerlo"
+    return {
+        "envivo": {"t": "En vivo", "q": "Los números se actualizan solos cada minuto, sin recargar la página.",
+                   "c": "Los datos pueden tardar unos minutos en llegar desde el registro de Kerna, así que lo último que ves puede tener un pequeño retraso.", "l": L},
+        "estado": {"t": "Estado general", "q": "Resumen de 5 segundos: junta la salud de los modelos, los proveedores, la calidad y la rapidez. Verde = todo bien, ámbar = atención, rojo = problema.",
+                   "c": "Un solo indicador en rojo hace que el estado general sea «problema»; en ámbar, «atención».", "l": L},
+        "salud_modelo": {"t": "Modelos de IA", "q": "Los modelos de lenguaje que redactan la sugerencia: uno principal y uno de respaldo.", "c": "Ámbar: a veces entra el respaldo. Rojo: muchos casos pasan a revisión manual.", "l": L},
+        "salud_conector": {"t": "Enlace con Veridy", "q": "El puente que lleva las denuncias de Veridy a Kerna y devuelve la sugerencia al caso.", "c": "Si hay casos esperando, se reintentan solos o pidiendo el reintento desde el panel.", "l": L},
+        "salud_busqueda": {"t": "Búsqueda de leyes", "q": "Encuentra en la base de leyes los artículos más parecidos a la denuncia. Lo informa el proveedor del servicio.", "c": "Si falla, Kerna busca con su servicio propio.", "l": L},
+        "salud_calidad": {"t": "Calidad", "q": "Qué tan seguido Kerna incluye el artículo correcto entre sus 5 primeras sugerencias, medido sobre un conjunto de pruebas.", "c": f"Meta: {meta_r} %.", "l": L},
+        "prov_azure": {"t": "Azure OpenAI (principal)", "q": "Estado del servicio de Microsoft que ejecuta el modelo principal. Lo informa Microsoft, no nuestros errores.", "c": "Si cae, Kerna responde con Gemini, un poco más lento.", "l": "Qué hace Kerna"},
+        "prov_gemini": {"t": "Google Gemini (respaldo)", "q": "Estado del servicio de Google que ejecuta el modelo de respaldo. Lo informa Google, no nuestros errores.", "c": "Si cae, Kerna sigue con Azure OpenAI; si los dos fallan, el caso pasa a revisión manual.", "l": "Qué hace Kerna"},
+        "prov_voyage": {"t": "Voyage AI (búsqueda de leyes)", "q": "Estado del servicio que convierte la denuncia en una búsqueda de leyes. Lo informa Voyage AI, no nuestros errores.", "c": "Si cae, Kerna busca con su servicio propio y los casos siguen saliendo.", "l": "Qué hace Kerna"},
+        "casos": {"t": "Denuncias", "q": "Cuántas denuncias de Veridy procesó Kerna en el período.", "c": "Sirve para dimensionar la carga. Un salto brusco puede ser una carga masiva o un problema.", "l": L},
+        "calidad": {"t": "Acierto", "q": "Se prueba a Kerna con casos cuya respuesta correcta ya se conoce. El acierto indica con qué frecuencia el artículo correcto aparece entre sus 5 primeras sugerencias.",
+                    "c": f"La meta es {meta_r} %. Se mide sobre un conjunto de pruebas, no sobre denuncias reales.", "l": L},
+        "tiempo": {"t": "Tiempo de respuesta", "q": "Cuánto tarda Kerna en entregar la sugerencia. Se mira el tiempo dentro del cual terminan 9 de cada 10 casos, en su peor día del período.", "c": f"La meta es {meta_t} segundos. Más lento no rompe nada, pero la persona espera más.", "l": L},
+        "costo_k": {"t": "Costo del período", "q": "Lo que cuesta atender las denuncias del período: los tokens (trozos de texto) que lee y escribe cada modelo, por su precio.", "c": precios, "l": L},
+        "casos_dia": {"t": "Denuncias por día", "q": "Cada barra es un día, dividida entre las denuncias que terminaron con sugerencia y las que no.", "c": "Muchas barras rojas indican que el análisis está fallando o que faltan normas que apliquen.", "l": L},
+        "modos": {"t": "Cómo se resolvieron", "q": "Reparte las denuncias entre modelo principal, modelo de respaldo, modelo local y revisión manual.", "c": "Lo ideal es que casi todo sea verde.", "l": L},
+        "acierto_ley": {"t": "Acierto por ley", "q": "El mismo acierto, desglosado por cada ley. Muestra dónde Kerna se equivoca más.", "c": "La raya negra es la meta. Una ley baja suele indicar artículos mal cargados o poco claros.", "l": L},
+        "valoraciones": {"t": "Valoraciones de auditores", "q": "Opinión de quienes revisan: «útil», «no útil» o «ninguno aplica» en cada sugerencia.", "c": "Es la señal de calidad más real. Sin datos hasta que haya valoraciones.", "l": L},
+        "latencia": {"t": "Rapidez por día", "q": "Línea azul: la mitad de los casos del día. Línea gris: los casos más lentos (9 de cada 10 terminan antes).", "c": f"La línea punteada verde es la meta de {meta_t} s. Por encima, la respuesta es lenta.", "l": L},
+        "etapas": {"t": "¿Dónde se va el tiempo?", "q": "Tiempo típico de cada etapa del análisis.", "c": "Rojo: la etapa que ocupa la mitad o más del tiempo. Ámbar: un cuarto o más.", "l": L},
+        "pendientes": {"t": "Reintentos pendientes", "q": "Casos que fallaron por problemas de los modelos y se volverán a intentar solos, o ahora mismo con el botón.", "c": "Los que necesitan a una persona no se reintentan: pasan a revisión manual.", "l": L},
+        "mapa": {"t": "¿Cuándo llegan las denuncias?", "q": "Muestra en qué días y horas (hora de Chile) llegan más denuncias.", "c": "Útil para planificar turnos y para elegir una hora de bajo uso al actualizar el sistema.", "l": L},
+        "costo": {"t": "Costo", "q": "Se calcula sobre los tokens de cada modelo usado: Claude Haiku 5.5 resuelve primero y Claude Sonnet 5.5 respalda cuando el primero falla.", "c": precios, "l": L},
+        "leyes": {"t": "Leyes más sugeridas", "q": "Ranking de las leyes que Kerna más sugiere (cantidad de artículos sugeridos).", "c": "Ayuda a ver qué tipo de denuncias predominan.", "l": L},
+        "periodo": {"t": "Período", "q": "Rango de fechas que cubrirá el informe.", "c": "Períodos más largos suavizan altibajos; más cortos muestran lo reciente.", "l": "Qué pasa si cambia"},
+        "fmt_pdf": {"t": "PDF", "q": "Documento listo para leer, imprimir o adjuntar a un correo, con gráficos y conclusiones.", "c": "Ideal para comités y auditorías. No se edita fácilmente.", "l": "Cuándo usarlo"},
+        "fmt_xlsx": {"t": "Excel (XLSX)", "q": "Planilla con una hoja por sección, con tablas listas para trabajar.", "c": "Ideal si quieres filtrar, hacer tus propios gráficos o cruzar datos.", "l": "Cuándo usarlo"},
+        "fmt_csv": {"t": "CSV", "q": "Un único archivo de texto con todas las cifras en una tabla larga (separador «;»).", "c": "Ideal para cargarlo en otro programa o base de datos.", "l": "Cuándo usarlo"},
+        "neg_estado": {"t": "Estado del negocio", "q": "Resume si Kerna como servicio va bien: clientes que lo usan, margen y riesgos.", "c": "Rojo si la utilidad es negativa; ámbar si hay algo por vigilar.", "l": L},
+        "neg_clientes_k": {"t": "Clientes activos", "q": "Clientes que enviaron al menos una denuncia en los últimos días (el resto está en riesgo).", "c": "Un cliente sin uso reciente es candidato a abandonar el servicio.", "l": L},
+        "neg_denuncias_k": {"t": "Denuncias procesadas", "q": "Total de denuncias analizadas entre todos los clientes en el período.", "c": "Es la base de los ingresos: más denuncias, más uso del plan y más costo de IA.", "l": L},
+        "neg_ingreso": {"t": "Ingreso del período", "q": "La tarifa anual en UF de cada cliente, repartida por los días del período.", "c": "Es lo que se factura por contrato, no por denuncia.", "l": L},
+        "neg_costo": {"t": "Costo de servir", "q": "Inteligencia artificial (con tope según el plan), infraestructura y soporte de cada cliente.", "c": "Sobre el tope de IA del plan, las consultas pasan al modo local sin costo.", "l": L},
+        "neg_margen": {"t": "Margen operativo", "q": "Lo que queda del ingreso después de servir a los clientes, pagar la parte de Veridy y los costos fijos.", "c": "Verde sobre 60 %, ámbar entre 30 y 60 %, rojo bajo 30 %.", "l": L},
+        "neg_utilidad": {"t": "Utilidad", "q": "Lo que queda al final: después de depreciación, interés del crédito e impuesto de primera categoría.", "c": "Es el resultado del período, no una proyección.", "l": L},
+        "neg_adopcion_k": {"t": "Valoradas por auditores", "q": "Qué parte de las denuncias tuvo su sugerencia valorada por una persona como útil o no útil.", "c": "Si casi nadie valora, no sabemos si las sugerencias sirven. Conviene pedirlo más.", "l": L},
+        "neg_sug": {"t": "Con sugerencia", "q": "De cada 100 denuncias, cuántas terminaron con una sugerencia de leyes lista.", "c": "Si baja, más casos requieren revisión manual.", "l": L},
+        "neg_clientes": {"t": "Clientes", "q": "Cada fila es un cliente: cuánto usa de lo contratado, cuánto ingresa y cuesta, y cuándo fue su último uso.", "c": "Uso muy bajo o muy alto del plan, o días sin actividad, son señales para contactar al cliente.", "l": L},
+        "neg_denuncias": {"t": "Denuncias por cliente", "q": "Evolución diaria del volumen de cada cliente, apilado.", "c": "Una franja que desaparece significa que ese cliente dejó de usar Kerna.", "l": L},
+        "neg_adopcion": {"t": "Adopción", "q": "Embudo: de las denuncias recibidas, cuántas recibieron sugerencia, cuántas fueron valoradas y cuántas valoradas resultaron útiles.", "c": "Barras cortas en valoración indican poca participación de los auditores.", "l": L},
+        "neg_resultado": {"t": "Resultado del período", "q": "Cómo se pasa del ingreso a la utilidad, con todos los costos del informe de Kerna (capítulo 25).", "c": "Las barras muestran cada partida como parte del ingreso.", "l": L},
+        "neg_supuestos": {"t": "Supuestos", "q": "Los supuestos son los del informe de Kerna: no se editan aquí.", "c": "Cambian en el archivo de parámetros financieros o con variables de entorno.", "l": L},
+        "proyeccion": {"t": "Proyección a 5 años", "q": "Ventas, costos y utilidad de cada año con el método del capítulo 25 del informe: clientes por plan, precios en UF, inflación y descuento.", "c": "Sirve para decidir precios o planes, no para comprometer cifras.", "l": L},
+    }

@@ -12,14 +12,22 @@ from datetime import datetime
 
 from fastapi.responses import Response
 
-from . import consultas, exportar, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad
+import json
+import time
+
+from . import consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
 app.mount("/estaticos", StaticFiles(directory=BASE / "estaticos"), name="estaticos")
 plantillas = Jinja2Templates(directory=BASE / "plantillas")
 plantillas.env.globals.update(graficos.FUNCIONES)
+plantillas.env.globals.update(formato.FUNCIONES)
 plantillas.env.filters["zip"] = lambda a, b: zip(a, b)
+_GLOS = glosario.glosario()
+plantillas.env.globals.update(
+    glos=_GLOS, glosario_json=json.dumps(_GLOS, ensure_ascii=False).replace("</", "<\\/"), ICONO=vistas.ICONO, ESTADO_TXT=vistas.ESTADO_TXT,
+    ver=int(max((p.stat().st_mtime for p in (BASE / "estaticos").glob("*.*")), default=0)))
 
 CABECERAS = {
     "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer", "X-Frame-Options": "DENY",
@@ -70,10 +78,36 @@ def entrar(request: Request, clave: str = Form("")):
     return r
 
 
+_extra_cache: dict = {}
+
+
+def _extra(nombre: str, dias: int, ttl: float = consultas.TTL_S) -> list[dict]:
+    """Consulta auxiliar del Resumen (costo, etapas, horarios) con caché corta; si falla, no hay datos (nunca rompe el panel)."""
+    hit = _extra_cache.get((nombre, dias))
+    if hit and time.time() - hit[0] < ttl:
+        return hit[1]
+    try:
+        filas = consultas.filas(reintentos._kql(nombre + ".kql").replace("ago(7d)", f"ago({int(dias)}d)"), dias)
+    except Exception:
+        filas = []
+    _extra_cache[(nombre, dias)] = (time.time(), filas)
+    return filas
+
+
+def _vista_resumen(m: dict, dias: int, prov, rei) -> dict:
+    try:
+        ev = evaluaciones.cargar()
+    except Exception:
+        ev = None
+    return vistas.resumen(m, ev, prov, rei, vistas.costo_modelos(_extra("front_tokens_por_modelo", dias)),
+                          vistas.etapas_lista(_extra("latencia_por_etapa", dias)), vistas.heat(_extra("front_horarios", dias)), dias)
+
+
 @app.get("/panel", response_class=HTMLResponse)
 def panel(request: Request, dias: int = 7):
     if not _permitido(request):
         return RedirectResponse("/acceso", status_code=303)
+    dias = dias if dias in consultas.RANGOS else 7
     try:
         m, error = consultas.metricas(dias), None
     except Exception as e:  # sin identidad, sin rol o Log Analytics caído: no se filtra el detalle
@@ -82,9 +116,10 @@ def panel(request: Request, dias: int = 7):
         prov = proveedores.estado_proveedores()
     except Exception:  # la página de estado nunca debe romper el panel
         prov = None
-    return plantillas.TemplateResponse(request, "panel.html", {"m": m, "error": error, "prov": prov, "rei": _reintentos_ctx(), "csrf": seguridad.token_csrf(request.cookies),
-                                                               "aviso": request.query_params.get("reintento"),
-                                                               "dias": dias if dias in consultas.RANGOS else 7})
+    rei = _reintentos_ctx()
+    V = _vista_resumen(m, dias, prov, rei) if m else None
+    return plantillas.TemplateResponse(request, "panel.html", {"m": m, "V": V, "error": error, "prov": prov, "rei": rei, "csrf": seguridad.token_csrf(request.cookies),
+                                                               "aviso": request.query_params.get("reintento"), "dias": dias})
 
 
 def _reintentos_ctx():
@@ -130,9 +165,15 @@ def api_metricas(request: Request, dias: int = 7):
     if not _permitido(request):
         return JSONResponse({"detalle": "no autorizado"}, status_code=401)
     try:
-        return consultas.metricas(dias)
+        m = consultas.metricas(dias)
     except Exception as e:
         return JSONResponse({"detalle": "consulta fallida", "tipo": type(e).__name__}, status_code=502)
+    try:
+        prov = proveedores.estado_proveedores()
+    except Exception:
+        prov = None
+    # La vista (estados, textos y series ya calculados) lleva lo que el Resumen necesita para refrescarse sin recargar.
+    return {**m, "vista": _vista_resumen(m, m["dias"], prov, None)}
 
 
 def _informe(dias, desde, hasta):
@@ -150,7 +191,7 @@ def panel_informe(request: Request, dias: int = 30, desde: str = "", hasta: str 
         return RedirectResponse("/acceso", status_code=303)
     inf = _informe(dias, desde or None, hasta or None)
     q = f"desde={desde}&hasta={hasta}" if desde else f"dias={dias if dias in inf_mod.RANGOS else 30}"
-    return plantillas.TemplateResponse(request, "informe.html", {"inf": inf, "dias": dias if not desde else 0, "q": q, "desde": desde, "hasta": hasta, "fmt": exportar._fmt})
+    return plantillas.TemplateResponse(request, "informe.html", {"inf": inf, "secciones": vistas.informe(inf), "dias": dias if not desde else 0, "q": q, "desde": desde, "hasta": hasta, "fmt": exportar._fmt})
 
 
 _FORMATOS = {"xlsx": (exportar.a_xlsx, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
@@ -188,4 +229,6 @@ def panel_negocio(request: Request, dias: int = 30):
         n, error = negocio.cargar(dias=30 if dias not in (7, 30, 90) else dias), None
     except Exception as e:
         n, error = None, type(e).__name__
-    return plantillas.TemplateResponse(request, "negocio.html", {"n": n, "error": error, "dias": dias})
+    dias = 30 if dias not in (7, 30, 90) else dias
+    V = vistas.negocio(n) if n else None
+    return plantillas.TemplateResponse(request, "negocio.html", {"n": n, "V": V, "error": error, "dias": dias})

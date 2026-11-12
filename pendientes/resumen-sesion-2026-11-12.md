@@ -25,3 +25,7 @@
 - ~98 denuncias en revisión manual se reintentan solas (de a 5).
 - Cuenta `kerna-e2e` para pruebas e2e (la crea la usuaria).
 - Cambiar `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` en `~/.claude/settings.json` (propuesto, sin aplicar).
+
+## Maqueta v3 publicada
+- La maqueta v3 de la consola (`kerna/front/diseno-v2/maqueta.html`) está publicada como Artifact: https://claude.ai/artifact/WwcmWbJdjYSPVKdksTy1Fx
+- El enlace de la v2 (HYMiH3d26ku4sN18dBQYJb) no se pudo leer ni actualizar desde esta cuenta, por eso la v3 quedó en un enlace nuevo.

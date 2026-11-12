@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_macros.html" import tip, kpi, cabecera, hd with context %}
+{% block pagina %}
+<div id="app" class="lg:flex">
+<aside class="hidden lg:flex flex-col w-64 shrink-0 h-screen sticky top-0 bg-white border-r p-5 gap-5 overflow-y-auto" style="border-color:var(--line)" aria-label="Menú lateral">
+<a href="/" class="brand-lk" aria-label="Kerna AI, ir a la portada"><svg class="kl" width="64" height="64" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><span class="brand-t disp" style="font-size:24px">KERNA<small>AI</small></span></a>
+<nav class="nav grid gap-2" aria-label="Principal">
+<a href="/panel/informe" class="gen"{% if seccion == 'informe' %} aria-current="page"{% endif %}><svg class="kl" width="36" height="36" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><span>Generar informe</span></a>
+<p class="nav-h">Operación</p>
+<a href="/panel"{% if seccion == 'resumen' %} class="on" aria-current="page"{% endif %}>{{ ic('layout-dashboard') }} Resumen</a>
+<p class="nav-h">Negocio</p>
+<a href="/panel/negocio"{% if seccion == 'negocio' %} class="on" aria-current="page"{% endif %}>{{ ic('briefcase-business') }} Clientes y márgenes</a>
+</nav>
+<div class="mt-auto grid gap-3"><a href="/" class="flex items-center gap-2 text-[15px] font-medium no-underline lnk" style="color:var(--muted)">{{ ic('globe') }} Ver portada pública</a></div>
+</aside>
+<div class="flex-1 min-w-0 pb-24 lg:pb-10">
+<header class="hdr lg:hidden sticky top-0 z-30 h-[72px] px-4 flex items-center justify-between"><a href="/" class="brand-lk" aria-label="Kerna AI, portada"><svg class="kl" width="46" height="46" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><span class="brand-t disp">KERNA</span></a></header>
+<main id="main" class="max-w-[1320px] mx-auto px-4 lg:px-8 pt-6 lg:pt-10"><div class="grid gap-3 md:gap-4">
+{% block vista %}{% endblock %}
+</div></main></div>
+<nav class="tabbar lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t flex" style="border-color:var(--line)" aria-label="Principal">
+<a href="/panel"{% if seccion == 'resumen' %} class="on" aria-current="page"{% endif %}>{{ ic('layout-dashboard') }}Resumen</a>
+<a href="/panel/informe" class="gen{% if seccion == 'informe' %} on{% endif %}"{% if seccion == 'informe' %} aria-current="page"{% endif %}>{{ ic('file-down') }}Informe</a>
+<a href="/panel/negocio"{% if seccion == 'negocio' %} class="on" aria-current="page"{% endif %}>{{ ic('briefcase-business') }}Negocio</a>
+</nav>
+</div>
+{% endblock %}

@@ -1,6 +1,10 @@
-{% extends "base.html" %}{% block titulo %}Reintentar casos · Kerna AI{% endblock %}{% block nav %}<a class="btn sec" href="/panel">Panel</a>{% endblock %}
-{% block cuerpo %}<section class="hoja" style="max-width:560px;margin:40px auto"><h1 style="font-size:20px">¿Reintentar ahora?</h1>
-<p>Kerna volverá a analizar {% if ctx %}{{ ctx.r.reintentables }} {% if ctx.r.reintentables == 1 %}caso{% else %}casos{% endif %}{% else %}los casos{% endif %} que fallaron por problemas de los modelos, sin esperar la próxima ronda automática. Los casos que necesitan a una persona no se tocan.</p>
-<p class="vacio">El texto de las denuncias no pasa por este panel: el conector lo lee de Veridy con su propia sesión, como siempre.</p>
-<form method="post" action="/panel/reintentar" style="display:flex;gap:10px;margin-top:16px"><input type="hidden" name="csrf" value="{{ csrf }}">
-<button class="btn" type="submit">Sí, reintentar</button><a class="btn sec" href="/panel">Cancelar</a></form></section>{% endblock %}
+{% extends "base_panel.html" %}{% block titulo %}Reintentar casos · Kerna AI{% endblock %}
+{% set seccion = 'resumen' %}
+{% block vista %}
+<section class="card card-hi p-5 md:p-8 grid gap-4" style="max-width:600px" aria-labelledby="rt">
+<div class="flex items-center gap-3"><span class="orb-ic grid place-items-center w-12 h-12 shrink-0" style="background:var(--brand-soft);color:var(--brand)"><span style="width:24px;height:24px;display:inline-flex">{{ ic('rotate-cw') }}</span></span><h1 id="rt" class="disp m-0" style="font-size:20px;line-height:1.15;color:var(--brand)">¿Reintentar ahora?</h1></div>
+<p class="m-0">Kerna volverá a analizar {% if ctx %}{{ ctx.r.reintentables }} {% if ctx.r.reintentables == 1 %}caso{% else %}casos{% endif %}{% else %}los casos{% endif %} que fallaron por problemas de los modelos, sin esperar la próxima ronda automática. Los casos que necesitan a una persona no se tocan.</p>
+<p class="m-0 text-sm muted">El texto de las denuncias no pasa por este panel: el conector lo lee de Veridy con su propia sesión, como siempre.</p>
+<form method="post" action="/panel/reintentar" class="flex flex-wrap gap-3"><input type="hidden" name="csrf" value="{{ csrf }}">
+<button class="btn btn-pri" type="submit">Sí, reintentar</button><a class="btn btn-sec" href="/panel">Cancelar</a></form></section>
+{% endblock %}

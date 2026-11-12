@@ -2,11 +2,19 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{% block titulo %}Kerna AI{% endblock %}</title>
 <meta name="description" content="Kerna AI sugiere las leyes y artículos chilenos aplicables a una denuncia dentro de Veridy.">
+<meta name="theme-color" content="#1C2A6B">
 <link rel="icon" type="image/svg+xml" href="/estaticos/img/favicon.svg">
+<link rel="preload" href="/estaticos/fuentes/inter-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/estaticos/fuentes/unbounded-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/estaticos/kerna.css"></head>
-<body><div class="pag">
-<header class="barra"><a class="marca" href="/">{% with %}{% include "_simbolo.html" %}{% endwith %}KERNA<i>AI</i></a>
-<nav>{% block nav %}<a class="btn sec" href="/panel">Panel</a>{% endblock %}</nav></header>
-{% block cuerpo %}{% endblock %}
-</div></body></html>
+<link rel="stylesheet" href="/estaticos/kerna.css?v={{ ver }}"><link rel="stylesheet" href="/estaticos/tailwind.css?v={{ ver }}">
+</head>
+<body>
+<div id="tt" role="tooltip"></div>
+<a class="skip" href="#main">Saltar al contenido</a>
+<div class="bgfx {% block fondo %}bg-a{% endblock %}" aria-hidden="true"><svg class="b-rot b1" viewBox="0 0 1200 1200" fill="none"><circle class="bo" cx="600" cy="600" r="560"/><circle class="bs" cx="1160" cy="600" r="12"/><circle class="bo" cx="600" cy="600" r="430"/></svg><svg class="b-rot b3" viewBox="0 0 1200 1200" fill="none">{% for g in range(0, 180, 15) %}<ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate({{ g }} 600 600)"/>{% endfor %}</svg></div>
+{% block pagina %}{% endblock %}
+<script type="application/json" id="glosario">{{ glosario_json|safe }}</script>
+{% block datos %}{% endblock %}
+<script src="/estaticos/echarts.min.js?v=5.5.1" defer></script>
+<script src="/estaticos/kerna.js?v={{ ver }}" defer></script>
+</body></html>

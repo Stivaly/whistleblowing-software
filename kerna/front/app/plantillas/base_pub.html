@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block fondo %}{% block fondo_pub %}bg-a{% endblock %}{% endblock %}
+{% block pagina %}
+<header class="hdr sticky top-0 z-30">
+<div class="max-w-7xl mx-auto px-4 md:px-8 h-[76px] md:h-[88px] flex items-center justify-between gap-3">
+<a href="/" class="brand-lk" aria-label="Kerna AI, inicio"><svg class="kl" width="56" height="56" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><span class="brand-t disp">KERNA<small>AI</small></span></a>
+<nav aria-label="Portada" class="hidden md:flex items-center gap-10">{% block navpub %}<a href="/#como" class="lnk">Cómo funciona</a><a href="/#proteccion" class="lnk">Protección</a><a href="/#leyes" class="lnk">Leyes</a>{% endblock %}</nav>
+<a href="/panel" class="btn btn-go">Entrar al panel {{ ic('arrow-right') }}</a>
+</div></header>
+<div id="main">{% block cuerpo %}{% endblock %}</div>
+{% endblock %}

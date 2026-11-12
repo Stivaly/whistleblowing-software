@@ -1,42 +1,51 @@
-{% extends "base.html" %}{% block titulo %}Negocio · Kerna AI{% endblock %}{% block nav %}<a class="btn sec" href="/panel">Panel</a><a class="btn sec" href="/panel/informe">Informe</a>{% endblock %}
-{% macro uf(v, d=2) %}{{ ('%.' ~ d ~ 'f') % v }} UF{% endmacro %}
-{% block cuerpo %}
-<h1 style="font-size:22px">Negocio</h1>
-<p class="eti">Clientes, uso del plan, costos reales y margen, todo en UF. Fuente: tablas de clientes y uso diario; sin textos de denuncias.</p>
-{% if error %}<div class="error" role="alert"><b>No se pudieron leer las tablas de negocio</b> ({{ error }}). Revisa el rol Table Data Reader de la app.</div>
-{% elif not n %}<p class="vacio">Sin clientes registrados. Ejecuta kerna/front/sembrar_negocio.py.</p>
+{% extends "base_panel.html" %}{% block titulo %}Negocio · Kerna AI{% endblock %}
+{% set seccion = 'negocio' %}
+{% block datos %}<script type="application/json" id="datos">{{ {'graficos': V.graficos if V else None}|tojson }}</script>{% endblock %}
+{% block vista %}
+<div class="pg-h">
+<div><h1 class="disp ph-t m-0" style="color:var(--brand)">Negocio</h1><p class="pg-s">Últimos {{ dias }} días · todo en UF · sin textos de denuncias</p></div>
+<div class="pg-a"><div class="seg" role="group" aria-label="Período">{% for d in (7, 30, 90) %}<a href="/panel/negocio?dias={{ d }}"{% if dias == d %} aria-current="true"{% endif %}>{{ d }} días</a>{% endfor %}</div>
+<a href="/panel/informe" class="btn btn-pri">{{ ic('file-down') }}<span>Informe</span></a></div></div>
+
+{% if error %}<div class="card p-4 bd-bad" role="alert"><b>No se pudieron leer las tablas de negocio</b> ({{ error }}). Revisa el rol Table Data Reader de la app.</div>
+{% elif not V %}<div class="pe pe-na card p-4">{{ ic('building-2') }}<span class="flex-1">Sin clientes registrados todavía.</span><span class="chip na">{{ ic('circle-minus') }} Sin datos</span></div>
 {% else %}
-{% set t = n.totales %}{% set a = n.adopcion %}
-<div class="kpis sec">
-<div class="hoja kpi"><b>{{ t.clientes_activos }}</b><span>clientes activos</span></div>
-<div class="hoja kpi"><b>{{ t.denuncias }}</b><span>denuncias en {{ n.dias }} días</span></div>
-<div class="hoja kpi"><b>{{ uf(t.ingreso) }}</b><span>ingreso del período (tarifa anual por los días)</span></div>
-<div class="hoja kpi"><b>{{ uf(t.costo_servir) }}</b><span>costo de servir ({{ uf(t.costo_ia, 3) }} de IA)</span></div>
-<div class="hoja kpi"><b>{{ t.margen_bruto_pct }} %</b><span>margen después de servir ({{ uf(t.margen_bruto) }})</span></div>
-<div class="hoja kpi"><b>{{ uf(t.participacion_veridy) }}</b><span>parte de Veridy ({{ n.proyeccion.participacion_veridy_pct }} % de sus contratos)</span></div>
-<div class="hoja kpi"><b>{{ uf(t.costos_fijos) }}</b><span>costos fijos del período</span></div>
-<div class="hoja kpi"><b>{{ t.margen_operativo_pct }} %</b><span>margen operativo ({{ uf(t.margen_operativo) }})</span></div>
-<div class="hoja kpi"><b>{{ uf(t.utilidad) }}</b><span>utilidad después de impuestos ({{ t.margen_neto_pct }} %)</span></div>
-<div class="hoja kpi"><b>{{ a.con_sugerencia_pct }} %</b><span>con sugerencia</span></div>
-<div class="hoja kpi"><b>{{ a.valoradas_pct }} %</b><span>valoradas ({{ a.valoradas }})</span></div>
-<div class="hoja kpi"><b>{{ a.utiles_pct }} %</b><span>útiles, sobre las valoradas</span></div></div>
-<div class="sec hoja"><span class="eti">Denuncias por día (todos los clientes)</span>{{ barras_v(n.dias_serie|zip(n.serie_total)|list) }}</div>
-<div class="sec hoja"><span class="eti">Clientes</span>
-<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
-<tr style="text-align:left"><th>Cliente</th><th>Plan/mes</th><th>Plan contratado</th><th>Tarifa al año</th><th>Denuncias</th><th>Uso del plan</th><th>Ingreso</th><th>Costo de servir</th><th>Margen</th><th>Último uso</th></tr>
-{% for c in n.clientes %}<tr style="border-top:1px solid var(--linea)">
-<td><b>{{ c.nombre }}</b><br><span class="eti">{{ c.rubro }}</span></td><td>{{ c.plan_tipo }}<br><span class="eti">{{ c.plan }} casos/mes</span></td><td>{{ uf(c.tarifa_uf_anual) }}</td><td>{{ c.tot }}</td>
-<td>{{ c.uso_plan }} %{% if c.uso_plan > 100 %} (sobre el plan){% endif %}</td><td>{{ uf(c.ingreso) }}</td><td>{{ uf(c.costo_servir) }}</td><td>{{ c.margen_pct }} %</td>
-<td>{% if c.ultimo_uso %}{{ c.ultimo_uso }} (hace {{ c.dias_sin_uso }} d){% else %}sin uso{% endif %}{% if c.riesgo == 'bad' %} <b>en riesgo</b>{% endif %}</td></tr>{% endfor %}
-</table></div></div>
+<section class="eg s-{{ V.eg.e }}" aria-labelledby="neg-t">
+<div class="eg-main"><span class="eg-ic">{{ ic('trending-up' if V.eg.e == 'ok' else ICONO[V.eg.e]) }}</span>
+<div class="min-w-0"><p class="eg-k">¿Cómo va el negocio?</p><h2 id="neg-t" class="eg-t"><span class="sr-only">Estado del negocio: </span>{{ V.eg.t }} {{ tip('neg_estado') }}</h2><p class="eg-s">{{ V.eg.s }}</p></div></div>
+{% if V.eg.puntos %}<ul class="eg-l">{% for p in V.eg.puntos %}<li class="pl s-{{ p.e }}">{{ ic(ICONO[p.e]) }}<span class="pl-n"><span>{{ p.n }}</span><b>{{ p.t }}</b></span></li>{% endfor %}</ul>{% endif %}
+</section>
+
+<section class="kg" aria-label="Indicadores de negocio">{% for k in V.kpis %}{{ kpi(k) }}{% endfor %}</section>
+
+<section class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Clientes</h2>{{ tip('neg_clientes') }}</div>
+<div class="cl-head" aria-hidden="true"><span>Cliente</span><span>Uso del plan ({{ dias }} días)</span><span>Ingreso · costo de servir</span><span>Último uso</span></div>
+<div>{% for c in V.clientes %}<div class="cl s-{{ c.riesgo }}">
+<div class="cl-n"><b>{{ c.nombre }}</b><span class="muted">{{ c.plan_tipo }} · {{ miles(c.plan) }} casos al mes · {{ uf(c.tarifa_uf_anual, 0) }} UF al año</span><svg viewBox="0 0 100 30" class="cl-sp" aria-hidden="true" preserveAspectRatio="none"><path d="{{ c.spark }}" fill="none" stroke="var(--brand-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg></div>
+<div class="cl-u s-{{ c.e_uso }}"><div class="mr-h"><span><b>{{ miles(c.tot) }}</b> denuncias</span><b class="vv">{{ ic(ICONO[c.e_uso]) }}<span>{{ c.uso_plan }} %</span></b></div><div class="mb"><i style="width:{{ c.w_uso }}%"></i><u style="left:100%;opacity:.5"></u></div></div>
+<div class="cl-m"><b>{{ uf(c.ingreso) }} UF</b> · {{ uf(c.costo_servir) }} UF</div>
+<div class="cl-l"><span class="chip {{ c.riesgo }}">{{ ic(ICONO[c.riesgo]) }}<span>{{ c.ult }}</span></span>{{ tip('neg_clientes', c.nota) }}</div></div>{% endfor %}</div></section>
+
+<section class="grid lg:grid-cols-3 gap-3 md:gap-4">
+<div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por cliente</h2>{{ tip('neg_denuncias') }}</div>
+<div id="ch-cli" class="chh" role="img" aria-label="Gráfico de área apilada de denuncias por cliente"></div></div>
+<div class="card p-4"><div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Adopción</h2>{{ tip('neg_adopcion') }}</div>
+<ul class="list-none p-0 m-0 grid gap-3">{% for a in V.embudo %}<li class="mr s-{{ a.e }}"><div class="mr-h"><span>{{ a.n }}</span><b>{{ ic(ICONO[a.e]) }}<span>{{ dec_corto(a.v, 0) }} %</span></b></div><div class="mb"><i style="width:{{ a.v }}%"></i></div></li>{% endfor %}</ul></div>
+</section>
+
+<section class="grid lg:grid-cols-3 gap-3 md:gap-4">
+<div class="card p-4"><div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Del ingreso a la utilidad</h2>{{ tip('neg_resultado') }}</div>
+<ul class="list-none p-0 m-0 grid gap-2.5">{% for r in V.resultado %}<li class="mr s-{{ r.e }}"><div class="mr-h"><span>{{ r.n }}</span><b>{{ r.v }} UF</b></div><div class="mb"><i style="width:{{ r.w }}%"></i></div></li>{% endfor %}</ul></div>
+<div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Proyección a 5 años</h2>{{ tip('proyeccion') }}<span class="chip brand ml-auto">{{ ic('landmark') }} Capítulo 25 del informe</span></div>
 {% set p = n.proyeccion %}
-<div class="sec hoja"><span class="eti">Proyección a 5 años (UF)</span>
-<p class="eti">Mismos supuestos del informe de Kerna: clientes por plan según su plan comercial, precios en UF, costos en pesos con {{ p.inflacion_pct }} % de inflación anual, costos fijos, parte de Veridy, crédito, impuesto de primera categoría y descuento de {{ p.tasa_descuento_pct }} %. El año 1 es {{ p.anios[0].calendario }}.</p>
-<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
-<tr style="text-align:left"><th>Año</th><th>Ventas</th><th>Costo de servir</th><th>Parte de Veridy</th><th>Costos fijos</th><th>Margen operativo</th><th>Utilidad después de impuestos</th><th>Caja del año</th></tr>
-{% for a in p.anios %}<tr style="border-top:1px solid var(--linea)"><td>{{ a.anio }} ({{ a.calendario }})</td><td>{{ uf(a.ventas, 0) }}</td><td>{{ uf(a.costo_ventas, 0) }}</td><td>{{ uf(a.participacion_veridy, 0) }}</td><td>{{ uf(a.costos_fijos, 0) }}</td><td>{{ uf(a.margen_operativo, 0) }} ({{ a.margen_operativo_pct }} %)</td><td>{{ uf(a.utilidad, 0) }}</td><td>{{ uf(a.flujo, 0) }}</td></tr>{% endfor %}
-</table></div>
-{{ barras_v(p.anios|map(attribute='anio')|map('string')|zip(p.anios|map(attribute='utilidad'))|list) }}
-<p class="eti">Valor actual neto {{ uf(p.van, 0) }} · retorno anual {{ p.tir_pct }} % · índice de rentabilidad {{ p.indice_rentabilidad }} · la inversión de {{ uf(p.inversion, 0) }} se recupera en el año {{ p.recuperacion_anio }}.</p></div>
-<p class="eti">Valores en UF (1 UF = {{ '%.0f' % n.uf_clp }} pesos; dólar a {{ n.usd_clp }} pesos). El costo de IA se mide en dólares a precios de Anthropic (Haiku 5.5 a 0,10/0,50 por millón, Sonnet 5.5 a 2/10) y se limita a la cuota del plan; sobre ella, las consultas pasan al modo local sin costo.</p>
-{% endif %}{% endblock %}
+<div class="stats"><div class="s-ok"><span>Valor actual neto</span><b>{{ uf(p.van, 0) }} UF</b></div><div class="s-ok"><span>Retorno anual</span><b>{{ dec_corto(p.tir_pct, 1) }} %</b></div><div class="s-ok"><span>Índice de rentabilidad</span><b>{{ dec(p.indice_rentabilidad, 2) }}</b></div><div class="s-ok"><span>Se recupera en el año</span><b>{{ p.recuperacion_anio }}</b></div></div>
+<div id="ch-proy" class="chh2" role="img" aria-label="Proyección a 5 años de ventas, costos y utilidad en UF"></div></div>
+</section>
+
+<section class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Año por año</h2>{{ tip('proyeccion') }}</div>
+<div class="tabla"><table><thead><tr><th>Año</th><th class="n">Ventas</th><th class="n">Costo de servir</th><th class="n">Parte de Veridy</th><th class="n">Costos fijos</th><th class="n">Margen operativo</th><th class="n">Utilidad después de impuestos</th><th class="n">Caja del año</th></tr></thead><tbody>
+{% for a in V.anios %}<tr><td><b>{{ a.label }}</b></td><td class="n">{{ uf(a.ventas, 0) }}</td><td class="n">{{ uf(a.costo_ventas, 0) }}</td><td class="n">{{ uf(a.participacion_veridy, 0) }}</td><td class="n">{{ uf(a.costos_fijos, 0) }}</td><td class="n">{{ uf(a.margen_operativo, 0) }} ({{ dec_corto(a.margen_operativo_pct, 0) }} %)</td><td class="n">{{ uf(a.utilidad, 0) }}</td><td class="n">{{ uf(a.flujo, 0) }}</td></tr>{% endfor %}</tbody></table></div>
+<p class="nota">Cifras en UF. Supuestos del informe de Kerna: inflación {{ dec_corto(p.inflacion_pct, 1) }} % anual, descuento {{ dec_corto(p.tasa_descuento_pct, 1) }} %, {{ p.participacion_veridy_pct }} % del ingreso neto de los contratos de Veridy, crédito e impuesto de primera categoría. La inversión de {{ uf(p.inversion, 0) }} UF se recupera en el año {{ p.recuperacion_anio }}. El año 1 es {{ p.anios[0].calendario }}.</p></section>
+<p class="nota">1 UF = {{ miles(n.uf_clp) }} pesos · dólar a {{ miles(n.usd_clp) }} pesos. El costo de IA se mide en dólares a precios de Anthropic (Haiku 5.5 a 0,10 y 0,50 por millón de tokens, Sonnet 5.5 a 2 y 10) y se limita a la cuota del plan; sobre ella, las consultas pasan al modo local sin costo.</p>
+{% endif %}
+{% endblock %}

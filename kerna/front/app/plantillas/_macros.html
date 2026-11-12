@@ -1,0 +1,27 @@
+{% macro tip(g, x=None, xk=None) -%}
+<k-tip g="{{ g }}"{% if x %} x="{{ x }}"{% endif %}{% if xk %} data-xk="{{ xk }}"{% endif %}><button type="button" aria-label="Ayuda: {{ glos[g].t if g in glos else '' }}">{{ ic('circle-help') }}</button></k-tip>
+{%- endmacro %}
+
+{% macro kpi(k) -%}
+<article class="kt s-{{ k.e }}" id="k-{{ k.k }}" data-s="k.{{ k.k }}">
+<div class="kt-h"><span class="kt-l">{{ ic(k.i) }}<span>{{ k.l }}</span></span>{{ tip(k.k, k.x, 'k.' ~ k.k) }}</div>
+{% if k.form == 'gauge' %}<div class="gg"><svg viewBox="0 0 100 60" aria-label="{{ k.l }}: {{ k.v }} {{ k.u }}, {{ k.et }}" role="img">
+{% for z in k.z %}<path class="zn s-{{ z.e }}" d="{{ z.d }}"/>{% endfor %}
+<line class="gg-tk" x1="{{ k.tick.x1 }}" y1="{{ k.tick.y1 }}" x2="{{ k.tick.x2 }}" y2="{{ k.tick.y2 }}"/><text class="gg-tx" x="{{ k.tick.tx }}" y="{{ k.tick.ty }}">{{ k.zl }}</text>
+<line class="gg-n" x1="50" y1="50" x2="50" y2="18" style="transform:rotate({{ ((k.f - 0.5) * 180)|round(1) }}deg)" data-rot="k.{{ k.k }}"/><circle cx="50" cy="50" r="3.6" class="gg-h"/></svg></div>{% endif %}
+<div class="kt-v">{% if k.p %}<span class="kt-u" data-t="k.{{ k.k }}.p">{{ k.p }}</span>{% endif %}<span class="kv" data-count data-t="k.{{ k.k }}.v">{{ k.v }}</span>{% if k.u %}<span class="kt-u" data-t="k.{{ k.k }}.u">{{ k.u }}</span>{% endif %}</div>
+{% if k.form == 'spark' %}<svg viewBox="0 0 100 30" preserveAspectRatio="none" class="sp" aria-hidden="true"><path d="{{ k.d_a }}" class="sp-a" data-d="k.{{ k.k }}.a"/><path d="{{ k.d_l }}" class="sp-l" vector-effect="non-scaling-stroke" data-d="k.{{ k.k }}.l"/></svg>{% endif %}
+{% if k.form == 'bullet' %}<div class="bu" role="img" aria-label="{{ k.l }}: {{ k.v }} {{ k.u }}, {{ k.metaT }}"><div class="bu-t">{% for z in k.z %}<i class="s-{{ z.e }}" style="flex:{{ z.b - z.a }}"></i>{% endfor %}<b class="bu-m" style="left:{{ k.pos|round(1) }}%" data-l="k.{{ k.k }}.m"></b><u class="bu-g" style="left:{{ k.pos_meta|round(1) }}%"></u></div>
+<div class="bu-s"><span>0</span><span class="bu-gl" style="left:{{ k.pos_meta|round(1) }}%">{{ k.metaT }}</span><span>{{ k.mx_txt }}</span></div></div>{% endif %}
+{% if k.form == 'dots' %}<div class="dots" role="img" aria-label="{{ k.x }}">{% for d in k.dots %}<i class="s-{{ d.e }}" title="{{ d.n }}">{{ ic(ICONO[d.e]) }}</i>{% endfor %}</div>{% endif %}
+<div class="kt-f"><span class="kt-s">{{ ic(ICONO[k.e], 'k.' ~ k.k) }}<span data-t="k.{{ k.k }}.et">{{ k.et }}</span></span>{% if k.tr %}<span class="kt-t t-{{ k.te }}">{{ ic(k.ta) }}<span>{{ k.tr }}</span></span>{% endif %}</div>
+</article>
+{%- endmacro %}
+
+{% macro cabecera(titulo, sub='', acciones='') -%}
+<div class="pg-h"><div><h1 class="disp ph-t m-0" style="color:var(--brand)">{{ titulo }}</h1>{% if sub %}<p class="pg-s">{{ sub }}</p>{% endif %}</div>{% if acciones %}<div class="pg-a">{{ acciones }}</div>{% endif %}</div>
+{%- endmacro %}
+
+{% macro hd(titulo, tipg=None, extra='') -%}
+<div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">{{ titulo }}</h2>{% if tipg %}{{ tip(tipg) }}{% endif %}{{ extra }}</div>
+{%- endmacro %}

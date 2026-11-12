@@ -37,3 +37,10 @@ Revisa cada fila y, si apruebas, bórralo tú manualmente (`rm -r .papelera/...`
 
 - 2026-11-12 · copia previa `kerna/front/diseno-v2/maqueta.html` -> `.papelera/2026-11-12/kerna/front/diseno-v2/maqueta-previa-v3.html` (versión anterior al rediseño v3; el original se reemplaza en su lugar).
 - 2026-11-12 · `kerna/pipeline_bcn/salida/fuentes/30210-karin.json` → `.papelera/2026-11-12/kerna/pipeline_bcn/salida/fuentes/30210-karin.json` · idNorma 30210 es el texto de 2005 de la Ley 18.834 sin cambios Karin; se usó el DFL 29 (236392).
+
+## 2026-11-12 · Rediseño del front real (maqueta aprobada)
+| Fecha | Ruta original | Ruta en papelera | Motivo |
+|---|---|---|---|
+| 2026-11-12 | kerna/front/app/estaticos/kerna.css | .papelera/2026-11-12/kerna/front/app/estaticos/kerna.css | Reemplazado por los estilos de la maqueta aprobada (copia de la versión anterior) |
+| 2026-11-12 | kerna/front/app/plantillas/{acceso,base,informe,negocio,panel,portada,reintentar}.html | .papelera/2026-11-12/kerna/front/app/plantillas/ | Reescritas con el diseño nuevo (copias de las versiones antiguas, diseño monoespaciado) |
+| 2026-11-12 | kerna/front/app/plantillas/_simbolo.html | .papelera/2026-11-12/kerna/front/app/plantillas/_simbolo.html | Símbolo estático antiguo; el logo vivo se dibuja ahora con kerna.js |

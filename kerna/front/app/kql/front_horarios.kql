@@ -1,0 +1,5 @@
+// Front /panel: denuncias por día de la semana y hora (hora de Chile). Solo conteos.
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| extend local = datetime_utc_to_local(TimeGenerated, "America/Santiago")
+| summarize casos = count() by dow = toint(dayofweek(local) / 1d), hora = toint(hourofday(local))

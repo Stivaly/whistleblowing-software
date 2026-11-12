@@ -1,35 +1,79 @@
-{% extends "base.html" %}{% block titulo %}Panel · Kerna AI{% endblock %}{% block nav %}<a class="btn sec" href="/">Portada</a>{% endblock %}
-{% block cuerpo %}
-<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-<h1 style="font-size:22px">Panel de resultados</h1>
-<div class="rangos"><a class="btn" href="/panel/negocio">Negocio</a><a class="btn{% if dias==7 %} act{% endif %}" href="/panel?dias=7">7 días</a><a class="btn{% if dias==30 %} act{% endif %}" href="/panel?dias=30">30 días</a></div></div>
-<p class="eti">Solo cifras agregadas. Sin texto de denuncias ni identificadores.</p>
-{% if prov %}
-<section class="hoja sec eg e-{{ prov.general.estado }}" aria-labelledby="eg"><div><span class="eti">¿Está todo bien?</span>
-<h2 id="eg" class="eg-t">{% if prov.general.estado == 'operativo' %}Sí{% elif prov.general.estado == 'caido' %}Atención: proveedor caído{% else %}Atención{% endif %}</h2>
-<p class="vacio">{{ prov.general.texto }} {{ prov.general.detalle }}</p></div>
-<ul class="pv" aria-label="Disponibilidad de los modelos según cada proveedor">
-{% for p in prov.proveedores %}<li class="pv-i e-{{ p.estado }}"><span class="pv-ic" aria-hidden="true">{% if p.estado == 'operativo' %}&#10003;{% elif p.estado == 'degradado' %}!{% elif p.estado == 'caido' %}&#10005;{% else %}?{% endif %}</span>
-<span class="pv-n"><b>{{ p.nombre }}</b><span>{{ p.modelo }} · {{ {'operativo':'Operativo','degradado':'Degradado','caido':'Caído','sin_informacion':'Sin información'}[p.estado] }}</span></span>
-<span class="ayuda" tabindex="0" role="button" aria-label="Qué pasa con {{ p.nombre }}">?<span class="ayuda-t" role="tooltip">{{ p.mensaje }} <a href="{{ p.enlace }}" target="_blank" rel="noopener noreferrer">Página oficial</a></span></span></li>{% endfor %}</ul></section>
+{% extends "base_panel.html" %}{% block titulo %}Resumen · Kerna AI{% endblock %}
+{% set seccion = 'resumen' %}
+{% block datos %}<script type="application/json" id="datos">{{ {'graficos': V.graficos if V else None}|tojson }}</script>{% endblock %}
+{% block vista %}
+<div class="pg-h">
+<div><h1 class="disp ph-t m-0" style="color:var(--brand)">Resumen</h1><p class="pg-s"><button type="button" class="vivo" data-vivo data-tip="envivo" aria-label="En vivo. Pasa el cursor para ver cuándo llegó el último dato"><i class="vd"></i>En vivo</button></p></div>
+<div class="pg-a"><div class="seg" role="group" aria-label="Período"><a href="/panel?dias=7"{% if dias == 7 %} aria-current="true"{% endif %}>7 días</a><a href="/panel?dias=30"{% if dias == 30 %} aria-current="true"{% endif %}>30 días</a></div>
+<a href="/panel/informe" class="btn btn-pri">{{ ic('file-down') }}<span>Informe</span></a></div></div>
+
+{% if aviso %}<div class="card p-3 aviso-r" role="status">{% if aviso == 'solicitado' %}<b>Listo.</b> Pedimos al conector que reintente los casos pendientes. Verás el resultado aquí en unos minutos.{% elif aviso == 'ya_solicitado' %}<b>Ya estaba pedido.</b> El conector todavía no atiende la solicitud anterior.{% else %}<b>No se pudo registrar el pedido.</b> Inténtalo de nuevo en un momento.{% endif %}</div>{% endif %}
+
+{% if V %}
+<section aria-labelledby="eg" class="eg s-{{ V.eg.e }}" data-s="eg">
+<div class="eg-main"><span class="eg-ic">{{ ic(ICONO[V.eg.e], 'eg') }}</span>
+<div class="min-w-0"><p class="eg-k">¿Está todo bien?</p>
+<h2 id="eg" class="eg-t"><span class="sr-only">Estado general: </span><span data-t="eg.t">{{ V.eg.t }}</span> {{ tip('estado') }}</h2>
+<p class="eg-s"><span data-t="eg.s">{{ V.eg.s }}</span>{% if rei and rei.r.reintentables %} <a href="#rei">Ver qué hacer</a>{% endif %}</p></div></div>
+<ul class="eg-l">{% for c in V.salud %}<li class="pl s-{{ c.e }}" data-s="sal.{{ c.k }}">{{ ic(ICONO[c.e], 'sal.' ~ c.k) }}<span class="pl-n"><span>{{ c.n }}</span><b data-t="sal.{{ c.k }}.t">{{ ESTADO_TXT[c.e] }}</b></span>{{ tip('salud_' ~ c.k, c.d, 'sal.' ~ c.k) }}</li>{% endfor %}</ul>
+</section>
 {% endif %}
-{% if aviso %}<div class="hoja sec aviso-r" role="status">{% if aviso == 'solicitado' %}<b>Listo.</b> Pedimos al conector que reintente los casos pendientes. Verás el resultado aquí en unos minutos.{% elif aviso == 'ya_solicitado' %}<b>Ya estaba pedido.</b> El conector todavía no atiende la solicitud anterior.{% else %}<b>No se pudo registrar el pedido.</b> Inténtalo de nuevo en un momento.{% endif %}</div>{% endif %}
-{% if rei %}<section class="hoja sec rei" aria-labelledby="rei-t"><div><span class="eti">Casos esperando reintento</span>
-<h2 id="rei-t" class="eg-t">{{ rei.r.reintentables }} {% if rei.r.reintentables == 1 %}caso{% else %}casos{% endif %}</h2>
-<p class="vacio">{% if rei.r.proximo_auto %}Próximo reintento automático: {{ rei.r.proximo_auto[:16].replace('T',' ') }} UTC.{% elif rei.r.reintentables %}Se reintentan solos en la próxima ronda del conector.{% else %}No hay casos esperando.{% endif %}
-{% if rei.s.estado == 'solicitado' %} Reintento manual pedido el {{ rei.s.solicitado_en[:16].replace('T',' ') }} UTC; esperando al conector.{% elif rei.s.estado == 'atendido' and rei.s.reintentados is not none %} Último reintento manual: {{ rei.s.reintentados }} casos.{% endif %}</p>
-<ul class="rei-l">{% for x in rei.r.motivos %}<li><b>{{ x.casos }}</b> {{ x.texto }}{% if not x.se_reintenta %} <em>(revisión manual de una persona)</em>{% endif %}</li>{% endfor %}</ul></div>
-<div>{% if rei.s.estado == 'solicitado' %}<span class="btn sec" aria-disabled="true">Pedido en curso</span>{% else %}<a class="btn" href="/panel/reintentar">Reintentar ahora</a>{% endif %}</div></section>{% endif %}
-{% if error %}<div class="error" role="alert"><b>No se pudo consultar Log Analytics</b> ({{ error }}). Revisa la identidad de la app y su rol Log Analytics Reader.</div>
+
+{% if rei %}{% set n = rei.r.reintentables %}
+<section id="rei" aria-labelledby="rei-t" class="card p-4 rei{% if not n %} rei-o{% endif %}">
+<div class="rei-h"><div class="min-w-0"><p class="eg-k" style="margin-bottom:2px">Casos esperando reintento</p><div class="flex items-center gap-1.5">{{ ic('rotate-cw') }}<h2 id="rei-t" class="text-base font-bold m-0">{{ n }} {{ 'caso espera' if n == 1 else 'casos esperan' }} reintento</h2>{{ tip('pendientes') }}</div>
+<p class="m-0 mt-0.5 text-xs muted">{% if rei.r.proximo_auto %}Próximo reintento automático: {{ fecha_hora(rei.r.proximo_auto) }}.{% elif n %}Se reintentan solos en la próxima ronda del conector.{% else %}No hay casos esperando.{% endif %}
+{% if rei.s.estado == 'solicitado' %} Reintento manual pedido el {{ fecha_hora(rei.s.solicitado_en) }}; esperando al conector.{% elif rei.s.estado == 'atendido' and rei.s.reintentados is not none %} Último reintento manual: {{ rei.s.reintentados }} {{ 'caso' if rei.s.reintentados == 1 else 'casos' }}.{% endif %}</p></div>
+<div class="rei-a">{% if rei.s.estado == 'solicitado' %}<span class="btn btn-sec" aria-disabled="true">Pedido en curso</span>{% elif n %}<a class="btn btn-pri" href="/panel/reintentar">{{ ic('rotate-cw') }}<span>Reintentar ahora</span></a>{% else %}<button type="button" class="btn btn-pri" disabled>{{ ic('rotate-cw') }}<span>Reintentar ahora</span></button>{% endif %}</div></div>
+{% if rei.r.motivos %}<ul class="rei-l">{% for x in rei.r.motivos %}{% set e = 'warn' if x.se_reintenta else 'na' %}<li class="s-{{ e }}">{{ ic(ICONO[e]) }}<span class="rei-t"><b>{{ miles(x.casos) }} {{ 'caso' if x.casos == 1 else 'casos' }}</b><span>{{ x.texto }}</span></span>{% if not x.se_reintenta %}<span class="chip na">Revisión manual de una persona</span>{% else %}<span class="rei-i">se reintenta solo</span>{% endif %}</li>{% endfor %}</ul>{% endif %}
+{% if not n %}<p class="m-0 text-sm muted">No hay casos esperando. Todo lo pendiente quedó resuelto.</p>{% endif %}
+</section>{% endif %}
+
+{% if error %}<div class="card p-4 bd-bad" role="alert"><b>No se pudo consultar Log Analytics</b> ({{ error }}). Revisa la identidad de la app y su rol Log Analytics Reader.</div>
 {% else %}
-<div class="kpis sec">
-<div class="hoja kpi"><b>{{ m.total_casos }}</b><span>casos procesados</span></div>
-<div class="hoja kpi"><b>{{ m.latencia.p50_ms }} ms</b><span>latencia P50</span></div>
-<div class="hoja kpi"><b>{{ m.latencia.p95_ms }} ms</b><span>latencia P95 (máx. diario)</span></div>
-<div class="hoja kpi"><b>{{ '{:,.0f}'.format(m.tokens.total).replace(',', '.') }}</b><span>tokens ({{ '{:,.0f}'.format(m.tokens.entrada).replace(',', '.') }} entrada / {{ '{:,.0f}'.format(m.tokens.salida).replace(',', '.') }} salida)</span></div></div>
-<div class="sec rejilla dos">
-<div class="hoja"><span class="eti">Casos procesados por día</span>{{ barras_v(m.casos_por_dia|map(attribute='dia')|zip(m.casos_por_dia|map(attribute='casos'))|list) }}</div>
-<div class="hoja"><span class="eti">Distribución por modo</span>{{ barras_h([('oficial', m.modos.oficial), ('respaldo', m.modos.respaldo), ('local', m.modos.local), ('revisión manual', m.modos.manual)]) }}</div>
-<div class="hoja"><span class="eti">Artículos sugeridos por ley</span>{{ barras_h(m.leyes|map(attribute='norma')|zip(m.leyes|map(attribute='articulos'))|list) }}</div>
-<div class="hoja"><span class="eti">Valoraciones</span>{{ barras_h([('útil', m.valoraciones.util), ('no útil', m.valoraciones.no_util), ('ninguno aplica', m.valoraciones.ninguno_aplica)]) }}</div></div>
-{% endif %}{% endblock %}
+<section aria-label="Indicadores clave" class="kg">{% for k in V.kpis %}{{ kpi(k) }}{% endfor %}</section>
+
+<section class="grid lg:grid-cols-3 gap-3 md:gap-4">
+<div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por día</h2>{{ tip('casos_dia') }}<span class="lgd"><span><i style="background:var(--ok-bar)"></i>Con sugerencia</span><span><i style="background:var(--bad-bar)"></i>Sin sugerencia</span></span></div>
+<div id="ch-casos" class="w-full chh" role="img" aria-label="Gráfico de barras apiladas de denuncias por día, con y sin sugerencia"></div></div>
+<div class="card p-4"><div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">¿Cómo se resolvieron?</h2>{{ tip('modos') }}</div>
+<div class="big s-{{ V.e_sug }}" data-s="sug"><span class="kv" data-count data-t="sug.v">{{ V.sug_pct }}</span><span class="kt-u">% con sugerencia</span></div>
+<div class="mb mb-lg mt-2" role="img" aria-label="Reparto de las denuncias por modo" style="display:flex;gap:2px">{% for x in V.modos %}<i class="s-{{ x.e }}" style="width:{{ x.p }}%" data-w="modo.{{ x.k }}"></i>{% endfor %}</div>
+<ul class="list-none p-0 m-0 mt-2">{% for x in V.modos %}{% if x.k != 'local' or x.n %}<li class="rw s-{{ x.e }}">{{ ic(ICONO[x.e]) }}<span>{{ x.t }}</span><b data-t="modo.{{ x.k }}.n">{{ miles(x.n) }}</b><em data-t="modo.{{ x.k }}.p">{{ x.p }} %</em></li>{% endif %}{% endfor %}</ul></div>
+</section>
+
+<section class="grid lg:grid-cols-2 gap-3 md:gap-4 items-start">
+<div class="grid gap-3 md:gap-4 content-start">
+<div class="card p-4"><div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Acierto por ley</h2>{{ tip('acierto_ley') }}<span class="lgd"><span><i class="tk"></i>Meta {{ V.meta_recall }} %</span></span></div>
+{% if V.aciertos %}<ul class="list-none p-0 m-0 grid gap-3">{% for l in V.aciertos %}<li class="mr s-{{ l.e }}"><div class="mr-h"><span>{{ l.n }}</span><b>{{ ic(ICONO[l.e]) }}<span>{{ l.v }} %</span></b></div><div class="mb"><i style="width:{{ l.w }}%"></i><u style="left:{{ V.meta_recall|replace(',', '.') }}%"></u></div></li>{% endfor %}</ul>
+{% else %}<div class="pe pe-na">{{ ic('chart-no-axes-column') }}<span class="flex-1 text-xs">Todavía no hay una medición por ley</span><span class="chip na">{{ ic('circle-minus') }} Sin datos</span></div>{% endif %}
+{% if V.n_val %}<div class="mt-4"><h3 class="sub flex items-center gap-1.5" style="margin-top:0">Valoraciones de auditores {{ tip('valoraciones') }}</h3><ul class="list-none p-0 m-0 grid gap-2">{% for v in V.valoraciones %}<li class="mr s-{{ v.e }}"><div class="mr-h"><span>{{ v.t }}</span><b><span>{{ miles(v.n) }} · {{ v.p }} %</span></b></div><div class="mb"><i style="width:{{ v.p }}%"></i></div></li>{% endfor %}</ul></div>
+{% else %}<div class="pe pe-na mt-3">{{ ic('message-square-off') }}<span class="flex-1"><b>Valoraciones de auditores</b></span><span class="chip na">{{ ic('circle-minus') }} Sin datos</span>{{ tip('valoraciones') }}</div>{% endif %}</div>
+<div class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Leyes más sugeridas</h2>{{ tip('leyes') }}</div>
+{% if V.leyes %}<ul class="list-none p-0 m-0 grid gap-2.5">{% for l in V.leyes %}<li class="mr s-na" title="Norma: {{ l.norma }}"><div class="mr-h"><span>{{ l.n }}</span><b><span>{{ miles(l.v) }} {{ 'artículo' if l.v == 1 else 'artículos' }}</span></b></div><div class="mb"><i style="width:{{ l.w }}%;background:var(--brand-2)"></i></div></li>{% endfor %}</ul>
+{% else %}<div class="pe pe-na">{{ ic('chart-no-axes-column') }}<span class="flex-1 text-xs">Aún no se registran</span><span class="chip na">{{ ic('circle-minus') }} Sin datos</span></div>{% endif %}</div>
+</div>
+<div class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Rapidez</h2>{{ tip('latencia') }}</div>
+<div class="stats"><div class="s-{{ V.rapidez.e50 }}" data-s="rap.p50"><span>Caso típico</span><b><span data-t="rap.p50">{{ V.rapidez.p50 }}</span> s</b></div><div class="s-{{ V.rapidez.e95 }}" data-s="rap.p95"><span>9 de cada 10</span><b>&lt; <span data-t="rap.p95">{{ V.rapidez.p95 }}</span> s</b></div><div class="s-ok"><span>Meta</span><b>{{ V.rapidez.meta }} s</b></div></div>
+<div id="ch-lat" class="chh2" role="img" aria-label="Gráfico de área del tiempo de respuesta por día frente a la meta de {{ V.rapidez.meta }} segundos"></div>
+{% if V.etapas %}<h3 class="sub flex items-center gap-1.5">¿Dónde se va el tiempo? {{ tip('etapas') }}</h3>
+<ul class="list-none p-0 m-0 grid gap-1.5">{% for e in V.etapas %}<li class="et s-{{ e.e }}" data-s="et.{{ e.id }}"><span>{{ e.n }}</span><div class="mb"><i style="width:{{ e.ancho }}%" data-w="et.{{ e.id }}"></i></div><b data-t="et.{{ e.id }}">{{ e.s }} s</b></li>{% endfor %}</ul>{% endif %}</div>
+</section>
+
+{% if V.proveedores %}
+<section aria-label="Disponibilidad de los modelos según cada proveedor" class="card p-4 pv-r"><span class="pv-k">Según el proveedor</span>
+<ul class="pv-l">{% for p in V.proveedores %}<li class="pl s-{{ p.e }}" id="pv-{{ p.id }}">{{ ic(ICONO[p.e]) }}<span class="pl-n"><a href="{{ p.enlace }}" target="_blank" rel="noopener noreferrer">{{ p.nombre }}</a><b><span>{{ p.modelo }}</span> · <span data-pt>{{ p.txt }}</span></b></span>{{ tip('prov_' ~ p.id, p.mensaje) }}</li>{% endfor %}</ul></section>
+{% endif %}
+
+<section class="grid lg:grid-cols-3 gap-3 md:gap-4">
+<div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Cuándo llegan las denuncias?</h2>{{ tip('mapa') }}</div>
+<div id="ch-heat" class="chh3" role="img" aria-label="Mapa de calor de denuncias por día de la semana y franja horaria"></div></div>
+<div class="grid gap-3 md:gap-4 content-start"><div class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Costo</h2>{{ tip('costo') }}</div>
+{% if V.costo %}<div class="big"><span class="kt-u">US$</span><span class="kv" style="color:var(--brand)" data-count data-t="costo.total">{{ V.costo.total }}</span></div>
+<p class="m-0 text-xs muted">US$ <span data-t="costo.caso">{{ V.costo.por_caso }}</span> por denuncia</p>
+<div class="mb mt-2" style="display:flex;gap:2px">{% for c in V.costo.modelos %}<i style="width:{{ c.w }}%;background:{{ '#3B4FB4' if loop.first else '#8E9AD0' }}" data-w="costo.m{{ loop.index0 }}"></i>{% endfor %}</div>
+<ul class="list-none p-0 m-0 mt-1">{% for c in V.costo.modelos %}<li class="rw rw3"><i class="dt" style="background:{{ '#3B4FB4' if loop.first else '#8E9AD0' }}"></i><span>{{ c.n }}</span><b>US$ <span data-t="costo.m{{ loop.index0 }}">{{ c.usd }}</span></b></li>{% endfor %}</ul>
+{% else %}<div class="pe pe-na">{{ ic('coins') }}<span class="flex-1 text-xs">Sin tokens medidos en el período</span><span class="chip na">{{ ic('circle-minus') }} Sin datos</span></div>{% endif %}</div></div>
+</section>
+{% endif %}
+{% endblock %}

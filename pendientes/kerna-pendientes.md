@@ -256,7 +256,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - Reproceso de casos en `revision_manual`: el contrato no lo define (arriba).
 
 ## Front de Kerna (recordatorio de la usuaria, 2026-11-12)
-- [ ] **Arreglar el informe de gestión** (`/panel/informe` y sus descargas PDF/XLSX/CSV): llevarlo al diseño y criterios de la maqueta v2/v3 (colores semánticos, conclusiones, información útil). Solo recordatorio: no lanzar agente hasta que la usuaria lo pida.
+- [x] (2026-11-12) Informe de gestión con el estilo de la maqueta; ver «Diseño de la maqueta en el front real». Pendiente original, ya hecho: **Arreglar el informe de gestión** (`/panel/informe` y sus descargas PDF/XLSX/CSV): llevarlo al diseño y criterios de la maqueta v2/v3 (colores semánticos, conclusiones, información útil). Solo recordatorio: no lanzar agente hasta que la usuaria lo pida.
 - [x] **Ingresos en UF** (2026-11-12): tarifas, ingresos, costos, margen y proyección de Negocio y del informe en UF; el costo de IA (USD) se convierte con el dólar y la UF de `kerna/front/app/datos/parametros_financieros.json`. Falta replicarlo en la maqueta v2 (`diseno-v2/maqueta.html`, la edita otro agente).
 - [ ] **Seguir mejorando el recall@5 por artículo hacia 0,80** (hoy 0,475 con el evaluador por IDs y nano; techo con 70 candidatos 0,902). Próximas vías: revisión jurídica de los casos dudosos del set (respuestas propuestas por un agente; 33 de 61 con un solo artículo aceptado), mejorar la búsqueda inicial para subir el artículo correcto dentro de los 70, y volver a medir mini si cambia el diseño del evaluador.
 
@@ -338,3 +338,14 @@ Pendiente:
 - Desplegar el conector (recrea el grupo de Veridy: `infra/veridy/terraform/conector.tf`, imagen nueva + `infra/aplicar.sh veridy`) con `REINTENTOS_TABLA_URL` y rol «Storage Table Data Contributor» de la identidad del grupo de Veridy sobre la tabla `reintentosmanuales` (hoy el botón registra el pedido pero nadie lo atiende).
 - El panel real no tiene botón por caso: la telemetría no guarda identificadores de casos (solo conteos); el contador de pendientes es una aproximación (revisión manual por fallo de modelos menos reprocesados, 7 días).
 - Azure Resource Health por recurso (más preciso) requiere rol Reader del front sobre la cuenta OpenAI; no se hizo. Gemini API / AI Studio no tiene endpoint legible por máquina (se usa el de Vertex Gemini como proxy). Los casos de incidente de Azure se probaron con respuestas guardadas modeladas (el feed estaba vacío).
+
+
+## Diseño de la maqueta en el front real (2026-11-12)
+Hecho y desplegado (app-kerna-dev-front-g6mzy): portada, acceso, Resumen, Negocio (UF, capítulo 25, proyección a 5 años), Informe y confirmación de reintento, con los datos reales del backend (`vistas.py`, `formato.py`, `glosario.py`). Tailwind 3.4.17 compilado, ECharts 5.5.1, sprite de íconos Lucide 0.469.0 e Inter locales (`kerna/front/herramientas/construir_estaticos.sh`); sin CDN y sin cambios en la CSP. «En vivo»: el Resumen consulta `/api/metricas` y `/api/proveedores` cada 60 s si la pestaña está visible. Capturas reales en `kerna/front/diseno-v2/capturas/prod-*`.
+- [ ] **Ajustes** queda fuera del menú: no hay App Configuration ni datos reales que editar.
+- [ ] Gráfico «Denuncias por día»: la telemetría no separa el modo por día, así que muestra con y sin sugerencia (la maqueta apilaba principal, respaldo y manual). Para igualarla falta un KQL de modo por día.
+- [ ] Sin comparación de tendencia contra el período anterior en los indicadores (la API entrega un solo rango).
+- [ ] Bloque de reintentos y evaluación de calidad no se refrescan en vivo (se actualizan al recargar); el resto sí.
+- [ ] «Costo» del Resumen sale «Sin datos» si la telemetría por modelo no trae tokens (hoy pasa en producción); la consulta `front_horarios.kql` usa hora de Chile y es nueva.
+- [ ] La portada conserva la tarjeta ilustrativa de sugerencia (cita de la Ley 21.643 y CT art. 160), sin caso inventado.
+- [ ] Comparación con la maqueta hecha a ojo con capturas de ambos tamaños; no se midió píxel a píxel. Etiquetas largas del informe (gráfico de barras horizontales) pueden recortarse.
