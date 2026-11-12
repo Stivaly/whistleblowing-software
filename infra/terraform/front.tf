@@ -71,7 +71,7 @@ resource "azurerm_role_assignment" "front_logs" {
 
 resource "azurerm_role_assignment" "front_evaluaciones" {
   count                = var.crear_front ? 1 : 0
-  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${azurerm_storage_table.evaluaciones.name}"
+  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${azapi_resource.tabla_evaluaciones.name}"
   role_definition_name = "Storage Table Data Reader"
   principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
 }

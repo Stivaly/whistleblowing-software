@@ -216,15 +216,29 @@ resource "azurerm_cognitive_deployment" "gpt_5_mini" {
 
 # ------------------------------------------------------- tabla de resultados de medición
 # Cada medición (recall, anonimizador, pruebas, comparación de embeddings, job de Azure) escribe aquí además de su JSONL.
-resource "azurerm_storage_table" "evaluaciones" {
-  name                 = "evaluaciones"
-  storage_account_name = azurerm_storage_account.nucleo.name
+# La tabla se gestiona por ARM (azapi): azurerm_storage_table lee sus ACL por el plano de datos con clave
+# compartida, y esta cuenta no admite claves.
+removed {
+  from = azurerm_storage_table.evaluaciones
+  lifecycle {
+    destroy = false
+  }
+}
 
-  depends_on = [azurerm_role_assignment.yo_tablas]
+import {
+  to = azapi_resource.tabla_evaluaciones
+  id = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/evaluaciones"
+}
+
+resource "azapi_resource" "tabla_evaluaciones" {
+  type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2023-05-01"
+  name      = "evaluaciones"
+  parent_id = "${azurerm_storage_account.nucleo.id}/tableServices/default"
+  body      = { properties = {} }
 }
 
 resource "azurerm_role_assignment" "pipeline_evaluaciones" {
-  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${azurerm_storage_table.evaluaciones.name}"
+  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${azapi_resource.tabla_evaluaciones.name}"
   role_definition_name = "Storage Table Data Contributor"
   principal_id         = azurerm_user_assigned_identity.pipeline.principal_id
 }
