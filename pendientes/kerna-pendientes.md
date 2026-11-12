@@ -216,7 +216,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       usuario en cada ingreso y el conector reingresa cada ~95 s. Hace falta crear en Veridy un destinatario de
       pruebas con acceso a los casos sintéticos y pasar `VERIDY_USUARIO` / `VERIDY_PASSWORD`. Por lo mismo, nadie debe
       iniciar sesión a mano con `kerna-conector`.
-- [x] **Casos en revisión manual** (2026-11-11, decidido: sin reproceso; vienen de las pruebas masivas de embeddings): 7 denuncias sintéticas del 11-11 quedaron en `revision_manual` (límite de
+- [ ] **Casos en revisión manual** (2026-11-11, decisión actualizada: reintento automático hasta 3 veces, máximo 1 al día, cuando la causa es falla de modelos; en implementación en el conector): 7 denuncias sintéticas del 11-11 quedaron en `revision_manual` (límite de
       peticiones del proveedor de embeddings). El contrato no define reproceso; decidir si se agrega.
 - [x] **Firewall de PostgreSQL de Veridy**: `host-veridy` = 181.43.217.156, aplicado con `infra/aplicar.sh veridy` (2026-11-11).
 - [ ] **PR-30 (P95 de 15 s) no se cumple**: con `gemini-3.8-flash` respondiendo 429 `RESOURCE_EXHAUSTED` (cuota del nivel gratuito) todo sale en modo respaldo (28 a 120 s
