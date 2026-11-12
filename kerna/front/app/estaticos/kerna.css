@@ -1038,3 +1038,4 @@ html,body{max-width:100%}
 .dat-s>summary::-webkit-details-marker{display:none}.dat-s>summary em{font-style:normal;color:var(--muted);font-weight:500;font-size:12px}.dat-s[open]{padding-bottom:8px}.dat-s>summary:hover{background:var(--brand-soft)}
 .dat-s>.dat-d{margin-left:8px}
 @media(max-width:599px){.dat-s>summary{min-height:36px;font-size:13.5px}}
+.lx[data-l="global"] k-n{--s:100%;display:block;width:100%;height:100%}
