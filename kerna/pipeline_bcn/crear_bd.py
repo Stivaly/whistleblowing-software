@@ -17,6 +17,7 @@ import argparse
 import os
 import sys
 
+import secretos
 from extraer_bcn import asegurar_indices
 
 _STR = {"bsonType": "string"}
@@ -60,12 +61,11 @@ def conectar():
     uri = os.environ.get("MONGODB_URI")
     if not uri:
         sys.exit("Falta MONGODB_URI (cargar .env: set -a && . ./.env && set +a)")
-    from pymongo import MongoClient
     from pymongo.errors import ConfigurationError
     from pymongo.errors import InvalidURI
     try:
-        cliente = MongoClient(uri, serverSelectionTimeoutMS=15000)
-    except InvalidURI as e:
+        cliente = secretos.mongo_client(uri, serverSelectionTimeoutMS=15000)
+    except (InvalidURI, secretos.ErrorConexion) as e:
         # El mensaje del driver puede incluir la URI con la clave: no se muestra.
         sys.exit(f"URI inválida ({type(e).__name__}). Formato esperado: "
                  "mongodb+srv://USUARIO:CLAVE@host/kerna?retryWrites=true&w=majority")
@@ -117,6 +117,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--probar", action="store_true", help="solo probar conexión y permisos")
     args = ap.parse_args()
+    secretos.proteger()
     cliente, db = conectar()
     ok = probar(cliente, db)
     if args.probar:

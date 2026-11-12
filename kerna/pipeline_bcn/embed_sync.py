@@ -43,6 +43,8 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
+import secretos
+
 COLECCION = "normativa_cl"
 DIMS = 1024
 VOYAGE_MODELO = "voyage-4-large"
@@ -439,8 +441,7 @@ def verificar_paridad(coleccion: str, db=None, puntos: dict | None = None) -> di
     vigente=false. sobrantes: puntos vigente=true cuyo fragmento ya no es vigente en Mongo
     (o no existe). Los puntos vigente=false de fragmentos no vigentes son correctos."""
     if db is None:
-        from pymongo import MongoClient
-        db = MongoClient(os.environ["MONGODB_URI"]).get_default_database()
+        db = secretos.mongo_client(os.environ["MONGODB_URI"]).get_default_database()
     puntos = puntos_de(coleccion) if puntos is None else puntos
     vigentes = {f["_id"]: f for f in db.fragmentos.find(
         {"vigente": True, "estado_embedding": {"$ne": "no_aplica"}},
@@ -528,9 +529,9 @@ def main(argv=None):
     ap.add_argument("--paridad", action="store_true",
                     help="compara Mongo con la colección (o con todas) y sale con 1 si difieren")
     args = ap.parse_args(argv)
+    secretos.proteger()
 
-    from pymongo import MongoClient
-    db = MongoClient(os.environ["MONGODB_URI"]).get_default_database()
+    db = secretos.mongo_client(os.environ["MONGODB_URI"]).get_default_database()
     colecciones = cargar_colecciones() if args.todas else [_config_desde_args(args)]
 
     if args.paridad:

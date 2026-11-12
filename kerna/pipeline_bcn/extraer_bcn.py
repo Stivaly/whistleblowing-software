@@ -63,6 +63,8 @@ import xml.etree.ElementTree as ET
 from datetime import date, datetime, timezone
 from pathlib import Path
 
+import secretos
+
 URL_XML = "https://www.leychile.cl/Consulta/obtxml?opt=7"
 URL_JSON = "https://nuevo.leychile.cl/servicios/Navegar/get_norma_json"
 NS_RE = re.compile(r"\{.*?\}")  # el XML viene con namespace; lo ignoramos
@@ -741,6 +743,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
                         format="%(asctime)s %(levelname)s %(message)s")
+    secretos.proteger()
 
     if args.verificar:
         verificar(args.verificar)
@@ -771,8 +774,7 @@ def main(argv=None):
     db = None
     uri = os.environ.get("MONGODB_URI")
     if uri and not args.dry_run:
-        from pymongo import MongoClient
-        db = MongoClient(uri).get_default_database()
+        db = secretos.mongo_client(uri).get_default_database()
         asegurar_indices(db)
     elif not args.dry_run:
         log.warning("MONGODB_URI no definida: solo se escriben JSON en %s", SALIDA)

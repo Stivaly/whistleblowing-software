@@ -19,9 +19,8 @@ import embed_sync  # noqa: E402
 
 
 def main():
-    from pymongo import MongoClient
-
-    db = MongoClient(os.environ["MONGODB_URI"]).get_default_database()
+    embed_sync.secretos.proteger()
+    db = embed_sync.secretos.mongo_client(os.environ["MONGODB_URI"]).get_default_database()
     filas = [{"id": embed_sync.punto_id(f["_id"]), "texto_embedding": f["texto_embedding"],
               "payload": embed_sync.payload_de(f)}
              for f in db.fragmentos.find({"vigente": True, "estado_embedding": {"$ne": "no_aplica"}}).sort("_id", 1)]

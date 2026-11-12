@@ -62,6 +62,13 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       acceso de la otra (la otra falla y se reintenta una vez). Propuesta: registro de uso en Mongo
       (`accesos_atlas`) y quitar la entrada solo si no queda otro uso activo. Pendiente de decisión.
 - [ ] Atlas: eliminar o rotar el usuario anterior con `atlasAdmin` (su clave quedó expuesta en un error).
+      Causa (2026-11-12): no se pudo probar. Revisados código, `logs/`, historial de bash y transcripciones: ningún
+      log ni script imprime la URI, y pymongo 4.19 no la incluye en sus errores (InvalidURI, ConfigurationError,
+      ServerSelectionTimeoutError). Hipótesis más probable: un mensaje de error de la configuración inicial (con
+      el usuario `atlasAdmin`, antes de crear el de mínimo privilegio) que mostró la URI completa; el comentario de
+      `crear_bd.py` ya lo sospechaba. Arreglo: `kerna/pipeline_bcn/secretos.py` enmascara `usuario:***@` en logs,
+      tracebacks y errores de conexión (extraer_bcn, embed_sync, crear_bd, preparar_datos), con `test_secretos.py`.
+      La rotación sigue pendiente (la hace la usuaria).
 - [x] Respaldo de MongoDB: descartado por la usuaria (2026-11-12).
 
 ## 2. Código pendiente
@@ -259,3 +266,19 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - Cuenta `kerna-e2e`: sigue pendiente, la crea la usuaria más adelante.
 - «Probar Kerna» en el front: publicar el front no requiere credencial; lo que falta es que el front pueda iniciar sesión en Veridy para enviar la denuncia. Opciones: secreto `front-demo` en Key Vault o reutilizar la credencial del conector. Pendiente de decisión.
 - `etl_incremental.py`: la usuaria preguntó por qué retirarlo. Motivo: copia la base SQLite local antigua de Veridy a Supabase (y tiene la contraseña escrita en el archivo); Veridy ya corre sobre PostgreSQL de Azure. Sin acción hasta que decida.
+
+## Revisor jurídico y triage (2026-11-12)
+
+- Triage hecho: `kerna/evaluacion/datos/triage_casos.json` (fuera de git) y `kerna/evaluacion/triage-casos.md`. 45 casos en alcance (34 desarrollo, 11 prueba), 44 `no`, 24 controles (22 "ninguna" + DEN-0002 y DEN-0007, etiquetados 21.643 pero definidos por el dataset para falsos positivos). `recall_retriever.py` acepta `--triage` y `--particion desarrollo|prueba|todas`.
+- Retriever (voyage-4-large, normativa_cl, texto_original, sin reranking): desarrollo 34 casos recall@5 por artículo 0,412 (IC 0,235-0,588); prueba 13 casos 0,462 (IC 0,231-0,769). Ley 20.393: 0,000 en 8 casos. Registrado en `kerna/evaluacion/registro/recall_retriever.jsonl`.
+- Etiqueta a revisar por la usuaria o el revisor jurídico: el dataset cita "CT 154 bis" como reserva de información del trabajador, pero en el corpus 154 bis es el protocolo de acoso para empresas sin reglamento y la reserva es 154 ter (afecta DEN-0065, 0066, 0067, 0074). Las "medidas de resguardo" citadas como CT 211-B están en 211-B bis (211-B trata principios de la investigación; afecta DEN-0010, 0012, 0016, 0022, 0029).
+- Ocho casos (DEN-0033, 0051, 0062, 0064, 0072, 0075, 0078, 0090) quedan `no` solo por no tener artículo etiquetado mapeable; el corpus sí aplica y se proponen artículos. Si la usuaria acepta los propuestos, pasan a en alcance.
+- La prueba (reddit) queda con solo 13 casos medibles por artículo (7 Karin, 6 datos, 0 de 20.393): intervalo muy ancho. No se inventaron casos; las propuestas de artículos adicionales (29 de 45 casos) no se aplicaron a la etiqueta.
+- Falta decisión jurídica: ver dudas en el informe del triage (estatutos administrativos y Carabineros como `no`; 154 bis/ter; DEN-0110 deepfakes escolares como "ninguna").
+- Revisor jurídico implementado (apagado por defecto, `KERNA_REVISOR`); sin ejecutar contra modelos ni contra el dataset. Código en `kerna/nucleo/kerna_nucleo/revisor/`, tests `test_nucleo_revisor.py` y `test_medir_revisor.py`, medición `kerna/evaluacion/medir_revisor.py`. Pendiente:
+  - [ ] Revisión por un abogado de `revisor/criterios/*.md` (redactados desde el texto de las leyes del corpus y conocimiento general; sin dataset). Puntos a confirmar: vigencia de la Ley 21.595 (septiembre de 2024), que el art. 3 de la 20.393 vigente ya no menciona "interés o provecho" (el criterio usa "favorecido o facilitado por la falta de modelo" y la exclusión del hecho cometido solo contra la propia persona jurídica), el régimen estatutario (art. 1 CT, fuera del corpus), y que para datos personales no se veta por vigencia (texto reformado rige desde 2026-12-01).
+  - [ ] Medir: el orquestador principal corre el núcleo con `KERNA_REVISOR=1` sobre el set de desarrollo, arma el JSON de casos (formato en el docstring de `medir_revisor.py`) y ejecuta `python3 evaluacion/medir_revisor.py casos.json --salida evaluacion/registro/revisor-AAAAMMDD.json --etiqueta <modelo/criterios>`. Registrar según la regla de KPIs (fecha, commit, parámetros).
+  - [ ] Decisión de modelo: el revisor usa el mismo enrutador y cadena que el generador y el evaluador (la cadena con gpt-5-nano de producción); no hay variable propia de modelo. Si se quiere otro nivel, agregar `desde_modelo` en `Orquestador._revisar`.
+  - [ ] Contrato: el GET de resultado agrega campos opcionales por artículo (`revision_juridica`, `dictamen`, `causal_veto`, `condiciones`, `alertas_revision`, `hecho_ids_revision`, `frase_ids_revision`, `confianza_revisor`), solo con el flag encendido. Falta anotarlos en `kerna/docs/contratos.md` y decidir cómo los muestra Veridy/el conector (los IDs H/A no llevan texto de la denuncia).
+  - [ ] El revisor no recibe perfil ni fecha de los hechos desde el orquestador (la API no trae fecha; el perfil solo existe con multiquery). Los parámetros `perfil` y `fecha_hechos` de `Revisor.revisar` están listos.
+  - [ ] Solo ve los artículos sugeridos (≤ 5), no las demás leyes ni artículos del corpus; la causal 3 depende del LLM hasta que el corpus tenga `vigencia_desde` por fragmento usable (existe el campo, no se usa).
