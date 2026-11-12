@@ -18,7 +18,8 @@
 </div>
 
 <!-- TABLE MODE -->
-<table *ngIf="mode === 'table' && header && content" class="table table-striped w-100">
+<div *ngIf="mode === 'table' && header && content" class="table-scroll">
+<table class="table table-striped w-100">
   <thead>
     <ng-container [ngTemplateOutlet]="header"></ng-container>
   </thead>
@@ -30,6 +31,7 @@
     </ng-container>
   </tbody>
 </table>
+</div>
 
 <!-- Pagination -->
 <app-pagination
