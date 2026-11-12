@@ -257,7 +257,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 
 ## Front de Kerna (recordatorio de la usuaria, 2026-11-12)
 - [ ] **Arreglar el informe de gestión** (`/panel/informe` y sus descargas PDF/XLSX/CSV): llevarlo al diseño y criterios de la maqueta v2/v3 (colores semánticos, conclusiones, información útil). Solo recordatorio: no lanzar agente hasta que la usuaria lo pida.
-- [ ] **Ingresos en UF, no en dólares**: las tarifas por cliente (tabla `clientes`, campo `tarifa_usd_denuncia`), los ingresos, el margen y la proyección de Negocio deben expresarse en UF. El costo de IA sigue en USD (precios de Anthropic) y debe convertirse a UF para calcular el margen. Afecta `kerna/front/app/negocio.py`, `sembrar_negocio.py`, la plantilla `negocio.html` y la maqueta v2. Solo recordatorio.
+- [x] **Ingresos en UF** (2026-11-12): tarifas, ingresos, costos, margen y proyección de Negocio y del informe en UF; el costo de IA (USD) se convierte con el dólar y la UF de `kerna/front/app/datos/parametros_financieros.json`. Falta replicarlo en la maqueta v2 (`diseno-v2/maqueta.html`, la edita otro agente).
 - [ ] **Seguir mejorando el recall@5 por artículo hacia 0,80** (hoy 0,475 con el evaluador por IDs y nano; techo con 70 candidatos 0,902). Próximas vías: revisión jurídica de los casos dudosos del set (respuestas propuestas por un agente; 33 de 61 con un solo artículo aceptado), mejorar la búsqueda inicial para subir el artículo correcto dentro de los 70, y volver a medir mini si cambia el diseño del evaluador.
 
 ## Decisiones de la usuaria (2026-11-12)
@@ -300,3 +300,25 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - `--etiqueta original|corregida` en `recall_retriever.py`; `articulos_corregidos` en `triage_casos.json` (154 bis -> 154 ter, 211-B -> 211-B bis, propuestos de confianza alta, y los estatutos públicos ahora en el corpus). Triage: desarrollo 42 si / 27 no / 8 control; prueba 13 si / 7 no / 16 control. Recall@5 por artículo con etiqueta corregida: desarrollo 0,571 (42 casos), prueba 0,467 (15).
 - Revisor jurídico medido con la configuración recomendada (híbrida + multi-query + evaluador 3m, gpt-5-nano): no cambia el recall (hit@5 0,500 desarrollo y 0,462 prueba antes y después), 15 vetos en total, 0 incorrectos, pero 5 de ellos en controles y 86 % de dictámenes "condiciona"; con revisor siguen saliendo sugerencias en 4 de 8 controles de desarrollo y 11 de 16 de prueba. Detalle en `kerna/evaluacion/registro-pruebas.md`.
 - Falta en el corpus: Ley 18.834 art. 84 l)-m) y 159, Ley 18.883 art. 82 l)-m) (la definición de la prohibición de acoso de los estatutos); Carabineros y Ejército siguen sin norma.
+
+
+## Costos reales en Negocio e informe (2026-11-12)
+
+Problema: el margen y la proyección solo descontaban la API de IA (margen 99 %, proyección a 6 meses con 15 % mensual inventado).
+Hecho:
+- `kerna/front/app/datos/parametros_financieros.json` + `finanzas.py`: todos los costos y supuestos del capítulo 25 del informe
+  (Tablas 107 a 115): costo de servir por plan (IA con tope de cuota, infraestructura y soporte), 30 % de Veridy, costos fijos
+  (VPN, Cloud SQL HA, energía, herramientas comerciales, contabilidad, patente, oficina virtual, certificado), depreciación acelerada,
+  crédito de 36 cuotas, impuesto Ley 21.850, inflación 3 %, descuento 25 %, dólar 994,29, inversión inicial 17.621.028.
+- `negocio.py`: ingreso por tarifa anual en UF prorrateada por días; costo de servir por cliente; fijos prorrateados; resultado hasta
+  utilidad después de impuestos; proyección a 5 años con el método del capítulo (reproduce la Tabla 114: VAN 27.932.860, TIR 66,5 %, IR 2,59, recuperación año 3).
+- `informe.py`: sección nueva «Rentabilidad» (XLSX, CSV y PDF) y costo total proyectado con fijos en la sección de costo.
+- `sembrar_negocio.py`: clientes con plan comercial y precio anual en UF (re-sembrado en Azure).
+- Pruebas: `test_front_finanzas.py` (contra las tablas del capítulo), `test_front_negocio.py`, `test_front_informe.py`: 33 OK.
+- Despliegue con `kerna/front/desplegar.sh` (App Service app-kerna-dev-front-g6mzy).
+Pendiente / decisiones para la usuaria:
+- El capítulo 25 no da el valor de la UF: se usó 40.000 pesos (configurable, `KERNA_UF_CLP`). Confirmar el valor oficial.
+- Año 1 de operación = 2027 (año 0 = 2026); configurable (`KERNA_INICIO_OPERACION`).
+- El precio de cada cliente pasó de «tarifa por denuncia» a precio anual del plan (modelo de ventas del capítulo 25); los campos `tarifa_usd_denuncia` antiguos en la tabla se ignoran.
+- La participación de Veridy usa el neto real de sus contratos; la Tabla 114 resta un neto fijo de 5.700.000 por plataforma externa (solo en la proyección).
+- Costos de embeddings, Qdrant, Atlas y observabilidad no figuran como partidas del capítulo 25; no se modelan.

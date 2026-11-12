@@ -1,0 +1,57 @@
+{
+  "_fuente": "Informe de Kerna AI, capítulo 25 «Presupuesto y evaluación financiera» (Tablas 107 a 115). Único lugar donde se definen los costos y supuestos del negocio. Las variables de entorno KERNA_UF_CLP, KERNA_USD_CLP, KERNA_INICIO_OPERACION y KERNA_TASA_DESCUENTO sustituyen los valores marcados como configurables.",
+  "moneda_informe": "CLP neto de IVA, sin decimales (cap. 25, párrafo inicial)",
+  "usd_clp": 994.29,
+  "_usd_clp": "Dólar observado del 27-oct-2026 (SII), cap. 25. Configurable con KERNA_USD_CLP.",
+  "uf_clp": 40000,
+  "_uf_clp": "El capítulo 25 fija los precios en UF pero no da su valor en pesos. Valor de referencia configurable con KERNA_UF_CLP; confirmar con el valor oficial del día.",
+  "inicio_operacion": "2027-01-01",
+  "_inicio_operacion": "El año 0 del flujo es 2026 (cap. 25), así que el año 1 de operación es 2027. Configurable con KERNA_INICIO_OPERACION.",
+  "horizonte_anios": 5,
+  "tasa_descuento": 0.25,
+  "inflacion_anual": 0.03,
+  "_inflacion_anual": "Meta de inflación del Banco Central; reajusta precios (UF) y costos en pesos. Los servicios en dólares quedan fuera (cap. 25, ventas).",
+  "impuesto_primera_categoria": [0.255, 0.24, 0.23, 0.23, 0.23],
+  "_impuesto": "Ley N.° 21.850: 25,5 % en 2027, 24 % en 2028 y 23 % desde 2029 (cap. 25, flujo de caja).",
+  "participacion_veridy": 0.30,
+  "_participacion_veridy": "30 % del ingreso neto (ventas menos costo de servir) de los contratos que origina Veridy; las plataformas externas no la pagan. Se descuenta antes de impuestos.",
+  "ingreso_neto_plataforma_externa": 5700000,
+  "_ingreso_neto_plataforma_externa": "Neto anual fijo por plataforma externa que el capítulo 25 excluye de la base de la participación de Veridy (Tabla 114); solo se usa para reproducir esa tabla.",
+  "planes": {
+    "basico": {
+      "nombre": "Básico", "precio_anual_clp_anio1": 1483200, "costo_servir_anual_clp_anio1": 259560, "cuota_api_mensual_clp": 3000, "casos_maximos_mes": 150,
+      "clientes_por_anio": [1, 2, 3, 4, 5], "origen_veridy": true
+    },
+    "pro": {
+      "nombre": "Pro", "precio_anual_clp_anio1": 2719200, "costo_servir_anual_clp_anio1": 494400, "cuota_api_mensual_clp": 7000, "casos_maximos_mes": null,
+      "clientes_por_anio": [1, 2, 3, 4, 5], "origen_veridy": true
+    },
+    "plataforma": {
+      "nombre": "Plataforma / Partner", "precio_anual_clp_anio1": 7107000, "costo_servir_anual_clp_anio1": 1236000, "cuota_api_mensual_clp": 15000, "casos_maximos_mes": null,
+      "clientes_por_anio": [3, 4, 5, 6, 7], "origen_veridy": false, "origen_veridy_por_anio": [1, 1, 1, 1, 1]
+    }
+  },
+  "_planes": "Tabla 108 (precio anual por plan y clientes por año) y Tabla 110 (costo anual de servir por cliente: modelos con tope de cuota, infraestructura y soporte). Precios y costos en pesos suben 3 % anual. Plataforma incluye a Veridy (1 contrato propio de origen Veridy por año).",
+  "costos_fijos_anuales": [
+    {"concepto": "Cloud VPN de alta disponibilidad", "anio1_clp": 762123, "reajusta": false, "_nota": "Servicio en dólares: no se reajusta (Tabla 111)."},
+    {"concepto": "Alta disponibilidad de Cloud SQL", "anio1_clp": 497016, "reajusta": false, "_nota": "Servicio en dólares."},
+    {"concepto": "Energía del servidor", "anio1_clp": 533540, "reajusta": true},
+    {"concepto": "Herramientas comerciales (HubSpot, Sales Navigator y Ubersuggest)", "anio1_clp": 2016301, "reajusta": false, "_nota": "Servicios en dólares."},
+    {"concepto": "Contabilidad externa", "anio1_clp": 370800, "reajusta": true, "hasta_anio": 4},
+    {"concepto": "Contabilidad externa (ventas sobre $5 millones al mes)", "por_anio_clp": [0, 0, 0, 0, 695564]},
+    {"concepto": "Patente municipal (mínimo de 1 UTM)", "anio1_clp": 74316, "reajusta": true},
+    {"concepto": "Oficina virtual y domicilio tributario", "anio1_clp": 61285, "reajusta": true},
+    {"concepto": "Renovación del certificado digital", "anio2_clp": 16964, "reajusta": true, "desde_anio": 2}
+  ],
+  "inversion_inicial": [
+    {"concepto": "Constitución de la sociedad", "clp": 270589},
+    {"concepto": "Relación con Veridy y levantamiento de requerimientos", "clp": 2488750},
+    {"concepto": "Marketing, comercialización y escalamiento", "clp": 9130000},
+    {"concepto": "Estación de trabajo con RTX PRO 4500 de 32 GB", "clp": 4761126},
+    {"concepto": "UPS de 1.500 VA", "clp": 281504},
+    {"concepto": "Dos routers MikroTik RB5009UG+S+IN", "clp": 689059}
+  ],
+  "_inversion_inicial": "Tabla 107; total 17.621.028.",
+  "depreciacion": {"vida_acelerada_anios": 2, "activos_clp": [4761126, 281504, 689059], "_nota": "Tabla 112: depreciación acelerada en 2 años, 2.865.845 al año."},
+  "credito": {"monto_clp": 17621028, "cuotas": 36, "tasa_mensual": 0.012, "_nota": "Sistema francés, 36 cuotas de 605.674 (Tabla 113)."}
+}

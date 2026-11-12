@@ -16,9 +16,9 @@ HOY = date(2026, 11, 12)
 
 
 def _datos():
-    cl = [{"PartitionKey": "a", "nombre": "Alfa SpA", "rubro": "X", "plan_denuncias_mes": 30, "tarifa_usd_denuncia": 0.5, "estado": "activo"},
-          {"PartitionKey": "b", "nombre": "Beta SA", "rubro": "Y", "plan_denuncias_mes": 100, "tarifa_usd_denuncia": 1.0, "estado": "activo"},
-          {"PartitionKey": "c", "nombre": "Baja", "plan_denuncias_mes": 10, "tarifa_usd_denuncia": 1.0, "estado": "baja"}]
+    cl = [{"PartitionKey": "a", "nombre": "Alfa SpA", "rubro": "X", "plan_denuncias_mes": 30, "plan_tipo": "basico", "estado": "activo"},
+          {"PartitionKey": "b", "nombre": "Beta SA", "rubro": "Y", "plan_denuncias_mes": 100, "plan_tipo": "pro", "estado": "activo"},
+          {"PartitionKey": "c", "nombre": "Baja", "plan_denuncias_mes": 10, "estado": "baja"}]
     uso = [{"PartitionKey": "a", "RowKey": (HOY - timedelta(days=i)).isoformat(), "denuncias": 2, "con_sugerencia": 2, "valoradas": 1, "utiles": 1,
             "nano_in": 1_000_000, "nano_out": 0, "mini_in": 0, "mini_out": 1_000_000} for i in range(30)]
     uso.append({"PartitionKey": "b", "RowKey": (HOY - timedelta(days=20)).isoformat(), "denuncias": 5})
@@ -35,10 +35,38 @@ def test_construir():
     a, b = n["clientes"]
     assert [x["nombre"] for x in n["clientes"]] == ["Alfa SpA", "Beta SA"]  # excluye el de baja
     assert a["tot"] == 60 and a["uso_plan"] == 200 and a["estado_uso"] == "bad" and a["riesgo"] == "ok"
-    assert a["ingreso"] == 30.0 and a["costo_ia"] == round(30 * 10.10, 4)
+    # Básico: 1.483.200 pesos al año = 37,08 UF (UF a 40.000); 30 días = 30/365 del año.
+    assert a["plan_tipo"] == "Básico" and a["tarifa_uf_anual"] == 37.08
+    assert a["ingreso"] == round(37.08 * 30 / 365, 2) == 3.05
+    # IA medida: 30 días x (1 M de entrada nano a 0,10 + 1 M de salida mini a 10) = 303 USD; muy sobre la cuota del plan (36.000 pesos al año).
+    assert n["totales"]["costo_ia_bruto"] > a["costo_ia"]
+    assert a["costo_ia"] == round(36000 / 40000 * 30 / 365, 4)  # tope de cuota prorrateado
     assert b["dias_sin_uso"] == 20 and b["riesgo"] == "bad"
     assert n["totales"]["en_riesgo"] == ["Beta SA"]
-    assert n["adopcion"]["utiles_pct"] == 100 and len(n["proyeccion"]["meses"]) == 6 and len(n["serie_total"]) == 30
+    assert n["adopcion"]["utiles_pct"] == 100 and len(n["proyeccion"]["anios"]) == 5 and len(n["serie_total"]) == 30
+
+
+def test_resultado_con_todos_los_costos():
+    """Un solo cliente Pro sin uso de IA, 365 días en el año 1: cada partida se verifica a mano (cap. 25)."""
+    cl = [{"PartitionKey": "p", "nombre": "P", "plan_tipo": "pro", "plan_denuncias_mes": 300, "estado": "activo", "origen_veridy": True}]
+    n = negocio.construir(cl, [], hoy=HOY, dias=365)
+    t, c = n["totales"], n["clientes"][0]
+    assert c["tarifa_uf_anual"] == round(2719200 / 40000, 2) == 67.98 and t["ingreso"] == 67.98
+    # costo de servir Pro 494.400 pesos = 12,36 UF (sin IA usada: infraestructura y soporte 410.400 pesos = 10,26 UF)
+    assert t["costo_servir"] == 10.26 and t["margen_bruto"] == round(67.98 - 10.26, 2)
+    assert t["participacion_veridy"] == round(0.30 * (67.98 - 10.26), 2) == 17.32
+    assert t["costos_fijos"] == round(4315381 / 40000, 2) == 107.88
+    assert t["depreciacion"] == round(2865844.5 / 40000, 2) and t["interes"] == round(2212371.78 / 40000, 2)
+    assert t["margen_operativo"] == round(67.98 - 10.26 - 17.316 - 107.88, 2) and t["margen_operativo"] < 0
+    assert t["impuesto"] == 0 and t["utilidad"] == t["resultado_antes_impuesto"] < t["margen_operativo"]
+
+
+def test_proyeccion_es_la_del_capitulo():
+    n = negocio.construir(_datos()[0], _datos()[1], hoy=HOY)
+    p = n["proyeccion"]
+    assert [a["ventas"] for a in p["anios"]][0] == round(25523400 / 40000, 2)
+    assert p["tasa_descuento_pct"] == 25.0 and p["tir_pct"] == 66.5 and p["indice_rentabilidad"] == 2.59 and p["recuperacion_anio"] == 3
+    assert p["van"] == round(27932860 / 40000, 2)
 
 
 def test_sin_clientes():

@@ -93,7 +93,11 @@ def api_metricas(request: Request, dias: int = 7):
 
 def _informe(dias, desde, hasta):
     ini, fin = inf_mod.periodo(dias, desde, hasta)
-    return inf_mod.construir(ini, fin)
+    try:
+        n = negocio.cargar(dias=(fin - ini).days or 30)
+    except Exception:
+        n = None  # la sección de rentabilidad declara que no hay datos
+    return inf_mod.construir(ini, fin, negocio=n)
 
 
 @app.get("/panel/informe", response_class=HTMLResponse)
@@ -122,22 +126,22 @@ def descargar_informe(ext: str, request: Request, dias: int = 30, desde: str = "
 
 
 @app.get("/api/negocio")
-def api_negocio(request: Request, dias: int = 30, crec: float = 15.0):
+def api_negocio(request: Request, dias: int = 30):
     if not _permitido(request):
         return JSONResponse({"detalle": "no autorizado"}, status_code=401)
     try:
-        d = negocio.cargar(crec=min(max(crec, 0), 30), dias=30 if dias not in (7, 30, 90) else dias)
+        d = negocio.cargar(dias=30 if dias not in (7, 30, 90) else dias)
     except Exception as e:
         return JSONResponse({"detalle": "consulta fallida", "tipo": type(e).__name__}, status_code=502)
     return d if d is not None else JSONResponse({"detalle": "sin datos de clientes"}, status_code=404)
 
 
 @app.get("/panel/negocio", response_class=HTMLResponse)
-def panel_negocio(request: Request, dias: int = 30, crec: float = 15.0):
+def panel_negocio(request: Request, dias: int = 30):
     if not _permitido(request):
         return RedirectResponse("/acceso", status_code=303)
     try:
-        n, error = negocio.cargar(crec=min(max(crec, 0), 30), dias=30 if dias not in (7, 30, 90) else dias), None
+        n, error = negocio.cargar(dias=30 if dias not in (7, 30, 90) else dias), None
     except Exception as e:
         n, error = None, type(e).__name__
-    return plantillas.TemplateResponse(request, "negocio.html", {"n": n, "error": error, "dias": dias, "crec": crec})
+    return plantillas.TemplateResponse(request, "negocio.html", {"n": n, "error": error, "dias": dias})

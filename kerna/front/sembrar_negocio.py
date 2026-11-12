@@ -3,6 +3,8 @@
 
 - Veridy (cliente real `veridy-dev`): su uso diario se calcula desde las tablas reales solicitud, valoracion y clasificacion.
 - Clientes de demostración: 90 días de uso verosímil, determinista por (cliente, día), con días hábiles.
+- Tarifas en UF por año de contrato: el precio anual del plan del capítulo 25 del informe de Kerna (kerna/front/app/finanzas.py),
+  convertido con la UF de los parámetros. Los costos y la proyección los calcula el front con esos mismos parámetros.
 Requiere az login con Storage Table Data Contributor. Uso: python3 kerna/front/sembrar_negocio.py [--url URL]
 """
 from __future__ import annotations
@@ -10,17 +12,21 @@ from __future__ import annotations
 import argparse
 import random
 import subprocess
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from app import finanzas  # noqa: E402
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 
 VERIDY = "veridy-dev"
-CLIENTES = [  # id, nombre, rubro, plan/mes, tarifa, alta, base diaria (hábil), comportamiento
-    ("veridy-dev", "Veridy", "Plataforma de denuncias", 200, 0.50, "2026-10-01", 0, "real"),
-    ("minera-altos-maipo", "Minera Altos del Maipo SpA", "Minería", 400, 0.55, "2026-06-15", 17, "normal"),
-    ("coop-valle-central", "Cooperativa Agrícola Valle Central", "Agroindustria", 150, 0.60, "2026-07-20", 9, "sobre"),
-    ("retail-austral", "Retail Austral S.A.", "Retail", 250, 0.50, "2026-08-03", 11, "riesgo"),
-    ("clinica-los-andes", "Clínica Los Andes Salud", "Salud", 100, 0.70, "2026-09-10", 4, "normal"),
+CLIENTES = [  # id, nombre, rubro, plan/mes, plan comercial, alta, base diaria (hábil), comportamiento
+    ("veridy-dev", "Veridy", "Plataforma de denuncias", 200, "plataforma", "2026-10-01", 0, "real"),
+    ("minera-altos-maipo", "Minera Altos del Maipo SpA", "Minería", 400, "pro", "2026-06-15", 17, "normal"),
+    ("coop-valle-central", "Cooperativa Agrícola Valle Central", "Agroindustria", 150, "basico", "2026-07-20", 9, "sobre"),
+    ("retail-austral", "Retail Austral S.A.", "Retail", 250, "pro", "2026-08-03", 11, "riesgo"),
+    ("clinica-los-andes", "Clínica Los Andes Salud", "Salud", 100, "basico", "2026-09-10", 4, "normal"),
 ]
 DIAS = 90
 
@@ -86,9 +92,10 @@ def main():
     svc = TableServiceClient(endpoint=_url(a.url), credential=DefaultAzureCredential())
     cl, uso = svc.get_table_client("clientes"), svc.get_table_client("usodiario")
     hoy = datetime.now(timezone.utc).date()
-    for cid, nombre, rubro, plan, tarifa, alta, base, modo in CLIENTES:
+    for cid, nombre, rubro, plan, plan_tipo, alta, base, modo in CLIENTES:
+        tarifa = round(finanzas.a_uf(finanzas.precio_anual_clp(plan_tipo, 1)), 2)
         cl.upsert_entity({"PartitionKey": cid, "RowKey": "perfil", "nombre": nombre, "rubro": rubro, "plan_denuncias_mes": plan,
-                          "tarifa_usd_denuncia": tarifa, "fecha_alta": alta, "estado": "activo"})
+                          "plan_tipo": plan_tipo, "precio_anual_uf": tarifa, "origen_veridy": True, "fecha_alta": alta, "estado": "activo"})
         filas = uso_real(svc) if modo == "real" else uso_demo(cid, base, modo, hoy)
         for f in filas:
             dia = f.pop("dia")

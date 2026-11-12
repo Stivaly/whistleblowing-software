@@ -63,7 +63,7 @@ def inf():
 
 def test_secciones_y_sin_proximos_pasos(inf):
     ids = [s["id"] for s in inf["secciones"]]
-    assert ids == ["resumen", "calidad", "desempeno", "costo", "cobertura", "incidentes"]
+    assert ids == ["resumen", "calidad", "desempeno", "costo", "rentabilidad", "cobertura", "incidentes"]
 
 
 def test_costo_real_por_modelo_con_equivalencia(inf):
@@ -76,7 +76,7 @@ def test_costo_real_por_modelo_con_equivalencia(inf):
     k = {x["etiqueta"]: x["valor"] for x in c["kpis"]}
     assert k["Costo del período"] == pytest.approx(haiku + sonnet, abs=1e-3)
     assert k["Costo por denuncia"] == pytest.approx((haiku + sonnet) / 10, abs=1e-5)
-    assert k["Proyección mensual, 1.000 denuncias"] == pytest.approx((haiku + sonnet) / 10 * 1000, abs=0.01)
+    assert k["Costo de IA mensual proyectado, 1.000 denuncias"] == pytest.approx((haiku + sonnet) / 10 * 1000, abs=0.01)
     texto = str(c).lower()
     assert "estimaci" not in texto and "escenario" not in texto and "tokenizador" not in texto and "opus" not in texto
     assert any("gemini-x" in n and "Haiku" in n for n in c["notas"])
@@ -137,3 +137,28 @@ def test_tabla_evaluaciones_caida_se_declara_sin_datos(monkeypatch):
     r = informe.construir(INI, FIN, ejecutar=falso)
     cal = next(x for x in r["secciones"] if x["id"] == "calidad")
     assert any("tabla `evaluaciones` no respondió" in n for n in cal["notas"])
+
+
+def test_rentabilidad_con_costos_del_capitulo_en_todos_los_formatos():
+    from app import negocio
+    cl = [{"PartitionKey": "p", "nombre": "P", "plan_tipo": "pro", "plan_denuncias_mes": 300, "estado": "activo", "origen_veridy": True}]
+    n = negocio.construir(cl, [], hoy=FIN.date(), dias=30)
+    r = informe.construir(INI, FIN, ejecutar=falso, evaluacion=EVAL, negocio=n)
+    rent = next(x for x in r["secciones"] if x["id"] == "rentabilidad")
+    k = {x["etiqueta"].split(" (")[0]: x for x in rent["kpis"]}
+    assert k["Costos fijos del período"]["unidad"] == "UF" and k["Costos fijos del período"]["valor"] == n["totales"]["costos_fijos"] > 0
+    assert k["Valor actual neto de la proyección"]["valor"] == n["proyeccion"]["van"]
+    assert len(next(t for t in rent["tablas"] if t["id"] == "rent_proyeccion")["filas"]) == 5
+    assert exportar.a_xlsx(r).startswith(b"PK") and exportar.a_pdf(r).startswith(b"%PDF") and b"Rentabilidad" in exportar.a_csv(r)
+    vacio = next(x for x in informe.construir(INI, FIN, ejecutar=falso, evaluacion=EVAL)["secciones"] if x["id"] == "rentabilidad")
+    assert vacio["kpis"] == [] and vacio["notas"]
+
+
+def test_ley_19628_se_nombra_con_su_reforma_21719():
+    assert informe.nombre_ley("19.628-21.719") == "Ley 19.628 (datos personales), reformada por la Ley 21.719"
+    ev = {**EVAL, "recall": {**EVAL["recall"], "por_ley": EVAL["recall"]["por_ley"] + [
+        {"ley": "19.628-21.719", "casos": 5, "casos_articulo": 4, "recall_ley": 0.9, "recall5": 0.5, "ic95_inf": None, "ic95_sup": None}]}}
+    cal = next(x for x in informe.construir(INI, FIN, ejecutar=falso, evaluacion=ev)["secciones"] if x["id"] == "calidad")
+    t = next(t for t in cal["tablas"] if t["id"] == "recall_ley")
+    assert any(f[0] == "Ley 19.628 (datos personales), reformada por la Ley 21.719" for f in t["filas"])
+    assert any(i[0] == informe.NOMBRE_19628 for g in cal["graficos"] for i in g["items"])

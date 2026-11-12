@@ -8,7 +8,7 @@ import os
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-from . import consultas, evaluaciones
+from . import consultas, evaluaciones, finanzas
 
 DATOS = Path(__file__).parent / "datos"
 RANGOS = (7, 30, 90)
@@ -25,6 +25,7 @@ EQUIVALENCIA = {"gpt-5-nano": "Claude Haiku 5.5", "gpt-5-mini": "Claude Sonnet 5
 POR_DEFECTO = "Claude Haiku 5.5"  # modelos sin equivalencia (p. ej. Gemini de respaldo)
 UMBRAL_PROMPT = 100_000
 PROYECCION = (100, 1000)  # denuncias por mes
+FUENTE_FIN = "Informe de Kerna, capítulo 25 (Tablas 107 a 115), parámetros en datos/parametros_financieros.json"
 LF_LA = "Log Analytics (AppTraces del núcleo)"
 CONSULTAS_INFORME = {
     "casos": "front_casos_por_dia", "modos": "solicitudes_por_modo", "tokens": "tokens_por_solicitud",
@@ -33,6 +34,13 @@ CONSULTAS_INFORME = {
     "revision": "informe_revision_manual", "reintentos": "front_reintentos", "por_modelo": "front_tokens_por_modelo",
 }
 MODOS = ("oficial", "respaldo", "local", "manual")
+NOMBRE_19628 = "Ley 19.628 (datos personales), reformada por la Ley 21.719"
+
+
+def nombre_ley(ley) -> str:
+    """Nombre legible de una norma: la 19.628 se presenta siempre con su reforma, la Ley 21.719."""
+    t = str(ley or "")
+    return NOMBRE_19628 if ("19.628" in t or "19628" in t) else t
 
 
 def periodo(dias: int | None = None, desde: str | None = None, hasta: str | None = None, ahora: datetime | None = None):
@@ -80,7 +88,8 @@ def _pct(a, b):
     return round(100.0 * a / b, 1) if b else None
 
 
-def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> dict:
+def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, negocio=None) -> dict:
+    """`negocio`: resultado de negocio.construir (clientes y costos en UF) para la sección de rentabilidad; si falta, se declara."""
     """`ejecutar(texto, ini, fin)` y los datos de evaluación se inyectan en las pruebas."""
     ejecutar = ejecutar or _filas_rango
     crudo, fallos = {}, {}
@@ -151,10 +160,10 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
             cal["kpis"].append({"etiqueta": "Recall por ley (global)", "valor": round(glob["recall_ley"], 3), "unidad": "ratio", "fuente": fte})
         cal["tablas"].append({"id": "recall_ley", "titulo": f"Recall@5 por ley ({r['configuracion']}; {r['dataset_casos']} casos del dataset público)",
                               "cols": ["Ley", "Casos", "Casos a nivel artículo", "Recall por ley", "Recall@5 artículo", "IC95 inf.", "IC95 sup.", "Meta", "Cumple meta"],
-                              "filas": [[x["ley"], x["casos"], x["casos_articulo"], round(x["recall_ley"], 3), round(x["recall5"], 3),
+                              "filas": [[nombre_ley(x["ley"]), x["casos"], x["casos_articulo"], round(x["recall_ley"], 3), round(x["recall5"], 3),
                                          round(x["ic95_inf"], 3) if x["ic95_inf"] is not None else None, round(x["ic95_sup"], 3) if x["ic95_sup"] is not None else None,
                                          r["meta"], "sí" if x["recall5"] >= r["meta"] else "no"] for x in r["por_ley"]], "fuente": fte})
-        cal["graficos"].append({"tipo": "h", "titulo": f"Recall@5 por artículo (meta {str(r['meta']).replace('.', ',')})", "items": [(x["ley"], round(x["recall5"], 3)) for x in r["por_ley"]], "fmt": "ratio", "meta": r["meta"]})
+        cal["graficos"].append({"tipo": "h", "titulo": f"Recall@5 por artículo (meta {str(r['meta']).replace('.', ',')})", "items": [(nombre_ley(x["ley"]), round(x["recall5"], 3)) for x in r["por_ley"]], "fmt": "ratio", "meta": r["meta"]})
         serie = evaluacion.get("serie", [])[-10:]
         if serie:
             cal["tablas"].append({"id": "recall_serie", "titulo": "Últimas 10 mediciones de recall@5 por artículo (global)", "cols": ["Fecha (UTC)", "Configuración", "Recall@5"],
@@ -218,6 +227,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
     ts = sum(_n(f["tokens_salida_total"]) for f in crudo["tokens"])
     nsol = sum(int(_n(f["solicitudes"])) for f in crudo["tokens"])
 
+    anio_op = finanzas.anio_operacion(fin.date())
     desglose = {}  # modelo Claude -> [solicitudes, entrada, salida, USD, modelos usados]
     sin_equiv = []
     for f in crudo["por_modelo"]:
@@ -247,7 +257,10 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
                       {"etiqueta": "Tokens de salida", "valor": int(ts), "unidad": "tokens", "fuente": LF_LA},
                       {"etiqueta": "Costo del período", "valor": round(total, 4) if hay else None, "unidad": "USD", "fuente": "tokens por modelo x precios de la API de Anthropic"},
                       {"etiqueta": "Costo por denuncia", "valor": round(por_caso, 6) if hay else None, "unidad": "USD", "fuente": "costo del período / solicitudes"}]
-             + [{"etiqueta": f"Proyección mensual, {format(k, ',d').replace(',', '.')} denuncias", "valor": round(por_caso * k, 2) if hay else None, "unidad": "USD", "fuente": "costo por denuncia x volumen mensual"} for k in PROYECCION],
+             + [{"etiqueta": f"Costo de IA del período en UF", "valor": round(finanzas.usd_a_uf(total, anio_op), 4) if hay else None, "unidad": "UF", "fuente": f"USD convertidos con dólar a {finanzas.parametros()['usd_clp']} y UF a {round(finanzas.uf_del_anio(anio_op))} pesos"}]
+             + [{"etiqueta": f"Costo de IA mensual proyectado, {format(k, ',d').replace(',', '.')} denuncias", "valor": round(por_caso * k, 2) if hay else None, "unidad": "USD", "fuente": "costo por denuncia x volumen mensual (solo IA)"} for k in PROYECCION]
+             + [{"etiqueta": f"Costo total mensual proyectado, {format(k, ',d').replace(',', '.')} denuncias", "valor": round(finanzas.usd_a_uf(por_caso * k, anio_op) + finanzas.a_uf(finanzas.total_fijos_clp(anio_op) / 12, anio_op), 2) if hay else None, "unidad": "UF",
+                 "fuente": "IA del volumen + costos fijos mensuales del capítulo 25 (Tabla 111); sin el costo de servir por cliente"} for k in PROYECCION],
              "tablas": [{"id": "costo_modelo", "titulo": "Costo por modelo (precios USD por millón de tokens: Haiku 5.5 0,10/0,50; Sonnet 5.5 2,00/10,00)",
                          "cols": ["Modelo Claude", "Modelo usado", "Solicitudes", "Tokens entrada", "Tokens salida", "Costo (USD)"],
                          "filas": desg, "fuente": f"{PRECIOS_FUENTE}; tokens medidos en {LF_LA}"},
@@ -269,7 +282,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
         costo["notas"].append("Embeddings: sin precio verificado para " + (", ".join(desc[:4]) or "ninguno") + "; Anthropic no ofrece embeddings y su costo queda fuera.")
 
     # ---- 5. Cobertura normativa ------------------------------------------------------------------------------
-    ley_rows = [[str(f["norma"]) or "(sin nombre)", int(_n(f["articulos"]))] for f in crudo["leyes"]]
+    ley_rows = [[nombre_ley(f["norma"]) or "(sin nombre)", int(_n(f["articulos"]))] for f in crudo["leyes"]]
     cob = {"id": "cobertura", "titulo": "Cobertura normativa",
            "justificacion": "Indica qué normas conoce Kerna y cuáles sugiere realmente; permite detectar leyes del corpus que nunca se usan.",
            "kpis": [{"etiqueta": "Artículos vigentes en el corpus", "valor": (evaluacion or {}).get("corpus_articulos"), "unidad": "artículos", "fuente": "kerna/evaluacion/registro/recall_retriever.jsonl (colección normativa_cl, vigente=true)"},
@@ -277,7 +290,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
            "tablas": [{"id": "leyes", "titulo": "Artículos sugeridos por ley", "cols": ["Norma", "Artículos sugeridos"], "filas": ley_rows, "fuente": LF_LA}],
            "graficos": [{"tipo": "h", "titulo": "Artículos sugeridos por ley", "items": [tuple(r) for r in ley_rows]}],
            "notas": [x for x in (sin("leyes", "artículos por ley"),) if x]}
-    cob["notas"].append("Leyes cubiertas por el corpus y el dataset de evaluación: 21.643 (Ley Karin), 19.628/21.719 (datos personales) y 20.393 (responsabilidad penal de personas jurídicas).")
+    cob["notas"].append("Leyes cubiertas por el corpus y el dataset de evaluación: 21.643 (Ley Karin), 19.628 (datos personales, reformada por la Ley 21.719, texto vigente desde el 1 de diciembre de 2026) y 20.393 (responsabilidad penal de personas jurídicas).")
     if not ley_rows:
         cob["notas"].append("Sin sugerencias por ley en el período: el evento articulo_sugerido solo existe desde que el núcleo desplegado lo emite.")
 
@@ -294,9 +307,46 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
            "notas": [x for x in (sin("errores", "fallas"), sin("revision", "revisión manual")) if x]}
     inc["notas"].append("Reintentos del conector sobre casos en revisión manual (hasta 3, uno al día, por falla de modelos): el conector los registra en su propio log, no en Log Analytics; sin cifras en este informe.")
 
+    # ---- 7. Rentabilidad (costos reales del capítulo 25) -----------------------------------------------------
+    rent = _rentabilidad(negocio)
     return {"meta": {"titulo": "Informe de gestión de Kerna AI", "periodo": per, "desde": ini.isoformat(timespec="seconds"), "hasta": fin.isoformat(timespec="seconds"),
                      "corte": corte, "evaluacion_generada": (evaluacion or {}).get("generado")},
-            "secciones": [resumen, cal, desemp, costo, cob, inc]}
+            "secciones": [resumen, cal, desemp, costo, rent, cob, inc]}
+
+
+def _rentabilidad(n: dict | None) -> dict:
+    """Sección de rentabilidad en UF con todos los costos del capítulo 25: costo de servir, parte de Veridy, costos fijos,
+    depreciación, interés e impuesto, más la proyección a cinco años con los supuestos del capítulo."""
+    sec = {"id": "rentabilidad", "titulo": "Rentabilidad",
+           "justificacion": "Muestra cuánto gana Kerna después de todos sus costos (IA, infraestructura y soporte por cliente, parte de Veridy, costos fijos, crédito e impuesto) y qué se espera en los próximos cinco años.",
+           "kpis": [], "tablas": [], "graficos": [], "notas": []}
+    if not n:
+        sec["notas"].append("Sin datos de clientes: las tablas de negocio no respondieron o están vacías; la rentabilidad se calcula cuando hay clientes y uso registrados.")
+        return sec
+    t, p, f = n["totales"], n["proyeccion"], FUENTE_FIN
+    per = f"{n['dias']} días hasta {n['hasta']}"
+    fte = f"tablas clientes y usodiario del núcleo; costos según {f}"
+    for et, k, u in (("Ingreso del período", "ingreso", "UF"), ("Costo de IA (con tope de cuota del plan)", "costo_ia", "UF"), ("Costo de servir a los clientes", "costo_servir", "UF"),
+                     ("Margen después de servir", "margen_bruto", "UF"), ("Parte de Veridy", "participacion_veridy", "UF"), ("Costos fijos del período", "costos_fijos", "UF"),
+                     ("Margen operativo", "margen_operativo", "UF"), ("Depreciación", "depreciacion", "UF"), ("Interés del crédito", "interes", "UF"),
+                     ("Impuesto de primera categoría", "impuesto", "UF"), ("Utilidad después de impuestos", "utilidad", "UF")):
+        sec["kpis"].append({"etiqueta": f"{et} ({per})", "valor": t[k], "unidad": u, "fuente": fte})
+    for et, k in (("Margen después de servir", "margen_bruto_pct"), ("Margen operativo", "margen_operativo_pct"), ("Margen neto", "margen_neto_pct")):
+        sec["kpis"].append({"etiqueta": f"{et} en porcentaje del ingreso", "valor": t[k], "unidad": "%", "fuente": fte})
+    sec["tablas"].append({"id": "rent_clientes", "titulo": "Rentabilidad por cliente (UF, período)", "cols": ["Cliente", "Plan", "Tarifa al año", "Ingreso", "Costo de IA", "Costo de servir", "Margen", "Margen %"],
+                          "filas": [[c["nombre"], c["plan_tipo"], c["tarifa_uf_anual"], c["ingreso"], c["costo_ia"], c["costo_servir"], c["margen"], c["margen_pct"]] for c in n["clientes"]], "fuente": fte})
+    sec["tablas"].append({"id": "rent_proyeccion", "titulo": "Proyección a cinco años (UF)", "cols": ["Año", "Ventas", "Costo de servir", "Parte de Veridy", "Costos fijos", "Margen operativo", "Utilidad después de impuestos", "Caja del año"],
+                          "filas": [[f"{a['anio']} ({a['calendario']})", a["ventas"], a["costo_ventas"], a["participacion_veridy"], a["costos_fijos"], a["margen_operativo"], a["utilidad"], a["flujo"]] for a in p["anios"]],
+                          "fuente": f})
+    sec["kpis"] += [{"etiqueta": "Valor actual neto de la proyección", "valor": p["van"], "unidad": "UF", "fuente": f},
+                    {"etiqueta": "Retorno anual del proyecto", "valor": p["tir_pct"], "unidad": "%", "fuente": f},
+                    {"etiqueta": "Índice de rentabilidad", "valor": p["indice_rentabilidad"], "unidad": "ratio", "fuente": f},
+                    {"etiqueta": "Año en que se recupera la inversión", "valor": p["recuperacion_anio"], "unidad": "año", "fuente": f}]
+    sec["graficos"].append({"tipo": "h", "titulo": "Utilidad después de impuestos por año (UF)", "items": [(f"Año {a['anio']}", a["utilidad"]) for a in p["anios"]]})
+    sec["notas"] += [f"Valores en UF: 1 UF = {round(n['uf_clp'])} pesos y dólar a {n['usd_clp']} pesos. El costo de IA se mide en dólares y se limita a la cuota mensual del plan (3.000, 7.000 y 15.000 pesos); sobre ella las consultas pasan al modo local.",
+                     f"Proyección con los supuestos del capítulo 25: clientes de 5 a 17, reajuste de {p['inflacion_pct']} % anual, parte de Veridy de {p['participacion_veridy_pct']} %, crédito de 36 cuotas, impuesto según la Ley 21.850 y descuento de {p['tasa_descuento_pct']} %; el año 1 es {p['inicio_operacion'][:4]}.",
+                     "Los costos fijos, la depreciación y el interés se prorratean por los días del período."]
+    return sec
 
 
 def filas_largas(inf: dict) -> list[list]:
