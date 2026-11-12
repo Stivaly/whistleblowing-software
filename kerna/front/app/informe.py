@@ -1,0 +1,289 @@
+"""Informe de gestión de Kerna: reúne datos reales (Log Analytics + instantánea de evaluación) en un modelo único
+que consumen la página HTML y las exportaciones XLSX, CSV y PDF. Donde falta un dato se declara, no se inventa."""
+from __future__ import annotations
+
+import json
+import math
+import os
+from datetime import date, datetime, timedelta, timezone
+from pathlib import Path
+
+from . import consultas
+
+DATOS = Path(__file__).parent / "datos"
+RANGOS = (7, 30, 90)
+META_RECALL = 0.80
+META_P95_MS = 15000
+# Precios de la API de Anthropic (USD por millón de tokens), único lugar donde se definen.
+PRECIOS_FECHA = "2026-11-03"
+PRECIOS_FUENTE = "tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03"
+PRECIOS_CLAUDE = {  # modelo: (entrada, salida, entrada sobre 100K por prompt, salida sobre 100K)
+    "Claude Haiku 5.5": (0.10, 0.50, 0.50, 2.50),
+    "Claude Sonnet 5.5": (2.00, 10.00, None, None),
+    "Claude Opus 5.5": (4.00, 20.00, None, None),
+}
+UMBRAL_PROMPT = 100_000
+PRINCIPAL = "Claude Haiku 5.5"
+PROYECCION = (100, 1000)  # denuncias por mes
+LF_LA = "Log Analytics (AppTraces del núcleo)"
+CONSULTAS_INFORME = {
+    "casos": "front_casos_por_dia", "modos": "solicitudes_por_modo", "tokens": "tokens_por_solicitud",
+    "latencia": "front_latencia", "etapas": "latencia_por_etapa", "disponibilidad": "disponibilidad_efectiva",
+    "leyes": "front_articulos_por_ley", "valoraciones": "front_valoraciones", "errores": "errores_por_proveedor",
+    "revision": "informe_revision_manual",
+}
+MODOS = ("oficial", "respaldo", "local", "manual")
+
+
+def periodo(dias: int | None = None, desde: str | None = None, hasta: str | None = None, ahora: datetime | None = None):
+    """(inicio, fin) en UTC. Fechas AAAA-MM-DD inclusivas; si no, los últimos `dias` (7, 30 o 90)."""
+    ahora = ahora or datetime.now(timezone.utc)
+    try:
+        if desde:
+            ini = datetime.fromisoformat(desde).replace(tzinfo=timezone.utc)
+            fin = datetime.fromisoformat(hasta).replace(tzinfo=timezone.utc) + timedelta(days=1) if hasta else ahora
+            fin = min(fin, ahora)
+            if ini < fin and (fin - ini).days <= 366:
+                return ini, fin
+    except ValueError:
+        pass
+    d = dias if dias in RANGOS else 30
+    return ahora - timedelta(days=d), ahora
+
+
+def kql_rango(nombre: str, ini: datetime) -> str:
+    t = (consultas.DIR_KQL / f"{CONSULTAS_INFORME[nombre]}.kql").read_text(encoding="utf-8")
+    return t.replace("ago(7d)", "datetime(%s)" % ini.strftime("%Y-%m-%dT%H:%M:%SZ"))
+
+
+def _filas_rango(texto: str, ini: datetime, fin: datetime) -> list[dict]:
+    from azure.monitor.query import LogsQueryStatus
+    r = consultas._logs().query_workspace(os.environ["LOG_ANALYTICS_WORKSPACE_ID"], texto, timespan=(ini, fin))
+    if r.status != LogsQueryStatus.SUCCESS:
+        raise RuntimeError("consulta parcial")
+    return [{c: (v.isoformat() if hasattr(v, "isoformat") else v) for c, v in zip(t.columns, f)} for t in r.tables for f in t.rows]
+
+
+def _cargar(nombre: str):
+    p = DATOS / nombre
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+
+
+def _n(v, d=0.0) -> float:
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return d
+
+
+def _pct(a, b):
+    return round(100.0 * a / b, 1) if b else None
+
+
+def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> dict:
+    """`ejecutar(texto, ini, fin)` y los datos de evaluación se inyectan en las pruebas."""
+    ejecutar = ejecutar or _filas_rango
+    evaluacion = evaluacion if evaluacion is not None else _cargar("evaluacion.json")
+    crudo, fallos = {}, {}
+    for n in CONSULTAS_INFORME:
+        try:
+            crudo[n] = ejecutar(kql_rango(n, ini), ini, fin)
+        except Exception as e:  # sin identidad, rol o consulta: se declara, no se oculta ni se filtra detalle
+            crudo[n], fallos[n] = [], type(e).__name__
+    corte = fin.strftime("%Y-%m-%d %H:%M UTC")
+    per = f"{ini:%Y-%m-%d} a {(fin - timedelta(seconds=1)):%Y-%m-%d}"
+    sin = lambda n, tema: f"Sin datos de {tema}: la consulta a Log Analytics falló ({fallos[n]})." if n in fallos else None  # noqa: E731
+
+    # ---- 1. Resumen -------------------------------------------------------------------------------------------
+    casos = sum(int(_n(f["casos"])) for f in crudo["casos"])
+    con_sug = sum(int(_n(f["con_sugerencia"])) for f in crudo["casos"])
+    modos = {m: 0 for m in MODOS}
+    for f in crudo["modos"]:
+        m = str(f.get("modo")) if str(f.get("modo")) in modos else "manual"
+        modos[m] += int(_n(f["solicitudes"]))
+    val_dis = sum(int(_n(f["validas"])) for f in crudo["disponibilidad"])
+    con_dis = sum(int(_n(f["con_sugerencia"])) for f in crudo["disponibilidad"])
+    val = {"util": 0, "no_util": 0, "ninguno_aplica": 0}
+    for f in crudo["valoraciones"]:
+        if f.get("valoracion") in val:
+            val[f["valoracion"]] += int(_n(f["total"]))
+    total_val = sum(val.values())
+    resumen = {
+        "id": "resumen", "titulo": "Resumen ejecutivo",
+        "justificacion": "Responde en una página cuánto trabajó Kerna, con qué resultado y en qué modo; es lo primero que lee un tutor o auditor.",
+        "kpis": [
+            {"etiqueta": "Casos procesados", "valor": casos, "unidad": "casos", "fuente": LF_LA + ", evento solicitud_terminada"},
+            {"etiqueta": "Casos con sugerencia (estado completada)", "valor": con_sug, "unidad": "casos", "fuente": LF_LA},
+            {"etiqueta": "% con sugerencia", "valor": _pct(con_sug, casos), "unidad": "%", "fuente": "con sugerencia / casos procesados"},
+            {"etiqueta": "% de sugerencias valoradas útiles", "valor": _pct(val["util"], total_val), "unidad": "%", "fuente": LF_LA + ", eventos feedback y clasificacion_auditor"},
+            {"etiqueta": "Disponibilidad efectiva", "valor": _pct(con_dis, val_dis), "unidad": "%", "fuente": "con sugerencia / solicitudes válidas (excluye sin_normativa_aplicable)"},
+            {"etiqueta": "Modo oficial", "valor": modos["oficial"], "unidad": "casos", "fuente": LF_LA},
+            {"etiqueta": "Modo respaldo", "valor": modos["respaldo"], "unidad": "casos", "fuente": LF_LA},
+            {"etiqueta": "Modo local (gemma)", "valor": modos["local"], "unidad": "casos", "fuente": LF_LA},
+            {"etiqueta": "Revisión manual", "valor": modos["manual"], "unidad": "casos", "fuente": LF_LA},
+        ],
+        "tablas": [{"id": "casos_dia", "titulo": "Casos por día", "cols": ["Día", "Casos", "Con sugerencia"],
+                    "filas": [[str(f["dia"])[:10], int(_n(f["casos"])), int(_n(f["con_sugerencia"]))] for f in crudo["casos"]], "fuente": LF_LA}],
+        "graficos": [{"tipo": "v", "titulo": "Casos procesados por día", "items": [(str(f["dia"])[5:10], int(_n(f["casos"]))) for f in crudo["casos"]]},
+                     {"tipo": "h", "titulo": "Casos por modo", "items": [("oficial", modos["oficial"]), ("respaldo", modos["respaldo"]), ("local", modos["local"]), ("revisión manual", modos["manual"])]}],
+        "notas": [x for x in (sin("casos", "casos"), sin("modos", "modos"), sin("disponibilidad", "disponibilidad"), sin("valoraciones", "valoraciones")) if x],
+    }
+    if not casos and not fallos:
+        resumen["notas"].append("No hay casos procesados en el período.")
+
+    # ---- 2. Calidad -------------------------------------------------------------------------------------------
+    cal = {"id": "calidad", "titulo": "Calidad", "kpis": [], "tablas": [], "graficos": [], "notas": [],
+           "justificacion": "Dice si las sugerencias son correctas: recall@5 por artículo frente a la meta de 0,80, anonimización por tipo de dato y valoración de auditores. Es la evidencia central del KPI del proyecto."}
+    cal["kpis"].append({"etiqueta": "Valoraciones: útil", "valor": val["util"], "unidad": "valoraciones", "fuente": LF_LA})
+    cal["kpis"].append({"etiqueta": "Valoraciones: no útil", "valor": val["no_util"], "unidad": "valoraciones", "fuente": LF_LA})
+    cal["kpis"].append({"etiqueta": "Valoraciones: ninguno aplica", "valor": val["ninguno_aplica"], "unidad": "valoraciones", "fuente": LF_LA})
+    if evaluacion and evaluacion.get("recall"):
+        r = evaluacion["recall"]
+        fte = f"{r['fuente']} (medición {r['fecha'][:16].replace('T', ' ')} UTC, commit {r.get('commit')})"
+        glob = next((x for x in r["por_ley"] if x["ley"] == "Global"), None)
+        if glob:
+            cal["kpis"].append({"etiqueta": "Recall@5 por artículo (global)", "valor": round(glob["recall5"], 3), "unidad": "ratio", "fuente": fte})
+            cal["kpis"].append({"etiqueta": "Meta de recall@5", "valor": r["meta"], "unidad": "ratio", "fuente": fte})
+            cal["kpis"].append({"etiqueta": "Recall por ley (global)", "valor": round(glob["recall_ley"], 3), "unidad": "ratio", "fuente": fte})
+        cal["tablas"].append({"id": "recall_ley", "titulo": f"Recall@5 por ley ({r['configuracion']}; {r['dataset_casos']} casos del dataset público)",
+                              "cols": ["Ley", "Casos", "Casos a nivel artículo", "Recall por ley", "Recall@5 artículo", "IC95 inf.", "IC95 sup.", "Meta", "Cumple meta"],
+                              "filas": [[x["ley"], x["casos"], x["casos_articulo"], round(x["recall_ley"], 3), round(x["recall5"], 3),
+                                         round(x["ic95_inf"], 3) if x["ic95_inf"] is not None else None, round(x["ic95_sup"], 3) if x["ic95_sup"] is not None else None,
+                                         r["meta"], "sí" if x["recall5"] >= r["meta"] else "no"] for x in r["por_ley"]], "fuente": fte})
+        cal["graficos"].append({"tipo": "h", "titulo": f"Recall@5 por artículo (meta {str(r['meta']).replace('.', ',')})", "items": [(x["ley"], round(x["recall5"], 3)) for x in r["por_ley"]], "fmt": "ratio", "meta": r["meta"]})
+        serie = evaluacion.get("serie", [])[-10:]
+        if serie:
+            cal["tablas"].append({"id": "recall_serie", "titulo": "Últimas 10 mediciones de recall@5 por artículo (global)", "cols": ["Fecha (UTC)", "Configuración", "Recall@5"],
+                                  "filas": [[s["fecha"], s["configuracion"], round(s["recall5"], 3)] for s in serie], "fuente": r["fuente"]})
+        cal["notas"].append("El recall se mide sobre el dataset público de evaluación, no sobre denuncias reales; las cifras no cambian con el período elegido.")
+    else:
+        cal["notas"].append("Sin datos de evaluación: falta app/datos/evaluacion.json (ejecutar generar_datos_informe.py).")
+    if evaluacion and evaluacion.get("anonimizador"):
+        a = evaluacion["anonimizador"]
+        cal["tablas"].append({"id": "anonimizador", "titulo": f"Anonimizador por reglas: recall por tipo de dato ({a['casos']} casos, medición {a['fecha']})",
+                              "cols": ["Tipo", "Casos con el dato", "Casos detectados", "Recall por caso"],
+                              "filas": [[t["tipo"], t["casos_con_dato"], t["casos_detectados"], t["recall_por_caso"]] for t in a["tipos"]], "fuente": a["fuente"]})
+        cal["tablas"].append({"id": "anon_apariciones", "titulo": "Anonimizador: apariciones ocultas", "cols": ["Tipo", "Apariciones", "Ocultas"],
+                              "filas": [[t["tipo"], t["total"], t["ocultas"]] for t in a["apariciones"]], "fuente": a["fuente"]})
+    else:
+        cal["notas"].append("Sin datos del anonimizador en la instantánea.")
+    if evaluacion and evaluacion.get("pruebas"):
+        p = evaluacion["pruebas"]
+        for capa, v in p["capas"].items():
+            cal["kpis"].append({"etiqueta": f"Pruebas automáticas ({capa}): pasadas/total", "valor": f"{v['pasadas']}/{v['total']}", "unidad": "pruebas", "fuente": f"{p['fuente']} ({p['fecha']}, commit {p['commit']})"})
+    if not total_val:
+        cal["notas"].append("No hay valoraciones de auditores en el período.")
+    cal["notas"] += [x for x in (sin("valoraciones", "valoraciones"),) if x]
+
+    # ---- 3. Desempeño -----------------------------------------------------------------------------------------
+    lat = crudo["latencia"]
+    tot_l = sum(int(_n(f["solicitudes"])) for f in lat)
+    p50 = sum(_n(f["p50_ms"]) * int(_n(f["solicitudes"])) for f in lat) / tot_l if tot_l else None
+    p95 = max((_n(f["p95_ms"]) for f in lat), default=None) if lat else None
+    desemp = {"id": "desempeno", "titulo": "Desempeño",
+              "justificacion": "Mide el tiempo de respuesta frente al requisito PR-30 (P95 de 15 s) y la etapa que lo consume.",
+              "kpis": [{"etiqueta": "Latencia P50 (ponderada por día)", "valor": round(p50) if p50 is not None else None, "unidad": "ms", "fuente": LF_LA + ", duracion_ms de solicitud_terminada"},
+                       {"etiqueta": "Latencia P95 (máximo diario)", "valor": round(p95) if p95 is not None else None, "unidad": "ms", "fuente": LF_LA + "; los percentiles diarios no se combinan exactamente"},
+                       {"etiqueta": "Meta PR-30: P95", "valor": META_P95_MS, "unidad": "ms", "fuente": "requisito PR-30 (pendientes/kerna-pendientes.md)"},
+                       {"etiqueta": "Cumple PR-30", "valor": None if p95 is None else ("sí" if p95 <= META_P95_MS else "no"), "unidad": "", "fuente": "P95 máximo diario frente a la meta"}],
+              "tablas": [{"id": "lat_dia", "titulo": "Latencia por día", "cols": ["Día", "Solicitudes", "P50 (ms)", "P95 (ms)"],
+                          "filas": [[str(f["dia"])[:10], int(_n(f["solicitudes"])), round(_n(f["p50_ms"])), round(_n(f["p95_ms"]))] for f in lat], "fuente": LF_LA},
+                         {"id": "lat_etapa", "titulo": "Latencia por etapa", "cols": ["Etapa", "Solicitudes", "P50 (ms)", "P95 (ms)", "Máx. (ms)"],
+                          "filas": [[str(f["etapa"]), int(_n(f["solicitudes"])), round(_n(f["p50_ms"])), round(_n(f["p95_ms"])), round(_n(f["max_ms"]))] for f in crudo["etapas"]], "fuente": LF_LA + ", eventos de clase etapa"}],
+              "graficos": [{"tipo": "h", "titulo": "P95 por etapa (ms)", "items": [(str(f["etapa"]), round(_n(f["p95_ms"]))) for f in crudo["etapas"]]}],
+              "notas": [x for x in (sin("latencia", "latencia"), sin("etapas", "etapas")) if x]}
+    conm = sum(modos[m] for m in ("respaldo", "local", "manual"))
+    desemp["kpis"].append({"etiqueta": "Casos fuera del modo oficial", "valor": conm, "unidad": "casos", "fuente": LF_LA})
+    desemp["notas"].append("Reintentos: el núcleo no registra reintentos del conector en Log Analytics (solo los reintentos entre niveles del modelo, en Incidentes); sin datos de reintentos del conector.")
+    ev = (evaluacion or {}).get("evaluador")
+    if ev and ev.get("latencia_llamada_ms"):
+        desemp["kpis"].append({"etiqueta": f"Latencia de llamada del evaluador {ev.get('cadena')} (mediana, medición offline)", "valor": round(ev["latencia_llamada_ms"]["mediana"]), "unidad": "ms", "fuente": "kerna/evaluacion/registro/recall_retriever.jsonl"})
+
+    # ---- 4. Costo y consumo ----------------------------------------------------------------------------------
+    te = sum(_n(f["tokens_entrada_total"]) for f in crudo["tokens"])
+    ts = sum(_n(f["tokens_salida_total"]) for f in crudo["tokens"])
+    nsol = sum(int(_n(f["solicitudes"])) for f in crudo["tokens"])
+
+    def usd_modelo(m):
+        pe, ps, pe2, ps2 = PRECIOS_CLAUDE[m]
+        tot = 0.0
+        for f in crudo["tokens"]:  # tramo alto si el prompt medio de ese modo supera 100K
+            alto = pe2 is not None and _n(f["tokens_entrada_prom"]) > UMBRAL_PROMPT
+            tot += _n(f["tokens_entrada_total"]) * (pe2 if alto else pe) / 1e6 + _n(f["tokens_salida_total"]) * (ps2 if alto else ps) / 1e6
+        return tot
+    hay = bool(nsol)
+    esc = []
+    for m, (pe, ps, _, _) in PRECIOS_CLAUDE.items():
+        u = usd_modelo(m)
+        esc.append([m, pe, ps, round(u, 4) if hay else None, round(u / nsol, 6) if hay else None,
+                    *[round(u / nsol * k, 2) if hay else None for k in PROYECCION]])
+    costo = {"id": "costo", "titulo": "Costo y consumo",
+             "justificacion": "Muestra el consumo medido de tokens y lo valoriza a precios de la API de Anthropic, para estimar cuánto costaría operar Kerna con Claude, sin importar el modelo que corre hoy.",
+             "kpis": [{"etiqueta": "Solicitudes con tokens medidos", "valor": nsol, "unidad": "solicitudes", "fuente": LF_LA},
+                      {"etiqueta": "Tokens de entrada", "valor": int(te), "unidad": "tokens", "fuente": LF_LA + ", tokens_entrada de solicitud_terminada"},
+                      {"etiqueta": "Tokens de salida", "valor": int(ts), "unidad": "tokens", "fuente": LF_LA},
+                      {"etiqueta": f"USD del período, escenario principal ({PRINCIPAL})", "valor": esc[0][3], "unidad": "USD", "fuente": f"{PRECIOS_FUENTE}; estimación"},
+                      {"etiqueta": f"USD por caso ({PRINCIPAL})", "valor": esc[0][4], "unidad": "USD", "fuente": "USD del período / solicitudes"}]
+             + [{"etiqueta": f"USD por {k:,} denuncias/mes ({PRINCIPAL})".replace(",", "."), "valor": esc[0][5 + i], "unidad": "USD", "fuente": "costo por caso x volumen mensual"} for i, k in enumerate(PROYECCION)],
+             "tablas": [{"id": "escenarios", "titulo": "Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida)",
+                         "cols": ["Modelo", "USD/M entrada", "USD/M salida", "Costo del período (USD)", "Costo por caso (USD)"] + [f"Proyección {k:,} denuncias/mes (USD)".replace(",", ".") for k in PROYECCION],
+                         "filas": esc, "fuente": f"{PRECIOS_FUENTE}; tokens medidos en {LF_LA}"},
+                        {"id": "tokens_modo", "titulo": "Tokens por modo", "cols": ["Modo", "Solicitudes", "Tokens entrada", "Tokens salida", "Entrada prom.", "Salida prom."],
+                         "filas": [[str(f["modo"]), int(_n(f["solicitudes"])), int(_n(f["tokens_entrada_total"])), int(_n(f["tokens_salida_total"])), round(_n(f["tokens_entrada_prom"])), round(_n(f["tokens_salida_prom"]))] for f in crudo["tokens"]], "fuente": LF_LA}],
+             "graficos": [{"tipo": "h", "titulo": "Costo del período por escenario (USD)", "items": [(e[0], e[3] or 0) for e in esc], "fmt": "usd"},
+                          {"tipo": "h", "titulo": "Tokens totales por modo", "items": [(str(f["modo"]), int(_n(f["tokens_entrada_total"]) + _n(f["tokens_salida_total"]))) for f in crudo["tokens"]]}],
+             "notas": [x for x in (sin("tokens", "tokens"),) if x]}
+    costo["notas"] += [f"Supuesto: se valorizan los tokens medidos del proveedor actual (Gemini / Azure OpenAI) tal cual; el tokenizador de Claude cuenta distinto, así que la cifra es una estimación y no se aplica ningún factor de corrección. Escenario principal: {PRINCIPAL} (equivalente al rol de gpt-5-nano). Sonnet 5.5 y Opus 5.5 son comparativos.",
+                       f"Precios al {PRECIOS_FECHA} ({PRECIOS_FUENTE}). Haiku 5.5 usa 0,50/2,50 USD/M solo si el prompt medio supera 100K tokens. Sin caché de prompts ni descuentos por lote.",
+                       "El evento solicitud_terminada no registra el modelo, solo el modo; no hay costo real facturado del proveedor actual medido en el período (la nube gratuita de Gemini no tiene cargo)."]
+    if evaluacion:
+        if ev and ev.get("costo_usd") is not None:
+            costo["notas"].append(f"Nota secundaria, costo real del proveedor actual en la última evaluación offline ({ev.get('cadena')}, 61 casos, precios 0,05/0,40 USD/M): {ev['costo_usd']:.4f} USD (kerna/evaluacion/registro/recall_retriever.jsonl).")
+        pe = evaluacion.get("precios_embeddings") or {}
+        desc = [k for k, v in pe.items() if v is None]
+        costo["notas"].append("Embeddings (kerna/evaluacion/precios_embeddings.json): sin precio verificado para " + (", ".join(desc[:4]) or "ninguno") + "; Anthropic no ofrece embeddings, por lo que su costo queda fuera de la estimación.")
+
+    # ---- 5. Cobertura normativa ------------------------------------------------------------------------------
+    ley_rows = [[str(f["norma"]) or "(sin nombre)", int(_n(f["articulos"]))] for f in crudo["leyes"]]
+    cob = {"id": "cobertura", "titulo": "Cobertura normativa",
+           "justificacion": "Indica qué normas conoce Kerna y cuáles sugiere realmente; permite detectar leyes del corpus que nunca se usan.",
+           "kpis": [{"etiqueta": "Artículos vigentes en el corpus", "valor": (evaluacion or {}).get("corpus_articulos"), "unidad": "artículos", "fuente": "kerna/evaluacion/registro/recall_retriever.jsonl (colección normativa_cl, vigente=true)"},
+                    {"etiqueta": "Artículos sugeridos en el período", "valor": sum(r[1] for r in ley_rows), "unidad": "artículos", "fuente": LF_LA + ", evento articulo_sugerido"}],
+           "tablas": [{"id": "leyes", "titulo": "Artículos sugeridos por ley", "cols": ["Norma", "Artículos sugeridos"], "filas": ley_rows, "fuente": LF_LA}],
+           "graficos": [{"tipo": "h", "titulo": "Artículos sugeridos por ley", "items": [tuple(r) for r in ley_rows]}],
+           "notas": [x for x in (sin("leyes", "artículos por ley"),) if x]}
+    cob["notas"].append("Leyes cubiertas por el corpus y el dataset de evaluación: 21.643 (Ley Karin), 19.628/21.719 (datos personales) y 20.393 (responsabilidad penal de personas jurídicas).")
+    if not ley_rows:
+        cob["notas"].append("Sin sugerencias por ley en el período: el evento articulo_sugerido solo existe desde que el núcleo desplegado lo emite.")
+
+    # ---- 6. Incidentes ---------------------------------------------------------------------------------------
+    err = [[str(f["evento"]), str(f["proveedor"]), str(f["modelo"]), str(f["codigo"]), int(_n(f["eventos"]))] for f in crudo["errores"]]
+    rev = [[str(f["motivo"]), int(_n(f["casos"]))] for f in crudo["revision"]]
+    inc = {"id": "incidentes", "titulo": "Incidentes",
+           "justificacion": "Registra caídas de modelos, límites de cuota y casos que requirieron revisión humana: la parte operativa que explica las demás cifras.",
+           "kpis": [{"etiqueta": "Casos en revisión manual", "valor": sum(r[1] for r in rev) if "revision" not in fallos else None, "unidad": "casos", "fuente": LF_LA + ", solicitud_terminada con estado revision_manual"},
+                    {"etiqueta": "Eventos de falla de proveedor o modelo", "valor": sum(r[4] for r in err) if "errores" not in fallos else None, "unidad": "eventos", "fuente": LF_LA + ", nivel_fallido, recuperación fallida, cortocircuito"}],
+           "tablas": [{"id": "fallas", "titulo": "Fallas por evento, proveedor, modelo y código", "cols": ["Evento", "Proveedor", "Modelo", "Código", "Eventos"], "filas": err, "fuente": LF_LA},
+                      {"id": "revision", "titulo": "Casos en revisión manual por motivo", "cols": ["Motivo", "Casos"], "filas": rev, "fuente": LF_LA}],
+           "graficos": [{"tipo": "h", "titulo": "Revisión manual por motivo", "items": [tuple(r) for r in rev]}],
+           "notas": [x for x in (sin("errores", "fallas"), sin("revision", "revisión manual")) if x]}
+    inc["notas"].append("Reintentos del conector sobre casos en revisión manual (hasta 3, uno al día, por falla de modelos): el conector los registra en su propio log, no en Log Analytics; sin cifras en este informe.")
+
+    return {"meta": {"titulo": "Informe de gestión de Kerna AI", "periodo": per, "desde": ini.isoformat(timespec="seconds"), "hasta": fin.isoformat(timespec="seconds"),
+                     "corte": corte, "evaluacion_generada": (evaluacion or {}).get("generado")},
+            "secciones": [resumen, cal, desemp, costo, cob, inc]}
+
+
+def filas_largas(inf: dict) -> list[list]:
+    """Formato largo: sección, métrica, valor, unidad, fuente, fecha de corte. Las tablas se aplanan (una fila por celda numérica o de texto)."""
+    corte, out = inf["meta"]["corte"], []
+    for s in inf["secciones"]:
+        for k in s["kpis"]:
+            out.append([s["titulo"], k["etiqueta"], "sin datos" if k["valor"] is None else k["valor"], k["unidad"], k["fuente"], corte])
+        for t in s["tablas"]:
+            for f in t["filas"]:
+                for c, v in zip(t["cols"][1:], f[1:]):
+                    out.append([s["titulo"], f"{t['titulo']} | {f[0]} | {c}", "sin datos" if v is None else v, "", t["fuente"], corte])
+        for n in s["notas"]:
+            out.append([s["titulo"], "Nota", n, "", "", corte])
+    return out

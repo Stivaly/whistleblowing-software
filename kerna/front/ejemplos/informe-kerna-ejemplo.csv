@@ -1,0 +1,283 @@
+﻿seccion;metrica;valor;unidad;fuente;fecha_corte
+Resumen ejecutivo;Casos procesados;285;casos;Log Analytics (AppTraces del núcleo), evento solicitud_terminada;2026-11-12 02:48 UTC
+Resumen ejecutivo;Casos con sugerencia (estado completada);32;casos;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Resumen ejecutivo;% con sugerencia;11.2;%;con sugerencia / casos procesados;2026-11-12 02:48 UTC
+Resumen ejecutivo;% de sugerencias valoradas útiles;sin datos;%;Log Analytics (AppTraces del núcleo), eventos feedback y clasificacion_auditor;2026-11-12 02:48 UTC
+Resumen ejecutivo;Disponibilidad efectiva;10.6;%;con sugerencia / solicitudes válidas (excluye sin_normativa_aplicable);2026-11-12 02:48 UTC
+Resumen ejecutivo;Modo oficial;17;casos;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Resumen ejecutivo;Modo respaldo;15;casos;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Resumen ejecutivo;Modo local (gemma);0;casos;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Resumen ejecutivo;Revisión manual;253;casos;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Resumen ejecutivo;Casos por día | 2026-11-11 | Casos;25;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Resumen ejecutivo;Casos por día | 2026-11-11 | Con sugerencia;15;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Resumen ejecutivo;Casos por día | 2026-11-12 | Casos;260;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Resumen ejecutivo;Casos por día | 2026-11-12 | Con sugerencia;17;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Calidad;Valoraciones: útil;0;valoraciones;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Calidad;Valoraciones: no útil;0;valoraciones;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Calidad;Valoraciones: ninguno aplica;0;valoraciones;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Calidad;Recall@5 por artículo (global);0.377;ratio;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;Meta de recall@5;0.8;ratio;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;Recall por ley (global);0.934;ratio;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;Pruebas automáticas (unitarias): pasadas/total;333/333;pruebas;kerna/evaluacion/registro/pruebas-20261111-2028-bb703e0fb.json (2026-11-11T20:28:51Z, commit bb703e0fb+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | Global | Casos";91;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | Global | Casos a nivel artículo";61;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | Global | Recall por ley";0.934;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | Global | Recall@5 artículo";0.377;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | Global | IC95 inf.";0.262;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | Global | IC95 sup.";0.492;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | Global | Meta";0.8;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | Global | Cumple meta";no;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 19.628-21.719 | Casos";38;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 19.628-21.719 | Casos a nivel artículo";23;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 19.628-21.719 | Recall por ley";1.0;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 19.628-21.719 | Recall@5 artículo";0.348;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 19.628-21.719 | IC95 inf.";0.174;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 19.628-21.719 | IC95 sup.";0.522;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 19.628-21.719 | Meta";0.8;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 19.628-21.719 | Cumple meta";no;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 20.393 | Casos";24;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 20.393 | Casos a nivel artículo";10;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 20.393 | Recall por ley";0.833;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 20.393 | Recall@5 artículo";0.0;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 20.393 | IC95 inf.";0.0;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 20.393 | IC95 sup.";0.0;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 20.393 | Meta";0.8;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 20.393 | Cumple meta";no;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 21.643 | Casos";29;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 21.643 | Casos a nivel artículo";28;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 21.643 | Recall por ley";0.931;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 21.643 | Recall@5 artículo";0.536;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 21.643 | IC95 inf.";0.357;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 21.643 | IC95 sup.";0.714;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 21.643 | Meta";0.8;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;"Recall@5 por ley (retriever + evaluador LLM (gpt-5-nano, 50 candidatos); 113 casos del dataset público) | 21.643 | Cumple meta";no;;kerna/evaluacion/registro/recall_retriever.jsonl (medición 2026-11-12 02:37 UTC, commit 6c7164cd0+cambios);2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-11 20:08 | Configuración;solo retriever (text-embedding-3-large, campo texto_original);;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-11 20:08 | Recall@5;0.344;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-11 20:27 | Configuración;solo retriever (text-embedding-3-large, campo texto_original);;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-11 20:27 | Recall@5;0.295;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-11 22:54 | Configuración;retriever + evaluador LLM (gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3-flash-preview,gemma-4-31b-it, 30 candidatos);;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-11 22:54 | Recall@5;0.541;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-11 22:58 | Configuración;retriever + evaluador LLM (gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3-flash-preview,gemma-4-31b-it, 30 candidatos);;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-11 22:58 | Recall@5;0.557;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-11 23:30 | Configuración;retriever + reranker abierto;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-11 23:30 | Recall@5;0.344;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-12 01:49 | Configuración;retriever + evaluador LLM (gpt-5-nano, 70 candidatos);;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-12 01:49 | Recall@5;0.41;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-12 02:21 | Configuración;retriever + evaluador LLM (gpt-5-nano, 70 candidatos);;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-12 02:21 | Recall@5;0.377;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-12 02:25 | Configuración;retriever + evaluador LLM (gpt-5-nano, 70 candidatos);;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-12 02:25 | Recall@5;0.426;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-12 02:29 | Configuración;retriever + evaluador LLM (gpt-5-nano, 70 candidatos);;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-12 02:29 | Recall@5;0.377;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-12 02:37 | Configuración;retriever + evaluador LLM (gpt-5-nano, 50 candidatos);;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Últimas 10 mediciones de recall@5 por artículo (global) | 2026-11-12 02:37 | Recall@5;0.377;;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | CARGO | Casos con el dato;33;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | CARGO | Casos detectados;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | CARGO | Recall por caso;0.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | CORREO | Casos con el dato;3;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | CORREO | Casos detectados;3;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | CORREO | Recall por caso;1.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | DIRECCION | Casos con el dato;2;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | DIRECCION | Casos detectados;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | DIRECCION | Recall por caso;0.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | EDAD | Casos con el dato;3;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | EDAD | Casos detectados;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | EDAD | Recall por caso;0.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | EMPRESA/INSTITUCION | Casos con el dato;60;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | EMPRESA/INSTITUCION | Casos detectados;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | EMPRESA/INSTITUCION | Recall por caso;0.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | FINANCIERO | Casos con el dato;1;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | FINANCIERO | Casos detectados;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | FINANCIERO | Recall por caso;0.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | GENERO | Casos con el dato;1;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | GENERO | Casos detectados;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | GENERO | Recall por caso;0.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | NACIONALIDAD | Casos con el dato;3;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | NACIONALIDAD | Casos detectados;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | NACIONALIDAD | Recall por caso;0.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | N_CAUSA | Casos con el dato;58;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | N_CAUSA | Casos detectados;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | N_CAUSA | Recall por caso;0.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | PERSONA | Casos con el dato;27;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | PERSONA | Casos detectados;24;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | PERSONA | Recall por caso;0.889;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | RUT | Casos con el dato;1;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | RUT | Casos detectados;1;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | RUT | Recall por caso;1.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | SALUD | Casos con el dato;4;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | SALUD | Casos detectados;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | SALUD | Recall por caso;0.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | UBICACION | Casos con el dato;14;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | UBICACION | Casos detectados;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador por reglas: recall por tipo de dato (113 casos, medición 2026-11-11) | UBICACION | Recall por caso;0.0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador: apariciones ocultas | CORREO | Apariciones;12;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador: apariciones ocultas | CORREO | Ocultas;12;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador: apariciones ocultas | RUT | Apariciones;3;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador: apariciones ocultas | RUT | Ocultas;3;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador: apariciones ocultas | TELEFONO | Apariciones;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador: apariciones ocultas | TELEFONO | Ocultas;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador: apariciones ocultas | EDAD | Apariciones;36;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador: apariciones ocultas | EDAD | Ocultas;0;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador: apariciones ocultas | N_CAUSA | Apariciones;17;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Anonimizador: apariciones ocultas | N_CAUSA | Ocultas;7;;kerna/evaluacion/registro/anonimizador_2026-11-11.json;2026-11-12 02:48 UTC
+Calidad;Nota;"El recall se mide sobre el dataset público de evaluación, no sobre denuncias reales; las cifras no cambian con el período elegido.";;;2026-11-12 02:48 UTC
+Calidad;Nota;No hay valoraciones de auditores en el período.;;;2026-11-12 02:48 UTC
+Desempeño;Latencia P50 (ponderada por día);27141;ms;Log Analytics (AppTraces del núcleo), duracion_ms de solicitud_terminada;2026-11-12 02:48 UTC
+Desempeño;Latencia P95 (máximo diario);134931;ms;"Log Analytics (AppTraces del núcleo); los percentiles diarios no se combinan exactamente";2026-11-12 02:48 UTC
+Desempeño;Meta PR-30: P95;15000;ms;requisito PR-30 (pendientes/kerna-pendientes.md);2026-11-12 02:48 UTC
+Desempeño;Cumple PR-30;no;;P95 máximo diario frente a la meta;2026-11-12 02:48 UTC
+Desempeño;Casos fuera del modo oficial;268;casos;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Desempeño;Latencia de llamada del evaluador gpt-5-nano (mediana, medición offline);13742;ms;kerna/evaluacion/registro/recall_retriever.jsonl;2026-11-12 02:48 UTC
+Desempeño;Latencia por día | 2026-11-11 | Solicitudes;25;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Desempeño;Latencia por día | 2026-11-11 | P50 (ms);27436;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Desempeño;Latencia por día | 2026-11-11 | P95 (ms);134931;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Desempeño;Latencia por día | 2026-11-12 | Solicitudes;180;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Desempeño;Latencia por día | 2026-11-12 | P50 (ms);27100;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Desempeño;Latencia por día | 2026-11-12 | P95 (ms);31979;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | generacion | Solicitudes;198;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | generacion | P50 (ms);0;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | generacion | P95 (ms);32036;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | generacion | Máx. (ms);129886;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | recuperacion | Solicitudes;207;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | recuperacion | P50 (ms);11855;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | recuperacion | P95 (ms);29788;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | recuperacion | Máx. (ms);84683;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | clasificacion | Solicitudes;207;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | clasificacion | P50 (ms);0;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | clasificacion | P95 (ms);4835;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | clasificacion | Máx. (ms);105425;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | anonimizacion | Solicitudes;207;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | anonimizacion | P50 (ms);3;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | anonimizacion | P95 (ms);23;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | anonimizacion | Máx. (ms);34;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | validacion | Solicitudes;32;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | validacion | P50 (ms);1;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | validacion | P95 (ms);2;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Latencia por etapa | validacion | Máx. (ms);2;;Log Analytics (AppTraces del núcleo), eventos de clase etapa;2026-11-12 02:48 UTC
+Desempeño;Nota;"Reintentos: el núcleo no registra reintentos del conector en Log Analytics (solo los reintentos entre niveles del modelo, en Incidentes); sin datos de reintentos del conector.";;;2026-11-12 02:48 UTC
+Costo y consumo;Solicitudes con tokens medidos;205;solicitudes;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens de entrada;352930;tokens;Log Analytics (AppTraces del núcleo), tokens_entrada de solicitud_terminada;2026-11-12 02:48 UTC
+Costo y consumo;Tokens de salida;34452;tokens;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;USD del período, escenario principal (Claude Haiku 5.5);0.0525;USD;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; estimación";2026-11-12 02:48 UTC
+Costo y consumo;USD por caso (Claude Haiku 5.5);0.000256;USD;USD del período / solicitudes;2026-11-12 02:48 UTC
+Costo y consumo;USD por 100 denuncias/mes (Claude Haiku 5.5);0.03;USD;costo por caso x volumen mensual;2026-11-12 02:48 UTC
+Costo y consumo;USD por 1.000 denuncias/mes (Claude Haiku 5.5);0.26;USD;costo por caso x volumen mensual;2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Haiku 5.5 | USD/M entrada;0.1;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Haiku 5.5 | USD/M salida;0.5;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Haiku 5.5 | Costo del período (USD);0.0525;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Haiku 5.5 | Costo por caso (USD);0.000256;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Haiku 5.5 | Proyección 100 denuncias/mes (USD);0.03;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Haiku 5.5 | Proyección 1.000 denuncias/mes (USD);0.26;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Sonnet 5.5 | USD/M entrada;2.0;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Sonnet 5.5 | USD/M salida;10.0;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Sonnet 5.5 | Costo del período (USD);1.0504;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Sonnet 5.5 | Costo por caso (USD);0.005124;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Sonnet 5.5 | Proyección 100 denuncias/mes (USD);0.51;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Sonnet 5.5 | Proyección 1.000 denuncias/mes (USD);5.12;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Opus 5.5 | USD/M entrada;4.0;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Opus 5.5 | USD/M salida;20.0;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Opus 5.5 | Costo del período (USD);2.1008;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Opus 5.5 | Costo por caso (USD);0.010248;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Opus 5.5 | Proyección 100 denuncias/mes (USD);1.02;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida) | Claude Opus 5.5 | Proyección 1.000 denuncias/mes (USD);10.25;;"tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03; tokens medidos en Log Analytics (AppTraces del núcleo)";2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | manual | Solicitudes;173;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | manual | Tokens entrada;165846;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | manual | Tokens salida;151;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | manual | Entrada prom.;959;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | manual | Salida prom.;1;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | oficial | Solicitudes;17;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | oficial | Tokens entrada;128805;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | oficial | Tokens salida;28754;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | oficial | Entrada prom.;7577;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | oficial | Salida prom.;1691;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | respaldo | Solicitudes;15;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | respaldo | Tokens entrada;58279;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | respaldo | Tokens salida;5547;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | respaldo | Entrada prom.;3885;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Tokens por modo | respaldo | Salida prom.;370;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Costo y consumo;Nota;"Supuesto: se valorizan los tokens medidos del proveedor actual (Gemini / Azure OpenAI) tal cual; el tokenizador de Claude cuenta distinto, así que la cifra es una estimación y no se aplica ningún factor de corrección. Escenario principal: Claude Haiku 5.5 (equivalente al rol de gpt-5-nano). Sonnet 5.5 y Opus 5.5 son comparativos.";;;2026-11-12 02:48 UTC
+Costo y consumo;Nota;Precios al 2026-11-03 (tabla de precios de la API de Anthropic (anthropic.com/pricing), cacheada al 2026-11-03). Haiku 5.5 usa 0,50/2,50 USD/M solo si el prompt medio supera 100K tokens. Sin caché de prompts ni descuentos por lote.;;;2026-11-12 02:48 UTC
+Costo y consumo;Nota;"El evento solicitud_terminada no registra el modelo, solo el modo; no hay costo real facturado del proveedor actual medido en el período (la nube gratuita de Gemini no tiene cargo).";;;2026-11-12 02:48 UTC
+Costo y consumo;Nota;Nota secundaria, costo real del proveedor actual en la última evaluación offline (gpt-5-nano, 61 casos, precios 0,05/0,40 USD/M): 0.1284 USD (kerna/evaluacion/registro/recall_retriever.jsonl).;;;2026-11-12 02:48 UTC
+Costo y consumo;Nota;"Embeddings (kerna/evaluacion/precios_embeddings.json): sin precio verificado para voyage-4-large, voyage-4-lite, qwen3-embedding-8b, qwen3-embedding-4b; Anthropic no ofrece embeddings, por lo que su costo queda fuera de la estimación.";;;2026-11-12 02:48 UTC
+Cobertura normativa;Artículos vigentes en el corpus;144;artículos;kerna/evaluacion/registro/recall_retriever.jsonl (colección normativa_cl, vigente=true);2026-11-12 02:48 UTC
+Cobertura normativa;Artículos sugeridos en el período;0;artículos;Log Analytics (AppTraces del núcleo), evento articulo_sugerido;2026-11-12 02:48 UTC
+Cobertura normativa;Nota;Leyes cubiertas por el corpus y el dataset de evaluación: 21.643 (Ley Karin), 19.628/21.719 (datos personales) y 20.393 (responsabilidad penal de personas jurídicas).;;;2026-11-12 02:48 UTC
+Cobertura normativa;Nota;Sin sugerencias por ley en el período: el evento articulo_sugerido solo existe desde que el núcleo desplegado lo emite.;;;2026-11-12 02:48 UTC
+Incidentes;Casos en revisión manual;271;casos;Log Analytics (AppTraces del núcleo), solicitud_terminada con estado revision_manual;2026-11-12 02:48 UTC
+Incidentes;Eventos de falla de proveedor o modelo;275;eventos;Log Analytics (AppTraces del núcleo), nivel_fallido, recuperación fallida, cortocircuito;2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | recuperacion_nube_fallida | Proveedor;voyage;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | recuperacion_nube_fallida | Modelo;;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | recuperacion_nube_fallida | Código;429;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | recuperacion_nube_fallida | Eventos;76;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemma-4-31b-it;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;403;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;24;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemini-3.5-flash-lite;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;403;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;23;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemini-3.8-flash;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;403;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;19;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemini-3.6-flash;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;403;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;18;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemini-3.8-flash;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;silencio;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;17;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemini-3.8-flash;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;429;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;16;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Proveedor;gemini;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Modelo;gemini-3.8-flash;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Código;;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Eventos;12;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemini-3.8-flash;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;503;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;11;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemini-3.6-flash;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;503;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;11;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Proveedor;gemini;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Modelo;gemini-3.6-flash;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Código;;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Eventos;10;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemini-3.6-flash;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;429;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;8;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Proveedor;gemini;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Modelo;gemma-4-31b-it;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Código;;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Eventos;7;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | recuperacion_local_fallida | Proveedor;local;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | recuperacion_local_fallida | Modelo;;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | recuperacion_local_fallida | Código;silencio;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | recuperacion_local_fallida | Eventos;7;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemini-3.5-flash-lite;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;503;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;6;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Proveedor;gemini;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Modelo;gemini-3.5-flash-lite;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Código;;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | cortocircuito_abierto | Eventos;6;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemma-4-31b-it;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;503;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;2;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Proveedor;generacion;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Modelo;gemma-4-31b-it;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Código;500;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Fallas por evento, proveedor, modelo y código | nivel_fallido | Eventos;2;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Casos en revisión manual por motivo | cadena_agotada | Casos;173;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Casos en revisión manual por motivo | tiempo_agotado | Casos;98;;Log Analytics (AppTraces del núcleo);2026-11-12 02:48 UTC
+Incidentes;Nota;"Reintentos del conector sobre casos en revisión manual (hasta 3, uno al día, por falla de modelos): el conector los registra en su propio log, no en Log Analytics; sin cifras en este informe.";;;2026-11-12 02:48 UTC

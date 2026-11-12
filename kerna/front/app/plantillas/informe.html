@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block titulo %}Informe de gestión · Kerna AI{% endblock %}{% block nav %}<a class="btn sec" href="/panel">Panel</a>{% endblock %}
+{% block cuerpo %}
+<section class="hoja portada-inf">
+<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">{% with %}{% include "_simbolo.html" %}{% endwith %}<div><span class="eti">Kerna AI</span><h1 style="font-size:26px">Informe de gestión</h1>
+<p class="eti">Período {{ inf.meta.periodo }} · corte {{ inf.meta.corte }}</p></div></div>
+<form method="get" action="/panel/informe" class="rangos" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+{% for d in (7,30,90) %}<a class="btn{% if dias==d %} act{% endif %}" href="/panel/informe?dias={{ d }}">{{ d }} días</a>{% endfor %}
+<label class="eti">desde <input type="date" name="desde" value="{{ desde }}"></label><label class="eti">hasta <input type="date" name="hasta" value="{{ hasta }}"></label><button class="btn" type="submit">Aplicar</button></form>
+<p style="margin-top:14px"><b>Descargar:</b> <a class="btn" href="/panel/informe/descargar.pdf?{{ q }}">PDF</a> <a class="btn" href="/panel/informe/descargar.xlsx?{{ q }}">XLSX</a> <a class="btn" href="/panel/informe/descargar.csv?{{ q }}">CSV</a></p>
+<p class="eti">Solo cifras agregadas. Donde no hay datos se dice «sin datos».</p></section>
+<nav class="hoja sec"><span class="eti">Índice</span><ol>{% for s in inf.secciones %}<li><a href="#{{ s.id }}">{{ s.titulo }}</a></li>{% endfor %}</ol></nav>
+{% for s in inf.secciones %}<section class="hoja sec" id="{{ s.id }}"><h2 style="font-size:18px">{{ loop.index }}. {{ s.titulo }}</h2><p class="eti">{{ s.justificacion }}</p>
+{% if s.kpis %}<div class="tabla"><table><thead><tr><th>Métrica</th><th>Valor</th><th>Fuente</th></tr></thead><tbody>{% for k in s.kpis %}<tr><td>{{ k.etiqueta }}</td><td><b>{{ fmt(k.valor) }}</b> {{ k.unidad if k.valor is not none else '' }}</td><td class="eti">{{ k.fuente }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{% for g in s.graficos %}<div style="margin-top:14px"><span class="eti">{{ g.titulo }}</span>{{ barras_v(g["items"]) if g.tipo=="v" else barras_h(g["items"]) }}</div>{% endfor %}
+{% for t in s.tablas %}<h3 style="font-size:13px;margin-top:16px">{{ t.titulo }}</h3><div class="tabla"><table><thead><tr>{% for c in t.cols %}<th>{{ c }}</th>{% endfor %}</tr></thead><tbody>
+{% for f in t.filas %}<tr>{% for v in f %}<td>{{ fmt(v) }}</td>{% endfor %}</tr>{% else %}<tr><td colspan="{{ t.cols|length }}">Sin datos en el período.</td></tr>{% endfor %}</tbody></table></div><p class="eti">Fuente: {{ t.fuente }}</p>{% endfor %}
+{% for n in s.notas %}<p class="eti">Nota: {{ n }}</p>{% endfor %}</section>{% endfor %}
+<style>.tabla{overflow-x:auto}.tabla table{border-collapse:collapse;width:100%;font-size:12px}.tabla th{background:var(--lima);border:1px solid var(--azul);padding:6px 8px;text-align:left}.tabla td{border-bottom:1px solid var(--linea);padding:6px 8px;vertical-align:top}.portada-inf svg{width:84px;height:84px}input[type=date]{font:12px var(--mono);border:1.5px solid var(--azul);padding:5px}</style>
+{% endblock %}

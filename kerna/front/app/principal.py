@@ -8,7 +8,11 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import consultas, graficos, seguridad
+from datetime import datetime
+
+from fastapi.responses import Response
+
+from . import consultas, exportar, graficos, informe as inf_mod, seguridad
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
@@ -85,3 +89,33 @@ def api_metricas(request: Request, dias: int = 7):
         return consultas.metricas(dias)
     except Exception as e:
         return JSONResponse({"detalle": "consulta fallida", "tipo": type(e).__name__}, status_code=502)
+
+
+def _informe(dias, desde, hasta):
+    ini, fin = inf_mod.periodo(dias, desde, hasta)
+    return inf_mod.construir(ini, fin)
+
+
+@app.get("/panel/informe", response_class=HTMLResponse)
+def panel_informe(request: Request, dias: int = 30, desde: str = "", hasta: str = ""):
+    if not _permitido(request):
+        return RedirectResponse("/acceso", status_code=303)
+    inf = _informe(dias, desde or None, hasta or None)
+    q = f"desde={desde}&hasta={hasta}" if desde else f"dias={dias if dias in inf_mod.RANGOS else 30}"
+    return plantillas.TemplateResponse(request, "informe.html", {"inf": inf, "dias": dias if not desde else 0, "q": q, "desde": desde, "hasta": hasta, "fmt": exportar._fmt})
+
+
+_FORMATOS = {"xlsx": (exportar.a_xlsx, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+             "csv": (exportar.a_csv, "text/csv; charset=utf-8"), "pdf": (exportar.a_pdf, "application/pdf")}
+
+
+@app.get("/panel/informe/descargar.{ext}")
+def descargar_informe(ext: str, request: Request, dias: int = 30, desde: str = "", hasta: str = ""):
+    if not _permitido(request):
+        return RedirectResponse("/acceso", status_code=303)
+    if ext not in _FORMATOS:
+        return JSONResponse({"detalle": "formato no disponible"}, status_code=404)
+    inf = _informe(dias, desde or None, hasta or None)
+    f, tipo = _FORMATOS[ext]
+    nombre = "informe-kerna-%s.%s" % (inf["meta"]["periodo"].replace(" a ", "_"), ext)
+    return Response(f(inf), media_type=tipo, headers={"Content-Disposition": f'attachment; filename="{nombre}"'})

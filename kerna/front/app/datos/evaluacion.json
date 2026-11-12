@@ -1,0 +1,337 @@
+{
+ "generado": "2026-11-12T02:45:59+00:00",
+ "recall": {
+  "fecha": "2026-11-12T02:37:57+00:00",
+  "commit": "6c7164cd0+cambios",
+  "configuracion": "retriever + evaluador LLM (gpt-5-nano, 50 candidatos)",
+  "meta": 0.8,
+  "dataset_casos": 113,
+  "por_ley": [
+   {
+    "ley": "Global",
+    "casos": 91,
+    "casos_articulo": 61,
+    "recall_ley": 0.9340659340659341,
+    "recall5": 0.3770491803278688,
+    "ic95_inf": 0.26229508196721313,
+    "ic95_sup": 0.4918032786885246
+   },
+   {
+    "ley": "19.628-21.719",
+    "casos": 38,
+    "casos_articulo": 23,
+    "recall_ley": 1.0,
+    "recall5": 0.34782608695652173,
+    "ic95_inf": 0.17391304347826086,
+    "ic95_sup": 0.5217391304347826
+   },
+   {
+    "ley": "20.393",
+    "casos": 24,
+    "casos_articulo": 10,
+    "recall_ley": 0.8333333333333334,
+    "recall5": 0.0,
+    "ic95_inf": 0.0,
+    "ic95_sup": 0.0
+   },
+   {
+    "ley": "21.643",
+    "casos": 29,
+    "casos_articulo": 28,
+    "recall_ley": 0.9310344827586207,
+    "recall5": 0.5357142857142857,
+    "ic95_inf": 0.35714285714285715,
+    "ic95_sup": 0.7142857142857143
+   }
+  ],
+  "fuente": "kerna/evaluacion/registro/recall_retriever.jsonl"
+ },
+ "serie": [
+  {
+   "fecha": "2026-11-11 03:24",
+   "configuracion": "solo retriever (voyage-law-2, campo texto_original)",
+   "recall5": 0.5081967213114754
+  },
+  {
+   "fecha": "2026-11-11 03:48",
+   "configuracion": "solo retriever (voyage-4-large, campo texto_original)",
+   "recall5": 0.2786885245901639
+  },
+  {
+   "fecha": "2026-11-11 07:36",
+   "configuracion": "solo retriever (embeddinggemma-300m, campo texto_original)",
+   "recall5": 0.2459016393442623
+  },
+  {
+   "fecha": "2026-11-11 07:38",
+   "configuracion": "solo retriever (bge-m3, campo texto_original)",
+   "recall5": 0.3114754098360656
+  },
+  {
+   "fecha": "2026-11-11 07:41",
+   "configuracion": "solo retriever (multilingual-e5-large-instruct, campo texto_original)",
+   "recall5": 0.2786885245901639
+  },
+  {
+   "fecha": "2026-11-11 08:02",
+   "configuracion": "solo retriever (voyage-4-large, campo texto_original)",
+   "recall5": 0.32786885245901637
+  },
+  {
+   "fecha": "2026-11-11 14:39",
+   "configuracion": "solo retriever (voyage-4-large, campo texto_original)",
+   "recall5": 0.32786885245901637
+  },
+  {
+   "fecha": "2026-11-11 14:40",
+   "configuracion": "solo retriever (voyage-4-large, campo texto_original)",
+   "recall5": 0.2786885245901639
+  },
+  {
+   "fecha": "2026-11-11 14:42",
+   "configuracion": "solo retriever (bge-m3, campo texto_original)",
+   "recall5": 0.3114754098360656
+  },
+  {
+   "fecha": "2026-11-11 14:43",
+   "configuracion": "solo retriever (voyage-4-large, campo texto_original)",
+   "recall5": 0.39344262295081966
+  },
+  {
+   "fecha": "2026-11-11 14:43",
+   "configuracion": "solo retriever (voyage-4-large, campo texto_original)",
+   "recall5": 0.32786885245901637
+  },
+  {
+   "fecha": "2026-11-11 14:44",
+   "configuracion": "solo retriever (voyage-law-2, campo texto_original)",
+   "recall5": 0.5573770491803278
+  },
+  {
+   "fecha": "2026-11-11 14:45",
+   "configuracion": "solo retriever (bge-m3, campo texto_original)",
+   "recall5": 0.3114754098360656
+  },
+  {
+   "fecha": "2026-11-11 14:48",
+   "configuracion": "solo retriever (embeddinggemma-300m, campo texto_original)",
+   "recall5": 0.22950819672131148
+  },
+  {
+   "fecha": "2026-11-11 14:48",
+   "configuracion": "solo retriever (multilingual-e5-large-instruct, campo texto_original)",
+   "recall5": 0.2786885245901639
+  },
+  {
+   "fecha": "2026-11-11 14:55",
+   "configuracion": "solo retriever (text-embedding-3-large, campo texto_original)",
+   "recall5": 0.3114754098360656
+  },
+  {
+   "fecha": "2026-11-11 14:56",
+   "configuracion": "solo retriever (text-embedding-3-large, campo texto_original)",
+   "recall5": 0.2786885245901639
+  },
+  {
+   "fecha": "2026-11-11 20:08",
+   "configuracion": "solo retriever (text-embedding-3-large, campo texto_original)",
+   "recall5": 0.3442622950819672
+  },
+  {
+   "fecha": "2026-11-11 20:27",
+   "configuracion": "solo retriever (text-embedding-3-large, campo texto_original)",
+   "recall5": 0.29508196721311475
+  },
+  {
+   "fecha": "2026-11-11 22:54",
+   "configuracion": "retriever + evaluador LLM (gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3-flash-preview,gemma-4-31b-it, 30 candidatos)",
+   "recall5": 0.5409836065573771
+  },
+  {
+   "fecha": "2026-11-11 22:58",
+   "configuracion": "retriever + evaluador LLM (gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3-flash-preview,gemma-4-31b-it, 30 candidatos)",
+   "recall5": 0.5573770491803278
+  },
+  {
+   "fecha": "2026-11-11 23:30",
+   "configuracion": "retriever + reranker abierto",
+   "recall5": 0.3442622950819672
+  },
+  {
+   "fecha": "2026-11-12 01:49",
+   "configuracion": "retriever + evaluador LLM (gpt-5-nano, 70 candidatos)",
+   "recall5": 0.4098360655737705
+  },
+  {
+   "fecha": "2026-11-12 02:21",
+   "configuracion": "retriever + evaluador LLM (gpt-5-nano, 70 candidatos)",
+   "recall5": 0.3770491803278688
+  },
+  {
+   "fecha": "2026-11-12 02:25",
+   "configuracion": "retriever + evaluador LLM (gpt-5-nano, 70 candidatos)",
+   "recall5": 0.4262295081967213
+  },
+  {
+   "fecha": "2026-11-12 02:29",
+   "configuracion": "retriever + evaluador LLM (gpt-5-nano, 70 candidatos)",
+   "recall5": 0.3770491803278688
+  },
+  {
+   "fecha": "2026-11-12 02:37",
+   "configuracion": "retriever + evaluador LLM (gpt-5-nano, 50 candidatos)",
+   "recall5": 0.3770491803278688
+  }
+ ],
+ "corpus_articulos": 144,
+ "evaluador": {
+  "cadena": "gpt-5-nano",
+  "proveedor": "azure-openai",
+  "tokens_por_consulta": {
+   "entrada": 19287.60655737705,
+   "salida": 2851.27868852459
+  },
+  "latencia_llamada_ms": {
+   "mediana": 13742.028367938474,
+   "p95": 27540.586403105408
+  },
+  "costo_usd": 0.1283984,
+  "hit_en_candidatos": 0.8852459016393442
+ },
+ "anonimizador": {
+  "fecha": "2026-11-11",
+  "casos": 113,
+  "tipos": [
+   {
+    "tipo": "CARGO",
+    "casos_con_dato": 33,
+    "casos_detectados": 0,
+    "recall_por_caso": 0.0
+   },
+   {
+    "tipo": "CORREO",
+    "casos_con_dato": 3,
+    "casos_detectados": 3,
+    "recall_por_caso": 1.0
+   },
+   {
+    "tipo": "DIRECCION",
+    "casos_con_dato": 2,
+    "casos_detectados": 0,
+    "recall_por_caso": 0.0
+   },
+   {
+    "tipo": "EDAD",
+    "casos_con_dato": 3,
+    "casos_detectados": 0,
+    "recall_por_caso": 0.0
+   },
+   {
+    "tipo": "EMPRESA/INSTITUCION",
+    "casos_con_dato": 60,
+    "casos_detectados": 0,
+    "recall_por_caso": 0.0
+   },
+   {
+    "tipo": "FINANCIERO",
+    "casos_con_dato": 1,
+    "casos_detectados": 0,
+    "recall_por_caso": 0.0
+   },
+   {
+    "tipo": "GENERO",
+    "casos_con_dato": 1,
+    "casos_detectados": 0,
+    "recall_por_caso": 0.0
+   },
+   {
+    "tipo": "NACIONALIDAD",
+    "casos_con_dato": 3,
+    "casos_detectados": 0,
+    "recall_por_caso": 0.0
+   },
+   {
+    "tipo": "N_CAUSA",
+    "casos_con_dato": 58,
+    "casos_detectados": 0,
+    "recall_por_caso": 0.0
+   },
+   {
+    "tipo": "PERSONA",
+    "casos_con_dato": 27,
+    "casos_detectados": 24,
+    "recall_por_caso": 0.889
+   },
+   {
+    "tipo": "RUT",
+    "casos_con_dato": 1,
+    "casos_detectados": 1,
+    "recall_por_caso": 1.0
+   },
+   {
+    "tipo": "SALUD",
+    "casos_con_dato": 4,
+    "casos_detectados": 0,
+    "recall_por_caso": 0.0
+   },
+   {
+    "tipo": "UBICACION",
+    "casos_con_dato": 14,
+    "casos_detectados": 0,
+    "recall_por_caso": 0.0
+   }
+  ],
+  "apariciones": [
+   {
+    "tipo": "CORREO",
+    "total": 12,
+    "ocultas": 12
+   },
+   {
+    "tipo": "RUT",
+    "total": 3,
+    "ocultas": 3
+   },
+   {
+    "tipo": "TELEFONO",
+    "total": 0,
+    "ocultas": 0
+   },
+   {
+    "tipo": "EDAD",
+    "total": 36,
+    "ocultas": 0
+   },
+   {
+    "tipo": "N_CAUSA",
+    "total": 17,
+    "ocultas": 7
+   }
+  ],
+  "fuente": "kerna/evaluacion/registro/anonimizador_2026-11-11.json"
+ },
+ "pruebas": {
+  "fecha": "2026-11-11T20:28:51Z",
+  "commit": "bb703e0fb+cambios",
+  "capas": {
+   "unitarias": {
+    "total": 333,
+    "pasadas": 333,
+    "fallidas": 0,
+    "omitidas": 0
+   }
+  },
+  "fuente": "kerna/evaluacion/registro/pruebas-20261111-2028-bb703e0fb.json"
+ },
+ "precios_embeddings": {
+  "voyage-4-large": null,
+  "voyage-4-lite": null,
+  "voyage-law-2": 0.12,
+  "text-embedding-3-large": 0.13,
+  "qwen3-embedding-8b": null,
+  "qwen3-embedding-4b": null,
+  "bge-m3": null,
+  "embeddinggemma-300m": null,
+  "multilingual-e5-large-instruct": null
+ }
+}

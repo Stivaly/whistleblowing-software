@@ -5,7 +5,18 @@ FastAPI con plantillas Jinja y gráficos SVG en línea; sin build de Node ni CDN
 - URL: https://app-kerna-dev-front-g6mzy.azurewebsites.net
 - `/` portada pública: qué hace Kerna, flujo, anonimizador y cifrado, leyes cubiertas (21.643, 19.628/21.719, 20.393) y aviso de que es una sugerencia. Símbolo guilloché animado en línea, quieto con `prefers-reduced-motion`.
 - `/panel` (protegido): casos por día, distribución por modo, artículos por ley, valoraciones, latencia P50/P95 y tokens; rango 7 o 30 días. `/api/metricas?dias=7|30` entrega lo mismo en JSON. Solo cifras agregadas, nunca texto ni identificadores.
+- `/panel/informe` (protegido): informe de gestión con selector 7/30/90 días o fechas, y descargas `/panel/informe/descargar.{pdf,xlsx,csv}` (mismos parámetros `dias` o `desde`/`hasta`). Ejemplos en `ejemplos/`.
 - `/salud` responde `ok` sin autenticación.
+
+## Informe de gestión
+Seis secciones, elegidas porque responden lo que un tutor o auditor pregunta, cada una con su fuente y fecha de corte (donde falta un dato dice «sin datos»):
+1. Resumen ejecutivo: casos, % con sugerencia, valoración útil, disponibilidad efectiva y modos.
+2. Calidad: recall@5 por artículo y por ley frente a la meta de 0,80, anonimizador por tipo, valoraciones de auditores, pruebas automáticas (evaluación sobre el dataset público; no depende del período).
+3. Desempeño: latencia P50/P95 frente a PR-30 (15 s) y por etapa. Los reintentos del conector no llegan a Log Analytics: sin datos.
+4. Costo y consumo: tokens medidos valorizados a precios de la API de Anthropic (Haiku 5.5 principal; Sonnet 5.5 y Opus 5.5 comparativos), por caso, por período y por 100 y 1.000 denuncias al mes. Supuesto: el tokenizador de Claude cuenta distinto y no se aplica factor. Precios, fecha y fuente en constantes al inicio de `app/informe.py`.
+5. Cobertura normativa: artículos del corpus y artículos sugeridos por ley.
+6. Incidentes: fallas de proveedor o modelo y casos en revisión manual por motivo.
+Datos: Log Analytics (consultas en `kql/`, rango exacto) y `app/datos/evaluacion.json`, instantánea que `generar_datos_informe.py` crea en cada despliegue desde `kerna/evaluacion/registro/`. Formatos: XLSX (hoja Resumen con logo PNG y una hoja por sección), PDF (reportlab, fuentes Unbounded y JetBrains Mono en TTF embebidas, logo vectorial) y CSV único en formato largo (seccion; metrica; valor; unidad; fuente; fecha_corte, UTF-8 con BOM y `;`), elegido porque un solo archivo se filtra y cruza sin abrir un zip.
 
 ## Datos
 `app/consultas.py` ejecuta con `azure-monitor-query` y `DefaultAzureCredential` las consultas KQL de `kerna/docs/observabilidad/consultas/` (las del Workbook `solicitudes_por_modo` y `tokens_por_solicitud`, más `front_*.kql`), cambiando `ago(7d)` por el rango. Caché de 60 s. El despliegue copia esas consultas a `app/kql/`.

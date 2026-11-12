@@ -19,7 +19,7 @@ def barras_h(items: list[tuple[str, float]], ancho: int = 560) -> Markup:
         rel = LIMA if v == mx else "#fff"
         p.append(f'<text x="0" y="{y + 17}" font-size="12" fill="{AZUL}">{escape(et)}</text>'
                  f'<rect x="200" y="{y + 4}" width="{w:.1f}" height="18" fill="{rel}" stroke="{AZUL}" stroke-width="1.5"/>'
-                 f'<text x="{208 + w:.1f}" y="{y + 18}" font-size="12" fill="{SEC}">{int(v):,}</text>'.replace(",", "."))
+                 f'<text x="{208 + w:.1f}" y="{y + 18}" font-size="12" fill="{SEC}">{(f'{v:,.4g}' if v != int(v) else f'{int(v):,}')}</text>'.replace(",", "."))
     p.append("</svg>")
     return Markup("".join(p))
 
