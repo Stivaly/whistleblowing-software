@@ -73,3 +73,7 @@ def vaciar() -> None:
     _datos.clear()
     with _candado:
         _enproceso.clear()
+
+
+def invalidar(clave) -> None:
+    _datos.pop(clave, None)

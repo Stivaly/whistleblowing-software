@@ -132,7 +132,7 @@ def panel(request: Request, dias: int = 7):
 
 def _reintentos_ctx():
     try:
-        return {"r": cache.obtener(("rei",), reintentos.resumen, 60), "s": reintentos.estado_solicitud()}
+        return {"r": cache.obtener(("rei",), reintentos.resumen, 60), "s": cache.obtener(("rei_s",), reintentos.estado_solicitud, 5)}
     except Exception:  # sin telemetría o sin tabla: el bloque se oculta, el panel sigue
         return None
 
@@ -156,6 +156,7 @@ def reintentar(request: Request, csrf: str = Form("")):
         return JSONResponse({"detalle": "token inválido"}, status_code=403)
     try:
         r = reintentos.solicitar()
+        cache.invalidar(("rei_s",))
     except Exception:
         r = "error"
     return RedirectResponse(f"/panel?reintento={r}", status_code=303)
