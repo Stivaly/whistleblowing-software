@@ -21,12 +21,18 @@ def _casos(n=30):
 
 
 @pytest.mark.pr("PR-13")
-def test_relato_marca_y_sin_texto_original():
+def test_relato_completo_incluye_texto_original():
     r = cd.armar_relato(CASO)
+    assert r.splitlines()[0] == "[PRUEBA SINTÉTICA DEN-0001]" and "DATO PERSONAL NO DEBE APARECER" in r
+
+
+@pytest.mark.pr("PR-13")
+def test_relato_marca_y_sin_texto_original():
+    r = cd.armar_relato(CASO, "resumen")
     assert r.splitlines()[0] == "[PRUEBA SINTÉTICA DEN-0001]"
     assert "Título de prueba" in r and "Hecho resumido." in r and "acoso" in r
     assert "DATO PERSONAL" not in r and "[Resumen parafraseado]" not in r
-    assert len(cd.armar_relato(dict(CASO, resumen_parafraseado="x" * 5000))) <= cd.MAX_RELATO
+    assert len(cd.armar_relato(dict(CASO, resumen_parafraseado="x" * 5000), "resumen")) <= cd.MAX_RELATO
 
 
 @pytest.mark.pr("PR-13")

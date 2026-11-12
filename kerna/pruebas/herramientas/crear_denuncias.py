@@ -25,14 +25,26 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parents[2]
 DATASET = RAIZ / "evaluacion" / "datos" / "denuncias_publicas.json"
 REGISTRO = RAIZ / "evaluacion" / "datos" / "denuncias_veridy.json"
+REGISTRO_COMPLETO = RAIZ / "evaluacion" / "datos" / "denuncias_veridy_texto_completo.json"
 SEMILLA = 20261110
 MAX_RELATO = 2000
 
 
 # ---------------------------------------------------------------- relato y selección
 
-def armar_relato(caso):
-    """Relato corto: marca visible + título, resumen parafraseado y submateria (nunca texto_original)."""
+def armar_relato(caso, modo="completo"):
+    """Relato del envío.
+
+    completo (por defecto): marca visible + título + texto_original íntegro (relato real con PII; el entorno
+    es cerrado y es el caso de prueba del anonimizador). resumen: forma antigua, marca + título + resumen
+    parafraseado + submateria, truncada a MAX_RELATO.
+    """
+    if modo == "completo":
+        return "\n".join([
+            "[PRUEBA SINTÉTICA %s]" % caso["id"],
+            "Título: %s" % (caso.get("titulo") or "").strip(),
+            "Relato: %s" % (caso.get("texto_original") or "").strip(),
+        ])
     resumen = (caso.get("resumen_parafraseado") or "").replace("[Resumen parafraseado]", "").strip()
     partes = [
         "[PRUEBA SINTÉTICA %s]" % caso["id"],
@@ -338,13 +350,16 @@ def main(argv=None):
     g.add_argument("--verificar", action="store_true")
     ap.add_argument("--url", default=os.environ.get("VERIDY_URL"))
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--relato", choices=("completo", "resumen"), default="completo",
+                    help="completo (defecto): título + texto_original; resumen: forma antigua de ~180 caracteres")
+    ap.add_argument("--registro", default=None, help="archivo de registro (defecto según --relato)")
     a = ap.parse_args(argv)
     if not (a.casos or a.lote or a.verificar):
         ap.error("indica --casos, --lote o --verificar")
     if not a.url:
         ap.error("falta --url o la variable VERIDY_URL")
 
-    reg = Registro()
+    reg = Registro(a.registro or (REGISTRO_COMPLETO if a.relato == "completo" else REGISTRO))
     try:
         if a.verificar:
             return verificar(a.url, reg)
@@ -361,7 +376,7 @@ def main(argv=None):
             if i in reg:
                 omitidos += 1
                 continue
-            ans = armar_respuestas(cuest, armar_relato(casos[i]), casos[i].get("ley_principal") or "")
+            ans = armar_respuestas(cuest, armar_relato(casos[i], a.relato), casos[i].get("ley_principal") or "")
             fallos = validar_cuerpo(cuest, ans)
             if fallos:
                 print("%s: cuerpo inválido (%d)" % (i, len(fallos)))

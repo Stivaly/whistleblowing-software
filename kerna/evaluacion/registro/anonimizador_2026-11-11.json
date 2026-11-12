@@ -1,0 +1,77 @@
+{
+ "persona_en_casos_sin_etiqueta": {
+  "casos": 86,
+  "marcadores": 221
+ },
+ "telefono_que_es_numero_de_causa": 22,
+ "residuo_nombre_pila_conocido_seguido_de_mayuscula": {
+  "apariciones": 1,
+  "casos": 1
+ },
+ "n_casos": 113,
+ "casos_con_etiqueta": {
+  "EMPRESA/INSTITUCION": 60,
+  "CARGO": 33,
+  "EDAD": 3,
+  "SALUD": 4,
+  "GENERO": 1,
+  "NACIONALIDAD": 3,
+  "N_CAUSA": 58,
+  "PERSONA": 27,
+  "RUT": 1,
+  "UBICACION": 14,
+  "DIRECCION": 2,
+  "FINANCIERO": 1,
+  "CORREO": 3
+ },
+ "casos_con_deteccion_del_tipo": {
+  "PERSONA": 24,
+  "RUT": 1,
+  "CORREO": 3
+ },
+ "marcadores_emitidos": {
+  "PERSONA": 780,
+  "TELEFONO": 13,
+  "URL": 11,
+  "RUT": 2,
+  "CORREO": 3
+ },
+ "casos_con_marcador": {
+  "PERSONA": 79,
+  "TELEFONO": 13,
+  "URL": 9,
+  "RUT": 1,
+  "CORREO": 3
+ },
+ "apariciones_independientes": {
+  "CORREO": {
+   "total": 12,
+   "ocultas": 12
+  },
+  "RUT": {
+   "total": 3,
+   "ocultas": 3
+  },
+  "TELEFONO": {
+   "total": 0,
+   "ocultas": 0
+  },
+  "EDAD": {
+   "total": 36,
+   "ocultas": 0
+  },
+  "N_CAUSA": {
+   "total": 17,
+   "ocultas": 7
+  }
+ },
+ "residuo_apariciones": {
+  "EDAD": 36,
+  "N_CAUSA": 10
+ },
+ "residuo_casos": {
+  "EDAD": 15,
+  "N_CAUSA": 7
+ },
+ "idempotente": false
+}

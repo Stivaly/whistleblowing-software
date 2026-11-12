@@ -15,9 +15,10 @@ export VERIDY_URL=https://<host-de-veridy>
 ```
 
 - `--lote N` elige N casos variados por `ley_principal` (turnos rotativos, semilla fija).
-- Relato: primera línea `[PRUEBA SINTÉTICA DEN-XXXX]`, luego título, resumen parafraseado y submateria. Nunca usa `texto_original`.
+- Relato por defecto (`--relato completo`): `[PRUEBA SINTÉTICA DEN-XXXX]`, título y `texto_original` íntegro (relatos reales con PII; el entorno es cerrado y sirve para probar el anonimizador). `--relato resumen` conserva la forma antigua (título, resumen parafraseado y submateria, 2.000 caracteres máx.).
+- Registro: `denuncias_veridy_texto_completo.json` con `completo`; `denuncias_veridy.json` con `resumen`; `--registro RUTA` lo cambia.
 - Los demás campos obligatorios del Cuestionario Base llevan valores neutros ("Prueba sintética"); sin evidencia y sin compartir datos.
-- Registro idempotente en `evaluacion/datos/denuncias_veridy.json` (ignorado por git, permisos 600): caso → id de denuncia, recibo, fecha UTC. Un caso registrado no se vuelve a crear. La herramienta no borra nada en Veridy.
+- Registro idempotente (ver arriba) (ignorado por git, permisos 600): caso → id de denuncia, recibo, fecha UTC. Un caso registrado no se vuelve a crear. La herramienta no borra nada en Veridy.
 - Veridy limita los envíos por hora y por IP: al alcanzar el límite la herramienta se detiene (código de salida 3); repetir el mismo comando más tarde continúa con los casos que faltan.
 - La salida muestra solo conteos e identificadores, nunca recibos ni textos.
 
