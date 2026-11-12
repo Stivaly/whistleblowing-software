@@ -242,7 +242,7 @@
   function opcionInforme(sp) {
     const u = sp.unit || '', ink = css('--ink'), mu = css('--muted'), ln = '#DDE2EF', h = !!sp.h, tip = { trigger: sp.kind === 'donut' ? 'item' : 'axis', valueFormatter: (v) => fnum(v) + u, confine: true };
     const o = { ...base(), tooltip: tip, aria: { enabled: true } };
-    const meta = sp.meta && { symbol: 'none', silent: true, data: [h ? { xAxis: sp.meta.v } : { yAxis: sp.meta.v }], label: { formatter: sp.meta.t + ' ' + fnum(sp.meta.v) + u, color: ink, fontSize: 10.5, fontWeight: 700, position: h ? 'insideStartTop' : 'insideEndTop' }, lineStyle: { color: ink, type: 'dashed', width: 1.5 } };
+    const meta = sp.meta && { symbol: 'none', silent: true, data: [h ? { xAxis: sp.meta.v } : { yAxis: sp.meta.v }], label: { formatter: sp.meta.t + ' ' + fnum(sp.meta.v) + u, color: ink, fontSize: 10.5, fontWeight: 700, position: h ? 'start' : 'insideEndTop', rotate: 0, align: 'left' }, lineStyle: { color: ink, type: 'dashed', width: 1.5 } };
     if (sp.kind === 'donut') {
       const tot = sp.items.reduce((a, x) => a + x.v, 0);
       return { ...o, legend: { bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: ink, fontSize: 11 } },
@@ -250,8 +250,8 @@
           { type: 'text', left: 'center', top: '46%', style: { text: sp.cn || '', fontSize: 11, fill: mu } }],
         series: [{ type: 'pie', radius: ['52%', '74%'], center: ['50%', '44%'], label: { show: false }, itemStyle: { borderColor: '#fff', borderWidth: 2 }, data: sp.items.map((x) => ({ name: x.n, value: x.v, itemStyle: { color: colC(x.c) } })) }] };
     }
-    const cat = { type: 'category', data: sp.cats, inverse: h, axisLabel: { color: mu, fontSize: 10.5, width: h ? 96 : undefined, overflow: 'truncate', interval: sp.kind === 'line' ? 'auto' : (!h && sp.cats.length > 8 ? Math.ceil(sp.cats.length / 7) - 1 : 0) }, axisLine: { lineStyle: { color: ln } }, axisTick: { show: false }, boundaryGap: sp.kind !== 'line' };
-    const val = { type: 'value', axisLabel: { color: mu, fontSize: 10.5, formatter: (v) => fnum(v) }, splitLine: { lineStyle: { color: '#EEF1F8' } }, max: (m) => { const x = Math.max(m.max, sp.meta ? sp.meta.v * 1.15 : 0), p = Math.pow(10, Math.floor(Math.log10(x || 1))) / 2; return Math.ceil(x / p) * p; } };
+    const cat = { type: 'category', data: sp.cats, inverse: h, axisLabel: { color: mu, fontSize: 10.5, width: h ? 128 : undefined, overflow: 'truncate', interval: sp.kind === 'line' ? 'auto' : (!h && sp.cats.length > 8 ? Math.ceil(sp.cats.length / 7) - 1 : 0) }, axisLine: { lineStyle: { color: ln } }, axisTick: { show: false }, boundaryGap: sp.kind !== 'line' };
+    const val = { type: 'value', axisLabel: { color: mu, fontSize: 10.5, formatter: (v) => fnum(v) }, splitLine: { lineStyle: { color: '#EEF1F8' } }, max: (m) => { const x = Math.max(m.max, sp.meta ? sp.meta.v * 1.1 : 0) || 1, k = Math.pow(10, Math.floor(Math.log10(x))); return k * [1, 1.5, 2, 3, 4, 5, 6, 8, 10].find((v) => v * k >= x); } };
     const multi = sp.series.length > 1;
     const series = sp.series.map((s, i) => {
       const dato = s.cs ? s.d.map((v, j) => ({ value: v, itemStyle: { color: colC(s.cs[j]) } })) : s.d, color = s.c ? colC(s.c) : undefined;
@@ -260,7 +260,7 @@
       return { name: s.n, data: dato, ...x, markLine: i === 0 && meta ? meta : undefined };
     });
     return { ...o, legend: multi ? { top: 0, right: 0, icon: 'roundRect', itemWidth: 10, itemHeight: 6, textStyle: { color: ink, fontSize: 11 } } : { show: false },
-      grid: { left: 6, right: h ? 36 : 10, top: multi ? 26 : (sp.meta ? 22 : 10), bottom: 4, containLabel: true },
+      grid: { left: 6, right: h ? 40 : 14, top: multi ? 26 : (sp.meta ? 22 : 10), bottom: 4, containLabel: true },
       xAxis: h ? val : cat, yAxis: h ? cat : val, series };
   }
   function iniciarInforme() {

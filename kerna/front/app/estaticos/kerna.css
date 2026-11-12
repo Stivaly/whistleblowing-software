@@ -765,3 +765,7 @@ k-st[data-e="valorada"]{--fondo:#CFFF5E;--acc:#0B1020;--pi:#0B1020;--pf:#CFFF5E;
 .kt-sub{margin:0;font-size:12.5px;color:var(--muted);font-weight:600}.kt-lg{display:grid;gap:3px;margin-top:2px!important}
 .kt-lg li{display:flex;align-items:center;gap:6px;font-size:12px;min-width:0}.kt-lg li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}.kt-lg li b{font-weight:700}
 .kt-lg .dt{width:8px;height:8px;border-radius:50%;flex:none}
+.sin-uso summary,.anio-d summary,.dat-d summary{list-style:none}.sin-uso summary::-webkit-details-marker,.anio-d summary::-webkit-details-marker{display:none}
+.sin-uso summary::before,.anio-d summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--brand);border-bottom:2px solid var(--brand);transform:rotate(-45deg);margin-right:10px;transition:transform .15s;flex:none}
+.sin-uso[open] summary::before,.anio-d[open] summary::before{transform:rotate(45deg)}
+.kt-lg .mb{flex:1.2;min-width:30px;height:8px}.kt-lg li span+.mb{margin-left:2px}

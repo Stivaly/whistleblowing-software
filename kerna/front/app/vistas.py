@@ -192,8 +192,11 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
         mp.s[f"k.{key}"] = x["e"]
         mp.ico[f"k.{key}"] = ICONO[x["e"]]
         mp.x[f"k.{key}"] = x["x"]
-        if x["form"] == "spark" and len(x["s"]) < 4:  # con menos de 4 días una línea no dice nada: se oculta
-            x["form"] = "none"
+        if x["form"] == "spark" and len(x["s"]) < 4:  # con menos de 4 días una línea no dice nada: se muestran los días como filas
+            x["form"] = "dias" if x["k"] == "casos" and x["s"] else "none"
+            if x["form"] == "dias":
+                mx = max(x["s"]) or 1
+                x["dias_l"] = [{"d": f.fecha_corta(c["dia"]), "n": f.miles(c["casos"]), "w": round(100 * c["casos"] / mx)} for c in m["casos_por_dia"]]
         if x["form"] == "spark":
             x["d_l"], x["d_a"] = graficos.spark(x["s"]), graficos.spark_area(x["s"])
             mp.d[f"k.{key}.l"], mp.d[f"k.{key}.a"] = x["d_l"], x["d_a"]
@@ -534,6 +537,8 @@ def informe(inf_: dict) -> list[dict]:
 # Informe de gestión en pantalla (v2): KPI con estado y tendencia, veredicto de una línea, pestañas con gráficos compactos.
 # Las tablas no van en el cuerpo: están en la pestaña «Datos» (plantilla informe_datos.html) y en XLSX/CSV.
 # ---------------------------------------------------------------------------------------------------------------------------------
+TIPOS_DATO = {"DIRECCION": "Dirección", "GENERO": "Género", "UBICACION": "Ubicación", "N_CAUSA": "N.º de causa", "EMPRESA_INSTITUCION": "Empresa o institución",
+              "CORREO": "Correo", "RUT": "RUT", "CARGO": "Cargo", "EDAD": "Edad", "FINANCIERO": "Dato financiero", "NACIONALIDAD": "Nacionalidad", "PERSONA": "Nombre de persona", "SALUD": "Salud"}
 PESTANAS = [  # id, título, ícono utilitario, glosario, KPI de la pestaña (etiqueta del informe, rótulo claro)
     ("resumen", "Resumen", "layout-dashboard", "inf_resumen", [("Disponibilidad efectiva", "Casos con sugerencia sobre los válidos"), ("% de sugerencias valoradas útiles", "Sugerencias útiles según auditores"), ("Revisión manual", "Casos en revisión manual")]),
     ("calidad", "Calidad", "target", "inf_calidad", [("Recall@5 por artículo (global)", "Acierto con el artículo exacto"), ("Recall por ley (global)", "Acierto con la ley"), ("Pruebas automáticas (unitarias): pasadas/total", "Pruebas automáticas pasadas")]),
@@ -633,11 +638,12 @@ def informe_charts(inf_: dict) -> dict:
     rs = T("recall_serie")
     if rs and len(rs["filas"]) > 1:
         fr = list(reversed(rs["filas"]))
-        out["calidad"].append({"id": "g-serie", "t": "Acierto en las últimas mediciones", "g": "inf_serie", "kind": "line", "unit": " %", "meta": {"v": round(100 * META_RECALL), "t": "Meta"},
-                               "cats": [f.fecha_corta(str(r[0])[:10]) + " " + str(r[0])[11:16] for r in fr], "series": [{"n": "Acierto", "d": [round(100 * r[2], 1) for r in fr], "c": "pro", "area": True}]})
+        un_dia = len({str(r[0])[:10] for r in fr}) == 1  # misma fecha: solo la hora en el eje, la fecha va en el título
+        out["calidad"].append({"id": "g-serie", "t": "Acierto en las últimas mediciones" + (f" ({f.fecha_corta(str(fr[0][0])[:10])})" if un_dia else ""), "g": "inf_serie", "kind": "line", "unit": " %", "meta": {"v": round(100 * META_RECALL), "t": "Meta"},
+                               "cats": [(str(r[0])[11:16] if un_dia else f.fecha_corta(str(r[0])[:10]) + " " + str(r[0])[11:16]) for r in fr], "series": [{"n": "Acierto", "d": [round(100 * r[2], 1) for r in fr], "c": "pro", "area": True}]})
     an = T("anonimizador")
     if an and an["filas"]:
-        out["calidad"].append({"id": "g-anon", "t": "Datos personales ocultados", "g": "inf_anon", "kind": "bar", "h": True, "unit": " %", "cats": [str(r[0]).capitalize() for r in an["filas"]],
+        out["calidad"].append({"id": "g-anon", "t": "Datos personales ocultados", "g": "inf_anon", "kind": "bar", "h": True, "unit": " %", "cats": [TIPOS_DATO.get(str(r[0]).upper(), str(r[0]).replace("_", " ").capitalize()) for r in an["filas"]],
                                "series": [{"n": "Ocultados", "d": [round(100 * r[3]) for r in an["filas"]], "cs": ["ok" if r[3] >= .9 else ("warn" if r[3] >= .6 else "bad") for r in an["filas"]]}]})
     ld = T("lat_dia")
     if ld and ld["filas"]:
