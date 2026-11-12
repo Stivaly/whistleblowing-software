@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: dos conceptos a página completa, cada uno con su pieza grande, su porqué, su construcción y sus versiones */
+/* Layout: el símbolo en movimiento abre la lámina; debajo, su lógica, los estados y las versiones */
 :root{
   --papel:#F5F7FB; --hoja:#FFFFFF; --azul:#1C2A6B; --sec:#4A5578; --linea:#DCE1EC; --lima:#CFFF5E; --oliva:#3F6212;
   --display:"Unbounded","Arial Black",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;
@@ -11,96 +11,99 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--papel:#0B1020;--hoja:#10172C;--azul:#C9D3FF;--sec:#A9B2CF;--linea:#26304D;--oliva:#CFFF5E;color-scheme:dark}}
 :root[data-theme="dark"]{--papel:#0B1020;--hoja:#10172C;--azul:#C9D3FF;--sec:#A9B2CF;--linea:#26304D;--oliva:#CFFF5E;color-scheme:dark}
 body{background:var(--papel);color:var(--azul);font-family:var(--mono);font-size:14px;line-height:1.65}
-.pag{max-width:1080px;margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:64px}
+.pag{max-width:1080px;margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:48px}
 .eti{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sec)}
 h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
-h1{font-weight:500;font-size:clamp(22px,3.4vw,32px)}
-h2{font-weight:700;font-size:clamp(28px,5vw,48px);letter-spacing:.02em}
-h3{font-weight:500;font-size:15px}
+h1{font-weight:700;font-size:clamp(40px,7vw,72px);letter-spacing:.05em;line-height:1}
+h1 span{font-family:var(--mono);font-weight:500;font-size:.3em;letter-spacing:.14em;color:var(--oliva);vertical-align:top;margin-left:.3em}
+h2{font-weight:500;font-size:20px}
+h3{font-weight:500;font-size:14px}
 p{margin:0;max-width:64ch}
 .hoja{background:var(--hoja);border:1px solid var(--linea)}
-.cab{display:grid;gap:10px}
-
-.concepto{display:grid;gap:20px}
 .heroe{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:center;padding:40px}
-.heroe .sim{width:100%;max-width:400px;justify-self:center}
-.porque{display:grid;gap:14px}
-.fila{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.fila>div{padding:20px;display:grid;gap:8px;min-width:0}
-.fila svg{width:100%;max-width:150px;justify-self:center}
-.lienzo{min-height:120px;display:grid;place-items:center;padding:12px}
+.heroe .sim{width:100%;max-width:420px;justify-self:center}
+.heroe .txt{display:grid;gap:14px}
+.sec{display:grid;gap:18px}
+.tres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.tres>div{padding:20px;display:grid;gap:8px;min-width:0}
+.estados{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.estados figure{margin:0;padding:20px;display:grid;gap:10px;justify-items:center;text-align:center}
+.estados svg{width:110px;height:110px}
+.estados b{font-family:var(--display);font-weight:500;font-size:13px}
+.estados span{font-size:12px;color:var(--sec)}
+.vers{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}
+.vers figure{margin:0;display:grid;gap:10px;padding:20px;min-width:0}
+.lienzo{min-height:130px;display:grid;place-items:center;padding:12px}
 .osc{--azul:#E8ECFF;--hoja:#0B1020;--oliva:#CFFF5E;background:#0B1020}
 .cla{--azul:#1C2A6B;--hoja:#FFFFFF;--oliva:#3F6212;background:#FFFFFF;border:1px solid #E3E7F1}
 .lockup{display:flex;align-items:center;gap:12px;color:var(--azul)}
-.lockup svg{width:54px;height:54px;flex:none}
+.lockup svg{width:56px;height:56px;flex:none}
 .lockup b{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:.06em}
 .lockup i{font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--oliva);align-self:flex-start;margin-top:6px}
 .fav{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
 .fav span{display:grid;place-items:center;border:1px solid var(--linea);background:var(--hoja);padding:5px}
 .cap{font-size:12px;color:var(--sec)}
 
-/* piezas generadas */
-.pt{fill:var(--azul)}
-.pt.t{opacity:.35}
+/* símbolo */
 .orb{fill:none;stroke:var(--azul);stroke-linecap:round}
+.ros{stroke-width:.75;stroke-dasharray:.1 2.2}
+.anillo{stroke-width:.9;stroke-dasharray:.1 2.4;opacity:.6}
+.guia{stroke-width:1.6}
 .nuc{fill:var(--azul)} .nuc-l{fill:var(--lima)}
 .sat{fill:var(--lima);stroke:var(--azul);stroke-width:1.6}
-.gira{transform-origin:32px 32px;animation:g 90s linear infinite}
+.vivo .roseta{transform-origin:32px 32px;animation:g 80s linear infinite}
+.vivo .camino{transform-origin:32px 32px;animation:g 14s linear infinite reverse}
+.vivo .latido{transform-origin:32px 32px;animation:l 3.5s ease-in-out infinite}
+.rapido .roseta{animation-duration:20s}.rapido .camino{animation-duration:5s}
 @keyframes g{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion: reduce){.gira{animation:none}}
-@media (max-width:760px){.heroe{grid-template-columns:1fr;padding:24px}.fila{grid-template-columns:1fr}}
+@keyframes l{50%{transform:scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.vivo .roseta,.vivo .camino,.vivo .latido{animation:none}}
+@media (max-width:760px){.heroe{grid-template-columns:1fr;padding:24px}.tres{grid-template-columns:1fr}.estados{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="defs"></defs></svg>
 
 <main class="pag">
-  <header class="cab">
-    <span class="eti">Kerna AI · logo · ronda 3</span>
-    <h1>Dos conceptos propios, nacidos de Núcleo</h1>
-    <p>Los dos se construyen con el mismo material que el bloque de Kerna: puntos, órbitas y un acento lima. No son un átomo: cada uno sale de algo que solo Kerna es.</p>
-  </header>
-
-  <!-- A · Semilla -->
-  <section class="concepto" aria-labelledby="t-a">
-    <div class="hoja heroe">
-      <svg class="sim" viewBox="-1 -1 66 66" role="img" aria-label="Concepto Semilla"><use href="#semilla"/></svg>
-      <div class="porque">
-        <span class="eti">Concepto A</span>
-        <h2 id="t-a">Semilla</h2>
-        <p>Kerna viene de <em>kernel</em>: grano, semilla, el centro de algo. El símbolo es el patrón con que crecen las semillas en un girasol: cada punto gira 137,5° respecto del anterior y se aleja un poco más del centro. Son los hechos de la denuncia ordenándose solos alrededor del núcleo.</p>
-        <p>Entre 220 puntos, uno es lima: el artículo que encaja. Una órbita punteada cierra el sistema.</p>
-      </div>
-    </div>
-    <div class="fila">
-      <div class="hoja"><h3>Construcción</h3><svg viewBox="-1 -1 66 66" aria-hidden="true"><use href="#semilla-g"/></svg><p class="cap">Ángulo áureo 137,508°. Radio = 1,85·√n. Punto = 0,35 + 1,15·(n/220).</p></div>
-      <div class="hoja"><h3>Analizando</h3><svg viewBox="-1 -1 66 66" aria-hidden="true"><g class="gira"><use href="#semilla-s"/></g></svg><p class="cap">La espiral gira despacio mientras Kerna busca; el punto lima aún no aparece.</p></div>
-      <div class="hoja"><h3>Versiones</h3>
-        <div class="lienzo cla"><div class="lockup"><svg viewBox="-1 -1 66 66"><use href="#semilla"/></svg><b>KERNA</b><i>AI</i></div></div>
-        <div class="lienzo osc"><div class="lockup"><svg viewBox="-1 -1 66 66"><use href="#semilla"/></svg><b>KERNA</b><i>AI</i></div></div>
-        <div class="fav"><span><svg width="16" height="16" viewBox="-1 -1 66 66"><use href="#semilla-p"/></svg></span><span><svg width="24" height="24" viewBox="-1 -1 66 66"><use href="#semilla-p"/></svg></span><span><svg width="40" height="40" viewBox="-1 -1 66 66"><use href="#semilla"/></svg></span></div>
-        <p class="cap">En 16 y 24 px se usan 60 puntos más grandes.</p></div>
+  <section class="hoja heroe" aria-label="Logo de Kerna AI">
+    <svg class="sim vivo" viewBox="-1 -1 66 66" role="img" aria-label="Símbolo de Kerna AI en movimiento"><use href="#kerna"/></svg>
+    <div class="txt">
+      <span class="eti">Kerna AI · logo</span>
+      <h1>KERNA<span>AI</span></h1>
+      <p>Una roseta de guilloché hecha de órbitas punteadas, como las de los billetes y los certificados. Una sola órbita está trazada: el camino que Kerna eligió para este caso. Por ella viaja el satélite lima, la norma que encaja.</p>
+      <p class="cap">La roseta gira muy lento; la órbita trazada gira al revés, más rápido. Con movimiento reducido activado, queda quieta.</p>
     </div>
   </section>
 
-  <!-- B · Guilloché -->
-  <section class="concepto" aria-labelledby="t-b">
-    <div class="hoja heroe">
-      <svg class="sim" viewBox="-1 -1 66 66" role="img" aria-label="Concepto Guilloché"><use href="#guilloche"/></svg>
-      <div class="porque">
-        <span class="eti">Concepto B</span>
-        <h2 id="t-b">Guilloché</h2>
-        <p>Los billetes, los títulos y los certificados notariales llevan rosetas de líneas entrelazadas para que no se puedan falsificar: el guilloché. Aquí la roseta está hecha de doce órbitas punteadas. Habla de confianza documental, que es lo que Kerna ofrece, y de sistema, que es lo que Kerna es.</p>
-        <p>En la punta de una órbita, el satélite lima: la norma que encajó. En el centro, el núcleo.</p>
-      </div>
+  <section class="sec">
+    <span class="eti">La lógica</span>
+    <div class="tres">
+      <div class="hoja"><h3>Roseta punteada</h3><p>Todas las rutas posibles entre los hechos y la ley chilena. Punteadas porque son candidatas.</p></div>
+      <div class="hoja"><h3>Órbita trazada</h3><p>La ruta que Kerna sigue. Es la única línea continua del símbolo.</p></div>
+      <div class="hoja"><h3>Núcleo y satélite</h3><p>El núcleo es Kerna; el satélite lima, el artículo que encajó. Siempre uno solo.</p></div>
     </div>
-    <div class="fila">
-      <div class="hoja"><h3>Construcción</h3><svg viewBox="-1 -1 66 66" aria-hidden="true"><use href="#guilloche-g"/></svg><p class="cap">12 elipses de 27 × 8, giradas cada 15°. Punteado 0,1 / 2,2. Anillo exterior de radio 30,5.</p></div>
-      <div class="hoja"><h3>Analizando</h3><svg viewBox="-1 -1 66 66" aria-hidden="true"><g class="gira"><use href="#guilloche-s"/></g></svg><p class="cap">La roseta rota completa, como un sello que se está estampando.</p></div>
-      <div class="hoja"><h3>Versiones</h3>
-        <div class="lienzo cla"><div class="lockup"><svg viewBox="-1 -1 66 66"><use href="#guilloche"/></svg><b>KERNA</b><i>AI</i></div></div>
-        <div class="lienzo osc"><div class="lockup"><svg viewBox="-1 -1 66 66"><use href="#guilloche"/></svg><b>KERNA</b><i>AI</i></div></div>
-        <div class="fav"><span><svg width="16" height="16" viewBox="-1 -1 66 66"><use href="#guilloche-p"/></svg></span><span><svg width="24" height="24" viewBox="-1 -1 66 66"><use href="#guilloche-p"/></svg></span><span><svg width="40" height="40" viewBox="-1 -1 66 66"><use href="#guilloche"/></svg></span></div>
-        <p class="cap">En 16 y 24 px, 6 órbitas continuas en lugar de 12 punteadas.</p></div>
+  </section>
+
+  <section class="sec">
+    <span class="eti">En Veridy, el símbolo es el estado</span>
+    <div class="estados">
+      <figure class="hoja"><svg class="vivo rapido" viewBox="-1 -1 66 66" aria-hidden="true"><use href="#kerna-busca"/></svg><figcaption><b>Analizando</b><br><span>Gira rápido, sin satélite</span></figcaption></figure>
+      <figure class="hoja"><svg class="vivo" viewBox="-1 -1 66 66" aria-hidden="true"><use href="#kerna"/></svg><figcaption><b>Sugerencia lista</b><br><span>El satélite viaja por su órbita</span></figcaption></figure>
+      <figure class="hoja"><svg viewBox="-1 -1 66 66" aria-hidden="true"><use href="#kerna-vacio"/></svg><figcaption><b>Sin norma aplicable</b><br><span>Roseta quieta, sin órbita trazada</span></figcaption></figure>
+      <figure class="hoja"><svg viewBox="-1 -1 66 66" aria-hidden="true" opacity=".4"><use href="#kerna-vacio"/></svg><figcaption><b>Sin conexión</b><br><span>Todo apagado</span></figcaption></figure>
+    </div>
+  </section>
+
+  <section class="sec">
+    <span class="eti">Versiones</span>
+    <div class="vers">
+      <figure class="hoja"><div class="lienzo cla"><div class="lockup"><svg class="vivo" viewBox="-1 -1 66 66"><use href="#kerna"/></svg><b>KERNA</b><i>AI</i></div></div><figcaption class="eti">Fondo claro</figcaption></figure>
+      <figure class="hoja"><div class="lienzo osc"><div class="lockup"><svg class="vivo" viewBox="-1 -1 66 66"><use href="#kerna"/></svg><b>KERNA</b><i>AI</i></div></div><figcaption class="eti">Fondo oscuro</figcaption></figure>
+      <figure class="hoja"><div class="lienzo"><div class="fav">
+        <span><svg width="16" height="16" viewBox="-1 -1 66 66"><use href="#kerna-p"/></svg></span>
+        <span><svg width="24" height="24" viewBox="-1 -1 66 66"><use href="#kerna-p"/></svg></span>
+        <span><svg width="40" height="40" viewBox="-1 -1 66 66"><use href="#kerna"/></svg></span>
+        <span><svg width="64" height="64" viewBox="-1 -1 66 66"><use href="#kerna"/></svg></span>
+      </div></div><figcaption class="eti">16 · 24 · 40 · 64 px</figcaption><p class="cap">En 16 y 24 px: 6 órbitas continuas finas, órbita trazada y satélite.</p></figure>
     </div>
   </section>
 </main>
@@ -109,42 +112,33 @@ p{margin:0;max-width:64ch}
 (function(){
   const NS="http://www.w3.org/2000/svg", defs=document.getElementById("defs");
   const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
-  const sym=id=>el("symbol",{id,viewBox:"-1 -1 66 66"},defs);
-  const ORO=137.508*Math.PI/180;
-
-  function semilla(id,{n=220,c=1.85,base=.35,crece=1.15,lima=true,guia=false,orbita=true}={}){
-    const s=sym(id);
-    if(orbita) el("circle",{class:"orb",cx:32,cy:32,r:31,"stroke-width":.9,"stroke-dasharray":".1 2.4",opacity:.6},s);
-    if(guia){ el("circle",{class:"orb",cx:32,cy:32,r:c*Math.sqrt(n),"stroke-width":.3,opacity:.5},s);
-      el("line",{x1:32,y1:32,x2:32+28*Math.cos(ORO),y2:32+28*Math.sin(ORO),stroke:"currentColor",class:"orb","stroke-width":.3},s);
-      el("line",{x1:32,y1:32,x2:60,y2:32,class:"orb","stroke-width":.3},s); }
-    const elegido=Math.round(n*0.72);
-    for(let i=4;i<=n;i++){
-      const a=i*ORO, r=c*Math.sqrt(i), x=32+r*Math.cos(a), y=32+r*Math.sin(a);
-      if(lima && i===elegido){ el("circle",{class:"sat",cx:x.toFixed(2),cy:y.toFixed(2),r:2.6},s); continue; }
-      el("circle",{class:"pt"+(i>n*.88?" t":""),cx:x.toFixed(2),cy:y.toFixed(2),r:(base+crece*i/n).toFixed(2)},s);
+  function kerna(id,{camino=true,sat=true,k=12,punteado=true}={}){
+    const s=el("symbol",{id,viewBox:"-1 -1 66 66"},defs);
+    el("circle",{class:"orb anillo",cx:32,cy:32,r:30.5},s);
+    const ros=el("g",{class:"roseta"},s);
+    for(let j=1;j<k;j++){
+      const e=el("ellipse",{class:"orb"+(punteado?" ros":""),cx:32,cy:32,rx:27,ry:8,transform:`rotate(${j*180/k} 32 32)`},ros);
+      if(!punteado){e.setAttribute("stroke-width","1.4");e.setAttribute("opacity",".7");}
     }
-    el("circle",{class:"nuc",cx:32,cy:32,r:2.6},s); el("circle",{class:"nuc-l",cx:32,cy:32,r:1},s);
-  }
-  semilla("semilla");
-  semilla("semilla-g",{guia:true});
-  semilla("semilla-s",{lima:false});
-  semilla("semilla-p",{n:60,c:3.6,base:1.1,crece:1.4,orbita:false});
-
-  function guilloche(id,{k=12,punteado=true,ancho=.75,lima=true,guia=false}={}){
-    const s=sym(id);
-    el("circle",{class:"orb",cx:32,cy:32,r:30.5,"stroke-width":.9,"stroke-dasharray":".1 2.4",opacity:.6},s);
-    for(let j=0;j<k;j++){
-      const e=el("ellipse",{class:"orb",cx:32,cy:32,rx:27,ry:8,transform:`rotate(${j*180/k} 32 32)`,"stroke-width":ancho},s);
-      if(punteado) e.setAttribute("stroke-dasharray",".1 2.2"); else e.setAttribute("opacity",".85");
-      if(guia && j===0){ e.setAttribute("stroke-width",1.6); e.removeAttribute("stroke-dasharray"); }
+    if(camino){
+      const c=el("g",{class:"camino"},s);
+      el("ellipse",{class:"orb guia",cx:32,cy:32,rx:27,ry:8},c);
+      if(sat) el("circle",{class:"sat",cx:59,cy:32,r:3.8},c);
     }
-    el("circle",{class:"nuc",cx:32,cy:32,r:5.4},s); el("circle",{class:"nuc-l",cx:32,cy:32,r:2},s);
-    if(lima){ const a=-30*Math.PI/180; el("circle",{class:"sat",cx:(32+27*Math.cos(a)).toFixed(2),cy:(32+27*Math.sin(a)).toFixed(2),r:3.6},s); }
+    const n=el("g",{class:"latido"},s);
+    el("circle",{class:"nuc",cx:32,cy:32,r:5.4},n); el("circle",{class:"nuc-l",cx:32,cy:32,r:2},n);
   }
-  guilloche("guilloche");
-  guilloche("guilloche-g",{guia:true});
-  guilloche("guilloche-s",{lima:false});
-  guilloche("guilloche-p",{k:6,punteado:false,ancho:1.6});
+  kerna("kerna");
+  kerna("kerna-busca",{sat:false});
+  kerna("kerna-vacio",{camino:false});
+  kerna("kerna-p",{k:6,punteado:false});
+  // Las animaciones CSS no cruzan el límite de <use>: se copia el dibujo dentro de cada SVG.
+  document.querySelectorAll("main svg use").forEach(u=>{
+    const s=document.getElementById(u.getAttribute("href").slice(1));
+    if(!s) return;
+    const g=document.createElementNS(NS,"g");
+    for(const h of s.childNodes) g.appendChild(h.cloneNode(true));
+    u.replaceWith(g);
+  });
 })();
 </script>
