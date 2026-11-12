@@ -250,3 +250,4 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 
 ## Front de Kerna (recordatorio de la usuaria, 2026-11-12)
 - [ ] **Arreglar el informe de gestión** (`/panel/informe` y sus descargas PDF/XLSX/CSV): llevarlo al diseño y criterios de la maqueta v2/v3 (colores semánticos, conclusiones, información útil). Solo recordatorio: no lanzar agente hasta que la usuaria lo pida.
+- [ ] **Ingresos en UF, no en dólares**: las tarifas por cliente (tabla `clientes`, campo `tarifa_usd_denuncia`), los ingresos, el margen y la proyección de Negocio deben expresarse en UF. El costo de IA sigue en USD (precios de Anthropic) y debe convertirse a UF para calcular el margen. Afecta `kerna/front/app/negocio.py`, `sembrar_negocio.py`, la plantilla `negocio.html` y la maqueta v2. Solo recordatorio.
