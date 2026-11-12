@@ -402,7 +402,7 @@ def test_datos_agrupa_las_tablas_por_seccion(monkeypatch, inf):
 
 def test_global_lleva_icono_como_las_leyes(inf):
     html = str(vistas.informe_vis(inf, {})["calidad"])
-    assert 'data-l="global"' in html and html.count('class="lx"') == html.count('<li class="ly')
+    assert 'data-l="global"' in html and "identidad.svg#n-acierto" in html and html.count('class="lx"') == html.count('<li class="ly')
 
 
 def test_pdf_usa_las_visuales_orbitales_de_la_vista(inf):
