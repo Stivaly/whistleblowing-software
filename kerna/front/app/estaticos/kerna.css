@@ -921,7 +921,7 @@ k-n svg,k-lx svg{display:block;width:100%;height:100%;overflow:visible}
 #app .as-ch.ctl{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin-left:auto;min-height:0;padding:0;border:0;font:500 13px Inter,sans-serif;color:var(--ink);background:none}
 #app .as-ch .ct-n{font-weight:600;font-size:13px}
 .gi{display:grid;grid-template-columns:minmax(0,1fr)}@media(min-width:1100px){.gi{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:28px}}
-#app .ctl{display:grid;grid-template-columns:minmax(130px,1fr) auto;align-items:center;gap:2px 12px;min-height:46px;padding:4px 0;border-top:1px dotted var(--line-strong);background:none!important}
+#app .ctl{display:grid;grid-template-columns:minmax(116px,1fr) auto;align-items:center;gap:2px 12px;min-height:46px;padding:4px 0;border-top:1px dotted var(--line-strong);background:none!important}
 #app .ctl:first-child{border-top:0}
 @media(min-width:1100px){#app .gi>.ctl:nth-child(2){border-top:0}}
 .ctl-w{grid-column:1/-1}
@@ -970,3 +970,6 @@ html,body{max-width:100%}
 /* Ajustes: sección de una sola fila (Compartir) ajustada a su contenido; textos de los paneles legibles */
 .as-1 .ap{min-height:0;height:88px}.as-1 .ap-svg{width:84px;height:84px}#app .as-1 .as-ch.ctl{margin-left:0;flex-basis:100%}.as-1 .as-r{align-content:start;padding-top:10px}.as-1 .gi{display:none}
 @media(max-width:599px){.subtxt{display:none}.as-1 .ap{height:88px}}
+#app .ctl .seg{flex-wrap:nowrap}
+@media(max-width:599px){#app .ctl[data-t="sg"]{grid-template-columns:minmax(0,1fr)}#app .ctl[data-t="sg"] .ct-c{justify-content:flex-start}}
+.stt b{white-space:nowrap}.stt b small{white-space:nowrap}

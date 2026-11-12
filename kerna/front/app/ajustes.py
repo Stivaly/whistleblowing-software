@@ -35,7 +35,7 @@ GRUPOS = [
         {"k": "reprocesar", "t": "sw", "l": "Reintentar los de revisión manual", "d": "Una vez, al guardar. Úsalo tras arreglar una falla."}]},
     {"id": "ia", "t": "Inteligencia artificial", "i": "sparkles", "items": [
         {"k": "evaluador", "t": "sw", "l": "Revisor automático de citas", "d": "Comprueba que las citas respalden cada artículo."},
-        {"k": "candidatos", "t": "rg", "l": "Artículos revisados por caso", "d": "Por cada caso.", "min": 3, "max": 20, "u": ("artículo", "artículos"), "dep": "evaluador"},
+        {"k": "candidatos", "t": "rg", "l": "Artículos por caso", "d": "Por cada caso.", "min": 3, "max": 20, "u": ("artículo", "artículos"), "dep": "evaluador"},
         {"k": "cadena", "t": "cd", "l": "Orden de los modelos", "d": "Cuál se usa primero y cuáles respaldan."}]},
     {"id": "comp", "t": "Compartir", "i": "users", "items": [
         {"k": "compartir", "t": "ch", "l": "Compartir con", "d": "Equipos que reciben el caso con la sugerencia.", "o": [{"v": v, "t": t} for v, t in EQUIPOS]}]},
