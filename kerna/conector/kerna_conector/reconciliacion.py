@@ -51,8 +51,9 @@ class ResultadoPasada:
 class _Pasada:
     def __init__(self, veridy, nucleo, estado: est.Estado, id_empresa: str, ahora: Callable[[], float],
                  compartir_con: str = "", reprocesar: bool = False, reintentos_max: int = 3,
-                 reintento_horas: float = 24.0, envios_max: int = 5):
-        self.envios_max, self.envios = envios_max, 0  # tope de envíos al núcleo por pasada (casos nuevos y reintentos)
+                 reintento_horas: float = 24.0, envios_max: int = 5, forzar: bool = False):
+        self.forzar = forzar  # reintento manual pedido desde el panel: sin esperas y sin tope de envíos por pasada
+        self.envios_max, self.envios = (0 if forzar else envios_max), 0  # tope de envíos al núcleo por pasada (casos nuevos y reintentos)
         self.reprocesar = reprocesar
         self.reintentos_max, self.reintento_horas = reintentos_max, reintento_horas
         self.v, self.n, self.e, self.ahora = veridy, nucleo, estado, ahora
@@ -293,7 +294,7 @@ class _Pasada:
             if k >= self.reintentos_max:
                 e.marcar_procesado(id_caso, "reproceso", "final")
                 return
-            if k > 0 and self.ahora() - float(e.id_nota_procesado(id_caso, "reproceso", "ts%d" % k) or 0) < espera:
+            if k > 0 and not self.forzar and self.ahora() - float(e.id_nota_procesado(id_caso, "reproceso", "ts%d" % k) or 0) < espera:
                 return
         caso = self._leer(id_caso)
         if caso is None:
@@ -305,7 +306,7 @@ class _Pasada:
                     ultima.nota.motivo_revision not in MOTIVOS_REINTENTABLES:
                 e.marcar_procesado(id_caso, "reproceso", "final")
                 return
-            if k == 0 and not self.reprocesar and self.ahora() - self._epoch(ultima.nota.generado_en) < espera:
+            if k == 0 and not self.reprocesar and not self.forzar and self.ahora() - self._epoch(ultima.nota.generado_en) < espera:
                 return
             try:
                 relato = lector_casos.extraer_relato(caso)
@@ -405,7 +406,7 @@ class _Pasada:
 def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "veridy",
                     ahora: Callable[[], float] = time.time, compartir_con: str = "",
                     reprocesar: bool = False, reintentos_max: int = 3,
-                    reintento_horas: float = 24.0, envios_max: int = 5) -> ResultadoPasada:
+                    reintento_horas: float = 24.0, envios_max: int = 5, forzar: bool = False) -> ResultadoPasada:
     dueno = str(uuid.uuid4())
     if not estado.tomar_cerrojo(CERROJO, dueno, ahora(), TTL_CERROJO_S):
         return ResultadoPasada(omitida=True, resultado="omitida")
@@ -414,7 +415,7 @@ def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "verid
     r = ResultadoPasada()
     try:
         p = _Pasada(veridy, nucleo, estado, id_empresa, ahora, compartir_con, reprocesar, reintentos_max, reintento_horas,
-                    envios_max)
+                    envios_max, forzar)
         r = p.r
         casos = sorted(veridy.listar_casos(), key=lambda c: (str(c.get("creation_date") or ""), str(c.get("id"))))
         r.casos = len(casos)

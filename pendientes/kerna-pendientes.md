@@ -322,3 +322,19 @@ Pendiente / decisiones para la usuaria:
 - El precio de cada cliente pasó de «tarifa por denuncia» a precio anual del plan (modelo de ventas del capítulo 25); los campos `tarifa_usd_denuncia` antiguos en la tabla se ignoran.
 - La participación de Veridy usa el neto real de sus contratos; la Tabla 114 resta un neto fijo de 5.700.000 por plataforma externa (solo en la proyección).
 - Costos de embeddings, Qdrant, Atlas y observabilidad no figuran como partidas del capítulo 25; no se modelan.
+
+## 2026-11-12 Disponibilidad por proveedor y reintento manual en el Resumen
+Hecho:
+- `kerna/front/app/proveedores.py`: estado según la página de cada proveedor (caché 4 min, timeout 4 s, error = «sin información»).
+  Fuentes: Azure Status RSS (`azure.status.microsoft/en-us/status/feed/`, filtro servicio OpenAI/Foundry y región West US, `REGION_AZURE_OPENAI`);
+  Google Cloud `status.cloud.google.com/incidents.json` (producto «Vertex Gemini API», incidente activo y global);
+  Voyage `voyageai-status.statuspage.io/api/v2/summary.json` (componente API; `status.voyageai.com` no responde desde este host, se usa el dominio de Statuspage).
+  Endpoint `/api/proveedores`; el panel muestra «¿Está todo bien?» (rojo si el principal cae) y una pastilla por proveedor con «?». Desplegado y verificado (3 operativos, egreso OK).
+- Reintento manual: `reintentos.py` (resumen desde telemetría, solicitud atómica en tabla `reintentosmanuales`, ETag), `/panel/reintentar` (confirmación sin JS, POST con sesión + token CSRF + mismo origen, doble clic idempotente). Terraform aplicado (tabla, rol Contributor del front, `REINTENTOS_TABLA_URL`).
+- Conector (código, SIN desplegar): `solicitudes.py` + `forzar` en `reconciliacion.py` (sin espera de 24 h ni tope de 5) + lectura al inicio de cada pasada.
+- Maqueta: se quitó «¿Qué falló y qué hacer?»; proveedores ocupan su lugar; reintentos arriba con «Reintentar ahora» (confirmación, carga, «5 de 7 resueltos») y botón por caso.
+- Pruebas: `test_front_proveedores.py`, `test_front_reintentos.py`, y 2 nuevas en `test_conector_reconciliacion.py` (102 OK en front+conector).
+Pendiente:
+- Desplegar el conector (recrea el grupo de Veridy: `infra/veridy/terraform/conector.tf`, imagen nueva + `infra/aplicar.sh veridy`) con `REINTENTOS_TABLA_URL` y rol «Storage Table Data Contributor» de la identidad del grupo de Veridy sobre la tabla `reintentosmanuales` (hoy el botón registra el pedido pero nadie lo atiende).
+- El panel real no tiene botón por caso: la telemetría no guarda identificadores de casos (solo conteos); el contador de pendientes es una aproximación (revisión manual por fallo de modelos menos reprocesados, 7 días).
+- Azure Resource Health por recurso (más preciso) requiere rol Reader del front sobre la cuenta OpenAI; no se hizo. Gemini API / AI Studio no tiene endpoint legible por máquina (se usa el de Vertex Gemini como proxy). Los casos de incidente de Azure se probaron con respuestas guardadas modeladas (el feed estaba vacío).

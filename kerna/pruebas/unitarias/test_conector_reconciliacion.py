@@ -496,3 +496,36 @@ def test_valoracion_del_auditor_sin_texto():
     assert _Pasada._valoracion(S(tipo="feedback", nota=S(valoracion="arriba"))) == "util"
     assert _Pasada._valoracion(S(tipo="feedback", nota=S(valoracion="abajo"))) == "no_util"
     assert _Pasada._valoracion(S(tipo="clasificacion_auditor", nota=S(articulos=[]))) == "ninguno_aplica"
+
+
+def test_reintento_manual_forzado_salta_la_espera_de_24_h_y_el_tope(mundo):
+    v, n, e, ref = _caso_agotado(mundo)
+    assert pasada_t(v, n, e, T0 + 60).reenviados == 0              # sin forzar, el fallo es reciente
+    r = ejecutar_pasada(v, n, e, ahora=lambda: T0 + 60, forzar=True, envios_max=1)
+    assert r.reenviados == 1 and len(n.solicitudes) == 2
+
+
+class TablaFalsa:
+    def __init__(self):
+        self.fila = None
+
+    def get_entity(self, pk, rk):
+        if self.fila is None:
+            raise type("ResourceNotFoundError", (Exception,), {})()
+        return dict(self.fila)
+
+    def upsert_entity(self, ent, mode="merge"):
+        self.fila = {**(self.fila or {}), **ent}
+
+
+def test_solicitud_manual_se_lee_una_vez_y_se_marca_atendida():
+    from kerna_conector.solicitudes import SolicitudReintento
+    t = TablaFalsa()
+    s = SolicitudReintento(t)
+    assert not s.pedida()                                           # sin fila
+    t.fila = {"estado": "solicitado"}
+    assert s.pedida()
+    s.atender(4)
+    assert t.fila["estado"] == "atendido" and t.fila["reintentados"] == 4 and not s.pedida()
+    assert not SolicitudReintento(None).pedida()                    # sin tabla configurada: inactivo
+    SolicitudReintento(None).atender(1)

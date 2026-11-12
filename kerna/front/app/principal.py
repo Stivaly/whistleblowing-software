@@ -12,7 +12,7 @@ from datetime import datetime
 
 from fastapi.responses import Response
 
-from . import consultas, exportar, graficos, informe as inf_mod, negocio, seguridad
+from . import consultas, exportar, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
@@ -78,7 +78,51 @@ def panel(request: Request, dias: int = 7):
         m, error = consultas.metricas(dias), None
     except Exception as e:  # sin identidad, sin rol o Log Analytics caído: no se filtra el detalle
         m, error = None, type(e).__name__
-    return plantillas.TemplateResponse(request, "panel.html", {"m": m, "error": error, "dias": dias if dias in consultas.RANGOS else 7})
+    try:
+        prov = proveedores.estado_proveedores()
+    except Exception:  # la página de estado nunca debe romper el panel
+        prov = None
+    return plantillas.TemplateResponse(request, "panel.html", {"m": m, "error": error, "prov": prov, "rei": _reintentos_ctx(), "csrf": seguridad.token_csrf(request.cookies),
+                                                               "aviso": request.query_params.get("reintento"),
+                                                               "dias": dias if dias in consultas.RANGOS else 7})
+
+
+def _reintentos_ctx():
+    try:
+        return {"r": reintentos.resumen(), "s": reintentos.estado_solicitud()}
+    except Exception:  # sin telemetría o sin tabla: el bloque se oculta, el panel sigue
+        return None
+
+
+@app.get("/panel/reintentar", response_class=HTMLResponse)
+def reintentar_confirmar(request: Request):
+    """Paso de confirmación (sin JavaScript): explica qué pasará y pide el segundo clic."""
+    if not _permitido(request):
+        return RedirectResponse("/acceso", status_code=303)
+    return plantillas.TemplateResponse(request, "reintentar.html", {"ctx": _reintentos_ctx(), "csrf": seguridad.token_csrf(request.cookies)})
+
+
+@app.post("/panel/reintentar")
+def reintentar(request: Request, csrf: str = Form("")):
+    if not _permitido(request):
+        return JSONResponse({"detalle": "no autorizado"}, status_code=401)
+    origen = request.headers.get("origin")
+    if (origen and origen.rstrip("/") != str(request.base_url).rstrip("/")) or request.headers.get("sec-fetch-site", "same-origin") not in ("same-origin", "none"):
+        return JSONResponse({"detalle": "origen no permitido"}, status_code=403)
+    if not seguridad.csrf_valido(request.cookies, csrf):
+        return JSONResponse({"detalle": "token inválido"}, status_code=403)
+    try:
+        r = reintentos.solicitar()
+    except Exception:
+        r = "error"
+    return RedirectResponse(f"/panel?reintento={r}", status_code=303)
+
+
+@app.get("/api/proveedores")
+def api_proveedores(request: Request):
+    if not _permitido(request):
+        return JSONResponse({"detalle": "no autorizado"}, status_code=401)
+    return proveedores.estado_proveedores()
 
 
 @app.get("/api/metricas")

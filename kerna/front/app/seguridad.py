@@ -58,3 +58,13 @@ def limitar(ip: str, max_fallos: int = 5, ventana_s: int = 300) -> bool:
 
 def fallo(ip: str) -> None:
     _fallos.setdefault(ip, []).append(time.time())
+
+
+def token_csrf(cookies) -> str:
+    """Token ligado a la sesión: la cookie del panel (o la clave por cabecera). Va en un campo oculto del formulario."""
+    base = cookies.get(COOKIE) or "sin-cookie"
+    return hmac.new(_clave().encode(), f"kerna-csrf:{base}".encode(), hashlib.sha256).hexdigest()
+
+
+def csrf_valido(cookies, candidato: str) -> bool:
+    return bool(_clave()) and hmac.compare_digest((candidato or "").encode(), token_csrf(cookies).encode())

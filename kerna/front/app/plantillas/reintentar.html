@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block titulo %}Reintentar casos · Kerna AI{% endblock %}{% block nav %}<a class="btn sec" href="/panel">Panel</a>{% endblock %}
+{% block cuerpo %}<section class="hoja" style="max-width:560px;margin:40px auto"><h1 style="font-size:20px">¿Reintentar ahora?</h1>
+<p>Kerna volverá a analizar {% if ctx %}{{ ctx.r.reintentables }} {% if ctx.r.reintentables == 1 %}caso{% else %}casos{% endif %}{% else %}los casos{% endif %} que fallaron por problemas de los modelos, sin esperar la próxima ronda automática. Los casos que necesitan a una persona no se tocan.</p>
+<p class="vacio">El texto de las denuncias no pasa por este panel: el conector lo lee de Veridy con su propia sesión, como siempre.</p>
+<form method="post" action="/panel/reintentar" style="display:flex;gap:10px;margin-top:16px"><input type="hidden" name="csrf" value="{{ csrf }}">
+<button class="btn" type="submit">Sí, reintentar</button><a class="btn sec" href="/panel">Cancelar</a></form></section>{% endblock %}

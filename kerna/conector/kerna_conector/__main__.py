@@ -17,6 +17,7 @@ from .config import Config, ErrorConfiguracion
 from .estado import abrir_estado
 from .nucleo import ClienteNucleo
 from .reconciliacion import ejecutar_pasada
+from .solicitudes import SolicitudReintento
 from .veridy import ClienteVeridy
 
 log = logging.getLogger("kerna.conector")
@@ -42,13 +43,17 @@ def main(argv=None) -> int:
     nucleo = ClienteNucleo(cfg.kerna_api_url, cfg.kerna_client_id, cfg.kerna_client_secret, cfg.id_empresa,
                            dormir=lambda s: parar.wait(s))
     estado = abrir_estado(cfg.estado)
+    solicitud = SolicitudReintento.desde_entorno()
     codigo = 0
     try:
         while not parar.is_set():
             try:
+                forzar = solicitud.pedida()
                 r = ejecutar_pasada(veridy, nucleo, estado, cfg.id_empresa, compartir_con=cfg.compartir_con,
                                  reprocesar=cfg.reprocesar, reintentos_max=cfg.reintentos_max,
-                                 reintento_horas=cfg.reintento_horas, envios_max=cfg.envios_por_pasada)
+                                 reintento_horas=cfg.reintento_horas, envios_max=cfg.envios_por_pasada, forzar=forzar)
+                if forzar and not r.omitida:
+                    solicitud.atender(r.reenviados + r.reprocesados)
                 log.info("pasada: %s casos=%d enviados=%d sugerencias=%d reenviados=%d reprocesados=%d decisiones=%d errores=%d",
                          r.resultado, r.casos, r.enviados, r.sugerencias, r.reenviados, r.reprocesados, r.decisiones, r.errores)
                 codigo = 3 if r.omitida else (0 if r.exitosa else 1)

@@ -4,6 +4,22 @@
 <h1 style="font-size:22px">Panel de resultados</h1>
 <div class="rangos"><a class="btn" href="/panel/negocio">Negocio</a><a class="btn{% if dias==7 %} act{% endif %}" href="/panel?dias=7">7 días</a><a class="btn{% if dias==30 %} act{% endif %}" href="/panel?dias=30">30 días</a></div></div>
 <p class="eti">Solo cifras agregadas. Sin texto de denuncias ni identificadores.</p>
+{% if prov %}
+<section class="hoja sec eg e-{{ prov.general.estado }}" aria-labelledby="eg"><div><span class="eti">¿Está todo bien?</span>
+<h2 id="eg" class="eg-t">{% if prov.general.estado == 'operativo' %}Sí{% elif prov.general.estado == 'caido' %}Atención: proveedor caído{% else %}Atención{% endif %}</h2>
+<p class="vacio">{{ prov.general.texto }} {{ prov.general.detalle }}</p></div>
+<ul class="pv" aria-label="Disponibilidad de los modelos según cada proveedor">
+{% for p in prov.proveedores %}<li class="pv-i e-{{ p.estado }}"><span class="pv-ic" aria-hidden="true">{% if p.estado == 'operativo' %}&#10003;{% elif p.estado == 'degradado' %}!{% elif p.estado == 'caido' %}&#10005;{% else %}?{% endif %}</span>
+<span class="pv-n"><b>{{ p.nombre }}</b><span>{{ p.modelo }} · {{ {'operativo':'Operativo','degradado':'Degradado','caido':'Caído','sin_informacion':'Sin información'}[p.estado] }}</span></span>
+<span class="ayuda" tabindex="0" role="button" aria-label="Qué pasa con {{ p.nombre }}">?<span class="ayuda-t" role="tooltip">{{ p.mensaje }} <a href="{{ p.enlace }}" target="_blank" rel="noopener noreferrer">Página oficial</a></span></span></li>{% endfor %}</ul></section>
+{% endif %}
+{% if aviso %}<div class="hoja sec aviso-r" role="status">{% if aviso == 'solicitado' %}<b>Listo.</b> Pedimos al conector que reintente los casos pendientes. Verás el resultado aquí en unos minutos.{% elif aviso == 'ya_solicitado' %}<b>Ya estaba pedido.</b> El conector todavía no atiende la solicitud anterior.{% else %}<b>No se pudo registrar el pedido.</b> Inténtalo de nuevo en un momento.{% endif %}</div>{% endif %}
+{% if rei %}<section class="hoja sec rei" aria-labelledby="rei-t"><div><span class="eti">Casos esperando reintento</span>
+<h2 id="rei-t" class="eg-t">{{ rei.r.reintentables }} {% if rei.r.reintentables == 1 %}caso{% else %}casos{% endif %}</h2>
+<p class="vacio">{% if rei.r.proximo_auto %}Próximo reintento automático: {{ rei.r.proximo_auto[:16].replace('T',' ') }} UTC.{% elif rei.r.reintentables %}Se reintentan solos en la próxima ronda del conector.{% else %}No hay casos esperando.{% endif %}
+{% if rei.s.estado == 'solicitado' %} Reintento manual pedido el {{ rei.s.solicitado_en[:16].replace('T',' ') }} UTC; esperando al conector.{% elif rei.s.estado == 'atendido' and rei.s.reintentados is not none %} Último reintento manual: {{ rei.s.reintentados }} casos.{% endif %}</p>
+<ul class="rei-l">{% for x in rei.r.motivos %}<li><b>{{ x.casos }}</b> {{ x.texto }}{% if not x.se_reintenta %} <em>(revisión manual de una persona)</em>{% endif %}</li>{% endfor %}</ul></div>
+<div>{% if rei.s.estado == 'solicitado' %}<span class="btn sec" aria-disabled="true">Pedido en curso</span>{% else %}<a class="btn" href="/panel/reintentar">Reintentar ahora</a>{% endif %}</div></section>{% endif %}
 {% if error %}<div class="error" role="alert"><b>No se pudo consultar Log Analytics</b> ({{ error }}). Revisa la identidad de la app y su rol Log Analytics Reader.</div>
 {% else %}
 <div class="kpis sec">

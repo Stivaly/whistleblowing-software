@@ -266,3 +266,19 @@ resource "azurerm_role_assignment" "front_negocio" {
   role_definition_name = "Storage Table Data Reader"
   principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
 }
+
+# Solicitud de reintento manual desde el panel: una sola fila (RowKey "solicitud") que el front escribe con
+# «Reintentar ahora» y que el conector lee y marca como atendida. Sin textos de denuncias ni identificadores de casos.
+resource "azapi_resource" "tabla_reintentos" {
+  type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2023-05-01"
+  name      = "reintentosmanuales"
+  parent_id = "${azurerm_storage_account.nucleo.id}/tableServices/default"
+  body      = { properties = {} }
+}
+
+resource "azurerm_role_assignment" "front_reintentos" {
+  count                = var.crear_front ? 1 : 0
+  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${azapi_resource.tabla_reintentos.name}"
+  role_definition_name = "Storage Table Data Contributor"
+  principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
+}

@@ -1,0 +1,6 @@
+// Panel: casos que terminaron en revisión manual por motivo (7 días), con el último instante en que el conector reintentó. Solo conteos.
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| where tostring(Properties.estado) == "revision_manual"
+| summarize casos = count() by motivo = coalesce(tostring(Properties.motivo), "sin_motivo")
+| order by casos desc

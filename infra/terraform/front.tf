@@ -54,6 +54,7 @@ resource "azurerm_linux_web_app" "front" {
     LOG_ANALYTICS_WORKSPACE_ID     = azurerm_log_analytics_workspace.logs.workspace_id
     EVALUACIONES_TABLA_URL         = azurerm_storage_account.nucleo.primary_table_endpoint
     NEGOCIO_TABLA_URL              = azurerm_storage_account.nucleo.primary_table_endpoint
+    REINTENTOS_TABLA_URL           = azurerm_storage_account.nucleo.primary_table_endpoint
     FRONT_AUTH                     = "clave"
     FRONT_CLAVE                    = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/front-clave-panel/)"
   }

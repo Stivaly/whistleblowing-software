@@ -93,7 +93,7 @@ k-tip k-ic{width:17px;height:17px}
 :root{--line-strong:#AAB5D6;--lime-soft:#EAFBC0;--ease:cubic-bezier(.2,.7,.2,1);--cut:20px;--guil:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%231C2A6B' stroke-opacity='0.2' stroke-width='0.6' stroke-dasharray='.1 1.5' stroke-linecap='round'%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%280 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2815 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2830 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2845 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2860 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2875 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2890 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28105 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28120 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28135 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28150 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28165 32 32%29'/%3E%3C/g%3E%3C/svg%3E");--guil-l:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23CFFF5E' stroke-opacity='0.17' stroke-width='0.6' stroke-dasharray='.1 1.5' stroke-linecap='round'%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%280 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2815 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2830 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2845 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2860 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2875 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2890 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28105 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28120 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28135 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28150 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28165 32 32%29'/%3E%3C/g%3E%3C/svg%3E")}
 html{scroll-behavior:smooth}
 body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
-#como,#proteccion,#leyes,#inc{scroll-margin-top:110px}
+#como,#proteccion,#leyes,#rei{scroll-margin-top:110px}
 @keyframes rot{to{transform:rotate(360deg)}}
 @keyframes bt{50%{transform:scale(1.08)}}
 @keyframes rvIn{from{opacity:.25;transform:translateY(26px)}to{opacity:1;transform:none}}
@@ -461,6 +461,20 @@ k-tip k-ic{width:20px;height:20px}
 .pl>k-ic{color:var(--st);width:18px;height:18px}
 .pl-n{display:flex;flex-direction:column;flex:1;min-width:0;font-size:12.5px;font-weight:600;line-height:1.2}
 .pl-n b{color:var(--st);font-size:12px;font-weight:700}
+.rei{border-left:4px solid var(--warn-bar);display:grid;gap:8px}.rei.rei-o{border-left-color:var(--ok-bar)}
+.rei-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px}.rei-h k-ic{color:var(--warn)}
+.rei-a{display:flex;align-items:center}.rei-c{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:13px;font-weight:600}
+.rei-r{display:flex;gap:6px;align-items:center;margin:0;padding:6px 10px;font-size:13px;font-weight:600;background:var(--ok-bg);border-left:3px solid var(--ok-bar)}.rei-r k-ic{color:var(--ok);width:18px;height:18px}
+.rei-l{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.rei-l li{display:grid;grid-template-columns:18px minmax(0,1fr) auto auto;gap:8px;align-items:center;min-height:44px;border-top:1px dotted var(--line-strong);font-size:13px}.rei-l li>k-ic{color:var(--st);width:17px;height:17px}
+.rei-t{display:flex;flex-direction:column;min-width:0;line-height:1.25}.rei-t span{color:var(--muted);font-size:12px}.rei-i{font-size:12px;color:var(--muted);white-space:nowrap}
+.rei-b{padding:4px 10px;min-height:32px}.rei button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:480px){.rei-l li{grid-template-columns:18px minmax(0,1fr) auto}.rei-i{display:none}}
+.pv-r{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.pv-k{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.pv-l{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;list-style:none;margin:0;padding:0;flex:1 1 420px}
+@media(max-width:639px){.pv-l{grid-template-columns:minmax(0,1fr)}}
+.pl-n a{color:inherit;text-decoration:none}.pl-n a:hover{text-decoration:underline}
 
 /* indicadores */
 .kg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -735,12 +749,30 @@ k-tip k-ic{width:20px;height:20px}
       <div class="min-w-0">
         <p class="eg-k">¿Está todo bien?</p>
         <h2 id="eg" class="eg-t"><span class="sr-only">Estado general: </span>Atención <k-tip g="estado"></k-tip></h2>
-        <p class="eg-s">Funciona, con 2 cosas por mejorar. <a href="#inc" @click.prevent="document.getElementById('inc').scrollIntoView({behavior:'smooth',block:'center'})">Ver qué hacer</a></p>
+        <p class="eg-s">Funciona, con 2 cosas por mejorar. <a href="#rei" @click.prevent="document.getElementById('rei').scrollIntoView({behavior:'smooth',block:'center'})">Ver qué hacer</a></p>
       </div>
     </div>
     <ul class="eg-l">
       <template x-for="c in salud" :key="c.k"><li class="pl" :class="'s-'+c.e"><k-ic :n="ico[c.e]"></k-ic><span class="pl-n"><span x-text="c.n"></span><b x-text="est[c.e]"></b></span><k-tip :g="'salud_'+c.k" :x="c.d"></k-tip></li></template>
     </ul>
+  </section>
+
+  <!-- reintentos y revisión manual -->
+  <section aria-labelledby="rei" class="card p-4 rei" :class="rei.pend.length?'rei-w':'rei-o'">
+    <div class="rei-h">
+      <div class="min-w-0"><div class="flex items-center gap-1.5"><k-ic n="rotate-cw"></k-ic><h2 id="rei" class="text-base font-bold m-0"><span x-text="rei.pend.length"></span> <span x-text="rei.pend.length===1?'caso espera':'casos esperan'"></span> reintento</h2><k-tip g="pendientes"></k-tip></div>
+        <p class="m-0 mt-0.5 text-xs muted">Próximo reintento automático: mañana 09:00 · <span x-text="'Intentos usados: hasta '+rei.maxUsado+' de 3'"></span></p></div>
+      <div class="rei-a">
+        <template x-if="!rei.confirma && !rei.cargando"><button type="button" class="btn btn-pri" :disabled="!rei.pend.length" @click="rei.confirma=true"><k-ic n="rotate-cw"></k-ic><span>Reintentar ahora</span></button></template>
+        <template x-if="rei.confirma && !rei.cargando"><div class="rei-c" role="group" aria-label="Confirmar reintento"><span x-text="'¿Reintentar los '+rei.pend.length+' casos ahora?'"></span><button type="button" class="btn btn-pri" @click="reintentarTodos()">Sí, reintentar</button><button type="button" class="btn btn-sec" @click="rei.confirma=false">Cancelar</button></div></template>
+        <template x-if="rei.cargando"><span class="btn btn-sec" aria-disabled="true" role="status"><span x-text="'Reintentando… '+rei.hechos+' de '+rei.total"></span></span></template>
+      </div>
+    </div>
+    <p x-show="rei.res" class="rei-r" role="status"><k-ic n="circle-check"></k-ic><span x-text="rei.res"></span></p>
+    <ul class="rei-l">
+      <template x-for="c in rei.pend" :key="c.id"><li :class="'s-'+c.e"><k-ic :n="ico[c.e]"></k-ic><span class="rei-t"><b x-text="'Caso '+c.id"></b><span x-text="c.m"></span></span><span class="rei-i" x-text="c.n+' de 3'"></span><button type="button" class="btn btn-sec rei-b" :disabled="!!(rei.cargando||c.busy)" @click="reintentarUno(c)"><span x-text="c.busy?'Reintentando…':'Reintentar'"></span></button></li></template>
+    </ul>
+    <p x-show="!rei.pend.length" class="m-0 text-sm muted">No hay casos esperando. Todo lo pendiente quedó resuelto.</p>
   </section>
 
   <!-- indicadores -->
@@ -813,17 +845,12 @@ k-tip k-ic{width:20px;height:20px}
     </div>
   </section>
 
-  <!-- incidentes -->
-  <section class="card p-4" aria-labelledby="inc">
-    <div class="hd flex flex-wrap items-center justify-between gap-2 mb-2"><div class="flex items-center gap-1.5"><h2 id="inc" class="text-base font-bold m-0">¿Qué falló y qué hacer?</h2><k-tip g="incidentes"></k-tip></div>
-      <a href="#ajustes" class="btn btn-sec"><k-ic n="sliders-horizontal"></k-ic> Ajustes</a></div>
-    <div>
-      <template x-for="i in incidentes" :key="i.c"><details class="ic" :class="'s-'+i.e" :open="wide">
-        <summary><k-ic :n="ico[i.e]"></k-ic><b x-text="i.c"></b><span class="n"><span x-count="i.n"></span><small>casos</small></span><k-ic n="chevron-down" class="chev"></k-ic></summary>
-        <p><k-ic n="lightbulb"></k-ic><span x-text="i.a"></span></p>
-      </details></template>
-    </div>
-    <div class="pe pe-warn mt-3"><k-ic n="rotate-cw"></k-ic><span class="flex-1 min-w-[150px]"><b>12 casos esperan reintento</b> <k-tip g="pendientes"></k-tip><span class="block text-xs muted">Próximo intento: mañana 09:00</span></span><span class="seg3" role="img" aria-label="Intentos usados: 1 de 3"><i class="on"></i><i></i><i></i><b>1 de 3</b></span></div>
+  <!-- disponibilidad según el proveedor -->
+  <section aria-label="Disponibilidad de los modelos según cada proveedor" class="card p-4 pv-r">
+    <span class="pv-k">Según el proveedor</span>
+    <ul class="pv-l">
+      <template x-for="p in prov" :key="p.k"><li class="pl" :class="'s-'+p.e"><k-ic :n="ico[p.e]"></k-ic><span class="pl-n"><a :href="p.u" target="_blank" rel="noopener noreferrer" x-text="p.n"></a><b><span x-text="p.m"></span> · <span x-text="provEst[p.e]"></span></b></span><k-tip :g="'prov_'+p.k" :x="p.d"></k-tip></li></template>
+    </ul>
   </section>
 
   <!-- horarios + costo -->
@@ -1127,6 +1154,9 @@ envivo:{t:'En vivo',q:'Los números se actualizan solos cada minuto, sin recarga
 estado:{t:'Estado general',q:'Resumen de 5 segundos: junta la salud de cada componente, la calidad y la rapidez. Verde = todo bien, ámbar = atención, rojo = problema.',c:'Un solo indicador en rojo hace que el estado general sea «problema»; en ámbar, «atención».',l:'Cómo leerlo'},
 salud_nucleo:{t:'Motor de Kerna',q:'Es el motor que analiza cada denuncia y propone leyes.',c:'Si está en rojo, no se generan sugerencias nuevas.',l:'Cómo leerlo'},
 salud_conector:{t:'Enlace con Veridy',q:'Es el puente que lleva las denuncias de Veridy a Kerna y devuelve la sugerencia al caso.',c:'Si falla, las denuncias se acumulan y se reenvían solas cuando vuelva.',l:'Cómo leerlo'},
+prov_azure:{t:'Azure OpenAI (principal)',q:'Estado del servicio de Microsoft que ejecuta el modelo principal (gpt-5 nano y mini), en la región que usa Kerna. Lo informa Microsoft, no nuestros errores.',c:'Si cae, Kerna responde con Gemini, un poco más lento.',l:'Qué hace Kerna'},
+prov_gemini:{t:'Google Gemini (respaldo)',q:'Estado del servicio de Google que ejecuta el modelo de respaldo. Lo informa Google, no nuestros errores.',c:'Si cae, Kerna sigue con Azure OpenAI; si los dos fallan, el caso pasa a revisión manual.',l:'Qué hace Kerna'},
+prov_voyage:{t:'Voyage AI (búsqueda de leyes)',q:'Estado del servicio que convierte la denuncia en una búsqueda de leyes. Lo informa Voyage AI, no nuestros errores.',c:'Si cae, Kerna busca con su servicio propio y los casos siguen saliendo.',l:'Qué hace Kerna'},
 salud_modelo:{t:'Modelo de IA',q:'El modelo de lenguaje que redacta la sugerencia. Hay uno principal y uno de respaldo.',c:'Ámbar: el principal falla a veces y entra el respaldo (más lento o menos preciso).',l:'Cómo leerlo'},
 salud_busqueda:{t:'Búsqueda de leyes',q:'Encuentra en la base de leyes los artículos más parecidos a la denuncia.',c:'Si falla, la sugerencia no tendría respaldo legal y se manda a revisión manual.',l:'Cómo leerlo'},
 casos:{t:'Denuncias analizadas',q:'Cuántas denuncias de Veridy procesó Kerna en el período.',c:'Sirve para dimensionar la carga. Un salto brusco puede ser una carga masiva o un problema.',l:'Cómo leerlo'},
@@ -1205,6 +1235,9 @@ function app(){return{
  ico:{ok:'circle-check',warn:'triangle-alert',bad:'octagon-alert',na:'circle-minus'},est:{ok:'Bien',warn:'Atención',bad:'Problema',na:'Sin datos'},
  pasos:[{i:'inbox',t:'Llega la denuncia',d:'Una persona denuncia en Veridy, como siempre.'},{i:'eye-off',t:'Se anonimiza',d:'Se tapan nombres, RUT, correos y teléfonos.'},{i:'search',t:'Se busca en la ley',d:'Kerna encuentra los artículos más parecidos.'},{i:'quote',t:'Sugerencia con cita',d:'Ves la ley, el artículo y el texto que lo respalda.'}],
  leyes:[{n:'21.643',t:'Ley Karin',d:'Acoso laboral, sexual y violencia en el trabajo.'},{n:'19.628',t:'Datos personales',d:'Protección de la vida privada, con la reforma de la Ley 21.719.'},{n:'20.393',t:'Responsabilidad penal',d:'De las personas jurídicas y modelos de prevención de delitos.'}],
+ rei:{pend:[{id:'A-4821',m:'Los modelos de IA no estaban disponibles',n:1,e:'warn'},{id:'A-4822',m:'Los modelos de IA no estaban disponibles',n:1,e:'warn'},{id:'A-4830',m:'El análisis tardó más de lo permitido',n:1,e:'warn'},{id:'A-4833',m:'Los modelos de IA no estaban disponibles',n:2,e:'warn'},{id:'A-4838',m:'Los modelos de IA no estaban disponibles',n:1,e:'warn'},{id:'A-4841',m:'El análisis tardó más de lo permitido',n:1,e:'warn'},{id:'A-4846',m:'Los modelos de IA no estaban disponibles',n:1,e:'warn'}],confirma:false,cargando:false,hechos:0,total:0,res:'',maxUsado:2},
+ provEst:{ok:'Operativo',warn:'Degradado',bad:'Caído',na:'Sin información'},
+ prov:[{k:'azure',n:'Azure OpenAI',m:'gpt-5 nano y mini',e:'ok',u:'https://azure.status.microsoft/en-us/status/',d:'Funciona con normalidad según Microsoft.'},{k:'gemini',n:'Google Gemini',m:'Gemini Flash',e:'warn',u:'https://status.cloud.google.com/',d:'Google informa errores más altos desde las 14:00 UTC. Si el principal falla, el caso pasa a revisión manual.'},{k:'voyage',n:'Voyage AI',m:'voyage-4-large',e:'ok',u:'https://voyageai-status.statuspage.io/',d:'Funciona con normalidad según el proveedor.'}],
  salud:[{k:'nucleo',n:'Motor de Kerna',i:'cpu',e:'ok',d:'Responde bien. Último caso procesado hace 4 min.'},{k:'conector',n:'Enlace con Veridy',i:'plug',e:'warn',d:'Conectado. 12 casos esperan reintento.'},{k:'modelo',n:'Modelo de IA',i:'bot',e:'warn',d:'El principal falló en 1 de cada 7 casos; entró el respaldo.'},{k:'busqueda',n:'Búsqueda de leyes',i:'search',e:'ok',d:'Encuentra artículos en menos de 4 s.'}],
  aciertos:[{n:'Ley 21.643 · Karin',v:81,e:'ok'},{n:'Ley 19.628 · Datos personales',v:74,e:'warn'},{n:'Ley 20.393 · Responsabilidad penal',v:66,e:'bad'}],
  anon:[{t:'Correos',v:100,e:'ok'},{t:'RUT',v:100,e:'ok'},{t:'Teléfonos',v:93,e:'ok'},{t:'Nombres de personas',v:86,e:'warn'}],
@@ -1319,6 +1352,11 @@ function app(){return{
   if(id==='ia')return (s.evaluador?'El revisor está encendido y compara '+s.candidatos+' artículos por caso.':'El revisor está apagado: más rápido y barato, con menos control de citas.')+' Orden de modelos: '+(s.cadena.filter(m=>m.on).map(m=>this.modelos[m.v].c).join(' → ')||'ninguno')+'.';
   if(id==='comp')return s.compartir.length?'Cada sugerencia llega a: '+s.compartir.map(v=>N[v]).join(', ')+'.':'Por ahora no se comparte con nadie.';
   return 'Un caso se marca lento después de '+s.maxresp+' segundos y se destaca si pasa '+s.alerta+(s.alerta===1?' hora':' horas')+' sin sugerencia.'},
+
+ reintentarTodos(){const r=this.rei;if(r.cargando||!r.pend.length)return;r.confirma=false;r.cargando=true;r.res='';r.hechos=0;r.total=r.pend.length;const lote=r.pend.slice();let k=0;
+  const paso=()=>{if(k<lote.length){k++;r.hechos=k;setTimeout(paso,260)}else{const fallan=new Set(lote.filter((c,ix)=>ix===3||ix===5).map(c=>c.id));const ok=lote.length-fallan.size;
+   r.pend=r.pend.filter(c=>fallan.has(c.id)).map(c=>({...c,n:Math.min(3,c.n+1)}));r.maxUsado=r.pend.reduce((a,c)=>Math.max(a,c.n),0);r.cargando=false;r.res=ok+' de '+lote.length+' resueltos'+(fallan.size?'. Los '+fallan.size+' restantes siguen esperando.':'.');this.say(ok+' de '+lote.length+' casos resueltos')}};setTimeout(paso,260)},
+ reintentarUno(c){const r=this.rei;if(r.cargando||c.busy)return;c.busy=true;setTimeout(()=>{r.pend=r.pend.filter(x=>x.id!==c.id);r.res='Caso '+c.id+' resuelto. Quedan '+r.pend.length+'.';r.maxUsado=r.pend.reduce((a,x)=>Math.max(a,x.n),0)},900)},
  say(t){this.toast=t;clearTimeout(this._t);this._t=setTimeout(()=>this.toast='',3200)},
  /* graficos */
  charts(){
