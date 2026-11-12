@@ -403,9 +403,20 @@ Desplegado con `desplegar.sh --ref HEAD` (último commit: "paneles orbitales de 
 - Punto 6 (rendimiento, producción, sin caché / con caché): portada TTFB 31-73 ms / 12-15 ms, 322 KB / 9 KB, 15 recursos, CPU en reposo 0 %; vistas del panel TTFB 11-29 ms (Ajustes 78-180 ms: lee la tabla), HTML 8-10 KB gzip, Informe 219 KB (echarts diferido), CPU en reposo 0-0,3 %. Cumple TTFB ~0,05 s y ~450 KB. Datos en `kerna/front/diseno-v2/capturas/prod7-extra.json`.
 - Punto 8 (capturas): `kerna/front/diseno-v2/capturas/prod7-*.png` (390 = `-m`, 1366 = `-d`; vistas, 6 pestañas del informe, `prod7-portada-{d,m}.png`, `prod7-reintentar-modal-{d,m}.png`) y `prod7.json`.
 
+### Relevo 2026-11-12 (agente 4): hecho y desplegado (commit 02a7e5688; 104 pruebas del front)
+- Porcentajes: todo porcentaje se ve en % (Acierto 49,2 %, meta 80 %). `informe.para_mostrar` (copia con el recall x100) alimenta Excel y CSV; la pantalla y el PDF convierten en `vistas.py` (`informe`, `informe_ejecutivo`, `_celda`, `_fmt_g`). El dato interno sigue siendo razón (0 a 1). Pruebas: `test_acierto_y_metas_en_porcentaje_en_el_informe`, `test_exportaciones_visibles_en_porcentaje`.
+- Veredicto en una frase ("0 de 3 metas cumplidas") y una línea chica con lo que falta (`informe_v2`, `informe_cuerpo.html`).
+- Puntito suelto: era el mini ícono de estado de KPI sin texto de estado (Costo) y el mini `m-sin-info` (solo un núcleo de 3 px). La macro `kb` ya no pinta el estado si no hay texto y el mini lleva un anillo sólido (`construir_identidad.py`). Sin elementos < 8 px en la portada a 390 y 1366.
+- Diagrama orbital: arcos terminan en ángulos repartidos (`orbital.angulos_satelites`), nombres en leyenda directa al lado (fila en móvil). Pruebas de no cruce de satélites.
+- Ajustes: guilloche centrada tras la ilustración (ya no es una mancha), "Compartir" ajustado (`.as-1`, `kerna.css` ~971), etiquetas "Meta de respuesta" y "Artículos por caso", segmentos sin partirse, textos de los paneles >= 11 px ("15 s · objetivo"; se oculta en <= 599 px).
+- Negocio: sin "+52 % sobre el plan"; cascada con conectores, alto mínimo de 2 px y valor sobre la barra (`vistas.cascada_negocio`, `kerna.js` `cascada`). Misma pila para todas las series (barras centradas).
+- Íconos `n-candado`, `n-oculto`, `n-cita`, `n-escudo`, `n-llave` en portada y banda de protección (mapeo en `graficos.A_NUCLEO`).
+- Cola de reintentos: `.cola-a` alineado a la izquierda.
+- PDF (`exportar.py`, `a_pdf` ~119): página 1 con cabecera, baldosa del veredicto (PNG en `app/estaticos/img/baldosa-*.png`, `herramientas/rasterizar_baldosas.sh`), KPI y modos; una página por pestaña (indicadores, barras y notas); anexo de tablas. Prueba `test_pdf_primera_pagina...`.
+- Capturas `kerna/front/diseno-v2/capturas/prod8-*.png` y `prod8.json` (alturas: Resumen 850 / 1.537, Negocio 948 / 1.371, Ajustes 850 / 1.623, Informe 850 / 1.100-1.265, Datos 1.120 / 1.550; sin desborde horizontal; TTFB 12-30 ms, Ajustes ~135 ms, HTML 9-10 KB, Informe 219 KB).
+
 ### Falta (en este orden)
-1. Punto 7, PDF (`kerna/front/app/exportar.py`, no tocado): cabecera con baldosa del veredicto (PNG pre-renderizadas con Playwright en `app/estaticos/img/`), KPI en la página 1, una página por pestaña con su visual, anexo de tablas.
-2. Sprites en el resto de la UI: íconos de línea Lucide que quedan sin equivalente propio (`lock`, `eye-off`, `quote`, `layout-dashboard` de la portada y la banda de protección); si se quieren 100 % de identidad, agregar `n-candado`, `n-oculto`, `n-cita` en `construir_identidad.py` (dict NUEVOS) y mapear en `graficos.A_NUCLEO`.
-3. Alturas aún sobre meta en 1366 (producción, datos reales): Ajustes 902 px (meta 850), Datos 1.142; en 390: Resumen 1.481, Ajustes ~1.570, Negocio 1.371, Datos 1.585. Informe: una pantalla por pestaña en 1366, 1.150-1.250 px en 390.
-4. Ajustes: la fila "Compartir" deja hueco bajo el título (`.as-s` de 1 sola fila usa `.ap` min-height); considerar altura automática para secciones de 1 fila (`kerna.css`, bloque v6, línea ~914).
-5. Panel de reintentos en Resumen: con "Pedido en curso" el tercer motivo queda aislado a la derecha (`.cola-a{margin-left:auto}`, `kerna.css` ~853); alinearlo a la izquierda.
+1. Alturas en 390 aún altas: Resumen 1.537, Ajustes 1.623, Negocio 1.371, Datos 1.550 (`kerna.css` bloque v6 y media <= 599 px, ~948); Datos 1.120 en 1366.
+2. PDF: las páginas de pestaña usan barras (clase `Barras`, `exportar.py` ~215), no las visuales orbitales; página 1 deja mitad de la hoja vacía (se podría subir la página de Calidad a la 1).
+3. Ajustes en móvil: sección "Compartir" con chips en 3 filas; considerar chips en una fila con scroll.
+4. Informe en móvil: pestañas Incidentes y Datos quedan fuera de vista (scroll horizontal interno de `.tabs2`); considerar 2 filas.
