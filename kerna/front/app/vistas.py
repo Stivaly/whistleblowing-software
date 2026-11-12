@@ -576,7 +576,7 @@ def informe_v2(inf_: dict) -> dict:
     s_casos = [r[1] for r in cd["filas"]] if cd else []
     s_sug = [100 * r[2] / r[1] for r in cd["filas"] if r[1]] if cd else []
     s_p95 = [r[3] / 1000 for r in ld["filas"]] if ld else []
-    s_rec = [100 * r[2] for r in reversed(rs["filas"])] if rs and rs["filas"] else []
+    s_rec = [100 * r[2] for r in sorted(rs["filas"], key=lambda r: str(r[0]))] if rs and rs["filas"] else []
     extra = {
         "casos": (s_casos, None, False, "Cantidad de denuncias de Veridy"), "neg_sug": (s_sug, False, True, "meta 90 % o más"),
         "calidad": (s_rec, False, True, f"meta {f.dec_corto(META_RECALL, 2)} o más"), "valoraciones": ([], None, False, "meta 70 % o más"),
@@ -637,9 +637,9 @@ def informe_charts(inf_: dict) -> dict:
                                "series": [{"n": "Acierto", "d": [round(100 * r[4], 1) for r in rl["filas"]], "cs": ["ok" if r[4] >= (r[7] or META_RECALL) else ("warn" if r[4] >= (r[7] or META_RECALL) - RECALL_ALERTA else "bad") for r in rl["filas"]]}]})
     rs = T("recall_serie")
     if rs and len(rs["filas"]) > 1:
-        fr = list(reversed(rs["filas"]))
+        fr = sorted(rs["filas"], key=lambda r: str(r[0]))
         un_dia = len({str(r[0])[:10] for r in fr}) == 1  # misma fecha: solo la hora en el eje, la fecha va en el título
-        out["calidad"].append({"id": "g-serie", "t": "Acierto en las últimas mediciones" + (f" ({f.fecha_corta(str(fr[0][0])[:10])})" if un_dia else ""), "g": "inf_serie", "kind": "line", "unit": " %", "meta": {"v": round(100 * META_RECALL), "t": "Meta"},
+        out["calidad"].append({"id": "g-serie", "t": "Acierto por medición" + (f" ({f.fecha_corta(str(fr[0][0])[:10])})" if un_dia else ""), "g": "inf_serie", "kind": "line", "unit": " %", "meta": {"v": round(100 * META_RECALL), "t": "Meta"},
                                "cats": [(str(r[0])[11:16] if un_dia else f.fecha_corta(str(r[0])[:10]) + " " + str(r[0])[11:16]) for r in fr], "series": [{"n": "Acierto", "d": [round(100 * r[2], 1) for r in fr], "c": "pro", "area": True}]})
     an = T("anonimizador")
     if an and an["filas"]:

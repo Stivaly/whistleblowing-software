@@ -242,7 +242,7 @@
   function opcionInforme(sp) {
     const u = sp.unit || '', ink = css('--ink'), mu = css('--muted'), ln = '#DDE2EF', h = !!sp.h, tip = { trigger: sp.kind === 'donut' ? 'item' : 'axis', valueFormatter: (v) => fnum(v) + u, confine: true };
     const o = { ...base(), tooltip: tip, aria: { enabled: true } };
-    const meta = sp.meta && { symbol: 'none', silent: true, data: [h ? { xAxis: sp.meta.v } : { yAxis: sp.meta.v }], label: { formatter: sp.meta.t + ' ' + fnum(sp.meta.v) + u, color: ink, fontSize: 10.5, fontWeight: 700, position: h ? 'start' : 'insideEndTop', rotate: 0, align: 'left' }, lineStyle: { color: ink, type: 'dashed', width: 1.5 } };
+    const meta = sp.meta && { symbol: 'none', silent: true, data: [h ? { xAxis: sp.meta.v } : { yAxis: sp.meta.v }], label: { formatter: sp.meta.t + ' ' + fnum(sp.meta.v) + u, color: ink, fontSize: 10.5, fontWeight: 700, position: h ? 'start' : 'insideStartTop', rotate: 0, align: 'left' }, lineStyle: { color: ink, type: 'dashed', width: 1.5 } };
     if (sp.kind === 'donut') {
       const tot = sp.items.reduce((a, x) => a + x.v, 0);
       return { ...o, legend: { bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: ink, fontSize: 11 } },
