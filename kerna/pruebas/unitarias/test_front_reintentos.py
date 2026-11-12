@@ -1,5 +1,6 @@
 """Pruebas del reintento manual del panel: resumen, solicitud atómica, CSRF, sesión y doble clic."""
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -108,17 +109,17 @@ def test_flujo_confirmar_pedir_y_doble_clic(cliente):
     r2 = cliente.post("/panel/reintentar", headers=H, data={"csrf": token()})
     assert r2.headers["location"] == "/panel?reintento=ya_solicitado"
     p = cliente.get("/panel?reintento=ya_solicitado", headers=H)
-    assert "Pedido en curso" in p.text and "ya pedido" in p.text and "Reintentar ahora" not in p.text
+    assert "Pedido en curso" in p.text and "Ya había un reintento pedido" in p.text and "Reintentar ahora" not in p.text
 
 
 def test_panel_muestra_bloque_y_no_se_rompe_si_la_tabla_falla(cliente, monkeypatch):
     p = cliente.get("/panel", headers=H)
-    assert "esperan reintento" in p.text and "Reintentar ahora" in p.text and "Los modelos de IA no estaban disponibles" in p.text
+    assert "En espera" in p.text and "Reintentar ahora" in p.text and "Los modelos de IA no estaban disponibles" in p.text
     monkeypatch.setattr(reintentos, "_tabla", lambda: (_ for _ in ()).throw(RuntimeError("sin acceso")))
     from app import cache
     cache.vaciar()  # la caché compartida guardó el resumen anterior
     p = cliente.get("/panel", headers=H)
-    assert p.status_code == 200 and "esperan reintento" not in p.text
+    assert p.status_code == 200 and "En espera" not in p.text
     assert cliente.post("/panel/reintentar", headers=H, data={"csrf": token()}).headers["location"] == "/panel?reintento=error"
 
 
@@ -135,3 +136,9 @@ def test_el_modal_pide_json_y_recibe_el_resultado_sin_salir_de_la_pagina(cliente
     assert r.status_code == 200 and r.json() == {"estado": "solicitado"}
     r = cliente.post("/panel/reintentar", headers={**H, "Accept": "application/json"}, data={"csrf": "malo"})
     assert r.status_code == 403 and r.json() == {"estado": "token"}   # el modal lo muestra en lenguaje simple
+
+
+def test_el_modal_y_el_enlace_de_reintentar(cliente):
+    p = cliente.get("/panel", headers=H).text
+    assert '<dialog id="dlg-rei"' in p and "data-dlg-ok" in p
+    assert re.search(r'<a class="btn btn-pri" href="/panel/reintentar" data-reintentar>', p)   # sin JS sigue siendo un enlace a la confirmación

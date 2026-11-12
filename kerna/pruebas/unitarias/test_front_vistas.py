@@ -71,7 +71,9 @@ def cliente(monkeypatch):
 
 def test_render_resumen_sin_cifras_crudas(cliente):
     t = cliente.get("/panel", headers=H).text
-    assert 'class="kt s-bad"' in t and "gg-n" in t and 'id="ch-casos"' in t and "En vivo" in t and 'id="pv-azure"' in t
+    assert 'class="kb s-bad"' in t and 'class="pr-d"' in t and 'id="k-calidad"' in t and "En vivo" in t and 'id="pv-azure"' in t
+    assert 'class="bu"' in t or 'class="bu ' in t or 'role="img" aria-label="Acierto' in t   # barra bala con la marca de la meta
+    assert "Ley Karin" in t and 'data-l="karin"' in t     # íconos de ley en la banda de aciertos
     assert "27141" not in t and "41000" not in t and "ms</" not in t     # nada de milisegundos
     assert "/estaticos/tailwind.css" in t and "cdn." not in t and "googleapis" not in t
 

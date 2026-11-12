@@ -96,7 +96,7 @@ def test_negocio_sin_bloque_ni_ventas(monkeypatch):
     assert n["proyeccion"]["anios"][-1]["clientes"] == 17 and n["proyeccion"]["anios"][0]["ventas"] == pytest.approx(638, abs=1)
     from app import glosario
     q = glosario.glosario()["ingresos_uf"]
-    assert "capítulo 25" in q["q"] and "2026" in q["c"] and "40.000" in q["c"]
+    assert "capítulo" not in q["q"].lower() and "Tabla" not in q["q"] and "2026" in q["c"] and "40.000" in q["c"]
 
 
 def test_kql_tokens_y_etapas_usan_los_eventos_reales():
@@ -134,10 +134,10 @@ def test_informe_compacto_html_y_pdf(monkeypatch):
     c = TestClient(principal.app, base_url="https://t")
     # sin datos calculados la página sale como esqueleto y el cuerpo llega por /panel/informe/cuerpo
     shell = c.get("/panel/informe?dias=30", headers=H).text
-    assert 'data-carga="/panel/informe/cuerpo?dias=30"' in shell and "sk-g" in shell
+    assert 'data-carga="/panel/informe/cuerpo?dias=30"' in shell and 'class="sk bn"' in shell
     h = c.get("/panel/informe/cuerpo?dias=30", headers=H).text
     assert "Contenido" not in h and "Responde en una página" not in h and "Es la evidencia central" not in h
-    assert 'class="vd2' in h and h.count('class="kc ') == 6 and "s-bad" in h and 'role="tablist"' in h and "Ley 21.643 · Ley Karin" not in h
+    assert 'class="bn vdh s-' in h and h.count('class="kb s-') == 6 and 'role="tablist"' in h and "capítulo" not in h.lower()
     assert "<table" not in h and 'id="p-datos"' in h  # las tablas no van en el cuerpo
     d = c.get("/panel/informe/datos?dias=30", headers=H).text
     assert d.count("<details") >= 8 and "<table" in d and "<details open" not in d.split("<summary")[0]  # plegadas por defecto

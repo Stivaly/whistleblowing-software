@@ -75,7 +75,7 @@ def test_acceso_cookie_y_panel(cliente):
     r = cliente.post("/acceso", data={"clave": "clave-de-prueba"})
     assert r.status_code == 303 and "httponly" in r.headers["set-cookie"].lower()
     p = cliente.get("/panel", cookies={seguridad.COOKIE: seguridad.emitir_cookie()})
-    assert p.status_code == 200 and "Ley 21643" in p.text and "casos procesados" in p.text
+    assert p.status_code == 200 and "Ley 21643" in p.text and "Resumen" in p.text and 'class="bn kbs"' in p.text
 
 
 def test_panel_con_error_de_consulta(monkeypatch):

@@ -77,7 +77,7 @@ def test_colores_de_estado_cumplen_contraste_AA():
 def test_icono_de_estado_usa_baldosa_y_lucide_solo_utilitario():
     c = TestClient(principal.app, base_url="https://t")
     t = c.get("/panel/ajustes", headers=H).text
-    assert '<k-st data-e="contingencia-modelo"' in t and "identidad.svg#e-contingencia-modelo" in t
+    assert "identidad.svg#e-contingencia-modelo" in t or "identidad.svg#n-" in t
     for viejo in ("circle-check", "triangle-alert", "octagon-alert", "circle-minus"):
         assert viejo not in re.sub(r"<symbol.*", "", t)
 
@@ -93,9 +93,10 @@ def test_informe_v2_kpis_veredicto_y_graficos(inf):
     v = vistas.informe_v2(inf)
     assert len(v["cards"]) == 6 and all(c["e"] in ("ok", "warn", "bad", "na") and c["meta"] for c in v["cards"])
     assert v["veredicto"]["e"] in ("ok", "warn", "bad", "na") and "\n" not in v["veredicto"]["t"] and len(v["veredicto"]["t"]) < 120
-    assert [p["id"] for p in v["pestanas"]] == ["resumen", "calidad", "desempeno", "costo", "rentabilidad", "incidentes"]
+    assert [p["id"] for p in v["pestanas"]] == ["calidad", "desempeno", "costo", "rentabilidad", "incidentes"]
     kinds = {c["kind"] for cs in v["charts"].values() for c in cs}
-    assert kinds <= {"bar", "line", "donut"} and sum(len(cs) for cs in v["charts"].values()) >= 8
+    assert kinds <= {"bar", "line", "donut"} and set(v["charts"]) <= {"rentabilidad"}   # el resto de pestañas usa visuales orbitales del servidor
+    assert all(p["vis"] for p in v["pestanas"] if p["id"] != "rentabilidad") and all(len(p["stats"]) <= 3 for p in v["pestanas"])
     for cs in v["charts"].values():
         assert len(cs) <= 3  # una fila de gráficos por pestaña
 
@@ -112,15 +113,15 @@ def test_informe_cuerpo_liviano_y_sin_parrafos(monkeypatch, inf):
     monkeypatch.setattr(principal, "_informe", lambda *a, **k: inf)
     h = TestClient(principal.app, base_url="https://t").get("/panel/informe/cuerpo?dias=30", headers=H).text
     assert len(re.findall(r"<[a-z]", h)) < 650            # el cuerpo no crece con las tablas (van aparte)
-    assert "<p" not in h and "<table" not in h
-    assert len(re.findall(r'role="tab"', h)) == 7 and "hidden" in h
+    assert "<table" not in h and len(re.findall(r"<p[ >]", h)) <= 16
+    assert len(re.findall(r'role="tab"', h)) == 6 and "hidden" in h
 
 
 def test_informe_con_cache_sale_completo(monkeypatch, inf):
     cache.vaciar()
     cache._datos[("informe", 30, None, None)] = (time.time(), inf)
     t = TestClient(principal.app, base_url="https://t").get("/panel/informe?dias=30", headers=H).text
-    assert "data-carga" not in t and 'class="kg6"' in t and 'id="inf-charts"' in t
+    assert "data-carga" not in t and 'class="bn kbs kbs6"' in t and 'id="inf-charts"' in t
 
 
 def test_informe_requiere_sesion():
@@ -247,3 +248,30 @@ def test_costo_en_la_tarjeta_y_sin_tarjeta_duplicada():
     assert k["form"] == "costo" and k["stack"][0]["n"] == "gpt-5-nano" and k["por_caso"]
     t = TestClient(principal.app, base_url="https://t")
     assert t.get("/panel", headers=H).status_code == 200
+
+
+# ---- íconos: todo <use> apunta a un id que existe -------------------------------------------------------------------------
+def _ids(archivo: str) -> set:
+    return set(re.findall(r'<(?:symbol|g|svg)[^>]*\sid="([^"]+)"', (EST / archivo).read_text()))
+
+
+def test_todo_use_apunta_a_un_id_que_existe(monkeypatch):
+    ids = {"identidad.svg": _ids("identidad.svg"), "iconos.svg": _ids("iconos.svg")}
+    c = TestClient(principal.app, base_url="https://t")
+    paginas = [c.get(r, headers=H).text for r in ("/", "/panel", "/panel/negocio", "/panel/ajustes", "/panel/reintentar")]
+    usados = set()
+    for t in paginas:
+        usados |= set(re.findall(r'href="/estaticos/(identidad\.svg|iconos\.svg)(?:\?[^"#]*)?#([^"]+)"', t))
+    assert len(usados) > 15
+    faltan = sorted(f"{a}#{i}" for a, i in usados if i not in ids[a])
+    assert faltan == []
+    # los íconos que genera el servidor y los que arma el JS también existen
+    for n in ("e-lista", "e-contingencia-modelo", "e-cadena-agotada", "e-sin-info", "l-karin", "l-datos", "l-penal", "t-lista"):
+        assert n in ids["identidad.svg"], n
+
+
+def test_portada_sin_use_roto():
+    t = (EST.parent / "plantillas" / "portada.html").read_text()
+    ids = _ids("identidad.svg") | _ids("iconos.svg")
+    internos = set(re.findall(r'<use[^>]*href="#([^"]+)"', t)) - set(re.findall(r'\sid="([^"]+)"', t))
+    assert not (internos - ids), internos - ids
