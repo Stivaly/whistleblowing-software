@@ -21,3 +21,9 @@ Revisa cada fila y, si apruebas, bórralo tú manualmente (`rm -r .papelera/...`
 - Las siluetas SVG de `kerna-glifo.component.ts` y el ícono "artículo marcado" de `kerna-icono.component.ts` fueron reemplazados por las escenas/logo de Núcleo (quedan en el historial de git).
 
 - 2026-11-11 | client/app/css/components/kerna.css (versión oscura) | .papelera/2026-11-11/client/app/css/components/kerna.css | reemplazada por el tema claro de Núcleo (sin fondos de color); copia movida/guardada para que la usuaria decida.
+
+## 2026-11-11 — Denuncias de prueba antiguas en Veridy (autorizado por la usuaria)
+- Eliminadas 62 denuncias de prueba (números 11–74 salvo 25 y 26) cargadas con resumen corto o con rótulos
+  "Título/Relato" y marca de prueba. Ids en `kerna/evaluacion/datos/denuncias_veridy.json` y
+  `denuncias_veridy_texto_completo.json`. Respaldo previo completo: `~/backups/veridy-azure-2026-11-11.dump`
+  (restaurar con `pg_restore --clean`). Quedan 38: las cargadas solo con el relato y las 10, 25 y 26 (origen sin registro).
