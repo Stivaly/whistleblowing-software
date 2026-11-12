@@ -113,6 +113,8 @@ def test_panel_muestra_bloque_y_no_se_rompe_si_la_tabla_falla(cliente, monkeypat
     p = cliente.get("/panel", headers=H)
     assert "esperan reintento" in p.text and "Reintentar ahora" in p.text and "Los modelos de IA no estaban disponibles" in p.text
     monkeypatch.setattr(reintentos, "_tabla", lambda: (_ for _ in ()).throw(RuntimeError("sin acceso")))
+    from app import cache
+    cache.vaciar()  # la caché compartida guardó el resumen anterior
     p = cliente.get("/panel", headers=H)
     assert p.status_code == 200 and "esperan reintento" not in p.text
     assert cliente.post("/panel/reintentar", headers=H, data={"csrf": token()}).headers["location"] == "/panel?reintento=error"

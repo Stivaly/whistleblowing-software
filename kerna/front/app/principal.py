@@ -86,20 +86,22 @@ def entrar(request: Request, clave: str = Form("")):
 _extra_cache: dict = {}
 
 
+def _extra_directo(nombre: str, dias: int) -> list[dict]:
+    try:
+        return consultas.filas(reintentos._kql(nombre + ".kql").replace("ago(7d)", f"ago({int(dias)}d)"), dias)
+    except Exception:
+        return []
+
+
 def _extra(nombre: str, dias: int, ttl: float = consultas.TTL_S) -> list[dict]:
     """Consulta auxiliar del Resumen (costo, etapas, horarios) con caché compartida; si falla, no hay datos (nunca rompe el panel)."""
-    def calcular():
-        try:
-            return consultas.filas(reintentos._kql(nombre + ".kql").replace("ago(7d)", f"ago({int(dias)}d)"), dias)
-        except Exception:
-            return []
-    return cache.obtener(("extra", nombre, dias), calcular, ttl)
+    return cache.obtener(("extra", nombre, dias), lambda: _extra_directo(nombre, dias), ttl)
 
 
 def _vista_resumen(m: dict, dias: int, prov, rei) -> dict:
     def ev():
         try:
-            return evaluaciones.cargar()
+            return cache.obtener(("ev",), evaluaciones.cargar, 120)
         except Exception:
             return None
     r = cache.paralelo({"ev": ev, **{k: (lambda k=k: _extra(k, dias)) for k in ("front_tokens_por_modelo", "latencia_por_etapa", "front_horarios")}})
@@ -205,7 +207,9 @@ def _informe(dias, desde, hasta):
 def precalentar():
     """Al arrancar: deja listos Resumen, informe y Negocio para que la primera visita no espere a Log Analytics."""
     cache.precalentar([(("metricas", 7), lambda: consultas.metricas(7), 60), (("prov",), proveedores.estado_proveedores, 60),
-                       (("informe", 30, None, None), lambda: _informe_directo(30), 120)])
+                       (("informe", 30, None, None), lambda: _informe_directo(30), 120), (("rei",), reintentos.resumen, 60), (("ev",), evaluaciones.cargar, 120),
+                       (("negocio", 30), lambda: negocio.cargar(dias=30), 120)]
+                      + [(("extra", k, 7), (lambda k=k: _extra_directo(k, 7)), consultas.TTL_S) for k in ("front_tokens_por_modelo", "latencia_por_etapa", "front_horarios")])
 
 
 def _informe_directo(dias):
