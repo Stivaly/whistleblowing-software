@@ -972,4 +972,4 @@ html,body{max-width:100%}
 @media(max-width:599px){.subtxt{display:none}.as-1 .ap{height:88px}}
 #app .ctl .seg{flex-wrap:nowrap}
 @media(max-width:599px){#app .ctl[data-t="sg"]{grid-template-columns:minmax(0,1fr)}#app .ctl[data-t="sg"] .ct-c{justify-content:flex-start}}
-.stt b{white-space:nowrap}.stt b small{white-space:nowrap}
+.stt b{white-space:nowrap}.stt li{flex-wrap:wrap;min-width:0;max-width:100%}
