@@ -63,7 +63,7 @@ def glosario() -> dict:
         "etapas": {"t": "¿Dónde se va el tiempo?", "q": "Tiempo típico de cada etapa del análisis.", "c": "Rojo: la etapa que ocupa la mitad o más del tiempo. Ámbar: un cuarto o más.", "l": L},
         "pendientes": {"t": "Reintentos pendientes", "q": "Casos que fallaron por problemas de los modelos y se volverán a intentar solos, o ahora mismo con el botón.", "c": "Los que necesitan a una persona no se reintentan: pasan a revisión manual.", "l": L},
         "mapa": {"t": "¿Cuándo llegan las denuncias?", "q": "Muestra en qué días y horas (hora de Chile) llegan más denuncias.", "c": "Útil para planificar turnos y para elegir una hora de bajo uso al actualizar el sistema.", "l": L},
-        "costo": {"t": "Costo", "q": "Se calcula sobre los tokens de cada modelo usado: Claude Haiku 5.5 resuelve primero y Claude Sonnet 5.5 respalda cuando el primero falla.", "c": precios, "l": L},
+        "costo": {"t": "Costo", "q": "Tokens que leyó y escribió cada modelo realmente usado, valorizados al precio de referencia de Anthropic (gpt-5-nano ≈ Claude Haiku 5.5; gpt-5-mini ≈ Claude Sonnet 5.5).", "c": precios, "l": L},
         "leyes": {"t": "Leyes más sugeridas", "q": "Ranking de las leyes que Kerna más sugiere (cantidad de artículos sugeridos).", "c": "Ayuda a ver qué tipo de denuncias predominan.", "l": L},
         "periodo": {"t": "Período", "q": "Rango de fechas que cubrirá el informe.", "c": "Períodos más largos suavizan altibajos; más cortos muestran lo reciente.", "l": "Qué pasa si cambia"},
         "fmt_pdf": {"t": "PDF", "q": "Documento listo para leer, imprimir o adjuntar a un correo, con gráficos y conclusiones.", "c": "Ideal para comités y auditorías. No se edita fácilmente.", "l": "Cuándo usarlo"},

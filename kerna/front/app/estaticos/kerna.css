@@ -698,22 +698,22 @@ a.btn{text-decoration:none}
 .inf-tr td,.inf-tr th{white-space:nowrap}
 
 /* ESTADOS-INICIO (generado por herramientas/construir_iconos_estado.py; paleta Núcleo, identidad v3) */
-k-st{display:inline-grid;place-items:center;flex:none;width:var(--s,1.5em);height:var(--s,1.5em);border-radius:22%;background:var(--fondo);vertical-align:middle;overflow:hidden}
+k-st{display:inline-grid;place-items:center;flex:none;width:var(--s,1.5em);height:var(--s,1.5em);border-radius:30%;background:var(--sb);vertical-align:middle;overflow:hidden}
 k-st svg{display:block;width:100%;height:100%;overflow:visible}
-k-st[data-e="lista"]{--fondo:#0F3A2A;--acc:#4EE08F;--pi:#E3FBEF;--pf:#0B1020}
-k-st[data-e="generando"]{--fondo:#14244F;--acc:#7FA2FF;--pi:#E6EEFF;--pf:#0B1020}
-k-st[data-e="contingencia-modelo"]{--fondo:#3F3008;--acc:#FFC93C;--pi:#FFF4D1;--pf:#0B1020}
-k-st[data-e="contingencia-busqueda"]{--fondo:#3F3008;--acc:#FFC93C;--pi:#FFF4D1;--pf:#0B1020}
-k-st[data-e="revision-citas"]{--fondo:#2E1B52;--acc:#B58CFF;--pi:#F3EAFF;--pf:#0B1020}
-k-st[data-e="revision-tiempo"]{--fondo:#44230A;--acc:#FF9A4D;--pi:#FFEBDD;--pf:#0B1020}
-k-st[data-e="cadena-agotada"]{--fondo:#4A1515;--acc:#FF6B5E;--pi:#FFE9E6;--pf:#0B1020}
-k-st[data-e="nucleo-no-disponible"]{--fondo:#4A1236;--acc:#FF6FB5;--pi:#FFE8F4;--pf:#0B1020}
-k-st[data-e="sin-info"]{--fondo:#1A2036;--acc:#8D98BC;--pi:#E4E8F5;--pf:#0B1020}
-k-st[data-e="sin-conexion"]{--fondo:#2A2F3D;--acc:#9AA6C4;--pi:#F2F5FF;--pf:#0B1020}
-k-st[data-e="sin-normativa"]{--fondo:#0C3A42;--acc:#4FD8E8;--pi:#E1FAFF;--pf:#0B1020}
-k-st[data-e="conector-en-proceso"]{--fondo:#33301F;--acc:#C9BE8A;--pi:#F7F1DC;--pf:#0B1020}
-k-st[data-e="conector-sin-nota"]{--fondo:#33301F;--acc:#C9BE8A;--pi:#F7F1DC;--pf:#0B1020}
-k-st[data-e="valorada"]{--fondo:#CFFF5E;--acc:#0B1020;--pi:#0B1020;--pf:#CFFF5E}
+k-st[data-e="lista"]{--fondo:#0F3A2A;--acc:#4EE08F;--pi:#E3FBEF;--pf:#0B1020;--sb:#4EE08F;--sg:#0F3A2A}
+k-st[data-e="generando"]{--fondo:#14244F;--acc:#7FA2FF;--pi:#E6EEFF;--pf:#0B1020;--sb:#7FA2FF;--sg:#14244F}
+k-st[data-e="contingencia-modelo"]{--fondo:#3F3008;--acc:#FFC93C;--pi:#FFF4D1;--pf:#0B1020;--sb:#FFC93C;--sg:#3F3008}
+k-st[data-e="contingencia-busqueda"]{--fondo:#3F3008;--acc:#FFC93C;--pi:#FFF4D1;--pf:#0B1020;--sb:#FFC93C;--sg:#3F3008}
+k-st[data-e="revision-citas"]{--fondo:#2E1B52;--acc:#B58CFF;--pi:#F3EAFF;--pf:#0B1020;--sb:#B58CFF;--sg:#2E1B52}
+k-st[data-e="revision-tiempo"]{--fondo:#44230A;--acc:#FF9A4D;--pi:#FFEBDD;--pf:#0B1020;--sb:#FF9A4D;--sg:#44230A}
+k-st[data-e="cadena-agotada"]{--fondo:#4A1515;--acc:#FF6B5E;--pi:#FFE9E6;--pf:#0B1020;--sb:#FF6B5E;--sg:#4A1515}
+k-st[data-e="nucleo-no-disponible"]{--fondo:#4A1236;--acc:#FF6FB5;--pi:#FFE8F4;--pf:#0B1020;--sb:#FF6FB5;--sg:#4A1236}
+k-st[data-e="sin-info"]{--fondo:#1A2036;--acc:#8D98BC;--pi:#E4E8F5;--pf:#0B1020;--sb:#8D98BC;--sg:#1A2036}
+k-st[data-e="sin-conexion"]{--fondo:#2A2F3D;--acc:#9AA6C4;--pi:#F2F5FF;--pf:#0B1020;--sb:#9AA6C4;--sg:#2A2F3D}
+k-st[data-e="sin-normativa"]{--fondo:#0C3A42;--acc:#4FD8E8;--pi:#E1FAFF;--pf:#0B1020;--sb:#4FD8E8;--sg:#0C3A42}
+k-st[data-e="conector-en-proceso"]{--fondo:#33301F;--acc:#C9BE8A;--pi:#F7F1DC;--pf:#0B1020;--sb:#C9BE8A;--sg:#33301F}
+k-st[data-e="conector-sin-nota"]{--fondo:#33301F;--acc:#C9BE8A;--pi:#F7F1DC;--pf:#0B1020;--sb:#C9BE8A;--sg:#33301F}
+k-st[data-e="valorada"]{--fondo:#CFFF5E;--acc:#0B1020;--pi:#0B1020;--pf:#CFFF5E;--sb:#CFFF5E;--sg:#0B1020}
 :root{
 --ok:#236F4A;--ok-bar:#2E8D5C;--ok-bg:#E6FBEF;--ok-ac:#4EE08F;
 --warn:#7C6119;--warn-bar:#9F7C22;--warn-bg:#FFF7E4;--warn-ac:#FFC93C;
@@ -757,3 +757,4 @@ k-st[data-e="valorada"]{--fondo:#CFFF5E;--acc:#0B1020;--pi:#0B1020;--pf:#CFFF5E}
 @media(prefers-reduced-motion:reduce){.sk{animation:none}}
 .mod-1{display:block!important}#app .mod-1{grid-template-columns:none}
 .mod-1 .mod-body{padding:14px 18px 6px}
+@media(min-width:1024px){.lg\:block{display:block}}

@@ -55,6 +55,28 @@ def estilizar(cuerpo):
     return re.sub(r"<\w+ [^>]*>", etiqueta, cuerpo)
 
 
+# Variante pequeña (16 a 32 px) del mismo ícono: baldosa del color del estado (acento de la paleta B) y glifo oscuro grueso, para que bien, atención y mal
+# se distingan sin leer el texto. Se dibuja en 24x24; el color de baldosa y de trazo viene de --sb y --sg.
+R = '<circle cx="12" cy="12" r="8.6"/>'
+GLIFOS = {
+    "lista": R + '<path d="M8 12.4l2.8 2.8L16.4 9"/>',
+    "contingencia-modelo": R + '<path d="M12 7.4v5.4"/><circle cx="12" cy="16.3" r="1" style="fill:var(--sg)"/>',
+    "contingencia-busqueda": '<circle cx="11" cy="11" r="4.6"/><path d="M14.6 14.6l4 4"/>',
+    "cadena-agotada": R + '<path d="M8.9 8.9l6.2 6.2M15.1 8.9l-6.2 6.2"/>',
+    "nucleo-no-disponible": R + '<path d="M7 7l10 10"/>',
+    "sin-info": '<circle cx="12" cy="12" r="8.6" style="stroke-dasharray:3.4 3"/><path d="M8.6 12h6.8"/>',
+    "sin-conexion": R + '<path d="M6.6 17.4L17.4 6.6"/>',
+    "generando": '<circle cx="12" cy="12" r="8.6" style="stroke-dasharray:11 4"/><circle cx="12" cy="12" r="2.6" style="fill:var(--sg)"/>',
+    "revision-citas": R + '<circle cx="12" cy="9.8" r="2.2"/><path d="M7.8 16.6c1.2-3.2 7.2-3.2 8.4 0"/>',
+    "revision-tiempo": R + '<path d="M12 7.4v4.8l3.2 2"/>',
+    "sin-normativa": R + '<path d="M8.4 12h7.2"/>',
+    "conector-en-proceso": '<circle cx="12" cy="12" r="8.6" style="stroke-dasharray:11 4"/><path d="M8.6 12h6.8"/>',
+    "conector-sin-nota": R + '<path d="M9 9.4h6M9 12h6M9 14.6h3.6"/>',
+    "valorada": R + '<path d="M8 12.4l2.8 2.8L16.4 9"/>',
+}
+GLIFO_ESTILO = "fill:none;stroke:var(--sg);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"
+
+
 def sprite():
     out = ['<svg xmlns="http://www.w3.org/2000/svg" style="display:none">']
     for n in ICONOS:
@@ -66,20 +88,23 @@ def sprite():
         cuerpo = re.sub(r' (?:late|blink)"', '"', cuerpo)
         cuerpo = estilizar(re.sub(r"(\d+\.\d)\d+", r"\1", cuerpo).replace(" />", "/>"))
         out.append(f'<g id="e-{n}">{cuerpo}</g>')  # <g> (no <symbol>): el recorte 26 6 108 108 lo pone el viewBox del svg que lo usa
+    for n, g in GLIFOS.items():
+        out.append(f'<g id="s-{n}" style="{GLIFO_ESTILO}">{g}</g>')
     out.append("</svg>")
     (EST / "estados.svg").write_text("\n".join(out) + "\n")
 
 
 def css():
     r = ["/* ESTADOS-INICIO (generado por herramientas/construir_iconos_estado.py; paleta Núcleo, identidad v3) */",
-         "k-st{display:inline-grid;place-items:center;flex:none;width:var(--s,1.5em);height:var(--s,1.5em);border-radius:22%;background:var(--fondo);vertical-align:middle;overflow:hidden}",
+         "k-st{display:inline-grid;place-items:center;flex:none;width:var(--s,1.5em);height:var(--s,1.5em);border-radius:30%;background:var(--sb);vertical-align:middle;overflow:hidden}",
          "k-st svg{display:block;width:100%;height:100%;overflow:visible}"]
     for n, t in ICONOS.items():
         f, x, a = PAL[t]
         pf = f if t == "fin" else "#0B1020"
         pi = "#0B1020" if t == "fin" else x
         if t == "fin": f, a, pf = "#CFFF5E", "#0B1020", "#CFFF5E"
-        r.append(f'k-st[data-e="{n}"]{{--fondo:{f};--acc:{a};--pi:{pi};--pf:{pf}}}')
+        sb, sg = ("#CFFF5E", "#0B1020") if t == "fin" else (a, f)
+        r.append(f'k-st[data-e="{n}"]{{--fondo:{f};--acc:{a};--pi:{pi};--pf:{pf};--sb:{sb};--sg:{sg}}}')
     # estados semánticos en superficies claras: texto = acento muy oscurecido hacia el fondo del tono; barra = mezcla acento/fondo; tinte = acento sobre blanco
     r.append(":root{")
     mal = []

@@ -22,6 +22,9 @@ TTL_S = 120
 # USD por millón de tokens (entrada, salida). gpt-5-nano ~ Claude Haiku 5.5; gpt-5-mini ~ Claude Sonnet 5.5.
 PRECIOS = {"nano": (0.10, 0.50), "mini": (2.00, 10.00)}
 DIAS_RIESGO, DIAS_ATENCION = 7, 3
+# Único cliente con uso real: sus denuncias, sugerencias y valoraciones salen de Log Analytics (la misma fuente del Resumen y del informe).
+# Los demás clientes sembrados aportan plan y tarifa; su uso no se conoce y se muestra «—» (nunca cifras inventadas).
+REALES = ("veridy-dev",)
 _cache: dict = {"t": 0.0, "v": None}
 
 
@@ -64,7 +67,8 @@ def construir(clientes: list[dict], uso: list[dict], hoy: date | None = None, di
     for c in sorted(clientes, key=lambda x: x.get("nombre", "")):
         if c.get("estado") not in (None, "activo"):
             continue
-        d = por_cli.get(c["PartitionKey"], {})
+        sin_uso = bool(c.get("sin_uso_real"))
+        d = {} if sin_uso else por_cli.get(c["PartitionKey"], {})
         ventana = [d.get(x, {}) for x in dias_l]
         serie = [int(v.get("denuncias") or 0) for v in ventana]
         tot, sug = sum(serie), sum(int(v.get("con_sugerencia") or 0) for v in ventana)
@@ -82,12 +86,12 @@ def construir(clientes: list[dict], uso: list[dict], hoy: date | None = None, di
         activos = [x for x, v in d.items() if int(v.get("denuncias") or 0) > 0 and x <= hoy]
         ult = max(activos) if activos else None
         sin = (hoy - ult).days if ult else None
-        riesgo = "bad" if sin is None or sin > DIAS_RIESGO else ("warn" if sin > DIAS_ATENCION else "ok")
-        uso_plan = _pct(tot, plan_dmes * dias / 30)
+        riesgo = "na" if sin_uso else ("bad" if sin is None or sin > DIAS_RIESGO else ("warn" if sin > DIAS_ATENCION else "ok"))
+        uso_plan = None if sin_uso else _pct(tot, plan_dmes * dias / 30)
         filas.append({"id": c["PartitionKey"], "nombre": c.get("nombre"), "rubro": c.get("rubro"), "plan": plan_dmes, "plan_tipo": par["planes"][clave]["nombre"],
                       "tarifa_uf_anual": _uf(tarifa), "origen_veridy": veridy,
-                      "alta": c.get("fecha_alta"), "serie": serie, "tot": tot, "uso_plan": uso_plan,
-                      "estado_uso": "bad" if uso_plan > 110 else ("warn" if uso_plan > 90 or uso_plan < 30 else "ok"),
+                      "alta": c.get("fecha_alta"), "serie": serie, "tot": None if sin_uso else tot, "uso_plan": uso_plan, "sin_uso": sin_uso,
+                      "estado_uso": "na" if sin_uso else ("bad" if uso_plan > 110 else ("warn" if uso_plan > 90 or uso_plan < 30 else "ok")),
                       "ingreso": _uf(ing), "costo_ia": round(ia, 4), "costo_servir": _uf(costo_servir), "margen": _uf(ing - costo_servir),
                       "margen_pct": _pct(ing - costo_servir, ing), "ultimo_uso": ult.isoformat() if ult else None, "dias_sin_uso": sin,
                       "riesgo": riesgo, "con_sugerencia": sug, "valoradas": val, "utiles": uti})
@@ -136,11 +140,50 @@ def construir(clientes: list[dict], uso: list[dict], hoy: date | None = None, di
     }
 
 
+def uso_real(dias: int) -> dict | None:
+    """Denuncias y sugerencias por día y valoraciones del período desde Log Analytics (misma consulta del Resumen). None si no responde."""
+    try:
+        from . import consultas
+        casos = consultas.filas(consultas.kql("casos", dias), dias)
+        vals = consultas.filas(consultas.kql("valoraciones", dias), dias)
+    except Exception:
+        return None
+    v = {r["valoracion"]: int(r["total"]) for r in vals if r.get("valoracion")}
+    return {"dias": {str(r["dia"])[:10]: (int(r["casos"]), int(r["con_sugerencia"])) for r in casos},
+            "valoradas": sum(v.get(k, 0) for k in ("util", "no_util", "ninguno_aplica")), "utiles": v.get("util", 0)}
+
+
+def con_uso_real(clientes: list[dict], uso: list[dict], real: dict | None, dias: int, hoy: date | None = None) -> tuple[list[dict], list[dict]]:
+    """Deja el uso solo donde es real: los clientes sembrados quedan sin uso y Veridy toma sus cifras de `real` (los tokens siguen de la tabla)."""
+    hoy = hoy or datetime.now(timezone.utc).date()
+    dias_l = [(hoy - timedelta(days=dias - 1) + timedelta(days=i)) for i in range(dias)]
+    cl, rows = [], []
+    for c in clientes:
+        c2 = dict(c)
+        if c["PartitionKey"] not in REALES or real is None:
+            c2["sin_uso_real"] = True
+        cl.append(c2)
+    for u in uso:
+        if u["PartitionKey"] in REALES and real is not None:
+            rows.append({k: v for k, v in u.items() if k not in ("denuncias", "con_sugerencia", "valoradas", "utiles")})
+    if real is not None:
+        por_dia = {r["RowKey"]: r for r in rows}
+        for i, d in enumerate(dias_l):
+            for pk in REALES:
+                r = por_dia.get(d.isoformat()) or {"PartitionKey": pk, "RowKey": d.isoformat()}
+                n, s = real["dias"].get(d.isoformat(), (0, 0))
+                r.update(denuncias=n, con_sugerencia=s, valoradas=real["valoradas"] if i == len(dias_l) - 1 else 0, utiles=real["utiles"] if i == len(dias_l) - 1 else 0)
+                por_dia[d.isoformat()] = r
+        rows = list(por_dia.values())
+    return cl, rows
+
+
 def cargar(crec: float | None = None, dias: int = 30, clientes=None, uso=None) -> dict | None:
-    """Lee las tablas (con caché breve). Lanza si no responden."""
+    """Lee las tablas (con caché breve). Lanza si no responden. Con las tablas reales, el uso sale de Log Analytics (solo Veridy)."""
     if clientes is None:
         ahora = time.monotonic()
         if _cache["v"] is None or ahora - _cache["t"] >= TTL_S:
             _cache.update(t=ahora, v=([dict(e) for e in _tabla(T_CLIENTES).list_entities()], [dict(e) for e in _tabla(T_USO).list_entities()]))
         clientes, uso = _cache["v"]
+        clientes, uso = con_uso_real(clientes, uso or [], uso_real(dias), dias)
     return construir(clientes, uso or [], dias=dias, crec=crec)

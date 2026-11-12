@@ -188,12 +188,15 @@
       }, hay ? '' : 'Sin denuncias en el período');
     }
     if (g.lat) {
-      const l = g.lat, intervalo = l.labels.length <= 8 ? 0 : Math.ceil(l.labels.length / 7) - 1, top = Math.max(l.meta * 1.4, ...l.p95, 1);
+      const l = g.lat, poco = l.labels.length < 4, intervalo = l.labels.length <= 8 ? 0 : Math.ceil(l.labels.length / 7) - 1, top = Math.max(l.meta * 1.4, ...l.p95, 1);
       mk('ch-lat', {
         ...base(), grid: { left: 32, right: 6, top: 24, bottom: 22 }, tooltip: { trigger: 'axis', valueFormatter: (v) => String(v).replace('.', ',') + ' s' }, legend: { top: 0, right: 0, textStyle: { color: ink, fontSize: 11 }, itemWidth: 12, itemHeight: 4 },
-        xAxis: { type: 'category', data: l.labels, boundaryGap: false, axisLabel: { color: mu, fontSize: 10.5, interval: intervalo }, axisLine: { lineStyle: { color: ln } }, axisTick: { show: false } },
+        xAxis: { type: 'category', data: l.labels, boundaryGap: poco, axisLabel: { color: mu, fontSize: 10.5, interval: intervalo }, axisLine: { lineStyle: { color: ln } }, axisTick: { show: false } },
         yAxis: { type: 'value', axisLabel: { color: mu, fontSize: 10.5 }, splitLine: { lineStyle: { color: '#EEF1F8' } }, max: Math.ceil(top / 5) * 5 },
-        series: [{ name: '9 de cada 10 casos', type: 'line', data: l.p95, smooth: true, symbol: 'none', lineStyle: { color: '#7C88B8', width: 2 }, areaStyle: { color: 'rgba(124,136,184,.18)' } },
+        series: poco ? [{ name: '9 de cada 10 casos', type: 'bar', data: l.p95, barMaxWidth: 26, itemStyle: { color: '#7C88B8', borderRadius: [3, 3, 0, 0] } },
+          { name: 'Caso típico', type: 'bar', data: l.p50, barMaxWidth: 26, itemStyle: { color: '#3B4FB4', borderRadius: [3, 3, 0, 0] },
+            markLine: { symbol: 'none', silent: true, data: [{ yAxis: l.meta, label: { formatter: 'Meta ' + String(l.meta).replace('.', ',') + ' s', color: ok, fontWeight: 700, fontSize: 10.5, position: 'insideEndTop' }, lineStyle: { color: ok, type: 'dashed', width: 2 } }] } }]
+          : [{ name: '9 de cada 10 casos', type: 'line', data: l.p95, smooth: true, symbol: 'none', lineStyle: { color: '#7C88B8', width: 2 }, areaStyle: { color: 'rgba(124,136,184,.18)' } },
           { name: 'Caso típico', type: 'line', data: l.p50, smooth: true, symbol: 'none', lineStyle: { color: '#3B4FB4', width: 3 }, areaStyle: { color: 'rgba(59,79,180,.22)' },
             markLine: { symbol: 'none', silent: true, data: [{ yAxis: l.meta, label: { formatter: 'Meta ' + String(l.meta).replace('.', ',') + ' s', color: ok, fontWeight: 700, fontSize: 10.5, position: 'insideEndTop' }, lineStyle: { color: ok, type: 'dashed', width: 2 } }] } }],
       }, l.labels.length ? '' : 'Sin mediciones de tiempo en el período');
@@ -296,7 +299,7 @@
   const PROV_E = { operativo: 'ok', degradado: 'warn', caido: 'bad', sin_informacion: 'na' };
   const PROV_T = { operativo: 'Operativo', degradado: 'Degradado', caido: 'Caído', sin_informacion: 'Sin información' };
   const ICO = { ok: 'e-lista', warn: 'e-contingencia-modelo', bad: 'e-cadena-agotada', na: 'e-sin-info' };
-  const icoHref = (id) => (id.startsWith('e-') ? '/estaticos/estados.svg#' : '/estaticos/iconos.svg#') + id;
+  const icoHref = (id) => (id.startsWith('e-') ? '/estaticos/estados.svg#s-' + id.slice(2) : '/estaticos/iconos.svg#' + id);
   const setIco = (u, id) => { u.setAttribute('href', icoHref(id)); const t = u.closest('k-st'); if (t) t.dataset.e = id.slice(2); };
   const setCls = (n, e) => { n.className = n.className.replace(/\bs-(ok|warn|bad|na)\b/g, '').trim() + ' s-' + e; };
   function aplicar(m) {

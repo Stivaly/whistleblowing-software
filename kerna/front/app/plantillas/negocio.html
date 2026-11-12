@@ -16,8 +16,9 @@
 <section class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Clientes</h2>{{ tip('neg_clientes') }}</div>
 <div class="cl-head" aria-hidden="true"><span>Cliente</span><span>Uso del plan ({{ dias }} días)</span><span>Ingreso · costo de servir</span><span>Último uso</span></div>
 <div>{% for c in V.clientes %}<div class="cl s-{{ c.riesgo }}">
-<div class="cl-n"><b>{{ c.nombre }}</b><span class="muted">{{ c.plan_tipo }} · {{ miles(c.plan) }} casos al mes · {{ uf(c.tarifa_uf_anual, 0) }} UF al año</span><svg viewBox="0 0 100 30" class="cl-sp" aria-hidden="true" preserveAspectRatio="none"><path d="{{ c.spark }}" fill="none" stroke="var(--brand-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg></div>
-<div class="cl-u s-{{ c.e_uso }}"><div class="mr-h"><span><b>{{ miles(c.tot) }}</b> denuncias</span><b class="vv">{{ ic(ICONO[c.e_uso]) }}<span>{{ c.uso_plan }} %</span></b></div><div class="mb"><i style="width:{{ c.w_uso }}%"></i><u style="left:100%;opacity:.5"></u></div></div>
+<div class="cl-n"><b>{{ c.nombre }}</b><span class="muted">{{ c.plan_tipo }} · {{ miles(c.plan) }} casos al mes · {{ uf(c.tarifa_uf_anual, 0) }} UF al año</span>{% if not c.sin_uso %}<svg viewBox="0 0 100 30" class="cl-sp" aria-hidden="true" preserveAspectRatio="none"><path d="{{ c.spark }}" fill="none" stroke="var(--brand-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>{% endif %}</div>
+{% if c.sin_uso %}<div class="cl-u s-na"><div class="mr-h"><span><b>—</b> denuncias</span><b class="vv"><span>—</span></b></div><div class="mb"><i style="width:0"></i></div></div>
+{% else %}<div class="cl-u s-{{ c.e_uso }}"><div class="mr-h"><span><b>{{ miles(c.tot) }}</b> denuncias</span><b class="vv">{{ ic(ICONO[c.e_uso]) }}<span>{{ c.uso_plan }} %</span></b></div><div class="mb"><i style="width:{{ c.w_uso }}%"></i><u style="left:100%;opacity:.5"></u></div></div>{% endif %}
 <div class="cl-m"><b>{{ uf(c.ingreso) }} UF</b> · {{ uf(c.costo_servir) }} UF</div>
 <div class="cl-l"><span class="chip {{ c.riesgo }}">{{ ic(ICONO[c.riesgo]) }}<span>{{ c.ult }}</span></span>{{ tip('neg_clientes', c.nota) }}</div></div>{% endfor %}</div></section>
 

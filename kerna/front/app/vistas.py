@@ -79,7 +79,8 @@ def costo_modelos(filas: list[dict]) -> dict | None:
         prom = _n(r.get("tokens_entrada_prom")) or (ent / c if c else 0)
         alto = pe2 is not None and prom > inf.UMBRAL_PROMPT
         usd = ent * (pe2 if alto else pe) / 1e6 + sal * (ps2 if alto else ps) / 1e6
-        d = tot.setdefault(cl, {"modelo": cl, "casos": 0, "usd": 0.0})
+        real = str(r.get("modelo") or "sin nombre")
+        d = tot.setdefault(real, {"modelo": real, "ref": cl, "casos": 0, "usd": 0.0})  # el modelo real; el equivalente Claude es solo precio de referencia
         d["casos"] += c
         d["usd"] += usd
         n += c
@@ -174,9 +175,10 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
                   "et": "Sin datos", "tr": "", "te": "na", "ta": "minus", "x": "No hay solicitudes medidas en el período."})
     # --- Costo
     if costo:
-        k.append({"k": "costo_k", "i": "coins", "l": "Costo", "form": "spark", "e": "ok", "p": "US$", "u": "", "num": round(costo["total"], 2), "v": f.usd(costo["total"]),
-                  "et": "Sin alertas", "tr": "", "te": "na", "ta": "minus", "s": serie,
-                  "x": f"Costo por denuncia: US$ {f.usd(costo['por_caso'], 4)}. " + " · ".join(f"{x['modelo']} US$ {f.usd(x['usd'])}" for x in costo["modelos"]) + "."})
+        refs = sorted({x["ref"] for x in costo["modelos"]})
+        k.append({"k": "costo_k", "i": "coins", "l": "Costo", "form": "spark", "e": "na", "p": "US$", "u": "", "num": round(costo["total"], 2), "v": f.usd(costo["total"]),
+                  "et": "", "tr": "", "te": "na", "ta": "minus", "s": serie,  # sin meta de costo en la configuración: sin estado
+                  "x": f"Costo por denuncia: US$ {f.usd(costo['por_caso'], 4)}. " + " · ".join(f"{x['modelo']} US$ {f.usd(x['usd'])}" for x in costo["modelos"]) + ". Precio de referencia: " + ", ".join(refs) + "."})
     else:
         k.append({"k": "costo_k", "i": "coins", "l": "Costo", "form": "spark", "e": "na", "p": "", "u": "", "num": None, "v": "—", "et": "Sin datos", "tr": "", "te": "na",
                   "ta": "minus", "s": serie, "x": "No hay tokens medidos en el período."})
@@ -224,13 +226,13 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
                 continue
             v = x["recall5"]
             e = "ok" if v >= meta_rec else ("warn" if v >= meta_rec - RECALL_ALERTA else "bad")
-            aciertos.append({"n": inf.nombre_ley(x["ley"]), "v": f.dec_corto(v * 100, 1), "w": round(v * 100, 1), "e": e, "casos": x.get("casos_articulo")})
+            aciertos.append({"n": inf.ley_corta(x["ley"]), "full": inf.nombre_ley(x["ley"]), "v": f.dec_corto(v * 100, 1), "w": round(v * 100, 1), "e": e, "casos": x.get("casos_articulo")})
     val = m["valoraciones"]
     nval = sum(val.values())
     vals = [{"t": t, "n": val[c], "p": pct(val[c], nval), "e": e} for c, t, e in (("util", "Útil", "ok"), ("no_util", "No útil", "bad"), ("ninguno_aplica", "Ninguno aplica", "warn"))]
     leyes = sorted(m["leyes"], key=lambda x: -x["articulos"])[:6]
     mx_ley = max((x["articulos"] for x in leyes), default=1) or 1
-    leyes_v = [{"n": inf.nombre_ley(x["norma"]), "norma": x["norma"], "v": x["articulos"], "w": round(100 * x["articulos"] / mx_ley)} for x in leyes]
+    leyes_v = [{"n": inf.ley_corta(x["norma"]), "full": inf.nombre_ley(x["norma"]), "norma": x["norma"], "v": x["articulos"], "w": round(100 * x["articulos"] / mx_ley)} for x in leyes]
 
     # --- Proveedores
     provs = []
@@ -276,6 +278,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     costo_v = None
     if costo:
         costo_v = {"total": f.usd(costo["total"]), "por_caso": f.usd(costo["por_caso"], 4),
+                   "ref": ", ".join(sorted({x["ref"] for x in costo["modelos"]})),
                    "modelos": [{"n": x["modelo"], "usd": f.usd(x["usd"]), "w": round(100 * x["usd"] / costo["total"], 1) if costo["total"] else 0} for x in costo["modelos"]]}
         mp.t["costo.total"], mp.t["costo.caso"] = costo_v["total"], costo_v["por_caso"]
         for i, x in enumerate(costo_v["modelos"]):
@@ -301,8 +304,9 @@ def negocio(n: dict) -> dict:
     """Vista de Negocio con los números de negocio.construir (todo en UF)."""
     t, a, p = n["totales"], n["adopcion"], n["proyeccion"]
     cls = n["clientes"]
-    activos = [c for c in cls if c["riesgo"] != "bad"]
+    activos = [c for c in cls if c["riesgo"] in ("ok", "warn")]
     riesgo = [c for c in cls if c["riesgo"] == "bad"]
+    sin_dato = [c for c in cls if c["riesgo"] == "na"]
     mo = t["margen_operativo_pct"]
     e_mar = "ok" if mo >= 60 else ("warn" if mo >= 30 else "bad")
     e_val = "na" if not t["denuncias"] else ("ok" if a["valoradas_pct"] >= 50 else ("warn" if a["valoradas_pct"] >= 30 else "bad"))
@@ -317,8 +321,9 @@ def negocio(n: dict) -> dict:
     ico = ICONO
     k = [
         {"k": "neg_clientes_k", "i": "building-2", "l": "Clientes activos", "form": "dots", "e": "ok" if not riesgo else "warn", "v": str(len(activos)), "u": f"de {len(cls)}",
-         "dots": [{"e": c["riesgo"], "n": f"{c['nombre']}: " + (f"hace {c['dias_sin_uso']} días" if c["dias_sin_uso"] is not None else "sin uso")} for c in cls],
-         "et": "Todos usan Kerna" if not riesgo else f"{len(riesgo)} en riesgo", "x": f"{len(activos)} de {len(cls)} clientes usaron Kerna en los últimos {neg_mod.DIAS_RIESGO} días. Cada círculo es un cliente."},
+         "dots": [{"e": c["riesgo"], "n": f"{c['nombre']}: " + ("sin datos de uso" if c["riesgo"] == "na" else (f"hace {c['dias_sin_uso']} días" if c["dias_sin_uso"] is not None else "sin uso"))} for c in cls],
+         "et": f"{len(riesgo)} en riesgo" if riesgo else (f"{len(sin_dato)} sin datos de uso" if sin_dato else "Todos usan Kerna"),
+         "x": f"{len(activos)} de {len(cls)} clientes usaron Kerna en los últimos {neg_mod.DIAS_RIESGO} días. Solo se mide el uso de Veridy; de los demás clientes se conocen el plan y la tarifa. Cada círculo es un cliente."},
         {"k": "neg_denuncias_k", "i": "inbox", "l": "Denuncias", "form": "spark", "e": "ok" if t["denuncias"] else "na", "v": f.miles(t["denuncias"]), "u": f"en {n['dias']} días", "s": n["serie_total"],
          "et": "Con actividad" if t["denuncias"] else "Sin denuncias", "x": f"Se procesaron {f.miles(t['denuncias'])} denuncias entre todos los clientes en {n['dias']} días."},
         {"k": "neg_ingreso", "i": "wallet", "l": "Ingreso", "form": "none", "e": "ok" if t["ingreso"] > 0 else "na", "v": f.uf(t["ingreso"]), "u": "UF", "et": "Tarifa anual por los días",
@@ -344,11 +349,12 @@ def negocio(n: dict) -> dict:
         x.setdefault("tr", "")
     clientes = []
     for c in cls:
-        e_u = c["estado_uso"] if c["riesgo"] != "bad" else "warn"
-        nota = ("Usó el plan al comienzo y luego se detuvo" if c["riesgo"] == "bad" and c["tot"] else "No registra denuncias en el período" if c["riesgo"] == "bad" else
+        e_u = "na" if c["sin_uso"] else (c["estado_uso"] if c["riesgo"] != "bad" else "warn")
+        nota = ("Sin datos de uso: solo se mide el uso de Veridy" if c["sin_uso"] else "Usó el plan al comienzo y luego se detuvo" if c["riesgo"] == "bad" and c["tot"] else "No registra denuncias en el período" if c["riesgo"] == "bad" else
                 "Superó el plan: ofrecer un plan mayor" if c["uso_plan"] > 110 else "Cerca del límite del plan" if c["uso_plan"] > 90 else "Usa muy poco de lo contratado" if c["uso_plan"] < 30 else "Uso sano del plan")
         clientes.append({**c, "e_uso": e_u, "nota": nota, "spark": graficos.spark(c["serie"]),
-                         "ult": ("hace " + (f"{c['dias_sin_uso']} días" if c["dias_sin_uso"] else "menos de un día")) if c["ultimo_uso"] else "sin uso", "w_uso": min(100, c["uso_plan"])})
+                         "ult": "sin datos" if c["sin_uso"] else (("hace " + (f"{c['dias_sin_uso']} días" if c["dias_sin_uso"] else "menos de un día")) if c["ultimo_uso"] else "sin uso"),
+                         "w_uso": min(100, c["uso_plan"] or 0)})
     embudo = [{"n": "Con sugerencia", "v": a["con_sugerencia_pct"], "e": "ok" if a["con_sugerencia_pct"] >= SUG_OK else "warn"},
               {"n": "Valoradas por auditores", "v": a["valoradas_pct"], "e": e_val},
               {"n": "Valoradas como útiles", "v": a["utiles_pct"], "e": "na" if not a["valoradas"] else ("ok" if a["utiles_pct"] >= 70 else "warn")}]
@@ -360,7 +366,7 @@ def negocio(n: dict) -> dict:
                  ("Impuesto", -t["impuesto"], "na", 100 * t["impuesto"] / nt), ("Utilidad después de impuestos", t["utilidad"], "ok" if t["utilidad"] > 0 else "bad", 100 * abs(t["utilidad"]) / nt)]
     resultado = [{"n": r[0], "v": f.uf(r[1]), "e": r[2], "w": round(min(100, r[3]), 1)} for r in resultado]
     anios = [{**x, "label": f"Año {x['anio']} ({x['calendario']})"} for x in p["anios"]]
-    graf = {"clientes": {"labels": [f.fecha_corta(d) for d in n["dias_serie"]], "series": [{"n": c["nombre"], "d": c["serie"]} for c in cls]},
+    graf = {"clientes": {"labels": [f.fecha_corta(d) for d in n["dias_serie"]], "series": [{"n": c["nombre"], "d": c["serie"]} for c in cls if not c["sin_uso"]]},
             "proy": {"labels": [str(x["calendario"]) for x in p["anios"]], "ventas": [x["ventas"] for x in p["anios"]], "costos": [round(x["ventas"] - x["margen_operativo"], 2) for x in p["anios"]],
                      "utilidad": [x["utilidad"] for x in p["anios"]]}}
     return {"eg": {"e": e_gen, "t": {"ok": "Saludable", "warn": "Atención", "bad": "Problema"}[e_gen], "s": sub, "puntos": puntos}, "kpis": k, "clientes": clientes, "embudo": embudo,
@@ -571,7 +577,7 @@ def informe_v2(inf_: dict) -> dict:
         serie, menos, pts, meta = extra[c["k"]]
         tr = _tendencia(serie, menos, pts=pts) if serie else {"tr": "", "te": "na", "ta": "minus"}
         d = {"d_l": graficos.spark(serie), "d_a": graficos.spark_area(serie)} if len(serie) > 1 else {}
-        cards.append({"k": c["k"], "i": c["i"], "l": nombres[c["k"]], "v": c["v"], "u": c["u"], "p": c["p"], "e": c["e"], "et": c["et"], "meta": meta, "x": c["x"], **tr, **d})
+        cards.append({"k": c["k"], "i": c["i"], "l": nombres[c["k"]], "v": c["v"], "u": c["u"], "p": c["p"], "e": c["e"], "et": "" if c["k"] == "costo_k" else c["et"], "meta": meta, "x": c["x"], **tr, **d})
     mal = [c["l"] for c in cards if c["e"] == "bad"]
     atencion = [c["l"] for c in cards if c["e"] == "warn"]
     if mal:
@@ -582,7 +588,8 @@ def informe_v2(inf_: dict) -> dict:
         e_v, txt = "na", "Sin datos en el período"
     else:
         e_v, txt = "ok", "Todo dentro de la meta"
-    veredicto = {"e": e_v, "t": txt, "n": f"{sum(1 for c in cards if c['e'] == 'ok')} de {len(cards)} en meta"}
+    con_meta = [c for c in cards if c["e"] != "na" and c["k"] != "casos"]
+    veredicto = {"e": e_v, "t": txt, "n": f"{sum(1 for c in con_meta if c['e'] == 'ok')} de {len(con_meta)} en meta"}
 
     kp = {k["etiqueta"]: k for s in vistas_informe_cache(inf_) for k in s["kpis"]}
     pestanas = []
@@ -628,8 +635,8 @@ def informe_charts(inf_: dict) -> dict:
                                "series": [{"n": "Ocultados", "d": [round(100 * r[3]) for r in an["filas"]], "cs": ["ok" if r[3] >= .9 else ("warn" if r[3] >= .6 else "bad") for r in an["filas"]]}]})
     ld = T("lat_dia")
     if ld and ld["filas"]:
-        out["desempeno"].append({"id": "g-lat", "t": "Tiempo de respuesta por día", "g": "latencia", "kind": "line", "unit": " s", "meta": {"v": META_P95_S, "t": "Meta"}, "cats": [f.fecha_corta(str(r[0])) for r in ld["filas"]],
-                                 "series": [{"n": "9 de cada 10 casos", "d": [round(r[3] / 1000, 1) for r in ld["filas"]], "c": "na", "area": True}, {"n": "Caso típico", "d": [round(r[2] / 1000, 1) for r in ld["filas"]], "c": "pro", "area": True}]})
+        out["desempeno"].append({"id": "g-lat", "t": "Tiempo de respuesta por día", "g": "latencia", "kind": "line" if len(ld["filas"]) >= 4 else "bar", "unit": " s", "meta": {"v": META_P95_S, "t": "Meta"}, "cats": [f.fecha_corta(str(r[0])) for r in ld["filas"]],
+                                 "series": [{"n": "9 de cada 10 casos", "d": [round(r[3] / 1000, 1) for r in ld["filas"]], "c": "na", "area": True}, {"n": "Caso típico", "d": [round(r[2] / 1000, 1) for r in ld["filas"]], "c": "pro", "area": True}]})  # con menos de 4 días, barras agrupadas
     le = T("lat_etapa")
     if le and le["filas"]:
         out["desempeno"].append({"id": "g-etapa", "t": "¿Dónde se va el tiempo?", "g": "etapas", "kind": "bar", "h": True, "unit": " s", "cats": [ETAPAS.get(str(r[0]), str(r[0]).capitalize()) for r in le["filas"]],

@@ -14,7 +14,7 @@
 {% if k.form == 'bullet' %}<div class="bu" role="img" aria-label="{{ k.l }}: {{ k.v }} {{ k.u }}, {{ k.metaT }}"><div class="bu-t">{% for z in k.z %}<i class="s-{{ z.e }}" style="flex:{{ z.b - z.a }}"></i>{% endfor %}<b class="bu-m" style="left:{{ k.pos|round(1) }}%" data-l="k.{{ k.k }}.m"></b><u class="bu-g" style="left:{{ k.pos_meta|round(1) }}%"></u></div>
 <div class="bu-s"><span>0</span><span class="bu-gl" style="left:{{ k.pos_meta|round(1) }}%">{{ k.metaT }}</span><span>{{ k.mx_txt }}</span></div></div>{% endif %}
 {% if k.form == 'dots' %}<div class="dots" role="img" aria-label="{{ k.x }}">{% for d in k.dots %}<i class="s-{{ d.e }}" title="{{ d.n }}">{{ ic(ICONO[d.e]) }}</i>{% endfor %}</div>{% endif %}
-<div class="kt-f"><span class="kt-s">{{ ic(ICONO[k.e], 'k.' ~ k.k) }}<span data-t="k.{{ k.k }}.et">{{ k.et }}</span></span>{% if k.tr %}<span class="kt-t t-{{ k.te }}">{{ ic(k.ta) }}<span>{{ k.tr }}</span></span>{% endif %}</div>
+<div class="kt-f">{% if k.et %}<span class="kt-s">{{ ic(ICONO[k.e], 'k.' ~ k.k) }}<span data-t="k.{{ k.k }}.et">{{ k.et }}</span></span>{% else %}<span></span>{% endif %}{% if k.tr %}<span class="kt-t t-{{ k.te }}">{{ ic(k.ta) }}<span>{{ k.tr }}</span></span>{% endif %}</div>
 </article>
 {%- endmacro %}
 
@@ -30,7 +30,7 @@
 <article class="kc s-{{ k.e }}" id="k-{{ k.k }}">
 <div class="kc-h"><span class="kc-l">{{ k.l }}</span>{{ tip(k.k, k.x) }}</div>
 <div class="kc-v">{% if k.p %}<span class="kt-u">{{ k.p }}</span>{% endif %}<b>{{ k.v }}</b>{% if k.u %}<span class="kt-u">{{ k.u }}</span>{% endif %}</div>
-<div class="kc-f"><span class="kc-s">{{ ic(ICONO[k.e]) }}<span>{{ k.et }}</span></span>{% if k.tr %}<span class="kt-t t-{{ k.te }}" title="Comparación de la segunda mitad del período con la primera">{{ ic(k.ta) }}<span>{{ k.tr }}</span></span>{% endif %}</div>
+<div class="kc-f">{% if k.et %}<span class="kc-s">{{ ic(ICONO[k.e]) }}<span>{{ k.et }}</span></span>{% else %}<span></span>{% endif %}{% if k.tr %}<span class="kt-t t-{{ k.te }}" title="Comparación de la segunda mitad del período con la primera">{{ ic(k.ta) }}<span>{{ k.tr }}</span></span>{% endif %}</div>
 {% if k.d_l %}<svg viewBox="0 0 100 30" preserveAspectRatio="none" class="sp" aria-hidden="true"><path d="{{ k.d_a }}" class="sp-a"/><path d="{{ k.d_l }}" class="sp-l" vector-effect="non-scaling-stroke"/></svg>{% endif %}
 <small class="kc-m">{{ k.meta }}</small>
 </article>
