@@ -29,3 +29,52 @@
 ## Maqueta v3 publicada
 - La maqueta v3 de la consola (`kerna/front/diseno-v2/maqueta.html`) está publicada como Artifact: https://claude.ai/artifact/WwcmWbJdjYSPVKdksTy1Fx
 - El enlace de la v2 (HYMiH3d26ku4sN18dBQYJb) no se pudo leer ni actualizar desde esta cuenta, por eso la v3 quedó en un enlace nuevo.
+
+## Trabajo sin la usuaria (2026-11-12, tarde, vía Continuo)
+
+**Escrito para:** la usuaria, al volver.
+
+**Desplegado en producción** (https://app-kerna-dev-front-g6mzy.azurewebsites.net, último commit desplegado con `desplegar.sh --ref HEAD`; 107 pruebas del front pasan):
+- **Rediseño Núcleo completo** según `kerna/front/diseno-v2/direccion-diseno.md`:
+  - **Resumen:** diagrama orbital del período (núcleo con 303 denuncias, anillos por modo, leyenda al lado); frase titular; cola de reintentos en línea con diálogo modal; KPI en banda sin tarjetas; «El camino de una denuncia»; anillos de acierto por ley con sus íconos.
+  - **Negocio:** frase titular; cascada del ingreso a la utilidad; KPI en banda; Veridy con anillo de capacidad; proyección compacta con chips y tabla plegada.
+  - **Ajustes:** se conservan los paneles azules orbitales que reaccionan a los controles. Cada ajuste en una fila, con títulos cortos.
+  - **Informe de gestión:** veredicto con baldosa de la identidad, 6 KPI y pestañas con una visual cada una; tablas solo en «Datos».
+  - **PDF:** las mismas visuales en vector; página 1 con cabecera, veredicto, KPI, diagrama y camino; anexo de tablas.
+- **Identidad:** sprite con las 14 escenas de estado, íconos de ley y más de 30 íconos propios en el mismo lenguaje orbital (candado, oculto, cita, escudo, llave…). Ningún glifo genérico en estados.
+- **Portada:** íconos de los 4 pasos y de las leyes recuperados (la causa era un sprite con XML inválido, ya con prueba). El círculo lima suelto era un satélite pintado en la imagen de fondo: eliminado.
+- **Porcentajes unificados:** acierto 49,2 % con meta 80 % en la vista, el Excel, el CSV y el PDF.
+- **Móvil:** sin scroll horizontal en ninguna vista ni pestaña.
+- **Reintentar:** funciona en producción, con diálogo modal; el pedido queda registrado en la tabla `reintentosmanuales`.
+
+**Alturas** (1366 / 390 px):
+
+| Vista | Antes | Ahora |
+|---|---|---|
+| Resumen | 1.775 / 2.708 | 850 / 1.185 |
+| Negocio | 1.477 / 2.485 | 948 / 1.240 |
+| Ajustes | 1.213 / 1.894 | 850 / 1.370 |
+
+**Rendimiento:** TTFB de 11 a 94 ms, HTML de 8 a 10 KB, CPU en reposo entre 0 y 0,4 %.
+
+**Qué revisé yo** (capturas prod7, prod8 y prod9 en `kerna/front/diseno-v2/capturas/`):
+- En prod7 encontré y devolví:
+  - la meta «0,8 %»;
+  - el veredicto duplicado;
+  - puntitos sueltos de íconos;
+  - el diagrama con etiquetas superpuestas;
+  - la mancha en los paneles de Ajustes y el hueco en «Compartir»;
+  - texto redundante en Negocio.
+- En prod9 corregí yo dos detalles de móvil: «+52 % sobre el plan» repetido y «Depreciación» partido a mitad de palabra, que ahora dice «Crédito y equipos».
+
+**Falta (menor):**
+- Datos a 390 px mide unos 1.340 px: se podría agrupar por sección.
+- PDF: las páginas de Rapidez e Incidentes quedan con media hoja libre.
+- En la pestaña Calidad, el anillo «Global» queda unos píxeles más abajo que los otros.
+- Revisar en un celular real el degradado de «Compartir».
+
+**Sigue pendiente de ti:**
+- Valor de la UF (hoy se usan 40.000).
+- Subir al plan B1 (unos US$ 13 al mes) para evitar la espera de la primera visita.
+- Autorizar el despliegue del conector, para que el reintento manual se ejecute de verdad.
+- Crear la cuenta `kerna-e2e`.
