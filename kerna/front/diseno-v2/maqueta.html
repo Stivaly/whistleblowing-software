@@ -139,11 +139,13 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 .hero-logo:hover .lg-a{scale:1.05}
 
 /* ---------- fondo vivo ---------- */
+.card.card-hi::before,.band::before,.mod-art::before,.orb-ic::before,.node::before,.nav a.on::after,.hero-logo::before{will-change:transform}
 .bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;transition:opacity .8s}
 .bgfx svg{position:absolute;left:50%;top:50%;width:max(100vw,100vh);height:max(100vw,100vh);transform:translate(-50%,-50%)}
 .bgfx.bg-p{opacity:.8}.bgfx.bg-a{opacity:.22}
-.bgfx .b-rot{transform-origin:600px 600px;will-change:transform}
-.b1{animation:rot 170s linear infinite}.b2{animation:rot 120s linear infinite reverse}.b3{animation:rot 280s linear infinite}
+.bgfx .b-rot{will-change:transform;contain:strict}
+@keyframes rotb{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+.b1{animation:rotb 170s linear infinite}.b2{animation:rotb 120s linear infinite reverse}.b3{animation:rotb 280s linear infinite}
 .bo{fill:none;stroke:#1C2A6B;stroke-opacity:.4;stroke-width:3;stroke-dasharray:.1 15;stroke-linecap:round}
 .bs{fill:#CFFF5E;stroke:#1C2A6B;stroke-width:4}
 .bro{fill:none;stroke:#1C2A6B;stroke-opacity:.3;stroke-width:2.4;stroke-dasharray:.1 13;stroke-linecap:round}
@@ -171,7 +173,7 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 .kv-s{font-family:Unbounded,Inter,sans-serif;font-weight:700;font-size:30px;line-height:1.1;letter-spacing:-.03em}
 
 /* ---------- barra superior ---------- */
-.hdr{background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:2px dotted var(--line-strong)}
+.hdr{background:#fff;border-bottom:2px dotted var(--line-strong)}
 .lnk{position:relative;display:inline-block;padding:8px 2px 12px;font-size:17px;font-weight:600;color:var(--ink);text-decoration:none}
 .lnk::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:8px;background:radial-gradient(circle,var(--brand-2) 1.4px,transparent 1.8px) 0 50%/9px 8px repeat-x;clip-path:inset(0 100% 0 0);transition:clip-path .45s var(--ease)}
 .lnk::before{content:"";position:absolute;left:0;bottom:2px;width:9px;height:9px;border-radius:50%;background:var(--lime);border:2px solid var(--brand);opacity:0;transition:left .45s var(--ease),opacity .2s;z-index:1}
@@ -338,8 +340,9 @@ k-tip k-ic{width:20px;height:20px}
 .bigtxt{font:700 40px Unbounded,Inter,sans-serif;fill:#fff;text-anchor:middle}
 .subtxt{font:500 14px Inter,sans-serif;fill:#DCE2FA;text-anchor:middle}
 .live{display:flex;gap:10px;align-items:flex-start;margin:0;font-size:15.5px;line-height:1.5;color:#fff;max-width:300px}
-.live-dot{flex:none;width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 0 rgba(207,255,94,.7);animation:livep 2.4s infinite}
-@keyframes livep{70%{box-shadow:0 0 0 10px rgba(207,255,94,0)}100%{box-shadow:0 0 0 0 rgba(207,255,94,0)}}
+.live-dot{flex:none;width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--lime);position:relative}
+.live-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:rgba(207,255,94,.7);animation:livep 2.4s infinite;will-change:transform,opacity}
+@keyframes livep{0%{transform:scale(1);opacity:1}70%,100%{transform:scale(2.6);opacity:0}}
 .live-k{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--lime);font-weight:700;margin:0;align-self:flex-start}
 .mod-body{padding:24px 20px 10px}
 @media(min-width:768px){.mod-body{padding:30px 34px 14px}}
@@ -395,7 +398,7 @@ k-tip k-ic{width:20px;height:20px}
 <a class="skip" href="#main">Saltar al contenido</a>
 
 <div x-data="app()" x-init="init()" x-cloak class="min-h-screen">
-<div class="bgfx" :class="view==='portada'?'bg-p':'bg-a'" aria-hidden="true"><svg viewBox="0 0 1200 1200" fill="none"><g class="b-rot b1"><circle class="bo" cx="600" cy="600" r="560"/><circle class="bs" cx="1160" cy="600" r="12"/><circle class="bo" cx="600" cy="600" r="430"/></g><g class="b-rot b2"><ellipse class="bo" cx="600" cy="600" rx="480" ry="170" transform="rotate(25 600 600)"/><circle class="bs" cx="1080" cy="600" r="10" transform="rotate(25 600 600)"/></g><g class="b-rot b3"><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(0 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(15 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(30 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(45 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(60 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(75 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(90 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(105 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(120 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(135 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(150 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(165 600 600)"/></g></svg></div>
+<div class="bgfx" :class="view==='portada'?'bg-p':'bg-a'" aria-hidden="true"><svg class="b-rot b1" viewBox="0 0 1200 1200" fill="none"><circle class="bo" cx="600" cy="600" r="560"/><circle class="bs" cx="1160" cy="600" r="12"/><circle class="bo" cx="600" cy="600" r="430"/></svg><svg class="b-rot b2" viewBox="0 0 1200 1200" fill="none"><ellipse class="bo" cx="600" cy="600" rx="480" ry="170" transform="rotate(25 600 600)"/><circle class="bs" cx="1080" cy="600" r="10" transform="rotate(25 600 600)"/></svg><svg class="b-rot b3" viewBox="0 0 1200 1200" fill="none"><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(0 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(15 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(30 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(45 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(60 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(75 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(90 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(105 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(120 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(135 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(150 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(165 600 600)"/></svg></div>
 
 <!-- ================= PORTADA PUBLICA ================= -->
 <div x-show="view==='portada'">
