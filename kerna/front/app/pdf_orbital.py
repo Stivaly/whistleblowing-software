@@ -78,12 +78,12 @@ class Orbital(_Base):
             c.arc(cx - r, cy - r, cx + r, cy + r, 90 - math.degrees(a["fin"]), min(a["frac"], .9999) * 360)
             c.restoreState()
             c.setFillColor(_c(CAT_BG[a["c"]])); c.setStrokeColor(col); c.setLineWidth(2 * k)
-            c.circle(X(a["sx"]), Y(a["sy"]), 12 * k, stroke=1, fill=1)
+            c.circle(X(a["sx"]), Y(a["sy"]), a["rs"] * k, stroke=1, fill=1)
             _centrado(c, X(a["sx"]), Y(a["sy"] + 3.4), a["txt"], "Mono", (8.6 if len(a["txt"]) <= 3 else 6.6 if len(a["txt"]) <= 5 else 5.4) * k, _c("#0B1020"))
         c.setFillColor(_c("#FFFFFF")); c.setStrokeColor(PUNTOS); c.setLineWidth(.8)
         c.circle(cx, cy, g["nuc"] * k, stroke=1, fill=1)
         grande = g["grande"]
-        _centrado(c, cx, Y(g["cy"] + (3 if grande else 2)), self.total, "Unbounded", (26 if grande else 17) * k, TINTA)
+        _centrado(c, cx, Y(g["cy"] + (3 if grande else 2)), self.total, "Unbounded", g["fs"] * k, TINTA)
         _centrado(c, cx, Y(g["cy"] + (17 if grande else 14)), self.unidad.upper(), "Mono", 6.4 * k, SEC)
         # leyenda directa a la derecha del diagrama
         x0, y = g["w"] * k + 22, self.height / 2 + len(g["anillos"]) * 13

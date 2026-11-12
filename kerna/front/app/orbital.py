@@ -67,6 +67,11 @@ def angulos_satelites(n: int) -> list[float]:
     return [math.radians(50 + i * 360 / max(n, 1)) for i in range(n)]
 
 
+def radio_satelite(txt: str) -> float:
+    """Radio del satélite según el largo de su cifra («271» cabe en 12; «144 mil» pide más)."""
+    return 12.0 if len(str(txt)) <= 3 else min(10 + 1.9 * len(str(txt)), 22.0)
+
+
 def geometria_orbital(anillos: list[dict], total: str) -> dict:
     """Geometría del diagrama orbital en el sistema del SVG (260 x 236, y hacia abajo); la usan el SVG de la vista y el dibujo vectorial del PDF."""
     anillos = [a for a in anillos if a["v"] > 0] or anillos[:1]
@@ -79,8 +84,9 @@ def geometria_orbital(anillos: list[dict], total: str) -> dict:
     for a, r, fin in zip(anillos, rs, angulos_satelites(len(anillos))):
         frac = max(a["v"] / tot, .012)
         sx, sy = _punto(cx, cy, r, fin)
-        filas.append({**a, "r": r, "fin": fin, "frac": frac, "sx": sx, "sy": sy})
-    return {"cx": cx, "cy": cy, "w": w, "h": h, "nuc": nuc, "anillos": filas, "grande": len(str(total)) <= 4 and nuc > 34}
+        filas.append({**a, "r": r, "fin": fin, "frac": frac, "sx": sx, "sy": sy, "rs": radio_satelite(a["txt"])})
+    grande = len(str(total)) <= 4 and nuc > 34
+    return {"cx": cx, "cy": cy, "w": w, "h": h, "nuc": nuc, "anillos": filas, "grande": grande, "fs": 26 if grande else (17 if len(str(total)) <= 6 else 12)}
 
 
 def diagrama_orbital(anillos: list[dict], total: str, unidad: str, etiqueta_total: str = "") -> Markup:
@@ -96,11 +102,11 @@ def diagrama_orbital(anillos: list[dict], total: str, unidad: str, etiqueta_tota
         o.append(f'<circle cx="{cx}" cy="{cy}" r="{_p(r)}" class="orb-b"/>')
         o.append(f'<path d="{_arco(cx, cy, r, a["frac"], a["fin"])}" class="orb-a" style="stroke:var(--c-{c})"/>')
         sx, sy = a["sx"], a["sy"]
-        o.append(f'<circle cx="{_p(sx)}" cy="{_p(sy)}" r="12" class="orb-s" style="fill:var(--c-{c}-bg);stroke:var(--c-{c})"/>'
+        o.append(f'<circle cx="{_p(sx)}" cy="{_p(sy)}" r="{_p(a["rs"])}" class="orb-s" style="fill:var(--c-{c}-bg);stroke:var(--c-{c})"/>'
                  f'<text x="{_p(sx)}" y="{_p(sy + 3.4)}" class="orb-n" text-anchor="middle">{escape(a["txt"])}</text>')
         lg.append(f'<li style="--c:var(--c-{c});--cb:var(--c-{c}-bg)"><i aria-hidden="true">{escape(a["txt"])}</i><span>{escape(a["n"])}</span></li>')
     o.append(f'<circle cx="{cx}" cy="{cy}" r="{_p(nuc)}" class="orb-c"/>')
-    o.append(f'<text x="{cx}" y="{_p(cy + (3 if grande else 2))}" class="orb-t" style="font-size:{26 if grande else 17}px" text-anchor="middle">{escape(total)}</text>'
+    o.append(f'<text x="{cx}" y="{_p(cy + (3 if grande else 2))}" class="orb-t" style="font-size:{g["fs"]}px" text-anchor="middle">{escape(total)}</text>'
              f'<text x="{cx}" y="{_p(cy + (17 if grande else 14))}" class="orb-u" text-anchor="middle">{escape(unidad)}</text></svg>')
     return Markup(f'<div class="orb-w">{"".join(o)}<ul class="orb-lg">{"".join(lg)}</ul></div>')
 

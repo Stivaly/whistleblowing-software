@@ -31,6 +31,7 @@ with sync_playwright() as p:
                 if pref != "-":
                     pg.evaluate("() => { if (!document.getElementById('__cap')) { const s = document.createElement('style'); s.id = '__cap'; s.textContent = 'nav.tabbar{position:static!important}'; document.head.appendChild(s) } }")  # la barra inferior fija no tapa el contenido en la captura de página completa
                     pg.screenshot(path=f"{pref}{clave_v}-{'m' if w < 600 else 'd'}{'' if w in (390, 1366) else w}.png", full_page=True)
+                    pg.evaluate("() => document.getElementById('__cap')?.remove()")
         ctx.close()
     nav.close()
 json.dump(res, open(salida, "w"), ensure_ascii=False, indent=1)

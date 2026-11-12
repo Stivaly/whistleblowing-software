@@ -325,7 +325,7 @@ def test_exportaciones_visibles_en_porcentaje(inf):
 
 # ---- diagrama orbital: satélites y leyenda sin superposición --------------------------------------------------------------
 def _satelites(html):
-    return [(float(x), float(y)) for x, y in re.findall(r'<circle cx="([\d.]+)" cy="([\d.]+)" r="12" class="orb-s"', html)]
+    return [(float(x), float(y)) for x, y, _ in re.findall(r'<circle cx="([\d.]+)" cy="([\d.]+)" r="([\d.]+)" class="orb-s"', html)]
 
 
 @pytest.mark.parametrize("n", [1, 2, 3, 4])
@@ -409,3 +409,9 @@ def test_pdf_con_rentabilidad_dibuja_cascada_y_proyeccion(inf):
     assert len(v["cascada"]["labels"]) == 7 and len(v["proyeccion"]) == 5
     texto = " ".join(p.extract_text() for p in PdfReader(io.BytesIO(exportar.a_pdf(inf2))).pages)
     assert "Del ingreso a la utilidad" in texto and "Proyección a cinco años" in texto
+
+
+def test_satelite_con_cifra_larga_crece_y_el_total_largo_se_achica():
+    from app import orbital
+    g = orbital.geometria_orbital([{"n": "a", "v": 3, "txt": "144 mil", "c": "azul"}, {"n": "b", "v": 1, "txt": "9", "c": "verde"}], "US$ 0,0347")
+    assert g["anillos"][0]["rs"] > 12 and g["anillos"][1]["rs"] == 12 and g["fs"] < 17
