@@ -22,6 +22,7 @@ from .enrutador import Enrutador, Nivel
 from .orquestador import Orquestador, iso
 from .proveedores import Proveedores
 from .proveedores.bge_reranker import ClienteBGE, es_bge
+from .proveedores.azure_openai import ClienteAzureOpenAI
 from .proveedores.gemini import ClienteGemini
 from .proveedores.qdrant import ClienteQdrant
 from .proveedores.servicio_local import ClienteLocal
@@ -54,7 +55,9 @@ class ClasificacionEntrada(BaseModel):
 
 
 def proveedores_reales(c: Config) -> Proveedores:
-    return Proveedores(gemini=ClienteGemini(c.gemini_api_key),
+    azure = (ClienteAzureOpenAI(c.azure_openai_endpoint, c.azure_openai_key, esfuerzo=c.azure_openai_esfuerzo)
+             if c.azure_openai_endpoint and c.azure_openai_key else None)
+    return Proveedores(azure_openai=azure, gemini=ClienteGemini(c.gemini_api_key),
                        voyage=ClienteVoyage(c.voyage_api_key, c.embedding, c.dims),
                        qdrant=ClienteQdrant(c.qdrant_url, c.qdrant_api_key),
                        local=ClienteLocal(c.local_url, c.local_token))
@@ -83,7 +86,8 @@ def crear_app(config: Config | None = None, almacen: Almacen | None = None, prov
     proveedores = proveedores or proveedores_reales(config)
     auth = Autenticador(config.clientes, config.jwt_secreto, reloj)
     niveles = [Nivel.desde_dict(n) for n in config.cadena]
-    enrutador = Enrutador(niveles, proveedores.gemini, reloj=reloj, dormir=proveedores.dormir,
+    enrutador = Enrutador(niveles, proveedores.gemini, reloj=reloj,
+                          clientes={"azure-openai": proveedores.azure_openai} if proveedores.azure_openai else None, dormir=proveedores.dormir,
                           plazo_llamada=proveedores.plazo_llamada, plazo_global=config.plazo_global_s,
                           corte=config.corte_llamada_s, esperas=config.esperas_s)
     retriever = Retriever(proveedores.voyage, proveedores.qdrant, proveedores.local, config.coleccion,

@@ -76,11 +76,13 @@ class Orquestador:
                   "finalizada_en": self.reloj(), "duracion_ms": round((self.reloj() - inicio) * 1000)}
         if articulos:
             await self.almacen.guardar_articulos(ids, articulos)
+            for a in articulos:  # solo el nombre público de la norma, para el tablero del front
+                telemetria.evento("articulo_sugerido", id_solicitud=ids, norma=str(a.get("norma", "")))
         await self.almacen.actualizar_solicitud(cliente, ref, campos, solo_si_pendiente=True)
         telemetria.evento("solicitud_terminada", id_solicitud=ids, cliente=cliente, estado=resultado["estado"],
                           motivo=resultado.get("motivo_revision"), modo=resultado["modo"],
                           recuperacion=resultado["recuperacion"], contingencia=contingencia,
-                          articulos=len(articulos), citas_rechazadas=reg["citas_rechazadas"],
+                          modelo=reg.get("modelo"), proveedor=reg.get("proveedor"), articulos=len(articulos), citas_rechazadas=reg["citas_rechazadas"],
                           tokens_entrada=reg["tokens_entrada"], tokens_salida=reg["tokens_salida"],
                           duracion_ms=round((self.reloj() - inicio) * 1000))
 

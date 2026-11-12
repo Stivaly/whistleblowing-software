@@ -7,13 +7,15 @@ locals {
 
   # Secreto en Key Vault => variable de entorno. Los valores se cargan con az keyvault secret set.
   secretos_nucleo = {
-    "gemini-api-key"    = "GEMINI_API_KEY"
-    "voyage-api-key"    = "VOYAGE_API_KEY"
-    "qdrant-url"        = "QDRANT_URL"
-    "qdrant-api-key"    = "QDRANT_API_KEY"
-    "kerna-jwt-secreto" = "KERNA_JWT_SECRETO"
-    "kerna-clientes"    = "KERNA_CLIENTES"
-    "kerna-local-token" = "KERNA_LOCAL_TOKEN"
+    "gemini-api-key"        = "GEMINI_API_KEY"
+    "voyage-api-key"        = "VOYAGE_API_KEY"
+    "qdrant-url"            = "QDRANT_URL"
+    "qdrant-api-key"        = "QDRANT_API_KEY"
+    "kerna-jwt-secreto"     = "KERNA_JWT_SECRETO"
+    "kerna-clientes"        = "KERNA_CLIENTES"
+    "kerna-local-token"     = "KERNA_LOCAL_TOKEN"
+    "azure-openai-key"      = "AZURE_OPENAI_KEY"
+    "azure-openai-endpoint" = "AZURE_OPENAI_ENDPOINT"
   }
 }
 

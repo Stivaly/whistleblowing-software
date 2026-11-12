@@ -18,6 +18,7 @@ from typing import Any, Awaitable, Callable
 
 from . import prompts
 from .enrutador import CadenaAgotada, PlazoAgotado
+from .validador import resolver_id
 
 VERSION_PROMPT_EVALUADOR = "1"
 
@@ -150,10 +151,10 @@ class Evaluador:
     def _filtrar(self, texto: str, cand: list[dict], items: list, res: ResultadoEvaluador) -> None:
         por_id = {f["fragmento_id"]: f for f in cand}
         for it in items:
-            if not isinstance(it, dict) or it.get("id") not in por_id:
+            ident = resolver_id(it.get("id"), por_id) if isinstance(it, dict) else None
+            if ident is None:
                 res.descartados_id += 1                # id inventado o ausente
                 continue
-            ident = it["id"]
             if ident in res.evaluaciones:
                 continue
             try:

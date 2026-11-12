@@ -16,6 +16,18 @@ def normalizar(texto: str) -> str:
     return re.sub(r"\s+", " ", t).strip().lower()
 
 
+def resolver_id(fid, ids) -> str | None:
+    """Id real del fragmento al que se refiere `fid`: exacto o, si el modelo cambió mayúsculas/espacios
+    (gpt-5 escribe «211-B-bis» por «211-b-bis»), el único id que coincide sin distinguir mayúsculas."""
+    if not isinstance(fid, str):
+        return None
+    if fid in ids:
+        return fid
+    clave = fid.strip().casefold()
+    coinc = [i for i in ids if isinstance(i, str) and i.casefold() == clave]
+    return coinc[0] if len(coinc) == 1 else None
+
+
 def validar(candidatos: list[dict], fragmentos: list[dict], max_articulos: int = 5):
     """Devuelve (aceptados, rechazados). Cada aceptado es {"fragmento": dict, "explicacion", "cita", "confianza"};
     cada rechazado, {"fragmento_id", "motivo"} con motivo: inexistente | no_vigente | cita_no_literal | duplicado | invalido."""
@@ -25,8 +37,10 @@ def validar(candidatos: list[dict], fragmentos: list[dict], max_articulos: int =
         if not isinstance(c, dict):
             rechazados.append({"fragmento_id": "", "motivo": "invalido"})
             continue
-        fid = c.get("fragmento_id")
-        frag = por_id.get(fid) if isinstance(fid, str) else None
+        fid = resolver_id(c.get("fragmento_id"), por_id)
+        frag = por_id.get(fid) if fid else None
+        if fid is None:
+            fid = c.get("fragmento_id")
         if frag is None:
             rechazados.append({"fragmento_id": str(fid)[:64], "motivo": "inexistente"})
         elif frag.get("vigente") is not True:

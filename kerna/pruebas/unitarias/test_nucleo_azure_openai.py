@@ -57,3 +57,13 @@ def test_enrutador_elige_cliente_por_proveedor():
                   plazo_llamada=plazo_simulado(reloj, []), clientes={"azure-openai": Az()})
     res = asyncio.run(r.generar("s", "u", None, lambda d: d, reloj()))
     assert llamadas == ["gpt-5-nano"] and res.proveedor == "azure-openai" and res.tokens_entrada == 5
+
+
+def test_validador_y_evaluador_resuelven_id_con_otras_mayusculas():
+    from kerna_nucleo.validador import resolver_id, validar
+    assert resolver_id("207436-KARIN-art-211-B-bis", {"207436-karin-art-211-b-bis": 1}) == "207436-karin-art-211-b-bis"
+    assert resolver_id("otro", {"a": 1}) is None
+    fr = [{"fragmento_id": "x-art-1-b", "vigente": True, "texto": "El empleador adoptará medidas de resguardo."}]
+    ok, rech = validar([{"fragmento_id": "X-ART-1-B", "explicacion": "e", "cita": "adoptará medidas de resguardo",
+                         "confianza": 0.9}], fr)
+    assert len(ok) == 1 and not rech

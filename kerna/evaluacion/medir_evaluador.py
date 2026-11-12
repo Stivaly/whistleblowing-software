@@ -30,8 +30,11 @@ sys.path.insert(0, str(AQUI.parent / "comun"))
 import recall_retriever as rr  # noqa: E402
 from kerna_nucleo.enrutador import Enrutador, Nivel, Resultado  # noqa: E402
 from kerna_nucleo.evaluador import Evaluador  # noqa: E402
+from kerna_nucleo.proveedores.azure_openai import ClienteAzureOpenAI  # noqa: E402
 from kerna_nucleo.proveedores.gemini import ClienteGemini  # noqa: E402
+from kerna_comun import anonimizador  # noqa: E402
 
+TOPE = {"usd": None, "gastado": 0.0, "pe": 0.0, "ps": 0.0}
 CACHE = AQUI / "datos" / "evaluador_cache.json"
 COLECCION, PROVEEDOR, MODELO = "normativa_cl", "voyage", "voyage-4-large"
 
@@ -61,17 +64,20 @@ class Generador:
         self.por_modelo: dict[str, int] = {}
 
     async def __call__(self, sistema, usuario, esquema, validar, inicio):
-        k = hashlib.sha256(f"{sistema}|{usuario}".encode()).hexdigest()
+        k = hashlib.sha256(f"{self.cadena}|{sistema}|{usuario}".encode()).hexdigest()
         if k in self.cache:
             self.aciertos += 1
             c = self.cache[k]
             self.por_modelo[c["modelo"]] = self.por_modelo.get(c["modelo"], 0) + 1
             return Resultado(validar(c["datos"]), "cache", "gemini", c["modelo"], c["te"], c["ts"])
+        if TOPE["usd"] is not None and TOPE["gastado"] >= TOPE["usd"]:
+            raise SystemExit(f"tope de gasto alcanzado: {TOPE['gastado']:.3f} USD")
         t0 = time.monotonic()
         r = await self.enr.generar(sistema, usuario, esquema, validar, time.time())
         self.ms.append((time.monotonic() - t0) * 1000)
         print(f"llamada {r.modelo} {self.ms[-1] / 1000:.0f}s tokens {r.tokens_entrada}/{r.tokens_salida}", flush=True)
         self.llamadas += 1
+        TOPE["gastado"] += r.tokens_entrada / 1e6 * TOPE["pe"] + r.tokens_salida / 1e6 * TOPE["ps"]
         self.por_modelo[r.modelo] = self.por_modelo.get(r.modelo, 0) + 1
         self.cache[k] = {"datos": {"resultados": r.datos}, "modelo": r.modelo, "te": r.tokens_entrada,
                          "ts": r.tokens_salida}
@@ -112,6 +118,11 @@ def main(argv=None):
     ap.add_argument("--candidatos", type=int, default=30)
     ap.add_argument("--lote", type=int, default=0, help="candidatos por llamada (0 = todos en una)")
     ap.add_argument("--cadena", default="gemini-3.5-flash,gemini-3.5-flash-lite")
+    ap.add_argument("--proveedor", choices=["gemini", "azure-openai"], default="gemini",
+                    help="azure-openai: despliegues del recurso oai-kerna (AZURE_OPENAI_ENDPOINT/KEY en el entorno)")
+    ap.add_argument("--sin-anonimizar", action="store_true",
+                    help="NO pasar el texto por el anonimizador (por defecto sí, como en producción)")
+    ap.add_argument("--tope-usd", type=float, default=None, help="aborta si la estimación previa lo supera")
     ap.add_argument("--esperas", default="", help="esperas ante 429/5xx por nivel, en s (vacío = pasa al siguiente modelo)")
     ap.add_argument("--concurrencia", type=int, default=3)
     ap.add_argument("--campo", default="texto_original", choices=["texto_original", "resumen_parafraseado"])
@@ -119,16 +130,24 @@ def main(argv=None):
     ap.add_argument("--usd-millon-entrada", type=float, default=None, help="precio de lista (no verificado si se omite)")
     ap.add_argument("--usd-millon-salida", type=float, default=None)
     args = ap.parse_args(argv)
+    TOPE.update(usd=args.tope_usd, pe=args.usd_millon_entrada or 0.0, ps=args.usd_millon_salida or 0.0)
     inicio = time.monotonic()
     crudo = rr.DATASET.read_bytes()
     casos = json.loads(crudo)["casos"]
     corpus = rr.articulos_vigentes(COLECCION)
     textos = [rr.texto_consulta(c, args.campo) for c in casos]
+    if not args.sin_anonimizar:
+        textos = [anonimizador.anonimizar(t).texto for t in textos]
     vectores = rr.embeber(textos, rr.ruta_cache(PROVEEDOR, MODELO), None, MODELO, rr.embed_sync.DIMS)
     base_tops = rr.buscar(vectores, k=args.candidatos, coleccion=COLECCION)
     frag = textos_fragmentos(COLECCION)
-    niveles = [Nivel("oficial" if i == 0 else "respaldo", "gemini", m) for i, m in enumerate(args.cadena.split(","))]
-    enr = Enrutador(niveles, ClienteGemini(os.environ["GEMINI_API_KEY"], timeout=180.0), plazo_global=600.0,
+    niveles = [Nivel("oficial" if i == 0 else "respaldo", args.proveedor, m) for i, m in enumerate(args.cadena.split(","))]
+    if args.proveedor == "azure-openai":
+        cli = ClienteAzureOpenAI(os.environ["AZURE_OPENAI_ENDPOINT"], os.environ["AZURE_OPENAI_KEY"], timeout=300.0,
+                                 esfuerzo=os.environ.get("KERNA_AZURE_OPENAI_ESFUERZO", "low"))
+    else:
+        cli = ClienteGemini(os.environ["GEMINI_API_KEY"], timeout=180.0)
+    enr = Enrutador(niveles, cli, plazo_global=600.0,
                     corte=180.0, esperas=tuple(float(x) for x in args.esperas.split(",") if x))
     gen = Generador(enr, args.cadena)
     tops_ev, st = asyncio.run(correr(args, casos, textos, base_tops, frag, gen, corpus))
@@ -147,7 +166,7 @@ def main(argv=None):
     if args.usd_millon_entrada is not None and args.usd_millon_salida is not None:
         costo = st["te"] / 1e6 * args.usd_millon_entrada + st["ts"] / 1e6 * args.usd_millon_salida
     extra = {"evaluador": {"variante_prompt": args.variante, "candidatos": args.candidatos, "lote": args.lote or args.candidatos,
-                           "cadena": args.cadena, "base": MODELO, "hit_en_candidatos": hitN, "estadisticas": st,
+                           "cadena": args.cadena, "proveedor": args.proveedor, "anonimizado": not args.sin_anonimizar, "base": MODELO, "hit_en_candidatos": hitN, "estadisticas": st,
                            "tokens_por_consulta": {"entrada": st["te"] / n, "salida": st["ts"] / n},
                            "respuestas_por_modelo": gen.por_modelo, "llamadas_nuevas": gen.llamadas, "respuestas_de_cache": gen.aciertos,
                            "latencia_llamada_ms": {"mediana": rr.percentil(gen.ms, 50), "p95": rr.percentil(gen.ms, 95)},
@@ -161,7 +180,8 @@ def main(argv=None):
     rr.registrar(res_ev, campo=args.campo, dataset=crudo, articulos_corpus=len(corpus), casos=len(casos),
                  duracion_s=time.monotonic() - inicio,
                  parametros={"modelo": MODELO, "proveedor": PROVEEDOR, "coleccion": COLECCION, "mapeo": args.mapeo,
-                             "modelo_consulta": MODELO, "evaluador": args.cadena, "candidatos": args.candidatos},
+                             "modelo_consulta": MODELO, "evaluador": args.cadena, "candidatos": args.candidatos,
+                             "proveedor_llm": args.proveedor, "anonimizado": not args.sin_anonimizar},
                  extra=extra, comando="medir_evaluador.py " + " ".join(argv if argv is not None else sys.argv[1:]))
     return 0
 

@@ -170,3 +170,38 @@ output "repositorio_eval_embeddings" {
 output "azure_openai_endpoint" {
   value = azurerm_cognitive_account.openai.endpoint
 }
+
+# Chat para el agente evaluador (capacidad baja a propósito: limita el ritmo de gasto).
+resource "azurerm_cognitive_deployment" "gpt_5_nano" {
+  name                 = "gpt-5-nano"
+  cognitive_account_id = azurerm_cognitive_account.openai.id
+
+  model {
+    format  = "OpenAI"
+    name    = "gpt-5-nano"
+    version = "2025-08-07"
+  }
+
+  sku {
+    name     = "GlobalStandard"
+    capacity = 250
+  }
+}
+
+resource "azurerm_cognitive_deployment" "gpt_5_mini" {
+  name                 = "gpt-5-mini"
+  cognitive_account_id = azurerm_cognitive_account.openai.id
+
+  model {
+    format  = "OpenAI"
+    name    = "gpt-5-mini"
+    version = "2025-08-07"
+  }
+
+  sku {
+    name     = "GlobalStandard"
+    capacity = 50
+  }
+
+  depends_on = [azurerm_cognitive_deployment.gpt_5_nano]
+}

@@ -17,6 +17,9 @@ class Config:
     clientes: dict = field(default_factory=dict)  # {client_id: {"secreto_sha256", "cliente"}}
     jwt_secreto: str = ""
     gemini_api_key: str = ""
+    azure_openai_endpoint: str = ""
+    azure_openai_key: str = ""
+    azure_openai_esfuerzo: str = "low"
     voyage_api_key: str = ""
     qdrant_url: str = ""
     qdrant_api_key: str = ""
@@ -51,6 +54,9 @@ class Config:
         c.clientes = json.loads(e.get("KERNA_CLIENTES") or "{}")
         c.jwt_secreto = e.get("KERNA_JWT_SECRETO", "")
         c.gemini_api_key = e.get("GEMINI_API_KEY", "")
+        c.azure_openai_endpoint = e.get("AZURE_OPENAI_ENDPOINT", "")
+        c.azure_openai_key = e.get("AZURE_OPENAI_KEY", "")
+        c.azure_openai_esfuerzo = e.get("KERNA_AZURE_OPENAI_ESFUERZO", c.azure_openai_esfuerzo)
         c.voyage_api_key = e.get("VOYAGE_API_KEY", "")
         c.qdrant_url = e.get("QDRANT_URL", "")
         c.qdrant_api_key = e.get("QDRANT_API_KEY", "")
@@ -65,6 +71,9 @@ class Config:
         c.evaluador = e.get("KERNA_EVALUADOR", "").strip().lower() in ("1", "true", "si", "sí", "on")
         c.evaluador_candidatos = int(e.get("KERNA_EVALUADOR_CANDIDATOS", c.evaluador_candidatos))
         c.evaluador_variante = e.get("KERNA_EVALUADOR_VARIANTE", c.evaluador_variante)
+        c.modelo_clasificador = e.get("KERNA_MODELO_CLASIFICADOR", c.modelo_clasificador)
+        c.plazo_global_s = float(e.get("KERNA_PLAZO_GLOBAL_S", c.plazo_global_s))
+        c.corte_llamada_s = float(e.get("KERNA_CORTE_LLAMADA_S", c.corte_llamada_s))
         c.concurrencia = int(e.get("KERNA_CONCURRENCIA", c.concurrencia))
         c.umbral_similitud = float(e.get("KERNA_UMBRAL_SIMILITUD", c.umbral_similitud))
         if e.get("KERNA_CADENA"):

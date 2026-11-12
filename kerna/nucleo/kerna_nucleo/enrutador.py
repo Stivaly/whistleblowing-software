@@ -70,9 +70,10 @@ def extraer_json(texto: str) -> Any:
 class Enrutador:
     def __init__(self, niveles: list[Nivel], gemini, reloj=time.time, dormir=None, plazo_llamada=None,
                  plazo_global=240.0, corte=30.0, esperas=(1.0, 2.0, 4.0), umbral_fallas=3, ventana=300.0,
-                 exclusion=600.0):
+                 exclusion=600.0, clientes=None):
         self.niveles = niveles
         self._gemini = gemini
+        self._clientes = dict(clientes or {})
         self._reloj = reloj
         self._dormir = dormir or asyncio.sleep
         self._plazo = plazo_llamada or (lambda aw, s: asyncio.wait_for(aw, s))
@@ -83,6 +84,9 @@ class Enrutador:
         self._ventana = ventana
         self._exclusion = exclusion
         self._estado: dict[str, _Estado] = {}
+
+    def _cliente(self, nivel: Nivel):
+        return self._clientes.get(nivel.proveedor, self._gemini)
 
     # ---- cortocircuito
     def _e(self, nivel: Nivel) -> _Estado:
@@ -110,7 +114,7 @@ class Enrutador:
         if self._reloj() < e.excluido_hasta:
             return False
         try:
-            sano = await self._plazo(self._gemini.salud(nivel.modelo), self.corte)
+            sano = await self._plazo(self._cliente(nivel).salud(nivel.modelo), self.corte)
         except Exception:
             sano = False
         if sano:
@@ -125,7 +129,7 @@ class Enrutador:
         return self.plazo_global - (self._reloj() - inicio)
 
     async def _llamar(self, nivel: Nivel, sistema, usuario, esquema, restante: float):
-        aw = self._gemini.generar(nivel.modelo, sistema, usuario, esquema if nivel.esquema else None,
+        aw = self._cliente(nivel).generar(nivel.modelo, sistema, usuario, esquema if nivel.esquema else None,
                                   con_sistema=nivel.sistema, degradar=True)
         return await self._plazo(aw, min(self.corte, restante))
 

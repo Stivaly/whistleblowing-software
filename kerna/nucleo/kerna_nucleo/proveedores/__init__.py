@@ -29,4 +29,5 @@ class Proveedores:
     local: Any
     dormir: Any = None
     plazo_llamada: Any = None  # corutina(awaitable, segundos); por defecto asyncio.wait_for
+    azure_openai: Any = None   # chat de Azure OpenAI (opcional)
     reranker: Any = None       # reranker abierto (ClienteBGE); por defecto se crea al configurarlo
