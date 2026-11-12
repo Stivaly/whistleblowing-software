@@ -960,3 +960,4 @@ html,body{max-width:100%}
 .vdh .ti-w{flex:none}.vdh .ti{max-width:100%}
 @media(max-width:560px){.vdh .ti{width:64px!important}}
 .pr-w{grid-template-columns:minmax(0,1fr);gap:4px}.pr-w .cch{height:150px}
+.dat,.dat-d{min-width:0;overflow-x:clip}

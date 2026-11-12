@@ -1,0 +1,138 @@
+{
+ "resumen@1366": {
+  "sw": 1366,
+  "cw": 1366,
+  "h": 850,
+  "top": [],
+  "ttfb": 12,
+  "kb": 10
+ },
+ "informe@1366": {
+  "sw": 1366,
+  "cw": 1366,
+  "h": 850,
+  "top": [],
+  "ttfb": 35,
+  "kb": 219
+ },
+ "informe-calidad@1366": {
+  "sw": 1366,
+  "cw": 1366,
+  "h": 850,
+  "top": []
+ },
+ "informe-desempeno@1366": {
+  "sw": 1366,
+  "cw": 1366,
+  "h": 850,
+  "top": []
+ },
+ "informe-costo@1366": {
+  "sw": 1366,
+  "cw": 1366,
+  "h": 850,
+  "top": []
+ },
+ "informe-rentabilidad@1366": {
+  "sw": 1366,
+  "cw": 1366,
+  "h": 850,
+  "top": []
+ },
+ "informe-incidentes@1366": {
+  "sw": 1366,
+  "cw": 1366,
+  "h": 850,
+  "top": []
+ },
+ "informe-datos@1366": {
+  "sw": 1366,
+  "cw": 1366,
+  "h": 1142,
+  "top": []
+ },
+ "negocio@1366": {
+  "sw": 1366,
+  "cw": 1366,
+  "h": 948,
+  "top": [],
+  "ttfb": 29,
+  "kb": 9
+ },
+ "ajustes@1366": {
+  "sw": 1366,
+  "cw": 1366,
+  "h": 938,
+  "top": [],
+  "ttfb": 134,
+  "kb": 66
+ },
+ "resumen@390": {
+  "sw": 390,
+  "cw": 390,
+  "h": 1481,
+  "top": [],
+  "ttfb": 14,
+  "kb": 10
+ },
+ "informe@390": {
+  "sw": 390,
+  "cw": 390,
+  "h": 1254,
+  "top": [],
+  "ttfb": 20,
+  "kb": 219
+ },
+ "informe-calidad@390": {
+  "sw": 390,
+  "cw": 390,
+  "h": 1254,
+  "top": []
+ },
+ "informe-desempeno@390": {
+  "sw": 390,
+  "cw": 390,
+  "h": 1145,
+  "top": []
+ },
+ "informe-costo@390": {
+  "sw": 390,
+  "cw": 390,
+  "h": 1237,
+  "top": []
+ },
+ "informe-rentabilidad@390": {
+  "sw": 390,
+  "cw": 390,
+  "h": 1205,
+  "top": []
+ },
+ "informe-incidentes@390": {
+  "sw": 390,
+  "cw": 390,
+  "h": 1155,
+  "top": []
+ },
+ "informe-datos@390": {
+  "sw": 391,
+  "cw": 390,
+  "h": 1585,
+  "top": []
+ },
+ "negocio@390": {
+  "sw": 390,
+  "cw": 390,
+  "h": 1371,
+  "top": [],
+  "ttfb": 13,
+  "kb": 9
+ },
+ "ajustes@390": {
+  "sw": 390,
+  "cw": 390,
+  "h": 1571,
+  "top": [],
+  "ttfb": 100,
+  "kb": 66
+ }
+}
