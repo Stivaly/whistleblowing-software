@@ -38,7 +38,7 @@
 .kerna-svg .th2 { stroke: var(--acc); stroke-width: 2.5; }
 .kerna-svg .err { stroke: var(--acc); stroke-width: 3; }
 .kerna-svg .fa { fill: var(--fa); stroke: var(--fa-borde, none); stroke-width: 1.5; }
-.kerna-icono, .kerna-ind[data-estado="valorada"], .kerna-panel[data-estado="valorada"] { --fa-borde: #0b1020; }
+.kerna-ind[data-estado="valorada"], .kerna-panel[data-estado="valorada"] { --fa-borde: #0b1020; }
 .kerna-svg .chk { stroke: var(--pf); stroke-width: 3; }
 .kerna-svg .chk2 { stroke: var(--pf); stroke-width: 4; }
 .kerna-svg .chk3 { stroke: var(--pf); stroke-width: 7; }
@@ -64,7 +64,7 @@
 .kerna-escena .ping { animation: kerna-ping 2.6s ease-out infinite; }
 .kerna-escena .chispa { animation: kerna-chispa .9s steps(2) infinite; }
 @media (prefers-reduced-motion: reduce) {
-  .kerna-svg *, .kerna-ind { animation: none !important; }
+  .kerna-svg *, .kerna-sim, .kerna-sim *, .kerna-ind { animation: none !important; }
 }
 
 .kerna-caja { position: relative; display: inline-block; }
@@ -81,7 +81,27 @@
 .kerna-ind:hover { background-color: #f3f5fb; }
 .kerna-ind:focus-visible { outline: 3px solid #0b1020; outline-offset: 3px; clip-path: none; }
 .kerna-ico { display: inline-flex; align-items: center; gap: 4px; }
-.kerna-icono { width: 24px; height: 24px; --acc: var(--k-verde); --fa: var(--k-lima); --pi: var(--txt); }
+.kerna-icono { display: block; width: 24px; height: 24px; overflow: visible; flex: none; }
+.kerna-ico-estado { display: inline-flex; }
+
+/* Símbolo de Kerna AI (kerna/diseno/logo): tinta azul marino sobre claro, satélite y centro lima. La forma (k-*) decide qué se mueve. */
+.kerna-sim { --k-azul: #1c2a6b; }
+.kerna-sim .k-orb { fill: none; stroke: var(--k-azul); stroke-linecap: round; }
+.kerna-sim .k-ros { stroke-width: .75; stroke-dasharray: .1 2.2; }
+.kerna-sim .k-cont { stroke-width: 1.4; opacity: .7; }
+.kerna-sim .k-anillo { stroke-width: .9; stroke-dasharray: .1 2.4; opacity: .6; }
+.kerna-sim .k-guia { stroke-width: 1.6; }
+.kerna-sim .k-nuc { fill: var(--k-azul); }
+.kerna-sim .k-nuc-l { fill: var(--k-lima); }
+.kerna-sim .k-sat { fill: var(--k-lima); stroke: var(--k-azul); stroke-width: 1.6; }
+.kerna-sim.k-apagado { opacity: .4; }
+.kerna-sim.k-lista .k-roseta, .kerna-sim.k-busca .k-roseta { transform-origin: 32px 32px; animation: kerna-sim-g 80s linear infinite; }
+.kerna-sim.k-lista .k-camino, .kerna-sim.k-busca .k-camino { transform-origin: 32px 32px; animation: kerna-sim-g 14s linear infinite reverse; }
+.kerna-sim.k-lista .k-latido, .kerna-sim.k-busca .k-latido { transform-origin: 32px 32px; animation: kerna-sim-l 3.5s ease-in-out infinite; }
+.kerna-sim.k-busca .k-roseta { animation-duration: 20s; }
+.kerna-sim.k-busca .k-camino { animation-duration: 5s; }
+@keyframes kerna-sim-g { to { transform: rotate(360deg); } }
+@keyframes kerna-sim-l { 50% { transform: scale(1.12); } }
 .kerna-glifo { display: inline-flex; width: 36px; height: 27px; }
 .kerna-glifo-svg { display: block; width: 36px; height: 27px; }
 .kerna-glifo-svg svg { width: 100%; height: 100%; }
@@ -109,7 +129,7 @@
 .kerna-panel .card-body { background: transparent; color: var(--k-tinta); padding: 12px 26px 18px; }
 .kerna-panel-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 22px; border: 0; border-bottom: 1px solid var(--k-linea); background: transparent; }
 .kerna-panel-titulo { display: flex; align-items: center; gap: 12px; margin: 0; color: var(--k-tinta); }
-.kerna-panel-titulo .kerna-icono { width: 30px; height: 30px; --pi: #0b1020; }
+.kerna-panel-titulo .kerna-icono { width: 30px; height: 30px; }
 .kerna-marca { font: 700 15px var(--k-display); letter-spacing: 6px; text-transform: uppercase; }
 .kerna-chip {
   display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: transparent; color: var(--txt);
@@ -126,6 +146,7 @@
   clip-path: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px);
 }
 .kerna-parche .kerna-svg { width: 190px; height: 142px; }
+.kerna-parche .kerna-hero-sim .kerna-icono { width: 142px; height: 142px; }
 .kerna-etq { margin: 0; font: 700 27px/1.15 var(--k-display); letter-spacing: .5px; text-transform: uppercase; color: var(--k-tinta); overflow-wrap: anywhere; }
 @media (max-width: 620px) {
   .kerna-hero { grid-template-columns: 1fr; justify-items: start; }

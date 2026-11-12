@@ -6,7 +6,7 @@ import {KernaIconoComponent} from "./kerna-icono.component";
 import {KernaDibujoComponent} from "./kerna-dibujo.component";
 import {SEGMENTOS_ANILLO} from "./kerna-ilustraciones";
 import {KernaArticulo, KernaArticuloClasificado, MAX_OBSERVACION} from "./kerna-notas";
-import {ResultadoEstado, claveEscena, claveTexto, materiaDe, numeroArticulo, segmentosConfianza, codigoSeguimiento, esProvisional, tieneArticulos} from "./kerna-estados";
+import {ResultadoEstado, formaSimbolo, claveEscena, claveTexto, materiaDe, numeroArticulo, segmentosConfianza, codigoSeguimiento, esProvisional, tieneArticulos} from "./kerna-estados";
 
 interface Valoracion {
   valor: "arriba" | "abajo" | null;
@@ -34,6 +34,8 @@ export class KernaPanelComponent {
   protected claveTexto = claveTexto;
   protected tieneArticulos = tieneArticulos;
   protected segmentosDibujo = SEGMENTOS_ANILLO;
+
+  protected forma = formaSimbolo;
 
   protected escena(e: ResultadoEstado): string {
     return claveEscena(e.id, e.variante);

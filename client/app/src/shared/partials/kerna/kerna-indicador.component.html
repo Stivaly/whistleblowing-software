@@ -6,8 +6,12 @@
                 [attr.aria-describedby]="idTooltip" [attr.aria-expanded]="k.abierto()" [attr.aria-controls]="idPanel"
                 (click)="k.alternar()" (focus)="alTenerFoco($event)" (blur)="alPerderFoco()">
           <span class="kerna-ico">
-            <src-kerna-icono></src-kerna-icono>
-            <span class="kerna-glifo"><src-kerna-glifo [estado]="e.id" [variante]="e.variante"></src-kerna-glifo></span>
+            @if (forma(e.id); as f) {
+              <src-kerna-icono class="kerna-ico-estado" [forma]="f" [chico]="true"></src-kerna-icono>
+            } @else {
+              <src-kerna-icono forma="marca" [chico]="true"></src-kerna-icono>
+              <span class="kerna-glifo"><src-kerna-glifo [estado]="e.id" [variante]="e.variante"></src-kerna-glifo></span>
+            }
           </span>
           <span class="kerna-lbl"><span class="visually-hidden">Kerna: </span>{{ t(claveTexto(e, 'etiqueta')) }}</span>
         </button>

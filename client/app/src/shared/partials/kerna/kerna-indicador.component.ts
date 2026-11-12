@@ -3,7 +3,7 @@ import {TranslateService} from "@ngx-translate/core";
 import {KernaService} from "./kerna.service";
 import {KernaIconoComponent} from "./kerna-icono.component";
 import {KernaGlifoComponent} from "./kerna-glifo.component";
-import {claveModo, claveTexto, resumen} from "./kerna-estados";
+import {formaSimbolo, claveModo, claveTexto, resumen} from "./kerna-estados";
 
 /**
  * Indicador de Kerna: píldora con el ícono de marca, una silueta de estado y la etiqueta, encima de la denuncia.
@@ -24,6 +24,7 @@ export class KernaIndicadorComponent implements OnInit, OnDestroy {
   readonly idTooltip = "kerna-tooltip";
   readonly idPanel = "kerna-panel";
   protected claveTexto = claveTexto;
+  protected forma = formaSimbolo;
 
   private enPuntero = false;
   private enFoco = false;

@@ -196,6 +196,20 @@ export function claveEscena(id: EstadoId, variante: Variante): string {
   return id;
 }
 
+/**
+ * Forma del símbolo de Kerna que sustituye a la escena en los estados que lo usan como indicador (null: conserva su escena).
+ * generando/analizando gira rápido sin satélite; lista y valorada, satélite girando; sin-normativa, roseta quieta; el resto, apagado.
+ */
+export function formaSimbolo(id: EstadoId): "lista" | "busca" | "vacio" | "apagado" | null {
+  switch (id) {
+    case "generando": return "busca";
+    case "lista": case "valorada": return "lista";
+    case "sin-normativa": return "vacio";
+    case "sin-conexion": case "nucleo-no-disponible": case "conector-inactivo": return "apagado";
+    default: return null;
+  }
+}
+
 /** Pictograma de materia según la ley del artículo: Ley Karin (21.643), datos personales (19.628), responsabilidad penal (20.393). */
 export function materiaDe(norma: string): "karin" | "datos" | "penal" | "otra" {
   const n = norma.toLowerCase();

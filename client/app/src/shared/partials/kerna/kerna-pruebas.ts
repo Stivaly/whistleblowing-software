@@ -11,7 +11,7 @@ import {extraerNotas, esNotaKerna, idCuentaKerna, parsearNota, ComentarioEntrada
 import {
   ESTADOS, EstadoId, UMBRAL_CONECTOR_MS, UMBRAL_ESPERA_MS, VENTANA_CASO_NUEVO_MS, ResultadoEstado,
   claveModo, claveTexto, codigoSeguimiento, deducirEstado, esProvisional, resumen, tieneArticulos,
-  claveEscena, materiaDe, numeroArticulo, segmentosConfianza
+  claveEscena, formaSimbolo, materiaDe, numeroArticulo, segmentosConfianza
 } from "./kerna-estados";
 
 const KERNA = "u-kerna";
@@ -238,6 +238,14 @@ caso("materia según la ley, segmentos del anillo y número de artículo", () =>
   assert.equal(claveEscena("contingencia", "busqueda"), "contingencia-busqueda");
   assert.equal(claveEscena("conector-inactivo", "en-proceso"), "conector-en-proceso");
   assert.equal(claveEscena("lista", null), "lista");
+  assert.equal(formaSimbolo("generando"), "busca");
+  assert.equal(formaSimbolo("lista"), "lista");
+  assert.equal(formaSimbolo("valorada"), "lista");
+  assert.equal(formaSimbolo("sin-normativa"), "vacio");
+  assert.equal(formaSimbolo("sin-conexion"), "apagado");
+  assert.equal(formaSimbolo("nucleo-no-disponible"), "apagado");
+  assert.equal(formaSimbolo("conector-inactivo"), "apagado");
+  assert.equal(formaSimbolo("contingencia"), null);
 });
 
 if (casos.length) {

@@ -2,11 +2,13 @@
   @if (k.abierto()) {
     <section class="card card-default kerna-panel" id="kerna-panel" data-cy="kerna-panel" [attr.data-estado]="e.id" aria-labelledby="kerna-panel-titulo">
       <div class="card-header kerna-panel-cabecera">
-        <h2 id="kerna-panel-titulo" class="kerna-panel-titulo"><src-kerna-icono></src-kerna-icono><span class="kerna-marca" aria-hidden="true">Kerna</span><span class="visually-hidden">{{ t('kerna.panel.titulo') }}</span></h2>
+        <h2 id="kerna-panel-titulo" class="kerna-panel-titulo"><src-kerna-icono forma="lista"></src-kerna-icono><span class="kerna-marca" aria-hidden="true">Kerna</span><span class="visually-hidden">{{ t('kerna.panel.titulo') }}</span></h2>
         <span class="kerna-chip"><i aria-hidden="true"></i>{{ t(claveTexto(e, 'etiqueta')) }}</span>
       </div>
       <div class="kerna-hero" aria-hidden="true">
-        <div class="kerna-parche"><src-kerna-dibujo [escena]="escena(e)"></src-kerna-dibujo></div>
+        <div class="kerna-parche">
+          @if (forma(e.id); as f) { <src-kerna-icono class="kerna-hero-sim" [forma]="f"></src-kerna-icono> } @else { <src-kerna-dibujo [escena]="escena(e)"></src-kerna-dibujo> }
+        </div>
         <p class="kerna-etq">{{ t(claveTexto(e, 'etiqueta')) }}</p>
       </div>
       <div class="card-body">
