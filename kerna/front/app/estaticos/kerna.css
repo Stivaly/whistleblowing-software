@@ -1033,3 +1033,8 @@ html,body{max-width:100%}
   .chs li{padding:2px 6px}
   .dat-h{margin:8px 0 0;font-size:13px}.dat-d summary{min-height:30px;padding:2px;font-size:13px;line-height:1.25}.dat-d summary em{font-size:11px}.dat-d[open]{padding-bottom:6px}
 }
+/* v9 · Datos agrupado por sección y ícono de «Global» */
+.dat-s{border-bottom:1px dotted var(--line-strong)}.dat-s>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:center;min-height:44px;padding:4px 2px;font-weight:700;font-size:14px;color:var(--brand)}
+.dat-s>summary::-webkit-details-marker{display:none}.dat-s>summary em{font-style:normal;color:var(--muted);font-weight:500;font-size:12px}.dat-s[open]{padding-bottom:8px}.dat-s>summary:hover{background:var(--brand-soft)}
+.dat-s>.dat-d{margin-left:8px}
+@media(max-width:599px){.dat-s>summary{min-height:36px;font-size:13.5px}}

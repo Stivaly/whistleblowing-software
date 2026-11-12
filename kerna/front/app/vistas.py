@@ -652,7 +652,7 @@ def informe_vis(inf_: dict, kp: dict) -> dict:
         for r in rl["filas"]:
             v = r[4]
             e = "ok" if v >= (r[7] or META_RECALL) else ("warn" if v >= (r[7] or META_RECALL) - RECALL_ALERTA else "bad")
-            li.append(f'<li class="ly s-{e}" title="{_e(inf.nombre_ley(r[0]))}">{_o.ley_icono(inf.nombre_ley(r[0]), 32) or _M(chr(60)+"span class=lx style=--s:32px aria-hidden=true>"+chr(60)+"/span>")}{_o.anillo(100 * v, e, 100 * meta, 64, f.dec_corto(100 * v, 1) + "%")}{_ley_n(inf.ley_corta(r[0]))}</li>')
+            li.append(f'<li class="ly s-{e}" title="{_e(inf.nombre_ley(r[0]))}">{_o.ley_icono(inf.nombre_ley(r[0]), 32) or _M('<span class="lx" data-l="global" style="--s:32px" aria-hidden="true"><svg focusable="false"><use href="/estaticos/identidad.svg#n-acierto"/></svg></span>')}{_o.anillo(100 * v, e, 100 * meta, 64, f.dec_corto(100 * v, 1) + "%")}{_ley_n(inf.ley_corta(r[0]))}</li>')
         out["calidad"] = _M(f'<p class="mk">Acierto por ley<span class="mk-r">marca = meta de {f.dec_corto(100 * meta, 0)} %</span></p><ul class="ly-l">{"".join(li)}</ul>')
     else:
         out["calidad"] = sin("Sin medición de calidad")

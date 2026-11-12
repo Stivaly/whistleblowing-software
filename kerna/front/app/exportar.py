@@ -334,10 +334,22 @@ def a_pdf(inf: dict) -> bytes:
 
     # una página por pestaña: sus indicadores y su visual orbital protagonista
     ids = [x["id"] for x in secs]
-    for s_ in sorted(secs, key=lambda x: ids.index("calidad") + .5 if x["id"] == "cobertura" and "calidad" in ids else ids.index(x["id"])):
+    vivas = {x["id"] for x in secs if x["kpis"] or x["graficos"]}
+    fusion = {"desempeno", "incidentes"} <= vivas      # Rapidez e Incidentes comparten página (cada una llenaba media hoja)
+
+    def orden(x):
+        if x["id"] == "cobertura" and "calidad" in ids:
+            return ids.index("calidad") + .5
+        if x["id"] == "incidentes" and fusion:
+            return ids.index("desempeno") + .5
+        return ids.index(x["id"])
+
+    for s_ in sorted(secs, key=orden):
         if s_["id"] == "resumen" or (not s_["kpis"] and not s_["graficos"]):
             continue
-        h += ([Spacer(1, 14)] if s_["id"] == "cobertura" else [PageBreak()]) + [P(s_["titulo"], "h1")]
+        junto = s_["id"] in ("cobertura", "incidentes") and (s_["id"] == "cobertura" or fusion)
+        titulo = "Rapidez e incidentes" if fusion and s_["id"] == "desempeno" else s_["titulo"]
+        h += ([Spacer(1, 14)] if junto else [PageBreak()]) + [P(titulo, "h2" if (junto and s_["id"] == "incidentes") else "h1")]
         if s_["kpis"]:
             h.append(Tarjetas([(k["etiqueta"], k["v"], k["u"], k["e"] if k["e"] in COL and k["e"] != "na" else ("na" if k["e"] == "na" else "neutro")) for k in s_["kpis"]], cols=3))
         v_, reemplaza = visual_de(s_["id"])

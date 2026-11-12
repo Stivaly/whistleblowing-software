@@ -381,6 +381,30 @@ def test_pdf_primera_pagina_con_veredicto_y_una_pagina_por_pestana(inf):
     assert (EST / "img" / "baldosa-lista.png").exists()
 
 
+def test_pdf_fusiona_rapidez_e_incidentes_en_una_pagina(inf):
+    import io
+    from app import exportar
+    from pypdf import PdfReader
+    pag = [p.extract_text() for p in PdfReader(io.BytesIO(exportar.a_pdf(inf))).pages]
+    una = [t for t in pag if "Rapidez e incidentes" in t]
+    assert len(una) == 1 and "Incidentes" in una[0]
+    assert not any(t.lstrip().startswith("Incidentes") for t in pag)
+
+
+def test_datos_agrupa_las_tablas_por_seccion(monkeypatch, inf):
+    monkeypatch.setattr(principal, "_informe", lambda *a, **k: inf)
+    html = TestClient(principal.app, base_url="https://t").get("/panel/informe/datos?dias=30", headers=H).text
+    secs = re.findall(r'<details class="dat-s">', html)
+    assert 3 <= len(secs) <= 7 and html.count('class="dat-d"') >= len(secs)
+    assert "dat-h" not in html
+    assert all(re.search(rf'class="dat-s"><summary><span>{t}</span>', html) for t in ("Calidad", "Rapidez", "Costos", "Incidentes"))
+
+
+def test_global_lleva_icono_como_las_leyes(inf):
+    html = str(vistas.informe_vis(inf, {})["calidad"])
+    assert 'data-l="global"' in html and html.count('class="lx"') == html.count('<li class="ly')
+
+
 def test_pdf_usa_las_visuales_orbitales_de_la_vista(inf):
     import io
     from app import exportar, orbital, pdf_orbital
