@@ -238,7 +238,7 @@
     const seg = (d, pos) => d.map((x, i) => ({ value: x, itemStyle: { color: col(c.cols[i]), borderRadius: 2 }, label: { show: pos ? x > 0 : x < 0 && !(c.sp[i] > 0), position: pos ? 'top' : 'bottom', formatter: c.vals[i], color: ink, fontSize: 11, fontWeight: 600 } }));
     const ancho = innerWidth < 600 ? 44 : 56;
     mk('ch-casc', {
-      ...base(), grid: { left: 4, right: 4, top: 22, bottom: innerWidth < 600 ? 40 : 26 }, tooltip: { trigger: 'item', formatter: (p) => (p.seriesType === 'bar' && p.seriesIndex % 2 ? c.labels[p.dataIndex] + ': ' + c.vals[p.dataIndex] + ' UF' : ''), confine: true },
+      ...base(), grid: { left: 4, right: 4, top: 22, bottom: innerWidth < 600 ? 50 : 26 }, tooltip: { trigger: 'item', formatter: (p) => (p.seriesType === 'bar' && p.seriesIndex % 2 ? c.labels[p.dataIndex] + ': ' + c.vals[p.dataIndex] + ' UF' : ''), confine: true },
       xAxis: { type: 'category', data: c.labels, axisLabel: { color: ink, fontSize: innerWidth < 600 ? 9.5 : 10.5, interval: 0, lineHeight: 13, margin: 8, ...(innerWidth < 600 ? { width: 44, overflow: 'break' } : {}) }, axisTick: { show: false }, axisLine: { lineStyle: { color: '#B9C1DA' } } },
       yAxis: { type: 'value', show: false },
       series: [{ type: 'bar', stack: 'p', data: c.bp, itemStyle: vacio, silent: true, barWidth: ancho }, { type: 'bar', stack: 'p', data: seg(c.sp, true), barWidth: ancho },

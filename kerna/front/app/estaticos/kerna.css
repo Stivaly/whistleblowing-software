@@ -973,3 +973,62 @@ html,body{max-width:100%}
 #app .ctl .seg{flex-wrap:nowrap}
 @media(max-width:599px){#app .ctl[data-t="sg"]{grid-template-columns:minmax(0,1fr)}#app .ctl[data-t="sg"] .ct-c{justify-content:flex-start}}
 .stt b{white-space:nowrap}.stt li{flex-wrap:wrap;min-width:0;max-width:100%}
+
+/* v8 · móvil compacto (390 px): bandas separadas 16 px, KPI en 2 columnas, diagrama de 200 px con leyenda en una fila,
+   leyes en 3 columnas, pestañas del informe en 2 filas, «Compartir» en una fila que se desplaza dentro de sí misma. */
+.ly-n em{font-style:normal}
+@media(max-width:599px){
+  .vw-main{padding:8px 14px 12px}
+  .bar{padding-bottom:6px;gap:6px 12px}
+  .h1{font-size:19px}
+  .bn{padding:8px 0}
+  .mk{margin-bottom:6px}
+  .frase{font-size:17px;margin:0 0 8px}
+  .pr{gap:6px}
+  .orb-w{flex-direction:column;align-items:center;gap:6px}.orb-w svg{width:200px}
+  .orb-lg{flex-wrap:nowrap;gap:8px;justify-content:center}.orb-lg li{font-size:10px;letter-spacing:.02em;gap:5px;white-space:nowrap}
+  .orb-lg i{min-width:22px;height:22px;font-size:9px}
+  .cola{padding:6px 10px;gap:2px}
+  .cola-l{gap:2px 12px}
+  .cola-m{font-size:12.5px;gap:6px}.cola-m b{font-size:16px}
+  .cola-m k-st,.cola-m k-n{--s:32px!important}
+  .cola-a{width:100%}.cola-a .btn{width:100%;justify-content:center;min-height:36px}
+  .kbs{gap:6px 0}
+  .kb{gap:6px;padding:2px 6px}.kb>k-st,.kb>k-n,.kbs6 .kb>k-st,.kbs6 .kb>k-n{--s:28px!important;align-self:flex-start;margin-top:2px}
+  .kb-b{gap:1px}.kb-l{font-size:9.5px;letter-spacing:.03em}.kbs6 .kb-l{font-size:9.5px}
+  .kb-v b{font-size:22px}.kb-sub{font-size:11px}.kb-e{font-size:11.5px}
+  .kb .bu-t{margin-top:2px}.kb .bu-gl{margin-top:1px;font-size:10.5px}.kb .bu{margin:0}
+  .cm::before{top:24px}.cm i{margin:calc((48px - var(--d)) / 2) 0}
+  .cm b{font-size:12.5px}.cm span{font-size:10.5px}
+  .ley-b{gap:6px}
+  .ly-l{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
+  .ly{grid-template-columns:auto auto;justify-content:center;gap:2px 6px}
+  .ly .lx{--s:22px!important}.ly svg.ani{width:56px;height:56px}
+  .ly>span{text-align:center;font-size:11.5px;line-height:1.25}
+  .ly-n em{display:none}.ly-n>span{display:block;font-weight:500;color:var(--muted)}
+  .ch-l{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
+  .ch-l li{justify-content:center;gap:4px;padding:3px 4px;font-size:11.5px;min-width:0;white-space:nowrap}.ch-l .lx{--s:18px!important}.ch-l li b{font-size:12px}
+  .ch-l li .ly-n em,.ch-l li .ly-n>span{display:none}
+  .cch{height:150px}
+  .tabs2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 4px;overflow:visible}
+  .tabs2 button{justify-content:center;min-height:38px;padding:6px 4px;font-size:13px}.tabs2 .t-datos{margin-left:0}
+  .stt{gap:6px;margin-top:8px}.stt li{padding:4px 8px 4px 6px}
+  .tp{padding-top:8px}
+  .vdh{gap:10px}
+  /* Ajustes */
+  .ap{height:64px;padding:4px}.ap-svg{width:60px;height:60px}.ap::before{width:200px;height:200px;margin:-100px 0 0 -100px}
+  .as-1 .ap{height:56px}.as-1 .ap-svg{width:52px;height:52px}
+  .as-r{padding:4px 14px 6px}
+  #app .ctl{min-height:40px;padding:2px 0}
+  #app .as-1 .as-ch.ctl{flex-wrap:nowrap;overflow-x:auto;gap:6px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);padding-right:28px}
+  #app .as-1 .as-ch.ctl::-webkit-scrollbar{display:none}
+  #app .as-1 .as-ch>*{flex:none;scroll-snap-align:start}
+  #app .as-1 .as-ch .chip{padding:3px 8px;font-size:12px;gap:4px}
+  .as-1 .as-r{padding-top:6px}
+  /* Negocio */
+  .cr{grid-template-columns:36px minmax(0,1fr) auto;gap:2px 10px;padding:6px 0}.cr svg.ani{width:36px;height:36px}
+  .cr svg.ani{grid-row:1}.cr-n{grid-column:2}.cr-l{grid-column:3;grid-row:1;justify-self:end}.cr-u,.cr-m{grid-column:2/-1;font-size:12.5px}
+  .pr-w .cch{height:168px}
+  .chs li{padding:2px 6px}
+  .dat-h{margin:8px 0 0;font-size:13px}.dat-d summary{min-height:30px;padding:2px;font-size:13px;line-height:1.25}.dat-d summary em{font-size:11px}.dat-d[open]{padding-bottom:6px}
+}

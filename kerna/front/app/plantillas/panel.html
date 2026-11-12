@@ -38,8 +38,8 @@
 {% if P.camino %}<section class="bn" aria-label="Tiempo por etapa"><h2 class="mk">El camino de una denuncia{{ tip('etapas') }}<span class="mk-r">{{ P.camino_t }}</span></h2>{{ P.camino }}</section>{% endif %}
 
 {% if V.aciertos or V.leyes %}<section class="bn ley-b" aria-label="Acierto por ley"><h2 class="mk">Acierto por ley{{ tip('acierto_ley') }}<span class="mk-r">marca = meta de {{ V.meta_recall }} %</span></h2>
-<ul class="ly-l">{% for l in V.aciertos %}<li class="ly s-{{ l.e }}" title="{{ l.full }}">{{ ley_icono(l.full, 32) }}{{ anillo(l.w, l.e, V.meta_recall|replace(',', '.')|float, 64, l.v ~ '%') }}<span>{{ l.n }}</span></li>{% endfor %}</ul>
-{% if V.leyes %}<ul class="ch-l" aria-label="Leyes más sugeridas">{% for l in V.leyes %}<li title="{{ l.full }}">{{ ley_icono(l.norma, 20) }}<span>{{ l.n }}</span><b>{{ miles(l.v) }}</b></li>{% endfor %}</ul>{% endif %}
+<ul class="ly-l">{% for l in V.aciertos %}<li class="ly s-{{ l.e }}" title="{{ l.full }}">{{ ley_icono(l.full, 32) }}{{ anillo(l.w, l.e, V.meta_recall|replace(',', '.')|float, 64, l.v ~ '%') }}<span class="ly-n">{% set pn = l.n.split(' · ') %}{{ pn[0] }}{% if pn|length > 1 %}<em> · </em><span>{{ pn[1] }}</span>{% endif %}</span></li>{% endfor %}</ul>
+{% if V.leyes %}<ul class="ch-l" aria-label="Leyes más sugeridas">{% for l in V.leyes %}<li title="{{ l.full }}">{{ ley_icono(l.norma, 20) }}<span class="ly-n">{% set pn = l.n.split(' · ') %}{{ pn[0] }}{% if pn|length > 1 %}<em> · </em><span>{{ pn[1] }}</span>{% endif %}</span><b>{{ miles(l.v) }}</b></li>{% endfor %}</ul>{% endif %}
 </section>{% endif %}
 
 {% if P.hay_heat %}<section class="bn" aria-label="Cuándo llegan las denuncias"><h2 class="mk">Cuándo llegan las denuncias{{ tip('mapa') }}</h2><div id="ch-heat" class="cch" role="img" aria-label="Mapa de calor de denuncias por día de la semana y franja horaria"></div></section>{% endif %}

@@ -635,6 +635,12 @@ def _corto_n(v: float) -> str:
     return f.dec_corto(v / 1e6, 1) + " M" if v >= 1e6 else (f.dec_corto(v / 1e3, 0) + " mil" if v >= 1e4 else f.miles(round(v)))
 
 
+def _ley_n(n: str) -> str:
+    """Etiqueta de ley en dos partes («Ley 21.643 · Ley Karin»): en móvil la segunda baja a otra línea."""
+    a, _, b = str(n).partition(" · ")
+    return f'<span class="ly-n">{_e(a)}' + (f'<em> · </em><span>{_e(b)}</span>' if b else "") + "</span>"
+
+
 def informe_vis(inf_: dict, kp: dict) -> dict:
     """Una visualización protagonista por pestaña del informe, con el lenguaje orbital (HTML o SVG del servidor)."""
     out: dict = {}
@@ -646,7 +652,7 @@ def informe_vis(inf_: dict, kp: dict) -> dict:
         for r in rl["filas"]:
             v = r[4]
             e = "ok" if v >= (r[7] or META_RECALL) else ("warn" if v >= (r[7] or META_RECALL) - RECALL_ALERTA else "bad")
-            li.append(f'<li class="ly s-{e}" title="{_e(inf.nombre_ley(r[0]))}">{_o.ley_icono(inf.nombre_ley(r[0]), 32) or _M(chr(60)+"span class=lx style=--s:32px aria-hidden=true>"+chr(60)+"/span>")}{_o.anillo(100 * v, e, 100 * meta, 64, f.dec_corto(100 * v, 1) + "%")}<span>{_e(inf.ley_corta(r[0]))}</span></li>')
+            li.append(f'<li class="ly s-{e}" title="{_e(inf.nombre_ley(r[0]))}">{_o.ley_icono(inf.nombre_ley(r[0]), 32) or _M(chr(60)+"span class=lx style=--s:32px aria-hidden=true>"+chr(60)+"/span>")}{_o.anillo(100 * v, e, 100 * meta, 64, f.dec_corto(100 * v, 1) + "%")}{_ley_n(inf.ley_corta(r[0]))}</li>')
         out["calidad"] = _M(f'<p class="mk">Acierto por ley<span class="mk-r">marca = meta de {f.dec_corto(100 * meta, 0)} %</span></p><ul class="ly-l">{"".join(li)}</ul>')
     else:
         out["calidad"] = sin("Sin medición de calidad")
