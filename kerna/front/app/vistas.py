@@ -882,3 +882,51 @@ def presentacion_negocio(V: dict, n: dict) -> dict:
              ("Se recupera en el año", str(p["recuperacion_anio"]))]
     cls = V["con_uso"]
     return {"frase": frase, "cascada": cascada, "kb": kb, "chips": chips, "n_con": len(cls), "n_sin": len(V["sin_uso"]), "e_gen": V["eg"]["e"]}
+
+
+def visuales_pdf(inf_: dict) -> dict:
+    """Datos de las visuales orbitales del PDF (los mismos de la vista, sin HTML): diagrama del período, camino de una denuncia, anillos por ley,
+    costo por modelo, fallas, cascada y proyección. Las que no tienen datos no aparecen."""
+    out: dict = {}
+    ej = informe_ejecutivo(inf_)
+    colores = {"oficial": "verde", "respaldo": "amarillo", "local": "cian", "manual": "coral"}
+    if ej["n_modos"]:
+        out["periodo"] = {"anillos": [{"n": MODO_CORTO[m["k"]], "v": m["n"], "txt": f.miles(m["n"]), "c": colores[m["k"]], "sub": f"{m['p']} % de los casos"} for m in ej["modos"] if m["n"]],
+                          "total": ej["tarjetas"][0]["v"], "unidad": "denuncias"}
+    rl = _tabla(inf_, "recall_ley")
+    if rl and rl["filas"]:
+        meta = rl["filas"][0][7] or META_RECALL
+        out["leyes"] = {"meta": 100 * meta, "items": [{"n": inf.ley_corta(r[0]), "pct": 100 * r[4], "txt": f.dec_corto(100 * r[4], 1) + "%",
+                                                       "e": "ok" if r[4] >= (r[7] or META_RECALL) else ("warn" if r[4] >= (r[7] or META_RECALL) - RECALL_ALERTA else "bad")} for r in rl["filas"]]}
+    le = _tabla(inf_, "lat_etapa")
+    if le and le["filas"]:
+        mx = max(r[3] for r in le["filas"])
+        out["etapas"] = [{"n": ETAPA_CORTA.get(str(r[0]), str(r[0]).capitalize()), "v": r[3], "txt": f.segundos(r[3]) + " s", "c": _o.COLOR_ETAPA.get(str(r[0]), "azul"), "hot": r[3] == mx} for r in le["filas"]]
+    kp = {k["etiqueta"]: k for s in informe(inf_) for k in s["kpis"]}
+    tl = _tabla(inf_, "tokens_modelo")
+    if tl and tl["filas"]:
+        ck = kp.get("Costo del período")
+        out["tokens"] = {"anillos": [{"n": str(r[0]), "v": r[2] + r[3], "txt": _corto_n(r[2] + r[3]), "c": _o.CICLO[i % len(_o.CICLO)]} for i, r in enumerate(tl["filas"][:4])],
+                         "total": ("US$ " + ck["v"]) if ck else "—", "unidad": "costo del período"}
+    fl = _tabla(inf_, "fallas")
+    if fl and fl["filas"]:
+        agg: dict[str, int] = {}
+        for r in fl["filas"]:
+            agg[str(r[1])] = agg.get(str(r[1]), 0) + int(r[4])
+        nom = {"generacion": "Redacción", "recuperacion": "Búsqueda", "voyage": "Voyage AI", "gemini": "Gemini", "local": "Modelo local", "azure": "Azure OpenAI"}
+        out["fallas"] = [{"n": nom.get(a, a.capitalize()), "v": b, "txt": f.miles(b), "c": _o.CICLO[i % len(_o.CICLO)], "hot": i == 0} for i, (a, b) in enumerate(sorted(agg.items(), key=lambda x: -x[1]))]
+    rv = _tabla(inf_, "revision")
+    if rv and rv["filas"]:
+        out["motivos"] = [(str(r[0]).replace("_", " ").capitalize(), f.miles(r[1])) for r in rv["filas"][:5]]
+    rent = next((s for s in inf_["secciones"] if s["id"] == "rentabilidad"), None)
+    if rent and rent["kpis"]:
+        def kv(pref):
+            return next((k["valor"] for k in rent["kpis"] if k["etiqueta"].startswith(pref)), None)
+        t = {"ingreso": kv("Ingreso del período"), "costo_servir": kv("Costo de servir"), "participacion_veridy": kv("Parte de Veridy"), "costos_fijos": kv("Costos fijos"),
+             "depreciacion": kv("Depreciación"), "interes": kv("Interés del crédito"), "impuesto": kv("Impuesto"), "utilidad": kv("Utilidad después de impuestos")}
+        if all(isinstance(v, (int, float)) for v in t.values()):
+            out["cascada"] = cascada_negocio(t)
+    rp = _tabla(inf_, "rent_proyeccion")
+    if rp and rp["filas"]:
+        out["proyeccion"] = [{"a": str(r[0]).split("(")[-1].rstrip(")") if "(" in str(r[0]) else str(r[0]), "cl": r[1], "ventas": r[2], "costos": round(r[2] - r[6], 2), "utilidad": r[7]} for r in rp["filas"]]
+    return out

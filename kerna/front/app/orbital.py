@@ -67,30 +67,39 @@ def angulos_satelites(n: int) -> list[float]:
     return [math.radians(50 + i * 360 / max(n, 1)) for i in range(n)]
 
 
-def diagrama_orbital(anillos: list[dict], total: str, unidad: str, etiqueta_total: str = "") -> Markup:
-    """anillos: [{n: texto corto, v: valor, txt: cifra del satélite, c: color de categoría}] (el primero es el anillo exterior).
-    El arco de cada anillo es su parte del total de los valores y termina en un satélite con la cifra; los satélites
-    quedan repartidos a lo largo de sus anillos. Los nombres van en una leyenda directa al lado, sin tocar el dibujo."""
+def geometria_orbital(anillos: list[dict], total: str) -> dict:
+    """Geometría del diagrama orbital en el sistema del SVG (260 x 236, y hacia abajo); la usan el SVG de la vista y el dibujo vectorial del PDF."""
     anillos = [a for a in anillos if a["v"] > 0] or anillos[:1]
     tot = sum(a["v"] for a in anillos) or 1
     cx, cy, w, h = 130.0, 118.0, 260, 236
     paso = 22 if len(anillos) <= 3 else 19
-    r0 = 106.0
-    rs = [r0 - i * paso for i in range(len(anillos))]
+    rs = [106.0 - i * paso for i in range(len(anillos))]
     nuc = max(rs[-1] - 21, 24)
+    filas = []
+    for a, r, fin in zip(anillos, rs, angulos_satelites(len(anillos))):
+        frac = max(a["v"] / tot, .012)
+        sx, sy = _punto(cx, cy, r, fin)
+        filas.append({**a, "r": r, "fin": fin, "frac": frac, "sx": sx, "sy": sy})
+    return {"cx": cx, "cy": cy, "w": w, "h": h, "nuc": nuc, "anillos": filas, "grande": len(str(total)) <= 4 and nuc > 34}
+
+
+def diagrama_orbital(anillos: list[dict], total: str, unidad: str, etiqueta_total: str = "") -> Markup:
+    """anillos: [{n: texto corto, v: valor, txt: cifra del satélite, c: color de categoría}] (el primero es el anillo exterior).
+    El arco de cada anillo es su parte del total de los valores y termina en un satélite con la cifra; los satélites
+    quedan repartidos a lo largo de sus anillos. Los nombres van en una leyenda directa al lado, sin tocar el dibujo."""
+    g = geometria_orbital(anillos, total)
+    cx, cy, w, h, nuc, grande = g["cx"], g["cy"], g["w"], g["h"], g["nuc"], g["grande"]
     o = [f'<svg class="orb" viewBox="0 0 {w} {h}" role="img" aria-label="{escape(etiqueta_total or unidad)}: {escape(total)}">']
     lg = []
-    for a, r, fin in zip(anillos, rs, angulos_satelites(len(anillos))):
-        c = a["c"]
+    for a in g["anillos"]:
+        c, r = a["c"], a["r"]
         o.append(f'<circle cx="{cx}" cy="{cy}" r="{_p(r)}" class="orb-b"/>')
-        frac = max(a["v"] / tot, .012)
-        o.append(f'<path d="{_arco(cx, cy, r, frac, fin)}" class="orb-a" style="stroke:var(--c-{c})"/>')
-        sx, sy = _punto(cx, cy, r, fin)
+        o.append(f'<path d="{_arco(cx, cy, r, a["frac"], a["fin"])}" class="orb-a" style="stroke:var(--c-{c})"/>')
+        sx, sy = a["sx"], a["sy"]
         o.append(f'<circle cx="{_p(sx)}" cy="{_p(sy)}" r="12" class="orb-s" style="fill:var(--c-{c}-bg);stroke:var(--c-{c})"/>'
                  f'<text x="{_p(sx)}" y="{_p(sy + 3.4)}" class="orb-n" text-anchor="middle">{escape(a["txt"])}</text>')
         lg.append(f'<li style="--c:var(--c-{c});--cb:var(--c-{c}-bg)"><i aria-hidden="true">{escape(a["txt"])}</i><span>{escape(a["n"])}</span></li>')
     o.append(f'<circle cx="{cx}" cy="{cy}" r="{_p(nuc)}" class="orb-c"/>')
-    grande = len(str(total)) <= 4 and nuc > 34
     o.append(f'<text x="{cx}" y="{_p(cy + (3 if grande else 2))}" class="orb-t" style="font-size:{26 if grande else 17}px" text-anchor="middle">{escape(total)}</text>'
              f'<text x="{cx}" y="{_p(cy + (17 if grande else 14))}" class="orb-u" text-anchor="middle">{escape(unidad)}</text></svg>')
     return Markup(f'<div class="orb-w">{"".join(o)}<ul class="orb-lg">{"".join(lg)}</ul></div>')

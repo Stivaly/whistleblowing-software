@@ -379,3 +379,33 @@ def test_pdf_primera_pagina_con_veredicto_y_una_pagina_por_pestana(inf):
     assert "meta 0,8" not in "".join(p.extract_text() for p in r.pages)
     assert len(r.pages) >= 3 and "Calidad" in r.pages[1].extract_text()
     assert (EST / "img" / "baldosa-lista.png").exists()
+
+
+def test_pdf_usa_las_visuales_orbitales_de_la_vista(inf):
+    import io
+    from app import exportar, orbital, pdf_orbital
+    from pypdf import PdfReader
+    v = vistas.visuales_pdf(inf)
+    assert {"periodo", "leyes", "etapas", "tokens"} <= set(v) and v["periodo"]["total"] == "9"
+    r = PdfReader(io.BytesIO(exportar.a_pdf(inf)))
+    texto = [p.extract_text() for p in r.pages]
+    assert "Cómo se resolvieron las denuncias" in texto[0] and "El camino de una denuncia" in texto[0] and "metas cumplidas" in texto[0]   # página 1 compuesta
+    assert any("Acierto por ley" in t for t in texto) and any("Costo por modelo" in t for t in texto)
+    # el dibujo vectorial del período usa la misma geometría que el SVG de la pantalla
+    g = orbital.geometria_orbital(v["periodo"]["anillos"], v["periodo"]["total"])
+    assert len(g["anillos"]) == len(v["periodo"]["anillos"]) and pdf_orbital.Orbital(v["periodo"]["anillos"], "9", "denuncias", 500).height > 200
+
+
+def test_pdf_con_rentabilidad_dibuja_cascada_y_proyeccion(inf):
+    import io
+    from app import exportar, negocio
+    from pypdf import PdfReader
+    cl = [{"PartitionKey": "a", "nombre": "Veridy", "plan_tipo": "profesional", "plan_denuncias_mes": 300, "estado": "activo"}]
+    n = negocio.construir(cl, [], dias=30)
+    from app import informe
+    from test_front_informe import EVAL, FIN, INI, falso
+    inf2 = informe.construir(INI, FIN, ejecutar=falso, evaluacion=EVAL, negocio=n)
+    v = vistas.visuales_pdf(inf2)
+    assert len(v["cascada"]["labels"]) == 7 and len(v["proyeccion"]) == 5
+    texto = " ".join(p.extract_text() for p in PdfReader(io.BytesIO(exportar.a_pdf(inf2))).pages)
+    assert "Del ingreso a la utilidad" in texto and "Proyección a cinco años" in texto

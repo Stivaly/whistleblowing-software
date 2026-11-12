@@ -296,15 +296,56 @@ def a_pdf(inf: dict) -> bytes:
     fila_v = Table([[RImage(str(baldosa), width=30 * mm, height=22.5 * mm) if baldosa.exists() else "", textos]], colWidths=[36 * mm, ancho - 36 * mm])
     fila_v.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, -1), FON[ver["e"]]), ("LINEBEFORE", (0, 0), (0, -1), 3, BAR[ver["e"]]), ("BOX", (0, 0), (-1, -1), .4, ln),
                                 ("VALIGN", (0, 0), (-1, -1), "MIDDLE"), ("TOPPADDING", (0, 0), (-1, -1), 5), ("BOTTOMPADDING", (0, 0), (-1, -1), 5), ("LEFTPADDING", (0, 0), (-1, -1), 8)]))
-    h = [fila_v, Spacer(1, 8), Tarjetas([(c["l"], str(c["v"]), (c["u"] or ""), c["e"]) for c in v2["cards"]], cols=3), Spacer(1, 8), Modos(ej)]
-    # una página por pestaña: sus indicadores y su gráfico principal
-    for s_ in secs:
+    from . import pdf_orbital as po
+    vis = vistas.visuales_pdf(inf)
+    h = [fila_v, Spacer(1, 8), Tarjetas([(c["l"], str(c["v"]), (c["u"] or ""), c["e"]) for c in v2["cards"]], cols=3), Spacer(1, 6)]
+    if "periodo" in vis:
+        pe = vis["periodo"]
+        h += [P("Cómo se resolvieron las denuncias", "h2"), po.Orbital(pe["anillos"], pe["total"], pe["unidad"], ancho, k=1.25)]
+    else:
+        h.append(Modos(ej))
+    if "etapas" in vis:
+        h += [P("El camino de una denuncia", "h2"), po.Camino(vis["etapas"], ancho, k=1.5)]
+
+    def visual_de(id_):
+        """Visual orbital protagonista de la página de cada pestaña (las mismas de la pantalla); devuelve (flowables, títulos de gráficos que reemplaza)."""
+        if id_ == "calidad" and "leyes" in vis:
+            return [P("Acierto por ley (la marca negra es la meta)", "h2"), po.AnillosLey(vis["leyes"]["items"], vis["leyes"]["meta"], ancho, k=1.7)], ("Recall@5",)
+        if id_ == "desempeno" and "etapas" in vis:
+            return [P("El camino de una denuncia: 9 de cada 10 casos", "h2"), po.Camino(vis["etapas"], ancho, k=1.7)], ("P95 por etapa",)
+        if id_ == "costo" and "tokens" in vis:
+            t = vis["tokens"]
+            return [P("Costo por modelo (el arco es la parte de los tokens de cada uno)", "h2"), po.Orbital(t["anillos"], t["total"], t["unidad"], ancho, k=1.2)], ("Tokens totales",)
+        if id_ == "rentabilidad":
+            r = []
+            if "cascada" in vis:
+                r += [P("Del ingreso a la utilidad (UF)", "h2"), po.Cascada(vis["cascada"], ancho, 150, k=1.25)]
+            if "proyeccion" in vis:
+                r += [P("Proyección a cinco años (UF)", "h2"), po.Proyeccion(vis["proyeccion"], ancho, 140, k=1.25)]
+            return r, ("Utilidad después",)
+        if id_ == "incidentes" and ("fallas" in vis or "motivos" in vis):
+            r = []
+            if "fallas" in vis:
+                r += [P("Fallas por proveedor (el tamaño es la cantidad de eventos)", "h2"), po.Camino(vis["fallas"], ancho, k=1.7)]
+            if "motivos" in vis:
+                r += [P("Revisión manual por motivo", "h2")] + [P(f"{m}: {n}") for m, n in vis["motivos"]]
+            return r, ("Revisión manual por motivo",)
+        return [], ()
+
+    # una página por pestaña: sus indicadores y su visual orbital protagonista
+    ids = [x["id"] for x in secs]
+    for s_ in sorted(secs, key=lambda x: ids.index("calidad") + .5 if x["id"] == "cobertura" and "calidad" in ids else ids.index(x["id"])):
         if s_["id"] == "resumen" or (not s_["kpis"] and not s_["graficos"]):
             continue
-        h += [PageBreak(), P(s_["titulo"], "h1")]
+        h += ([Spacer(1, 14)] if s_["id"] == "cobertura" else [PageBreak()]) + [P(s_["titulo"], "h1")]
         if s_["kpis"]:
             h.append(Tarjetas([(k["etiqueta"], k["v"], k["u"], k["e"] if k["e"] in COL and k["e"] != "na" else ("na" if k["e"] == "na" else "neutro")) for k in s_["kpis"]], cols=3))
+        v_, reemplaza = visual_de(s_["id"])
+        if v_:
+            h += [Spacer(1, 6)] + v_
         for g in s_["graficos"]:
+            if any(g["titulo"].startswith(t) for t in reemplaza):
+                continue
             h += [Spacer(1, 8), Barras(g)]
         for n in s_["notas"]:
             h += [Spacer(1, 4), P("Nota: " + n, "n")]
