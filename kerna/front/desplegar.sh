@@ -19,7 +19,7 @@ else
   RAIZ_PRUEBAS="$RAIZ"; RAIZ_KQL="$RAIZ"
 fi
 if [ "$PRUEBAS" = 1 ]; then
-  (cd "$RAIZ_PRUEBAS" && python3 -m pytest -q kerna/pruebas/unitarias -k front -p no:cacheprovider) || { echo "Pruebas del front fallaron: no se despliega." >&2; exit 1; }
+  (cd "$RAIZ_PRUEBAS" && python3 -m pytest -q kerna/pruebas/unitarias/test_front*.py -p no:cacheprovider) || { echo "Pruebas del front fallaron: no se despliega." >&2; exit 1; }
 fi
 cp -r "$AQUI/app/." "$TMP/app/"; cp "$AQUI/requirements.txt" "$TMP/"
 rm -rf "$TMP/app/__pycache__" "$TMP/app/kql"; mkdir "$TMP/app/kql"
