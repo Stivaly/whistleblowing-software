@@ -400,9 +400,215 @@ k-tip k-ic{width:20px;height:20px}
 .rg-n.sm{font:700 10.5px/1.15 Inter,sans-serif;text-align:center;padding:0 14px;color:var(--muted)}
 .mod>*,.ctl,.ctl>*{min-width:0}.ctl>.flex{flex-wrap:wrap}
 @media(max-width:767px){.kv-s{font-size:24px}}
+/* =====================================================================
+   v4 · Panel compacto (solo dentro de #app; la portada no cambia)
+   Animaciones: una sola vez y solo transform/opacity. Nada infinito nuevo.
+   ===================================================================== */
+#app{font-size:14.5px;line-height:1.45}
+#app .text-sm{font-size:13.5px!important;line-height:1.45!important}
+#app .text-xs{font-size:12px!important;line-height:1.4!important}
+#app .text-base{font-size:15px}#app .text-2xl{font-size:22px;line-height:1.1}
+#app .chip{font-size:12px;padding:2px 8px 2px 6px;gap:4px}
+#app .chip k-ic{width:1em;height:1em}
+#app .btn{min-height:40px;padding:0 14px;font-size:13.5px;gap:6px}
+#app .btn.\!min-h-\[38px\]{min-height:40px!important}
+#app .btn:hover{transform:none;box-shadow:3px 3px 0 var(--brand)}
+#app .seg{padding:2px}#app .seg button{min-height:34px;padding:0 12px;font-size:12.5px}
+#app .card{--cut:16px}
+#app .card:is(.p-3,.p-4,.p-5,.md\:p-5,.md\:p-6,.md\:p-8){padding:14px 14px 16px}
+@media(min-width:768px){#app .card:is(.p-3,.p-4,.p-5,.md\:p-5,.md\:p-6,.md\:p-8){padding:16px 18px 18px}}
+#app .card:hover{--bc:var(--line-strong)}
+#app .hd{padding-bottom:9px;margin-bottom:10px!important}
+#app .hd::after{height:6px}
+#app .card h2.text-base{font-size:15px;letter-spacing:-.005em}
+#app k-tip button{width:22px;height:22px}#app k-tip k-ic{width:16px;height:16px}
+#app header.hdr{height:56px!important}
+#app .hdr .kl{width:36px!important;height:36px!important}#app .hdr .brand-t{font-size:18px}
+#app main{padding-top:14px}
+@media(min-width:1024px){#app main{padding-top:22px}}
+#app .nav a{padding:11px 14px;font-size:15px}
+#app .nav a.gen{min-height:56px;font-size:16px}
+#app .ph-t{font-size:22px;line-height:1.1}
+#app .ph-t::after{width:84px;height:8px;margin-top:8px}
+.tabbar{box-shadow:0 -1px 0 var(--line)}
+.tabbar a{min-height:52px;padding:6px 2px 7px;font-size:10.5px;gap:1px}
+.tabbar a.on k-ic,.tabbar a.gen k-ic{width:44px;height:24px;padding:2px 12px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* estados semánticos */
+.s-ok{--sc:var(--ok-bar);--st:var(--ok);--sb:var(--ok-bg)}
+.s-warn{--sc:var(--warn-bar);--st:var(--warn);--sb:var(--warn-bg)}
+.s-bad{--sc:var(--bad-bar);--st:var(--bad);--sb:var(--bad-bg)}
+.s-na{--sc:var(--na-bar);--st:var(--na);--sb:var(--na-bg)}
+
+/* cabecera de vista */
+.pg-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px}
+.pg-s{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.pg-a{display:flex;align-items:center;gap:8px}
+
+/* ¿está todo bien? */
+.eg{position:relative;display:grid;gap:12px;padding:12px 14px;background:var(--guil) right -70px top -80px/230px no-repeat,var(--sb);border:1px solid var(--sc);border-left:5px solid var(--sc);clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,0 100%)}
+.eg-main{display:flex;align-items:center;gap:14px;min-width:0}
+.eg-ic{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--st);border:2px solid var(--sc);outline:2px dotted var(--sc);outline-offset:3px;margin:3px}
+.eg-ic k-ic{width:24px;height:24px}
+.eg-k{margin:0;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.eg-t{margin:0;font:700 21px/1.15 Unbounded,Inter,sans-serif;letter-spacing:-.02em;color:var(--st);display:flex;align-items:center;gap:6px}
+.eg-s{margin:2px 0 0;font-size:13px}.eg-s a{color:var(--brand);font-weight:700}
+.eg-l{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;list-style:none;margin:0;padding:0}
+@media(min-width:640px) and (max-width:899px){.eg-l{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:900px){.eg{grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);align-items:center;gap:20px;padding:12px 18px}}
+.pl{display:flex;align-items:center;gap:8px;padding:7px 8px 7px 10px;background:#fff;border:1px solid var(--line-strong);border-left:3px solid var(--sc);min-width:0}
+.pl>k-ic{color:var(--st);width:18px;height:18px}
+.pl-n{display:flex;flex-direction:column;flex:1;min-width:0;font-size:12.5px;font-weight:600;line-height:1.2}
+.pl-n b{color:var(--st);font-size:12px;font-weight:700}
+
+/* indicadores */
+.kg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(min-width:900px){.kg{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}
+.kt{position:relative;display:flex;flex-direction:column;gap:6px;min-width:0;padding:10px 12px 9px;background:var(--guil) right -46px top -58px/140px no-repeat,#fff;border:1px solid var(--line-strong);border-top:3px solid var(--sc);clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%)}
+.kt::after,.eg::after{content:"";position:absolute;top:-1px;right:-1px;width:17px;height:17px;pointer-events:none;background:linear-gradient(to top right,transparent calc(50% - .5px),var(--line-strong) calc(50% - .5px),var(--line-strong) calc(50% + .5px),transparent calc(50% + .5px))}
+.eg::after{width:21px;height:21px;background:linear-gradient(to top right,transparent calc(50% - .5px),var(--sc) calc(50% - .5px),var(--sc) calc(50% + .5px),transparent calc(50% + .5px))}
+.kt-h{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-right:12px;order:-3}
+.kt-l{display:flex;align-items:center;gap:5px;min-width:0;font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.15}
+.kt-l k-ic{width:15px;height:15px;flex:none}
+.kt-v{display:flex;align-items:baseline;gap:4px;color:var(--st);min-width:0;line-height:1}
+#app .kv{font-size:clamp(24px,2.2vw,30px);color:inherit}
+.kt-u{font-size:12px;font-weight:600;color:var(--muted)}
+.kt-f{display:flex;align-items:center;justify-content:space-between;gap:2px 8px;flex-wrap:wrap;margin-top:auto;font-size:12px;font-weight:700}
+.kt-s{display:inline-flex;align-items:center;gap:4px;color:var(--st)}.kt-s k-ic{width:14px;height:14px}
+.kt-t{display:inline-flex;align-items:center;gap:2px;color:var(--muted)}.kt-t k-ic{width:14px;height:14px}
+.kt-t.t-bad{color:var(--bad)}.kt-t.t-warn{color:var(--warn)}.kt-t.t-ok{color:var(--ok)}
+.sp{display:block;width:100%;height:30px;min-height:30px;flex:1 1 30px;overflow:visible}
+.bu,.dots{margin:auto 0}
+.sp-l{fill:none;stroke:var(--sc);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sp-a{fill:var(--sc);opacity:.14;stroke:none}
+.gg{order:-2}.gg svg{display:block;width:100%;max-width:170px;margin:0 auto;overflow:visible}
+.gg+.kt-v{justify-content:center}
+.gg .zn{fill:none;stroke:var(--sc);stroke-width:8}
+.gg-tk{stroke:var(--ink);stroke-width:2;stroke-linecap:round}.gg-tx{font:700 6.5px Inter;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
+.gg-n{stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;transform-origin:50px 50px;transform-box:view-box;animation:ndl .9s var(--ease) backwards}
+.gg-h{fill:var(--lime);stroke:var(--ink);stroke-width:1.8}
+@keyframes ndl{from{transform:rotate(-90deg)}}
+.bu{padding:6px 0 0}
+.bu-t{position:relative;display:flex;gap:2px;height:10px}
+.bu-t i{display:block;height:100%;background:var(--sc);opacity:.4}
+.bu-m{position:absolute;top:-4px;width:6px;height:18px;margin-left:-3px;background:var(--st);border:1.5px solid #fff;outline:1px solid var(--st);animation:fi .8s .2s backwards}
+.bu-g{position:absolute;top:-5px;width:2px;height:20px;margin-left:-1px;background:var(--ink);text-decoration:none}
+@keyframes fi{from{opacity:0}}
+.bu-s{position:relative;display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:7px;height:14px}
+.bu-gl{position:absolute;transform:translateX(-50%);color:var(--ink);font-weight:700;white-space:nowrap}
+.dots{display:flex;gap:8px;padding:4px 0}
+.dots i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--sc);border:2px solid var(--brand);color:#fff}
+.dots i k-ic{width:12px;height:12px}
+
+/* barras de medida */
+.mb{position:relative;height:8px;background:#E3E7F2;display:block}
+.mb>i{display:block;height:100%;background:var(--sc);transform-origin:left;position:relative}
+.mb>i:only-child{min-width:2px}
+.mb>u{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);margin-left:-1px;text-decoration:none}
+.mb-lg{height:12px;background:none}.mb-lg>i{display:block;height:100%}
+.rv-go .mb>i{animation:sx .9s .1s var(--ease) backwards}
+@keyframes sx{from{transform:scaleX(0)}}
+.mr-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px;font-size:13px}
+.mr-h>b,.mr-h .vv{display:inline-flex;align-items:center;gap:4px;color:var(--st);font-size:13px}
+.mr-h k-ic{width:14px;height:14px}
+.rw{display:grid;grid-template-columns:16px 1fr auto 44px;gap:8px;align-items:center;padding:7px 0;border-top:1px dotted var(--line-strong);font-size:13px}
+.rw:first-child{border-top:0}
+.rw>k-ic{color:var(--st);width:15px;height:15px}.rw b{font-variant-numeric:tabular-nums}.rw em{font-style:normal;text-align:right;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.rw3{grid-template-columns:12px 1fr auto}.rw .dt{width:10px;height:10px;border-radius:2px;display:block}
+.big{display:flex;align-items:baseline;gap:6px;color:var(--st);line-height:1}
+.lgd{display:flex;gap:10px;margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:600;flex-wrap:wrap}
+.lgd span{display:inline-flex;align-items:center;gap:4px}.lgd i{width:9px;height:9px;border-radius:2px;display:inline-block}.lgd i.tk{width:2px;height:12px;background:var(--ink);border-radius:0}
+.chh{height:190px}.chh2{height:170px}.chh3{height:200px}
+@media(min-width:1024px){.chh{height:230px}.chh2{height:190px}.chh3{height:250px}}
+.stats{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;margin-bottom:4px}
+.stats>div{border-left:3px solid var(--sc);padding:2px 0 2px 8px}
+.stats>div>span{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
+.stats b{font:700 18px/1.2 Unbounded,Inter,sans-serif;color:var(--st);white-space:nowrap}
+.sub{margin:12px 0 6px;font-size:13px;font-weight:700}
+.et{display:grid;grid-template-columns:104px 1fr 40px;gap:8px;align-items:center;font-size:12.5px}
+.et b{text-align:right;color:var(--st);font-variant-numeric:tabular-nums}
+.ic{border-top:1px dotted var(--line-strong)}.ic:first-of-type{border-top:0}
+.ic summary{display:grid;grid-template-columns:18px minmax(0,1fr) auto 16px;gap:8px;align-items:center;min-height:44px;cursor:pointer;list-style:none;font-size:13.5px}
+.ic summary::-webkit-details-marker{display:none}
+.ic summary>k-ic{color:var(--st);width:17px;height:17px}.ic summary .chev{color:var(--muted);transition:transform .2s}.ic[open] .chev{transform:rotate(180deg)}
+.ic .n{font:700 17px Unbounded,Inter,sans-serif;color:var(--st);white-space:nowrap}.ic .n small{font:600 11px Inter;color:var(--muted);margin-left:3px}
+.ic p{margin:0 0 8px 26px;font-size:13px;display:flex;gap:6px;align-items:flex-start}.ic p k-ic{color:var(--brand-2);flex:none;margin-top:2px}
+.pe{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;padding:8px 12px;font-size:13px;border-left:3px solid var(--sc)}
+.pe>k-ic{width:20px;height:20px;flex:none;color:var(--st)}
+.pe-warn{--sc:var(--warn-bar);--st:var(--warn);background:var(--warn-bg)}.pe-na{--sc:var(--na-bar);--st:var(--na);background:var(--na-bg)}
+.seg3{display:inline-flex;align-items:center;gap:4px;font-size:12px}.seg3 i{width:20px;height:6px;background:#fff;display:block}.seg3 i.on{background:var(--warn-bar)}.seg3 b{margin-left:4px}
+
+/* clientes */
+.cl-head{display:none}
+.cl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 10px;padding:10px 0;border-top:1px dotted var(--line-strong);align-items:center;font-size:13px}
+.cl:first-of-type{border-top:0}
+.cl-n{display:flex;flex-direction:column;min-width:0}.cl-n .muted{font-size:12px}.cl-sp{display:none}
+.cl-u{grid-column:1/-1;order:3}.cl-m{font-size:12.5px;order:4;grid-column:1}.cl-m b{font-variant-numeric:tabular-nums}.cl-l{display:flex;align-items:center;gap:2px;justify-self:end;order:2}
+@media(max-width:1023px){.cl-l{grid-row:1;grid-column:2}}
+@media(min-width:1024px){
+ .cl-head{display:grid;grid-template-columns:1.1fr 1.5fr 1fr 1.1fr;gap:16px;font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;padding-bottom:4px}
+ .cl{grid-template-columns:1.1fr 1.5fr 1fr 1.1fr;gap:16px}
+ .cl-u,.cl-m,.cl-l,.cl-n{order:0;grid-column:auto}
+ .cl-sp{display:block;width:80px;height:20px;margin-top:3px}.cl-l{justify-self:start}}
+
+/* ajustes */
+#app .mod{--cut:24px}
+@media(min-width:1024px){#app .mod{grid-template-columns:minmax(0,240px) minmax(0,1fr)}}
+#app .mod-art{padding:14px 16px;gap:8px;align-items:flex-start}
+#app .mod-art::before{width:300px;height:300px;left:-100px;top:-100px}
+#app .orb-wrap{width:min(100%,170px);margin:2px auto}
+@media(max-width:1023px){#app .orb-wrap{display:none}}
+#app .live{font-size:13px;max-width:none;line-height:1.45}
+#app .mod-body{padding:14px 14px 4px}
+@media(min-width:768px){#app .mod-body{padding:16px 22px 6px}}
+#app .mod-h{font-size:17px}
+#app .ctl{padding:11px 0;gap:6px}
+#app .ctl .text-\[17px\]{font-size:14.5px}
+#app .ctl .kv-s{font-size:19px}
+#app .range{height:30px}
+#app .sw{width:54px;height:30px}
+#app .sw::after{top:2px;left:2px;width:22px;height:22px;box-shadow:inset 0 0 0 6px #6C79A8,inset 0 0 0 17px #DDE2EF}
+#app .sw[aria-checked=true]::after{transform:translateX(24px);box-shadow:inset 0 0 0 7px var(--brand),inset 0 0 0 17px var(--lime),0 0 0 4px rgba(207,255,94,.7)}
+#app .swt{font-size:12.5px;min-width:0}
+#app .cn-row{padding:8px 10px;gap:10px;flex-wrap:wrap}
+#app .cn-n{width:28px;height:28px;border-width:2.5px;font-size:12px}
+#app .ctl .btn.btn-sec{min-height:36px}
+.gi{display:grid}@media(min-width:900px){.gi{grid-template-columns:1fr 1fr;column-gap:32px}.gi .ctl-w{grid-column:1/-1}}
+
+/* informe */
+#app .doc{gap:18px}#app .doc h3{font-size:15px}#app .conc{font-size:14px;margin-bottom:8px}
+#app .stepdot{width:26px;height:26px;font-size:12px}
+.iv{border:1px solid var(--line-strong);border-left:3px solid var(--sc);padding:8px 10px;background:#fff}
+.iv small{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
+.iv b.v{display:block;font:700 22px/1.2 Unbounded,Inter,sans-serif;color:var(--st)}
+.iv .kt-s{margin-top:2px}
+
+@media(max-width:767px){
+ #app .ph-t{font-size:20px}
+ .eg-t{font-size:19px}
+ #app .kv{font-size:24px}
+ .pg-a .btn span{display:inline}
+ .stats b{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){.gg-n,.bu-m,.rv-go .mb>i{animation:none!important}}
+
+#app .ctl>.flex.justify-between{flex-wrap:nowrap}
+
+/* indicador En vivo: un solo pulso por actualización (transform + opacity) */
+.vivo{all:unset;cursor:help;display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--muted);padding:6px 4px;margin:-6px -4px}
+.vivo:focus-visible{outline:3px solid var(--brand-2);outline-offset:2px}
+.vd{position:relative;width:8px;height:8px;border-radius:50%;background:var(--ok-bar);display:inline-block}
+.vd::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--ok-bar);opacity:0}
+.vd.b1::after{animation:vb1 1s ease-out 1}.vd.b2::after{animation:vb2 1s ease-out 1}
+@keyframes vb1{from{opacity:.65;transform:scale(1)}to{opacity:0;transform:scale(3)}}
+@keyframes vb2{from{opacity:.65;transform:scale(1)}to{opacity:0;transform:scale(3)}}
+.kt.upd .kv,.kt.upd .bu-m{animation:fi .7s var(--ease)}
+.gg-n{transition:transform .6s var(--ease)}
+@media (prefers-reduced-motion:reduce){.vd::after,.kt.upd .kv{animation:none!important}}
 </style>
 <style id="tw">/* Tailwind 3.4.17 compilado (CLI) con la config: colors brand/ink/line/surface/mut */
-*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.visible{visibility:visible}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.inset-x-0{left:0;right:0}.-top-1{top:-.25rem}.bottom-0{bottom:0}.bottom-\[62px\]{bottom:62px}.left-0{left:0}.left-1\/2{left:50%}.right-0{right:0}.top-0{top:0}.top-4{top:1rem}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.z-\[90\]{z-index:90}.order-first{order:-9999}.col-span-2{grid-column:span 2/span 2}.m-0{margin:0}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.ml-1{margin-left:.25rem}.ml-1\.5{margin-left:.375rem}.ml-auto{margin-left:auto}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.mt-7{margin-top:1.75rem}.mt-8{margin-top:2rem}.mt-auto{margin-top:auto}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.table{display:table}.grid{display:grid}.hidden{display:none}.h-12{height:3rem}.h-14{height:3.5rem}.h-2{height:.5rem}.h-2\.5{height:.625rem}.h-3{height:.75rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-7{height:1.75rem}.h-\[34px\]{height:34px}.h-\[72px\]{height:72px}.h-\[76px\]{height:76px}.h-px{height:1px}.h-screen{height:100vh}.max-h-\[90vh\]{max-height:90vh}.\!min-h-\[38px\]{min-height:38px!important}.\!min-h-\[40px\]{min-height:40px!important}.\!min-h-\[44px\]{min-height:44px!important}.min-h-screen{min-height:100vh}.\!w-11{width:2.75rem!important}.w-0\.5{width:.125rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-24{width:6rem}.w-5{width:1.25rem}.w-72{width:18rem}.w-full{width:100%}.min-w-0{min-width:0}.min-w-\[200px\]{min-width:200px}.min-w-\[220px\]{min-width:220px}.max-w-3xl{max-width:48rem}.max-w-4xl{max-width:56rem}.max-w-7xl{max-width:80rem}.max-w-\[1320px\]{max-width:1320px}.max-w-lg{max-width:32rem}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.-translate-x-1\/2{--tw-translate-x:-50%}.-translate-x-1\/2,.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize{resize:both}.list-none{list-style-type:none}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-\[120px_1fr_44px\]{grid-template-columns:120px 1fr 44px}.grid-cols-\[130px_1fr_52px\]{grid-template-columns:130px 1fr 52px}.grid-cols-\[1fr_auto\]{grid-template-columns:1fr auto}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.content-center{align-content:center}.content-start{align-content:flex-start}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-10{gap:2.5rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-7{gap:1.75rem}.gap-8{gap:2rem}.gap-x-4{-moz-column-gap:1rem;column-gap:1rem}.gap-x-6{-moz-column-gap:1.5rem;column-gap:1.5rem}.gap-y-0\.5{row-gap:.125rem}.gap-y-1{row-gap:.25rem}.gap-y-2{row-gap:.5rem}.self-start{align-self:flex-start}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-0{border-width:0}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-0{padding:0}.p-1{padding:.25rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-7{padding:1.75rem}.\!px-0{padding-left:0!important;padding-right:0!important}.\!px-3{padding-left:.75rem!important;padding-right:.75rem!important}.\!py-1\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}.\!py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}.px-4{padding-left:1rem;padding-right:1rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.pb-1\.5{padding-bottom:.375rem}.pb-12{padding-bottom:3rem}.pb-24{padding-bottom:6rem}.pb-5{padding-bottom:1.25rem}.pl-4{padding-left:1rem}.pt-2{padding-top:.5rem}.pt-3{padding-top:.75rem}.pt-4{padding-top:1rem}.pt-6{padding-top:1.5rem}.text-left{text-align:left}.text-right{text-align:right}.\!text-sm{font-size:.875rem!important;line-height:1.25rem!important}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[12\.5px\]{font-size:12.5px}.text-\[13px\]{font-size:13px}.text-\[14\.5px\]{font-size:14.5px}.text-\[15\.5px\]{font-size:15.5px}.text-\[15px\]{font-size:15px}.text-\[16px\]{font-size:16px}.text-\[17px\]{font-size:17px}.text-\[18px\]{font-size:18px}.text-\[19px\]{font-size:19px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)}.leading-snug{line-height:1.375}.tracking-widest{letter-spacing:.1em}.text-ink{color:var(--ink)}.underline{text-decoration-line:underline}.no-underline{text-decoration-line:none}.opacity-50{opacity:.5}.opacity-60{opacity:.6}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring,.ring-2{box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-\[\#1C2A6B\]{--tw-ring-opacity:1;--tw-ring-color:rgb(28 42 107/var(--tw-ring-opacity,1))}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}@media (min-width:640px){.sm\:col-span-1{grid-column:span 1/span 1}.sm\:inline{display:inline}.sm\:w-48{width:12rem}.sm\:w-auto{width:auto}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-\[1\.2fr_100px_2fr\]{grid-template-columns:1.2fr 100px 2fr}.sm\:grid-cols-\[1\.4fr_1fr_1fr\]{grid-template-columns:1.4fr 1fr 1fr}.sm\:grid-cols-\[1\.4fr_1fr_1fr_1fr\]{grid-template-columns:1.4fr 1fr 1fr 1fr}.sm\:grid-cols-\[170px_1fr_60px\]{grid-template-columns:170px 1fr 60px}.sm\:gap-4{gap:1rem}.sm\:text-left{text-align:left}.sm\:text-\[13px\]{font-size:13px}}@media (min-width:768px){.md\:block{display:block}.md\:flex{display:flex}.md\:h-\[88px\]{height:88px}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:grid-cols-\[1\.1fr_100px_2fr\]{grid-template-columns:1.1fr 100px 2fr}.md\:gap-12{gap:3rem}.md\:gap-4{gap:1rem}.md\:gap-6{gap:1.5rem}.md\:p-14{padding:3.5rem}.md\:p-4{padding:1rem}.md\:p-5{padding:1.25rem}.md\:p-6{padding:1.5rem}.md\:p-7{padding:1.75rem}.md\:p-8{padding:2rem}.md\:px-8{padding-left:2rem;padding-right:2rem}.md\:py-16{padding-top:4rem;padding-bottom:4rem}.md\:pb-20{padding-bottom:5rem}.md\:pt-10{padding-top:2.5rem}}@media (min-width:1024px){.lg\:bottom-0{bottom:0}.lg\:left-72{left:18rem}.lg\:order-last{order:9999}.lg\:col-span-2{grid-column:span 2/span 2}.lg\:block{display:block}.lg\:flex{display:flex}.lg\:hidden{display:none}.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.lg\:grid-cols-\[\.85fr_1\.15fr\]{grid-template-columns:.85fr 1.15fr}.lg\:grid-cols-\[1\.05fr_1fr\]{grid-template-columns:1.05fr 1fr}.lg\:grid-cols-\[1\.2fr_1\.6fr_1fr_1fr\]{grid-template-columns:1.2fr 1.6fr 1fr 1fr}.lg\:gap-10{gap:2.5rem}.lg\:gap-14{gap:3.5rem}.lg\:gap-5{gap:1.25rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}.lg\:pb-10{padding-bottom:2.5rem}.lg\:pt-10{padding-top:2.5rem}}@media (min-width:1280px){.xl\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.visible{visibility:visible}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.inset-x-0{left:0;right:0}.-top-1{top:-.25rem}.bottom-0{bottom:0}.bottom-\[56px\]{bottom:56px}.left-0{left:0}.left-1{left:.25rem}.left-1\/2{left:50%}.right-0{right:0}.top-0{top:0}.top-4{top:1rem}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.z-\[90\]{z-index:90}.order-first{order:-9999}.col-span-2{grid-column:span 2/span 2}.m-0{margin:0}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.ml-1{margin-left:.25rem}.ml-auto{margin-left:auto}.mt-0{margin-top:0}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.mt-7{margin-top:1.75rem}.mt-8{margin-top:2rem}.mt-auto{margin-top:auto}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.table{display:table}.grid{display:grid}.hidden{display:none}.h-12{height:3rem}.h-14{height:3.5rem}.h-2{height:.5rem}.h-3{height:.75rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-7{height:1.75rem}.h-\[72px\]{height:72px}.h-\[76px\]{height:76px}.h-px{height:1px}.h-screen{height:100vh}.max-h-\[90vh\]{max-height:90vh}.\!min-h-\[40px\]{min-height:40px!important}.min-h-screen{min-height:100vh}.\!w-10{width:2.5rem!important}.w-0{width:0}.w-0\.5{width:.125rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-24{width:6rem}.w-5{width:1.25rem}.w-64{width:16rem}.w-72{width:18rem}.w-full{width:100%}.min-w-0{min-width:0}.min-w-\[150px\]{min-width:150px}.min-w-\[200px\]{min-width:200px}.max-w-3xl{max-width:48rem}.max-w-4xl{max-width:56rem}.max-w-7xl{max-width:80rem}.max-w-\[1320px\]{max-width:1320px}.max-w-lg{max-width:32rem}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.-translate-x-1{--tw-translate-x:-0.25rem}.-translate-x-1,.-translate-x-1\/2{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-x-1\/2{--tw-translate-x:-50%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize{resize:both}.list-none{list-style-type:none}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-\[130px_1fr_52px\]{grid-template-columns:130px 1fr 52px}.grid-cols-\[1fr_auto\]{grid-template-columns:1fr auto}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.content-center{align-content:center}.content-start{align-content:flex-start}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-10{gap:2.5rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-7{gap:1.75rem}.gap-8{gap:2rem}.gap-x-4{-moz-column-gap:1rem;column-gap:1rem}.gap-x-6{-moz-column-gap:1.5rem;column-gap:1.5rem}.gap-y-0{row-gap:0}.gap-y-0\.5{row-gap:.125rem}.gap-y-1{row-gap:.25rem}.gap-y-2{row-gap:.5rem}.self-start{align-self:flex-start}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-0{border-width:0}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-0{padding:0}.p-1{padding:.25rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-7{padding:1.75rem}.\!px-0{padding-left:0!important;padding-right:0!important}.\!px-3{padding-left:.75rem!important;padding-right:.75rem!important}.\!py-1{padding-top:.25rem!important;padding-bottom:.25rem!important}.\!py-1\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}.\!py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}.px-4{padding-left:1rem;padding-right:1rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.pb-1{padding-bottom:.25rem}.pb-1\.5{padding-bottom:.375rem}.pb-12{padding-bottom:3rem}.pb-24{padding-bottom:6rem}.pb-5{padding-bottom:1.25rem}.pl-4{padding-left:1rem}.pt-2{padding-top:.5rem}.pt-3{padding-top:.75rem}.pt-4{padding-top:1rem}.pt-6{padding-top:1.5rem}.text-left{text-align:left}.text-right{text-align:right}.\!text-sm{font-size:.875rem!important;line-height:1.25rem!important}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[13px\]{font-size:13px}.text-\[14px\]{font-size:14px}.text-\[15px\]{font-size:15px}.text-\[16px\]{font-size:16px}.text-\[17px\]{font-size:17px}.text-\[18px\]{font-size:18px}.text-\[19px\]{font-size:19px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)}.leading-snug{line-height:1.375}.tracking-widest{letter-spacing:.1em}.text-ink{color:var(--ink)}.underline{text-decoration-line:underline}.no-underline{text-decoration-line:none}.opacity-50{opacity:.5}.opacity-60{opacity:.6}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring,.ring-2{box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-\[\#1C2A6B\]{--tw-ring-opacity:1;--tw-ring-color:rgb(28 42 107/var(--tw-ring-opacity,1))}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}@media (min-width:640px){.sm\:col-span-1{grid-column:span 1/span 1}.sm\:inline{display:inline}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-\[1\.2fr_100px_2fr\]{grid-template-columns:1.2fr 100px 2fr}.sm\:grid-cols-\[1\.4fr_1fr_1fr\]{grid-template-columns:1.4fr 1fr 1fr}.sm\:grid-cols-\[1\.4fr_1fr_1fr_1fr\]{grid-template-columns:1.4fr 1fr 1fr 1fr}.sm\:grid-cols-\[170px_1fr_60px\]{grid-template-columns:170px 1fr 60px}.sm\:gap-4{gap:1rem}.sm\:text-left{text-align:left}}@media (min-width:768px){.md\:block{display:block}.md\:flex{display:flex}.md\:h-\[88px\]{height:88px}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:gap-12{gap:3rem}.md\:gap-4{gap:1rem}.md\:gap-6{gap:1.5rem}.md\:p-14{padding:3.5rem}.md\:p-4{padding:1rem}.md\:p-6{padding:1.5rem}.md\:p-7{padding:1.75rem}.md\:p-8{padding:2rem}.md\:px-8{padding-left:2rem;padding-right:2rem}.md\:py-16{padding-top:4rem;padding-bottom:4rem}.md\:pb-20{padding-bottom:5rem}.md\:pt-10{padding-top:2.5rem}}@media (min-width:1024px){.lg\:bottom-0{bottom:0}.lg\:left-64{left:16rem}.lg\:order-last{order:9999}.lg\:col-span-2{grid-column:span 2/span 2}.lg\:flex{display:flex}.lg\:hidden{display:none}.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.lg\:grid-cols-\[\.85fr_1\.15fr\]{grid-template-columns:.85fr 1.15fr}.lg\:grid-cols-\[1\.05fr_1fr\]{grid-template-columns:1.05fr 1fr}.lg\:gap-10{gap:2.5rem}.lg\:gap-14{gap:3.5rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}.lg\:pb-10{padding-bottom:2.5rem}.lg\:pt-10{padding-top:2.5rem}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
@@ -491,8 +697,8 @@ k-tip k-ic{width:20px;height:20px}
 </div>
 
 <!-- ================= APP ================= -->
-<div x-show="view!=='portada'" class="lg:flex">
-  <aside class="hidden lg:flex flex-col w-72 shrink-0 h-screen sticky top-0 bg-white border-r p-6 gap-7 overflow-y-auto" style="border-color:var(--line)" aria-label="Menú lateral">
+<div id="app" x-show="view!=='portada'" class="lg:flex">
+  <aside class="hidden lg:flex flex-col w-64 shrink-0 h-screen sticky top-0 bg-white border-r p-5 gap-5 overflow-y-auto" style="border-color:var(--line)" aria-label="Menú lateral">
     <a href="#portada" class="brand-lk" aria-label="Kerna AI, ir a la portada"><svg class="kl" width="64" height="64" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><span class="brand-t disp" style="font-size:24px">KERNA<small>AI</small></span></a>
     <nav class="nav grid gap-2" aria-label="Principal">
       <a href="#informe" class="gen" :aria-current="view==='informe'?'page':null" :class="view==='informe'?'ring-2 ring-[#1C2A6B]':''"><svg class="kl" width="36" height="36" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><span>Generar informe</span></a>
@@ -513,154 +719,136 @@ k-tip k-ic{width:20px;height:20px}
     <main id="main" class="max-w-[1320px] mx-auto px-4 lg:px-8 pt-6 lg:pt-10">
 
 <!-- ========== RESUMEN ========== -->
-<div x-show="view==='resumen'" class="grid gap-5">
-  <div class="flex flex-wrap items-start justify-between gap-4">
-    <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Resumen</h1><p class="m-0 mt-1 muted text-sm">Cómo está funcionando Kerna · actualizado hoy 12 nov, 10:42</p></div>
-    <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-      <div class="seg" role="group" aria-label="Período"><template x-for="p in [7,30]"><button type="button" :aria-pressed="per===p" @click="setPer(p)" x-text="'Últimos '+p+' días'"></button></template></div>
-      <a href="#informe" class="btn btn-pri w-full sm:w-auto"><k-ic n="file-down"></k-ic> Generar informe de gestión</a>
+<div x-show="view==='resumen'" class="grid gap-3 md:gap-4">
+  <div class="pg-h">
+    <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Resumen</h1><p class="pg-s"><button type="button" class="vivo" data-tip="envivo" aria-label="En vivo. Pasa el cursor para ver cuándo llegó el último dato"><i class="vd" :class="beat?(beat%2?'b1':'b2'):''"></i>En vivo</button></p></div>
+    <div class="pg-a">
+      <div class="seg" role="group" aria-label="Período"><template x-for="p in [7,30]"><button type="button" :aria-pressed="per===p" @click="setPer(p)" x-text="p+' días'"></button></template></div>
+      <a href="#informe" class="btn btn-pri"><k-ic n="file-down"></k-ic><span>Informe</span></a>
     </div>
   </div>
 
-  <!-- estado general -->
-  <section aria-labelledby="eg" class="card card-hi p-5 md:p-6 bd-warn">
-    <div class="flex flex-wrap items-start gap-4">
-      <span class="estado-ic grid place-items-center w-14 h-14 orb-ic rounded-2xl shrink-0" style="background:var(--warn-bg);color:var(--warn)"><k-ic n="triangle-alert" style="width:30px;height:30px"></k-ic></span>
-      <div class="flex-1 min-w-[220px]">
-        <div class="flex flex-wrap items-center gap-2"><h2 id="eg" class="estado-t disp text-xl font-bold m-0">Estado general: atención</h2><k-tip g="estado"></k-tip></div>
-        <p class="m-0 mt-1 text-[15px]"><b>Kerna está funcionando</b>, pero hay 2 cosas por mejorar: las sugerencias aciertan menos de lo esperado y las respuestas son lentas. <a href="#inc" @click.prevent="document.getElementById('inc').scrollIntoView({behavior:'smooth',block:'center'})" class="font-semibold underline" style="color:var(--brand)">Ver qué hacer</a></p>
+  <!-- ¿está todo bien? -->
+  <section aria-labelledby="eg" class="eg s-warn">
+    <div class="eg-main">
+      <span class="eg-ic"><k-ic n="triangle-alert"></k-ic></span>
+      <div class="min-w-0">
+        <p class="eg-k">¿Está todo bien?</p>
+        <h2 id="eg" class="eg-t"><span class="sr-only">Estado general: </span>Atención <k-tip g="estado"></k-tip></h2>
+        <p class="eg-s">Funciona, con 2 cosas por mejorar. <a href="#inc" @click.prevent="document.getElementById('inc').scrollIntoView({behavior:'smooth',block:'center'})">Ver qué hacer</a></p>
       </div>
     </div>
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
-      <template x-for="c in salud" :key="c.k"><div class="rounded-xl border p-3 bg-white" :class="'bd-'+c.e" style="border-color:var(--line)">
-        <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 font-semibold text-sm"><k-ic :n="c.i"></k-ic><span x-text="c.n"></span></span><k-tip :g="'salud_'+c.k"></k-tip></div>
-        <div class="mt-2"><span class="chip" :class="c.e"><k-ic :n="ico[c.e]"></k-ic><span x-text="est[c.e]"></span></span></div>
-        <p class="m-0 mt-2 text-[12.5px] sm:text-[13px] muted leading-snug" x-text="c.d"></p>
-      </div></template>
-    </div>
+    <ul class="eg-l">
+      <template x-for="c in salud" :key="c.k"><li class="pl" :class="'s-'+c.e"><k-ic :n="ico[c.e]"></k-ic><span class="pl-n"><span x-text="c.n"></span><b x-text="est[c.e]"></b></span><k-tip :g="'salud_'+c.k" :x="c.d"></k-tip></li></template>
+    </ul>
   </section>
 
-  <!-- KPIs -->
-  <section aria-label="Indicadores clave" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-    <template x-for="k in kpis" :key="k.k"><article class="card card-k p-4 flex flex-col" :class="'bd-'+k.e">
-      <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 text-[15px] font-semibold muted"><k-ic :n="k.i"></k-ic><span x-text="k.l"></span></span><k-tip :g="k.k"></k-tip></div>
-      <div class="flex items-center justify-between gap-3 mt-4">
-        <div class="min-w-0"><span class="kv" x-count="k.v"></span><span class="text-[15px] font-semibold muted ml-1.5" x-text="k.u"></span></div>
-        <template x-if="k.ring!==undefined"><div class="orbring" :class="'rg-'+k.e" :style="'--v:'+k.ring"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="rg-r"><circle class="rg-t" cx="32" cy="32" r="26"/><circle class="rg-p" cx="32" cy="32" r="26" pathLength="100"/><g class="rg-m" x-show="k.meta" :style="'transform:rotate('+(k.meta*3.6)+'deg)'"><line x1="55" y1="32" x2="63" y2="32"/></g><g class="rg-s"><circle cx="58" cy="32" r="4.6"/></g></g></svg><span class="rg-n sm" x-show="k.rc" x-text="k.rc"></span></div></template>
-      </div>
-      <template x-if="k.ring===undefined"><svg viewBox="0 0 100 30" preserveAspectRatio="none" class="w-full h-[34px] mt-3" aria-hidden="true"><path :d="spark(k.s)" fill="none" :stroke="'var(--'+(k.e==='na'?'na':k.e)+'-bar)'" stroke-width="2.2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg></template>
-      <div class="flex flex-wrap items-center gap-2 mt-3">
-        <span class="chip" :class="k.e"><k-ic :n="ico[k.e]"></k-ic><span x-text="k.et"></span></span>
-        <span class="chip" :class="k.de" x-show="k.dt"><k-ic :n="k.da"></k-ic><span x-text="k.dt"></span></span>
-      </div>
-      <p class="m-0 mt-3 text-[14.5px] leading-snug" x-text="k.f"></p>
-      <p class="m-0 mt-auto pt-2 text-xs muted" x-text="k.m"></p>
-    </article></template>
+  <!-- indicadores -->
+  <section aria-label="Indicadores clave" class="kg">
+    <template x-for="k in kpis" :key="k.k"><article class="kt" :class="'s-'+k.e">
+        <div class="kt-h"><span class="kt-l"><k-ic :n="k.i"></k-ic><span x-text="k.l"></span></span><k-tip :g="k.k" :x="k.x"></k-tip></div>
+        <template x-if="k.form==='gauge'"><div class="gg"><svg viewBox="0 0 100 60" :aria-label="k.l+': '+k.v+' '+k.u+', '+k.et" role="img">
+          <path class="zn" :class="'s-'+k.z[0][2]" :d="gArc(k.z[0][0],k.z[0][1])"/><path class="zn" :class="'s-'+k.z[1][2]" :d="gArc(k.z[1][0],k.z[1][1])"/><path class="zn" :class="'s-'+k.z[2][2]" :d="gArc(k.z[2][0],k.z[2][1])"/>
+          <line class="gg-tk" :x1="gTick(k.zm).x1" :y1="gTick(k.zm).y1" :x2="gTick(k.zm).x2" :y2="gTick(k.zm).y2"/><text class="gg-tx" :x="gTick(k.zm).tx" :y="gTick(k.zm).ty" x-text="k.zl"></text>
+          <line class="gg-n" x1="50" y1="50" x2="50" y2="18" :style="'transform:rotate('+((k.f-.5)*180)+'deg)'"/><circle cx="50" cy="50" r="3.6" class="gg-h"/></svg></div></template>
+        <div class="kt-v"><span class="kt-u" x-show="k.p" x-text="k.p"></span><span class="kv" x-count="k.v"></span><span class="kt-u" x-text="k.u"></span></div>
+        <template x-if="k.form==='spark'"><svg viewBox="0 0 100 30" preserveAspectRatio="none" class="sp" aria-hidden="true"><path :d="sparkA(k.s)" class="sp-a"/><path :d="spark(k.s)" class="sp-l" vector-effect="non-scaling-stroke"/></svg></template>
+        <template x-if="k.form==='bullet'"><div class="bu" role="img" :aria-label="k.l+': '+k.v+' '+k.u+', meta '+k.metaT"><div class="bu-t"><template x-for="z in k.z" :key="z[0]"><i :class="'s-'+z[2]" :style="'flex:'+(z[1]-z[0])"></i></template><b class="bu-m" :style="'left:'+Math.min(100,k.v/k.max*100)+'%'"></b><u class="bu-g" :style="'left:'+(k.meta/k.max*100)+'%'"></u></div>
+          <div class="bu-s"><span>0</span><span class="bu-gl" :style="'left:'+(k.meta/k.max*100)+'%'" x-text="k.metaT"></span><span x-text="k.max+(k.u==='s'?' s':' %')"></span></div></div></template>
+        <template x-if="k.form==='dots'"><div class="dots" role="img" :aria-label="k.x"><template x-for="(d,ix) in k.dots" :key="ix"><i :class="'s-'+d.e" :title="d.n"><k-ic :n="ico[d.e]"></k-ic></i></template></div></template>
+        <div class="kt-f"><span class="kt-s"><k-ic :n="ico[k.e]"></k-ic><span x-text="k.et"></span></span><span class="kt-t" :class="'t-'+k.te" x-show="k.tr"><k-ic :n="k.ta"></k-ic><span x-text="k.tr"></span></span></div>
+      </article></template>
+
   </section>
 
-  <!-- casos por dia + modos -->
-  <section class="grid lg:grid-cols-3 gap-4">
+  <!-- denuncias por día + cómo se resolvieron -->
+  <section class="grid lg:grid-cols-3 gap-3 md:gap-4">
     <div class="card p-4 lg:col-span-2">
-      <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por día y cómo se resolvieron</h2><k-tip g="casos_dia"></k-tip></div>
-      <p class="m-0 mb-2 text-sm muted">Cada barra es un día. Verde: resuelto por el modelo principal; ámbar: con respaldo; rojo: pasó a revisión manual.</p>
-      <div id="ch-casos" class="w-full" style="height:290px" role="img" aria-label="Gráfico de barras apiladas de denuncias por día y modo de resolución"></div>
+      <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por día</h2><k-tip g="casos_dia"></k-tip>
+        <span class="lgd"><span><i style="background:var(--ok-bar)"></i>Principal</span><span><i style="background:var(--warn-bar)"></i>Respaldo</span><span><i style="background:var(--bad-bar)"></i>Manual</span></span></div>
+      <div id="ch-casos" class="w-full chh" role="img" aria-label="Gráfico de barras apiladas de denuncias por día y modo de resolución"></div>
     </div>
     <div class="card p-4">
       <div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">¿Cómo se resolvieron?</h2><k-tip g="modos"></k-tip></div>
-      <div class="nosat flex h-4 rounded-full overflow-hidden mb-4" role="img" :aria-label="'Principal '+modos.o+', respaldo '+modos.r+', manual '+modos.m"><div class="f-ok" :style="'width:'+pct(modos.o,tot)+'%'"></div><div class="f-warn" :style="'width:'+pct(modos.r,tot)+'%'"></div><div class="f-bad" :style="'width:'+pct(modos.m,tot)+'%'"></div></div>
-      <div class="flex items-center gap-4 mb-4"><div class="orbring" :class="'rg-'+(sugPct>=90?'ok':'warn')" :style="'--v:'+sugPct"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="rg-r"><circle class="rg-t" cx="32" cy="32" r="26"/><circle class="rg-p" cx="32" cy="32" r="26" pathLength="100"/><g class="rg-s"><circle cx="58" cy="32" r="4.6"/></g></g></svg><span class="rg-n" x-text="sugPct+'%'"></span></div><p class="m-0 text-sm"><b x-text="sugPct+' de cada 100'"></b> denuncias recibieron sugerencia (principal + respaldo).</p></div>
-      <ul class="list-none p-0 m-0 grid gap-3">
-        <li class="flex items-start gap-3"><span class="chip ok mt-0.5"><k-ic n="circle-check"></k-ic> Bien</span><div class="flex-1"><b>Modelo principal</b><div class="text-sm muted">Resolvió <b class="text-ink" style="color:var(--ink)" x-text="modos.o"></b> de <span x-text="tot"></span> (<span x-text="pct(modos.o,tot)"></span> %)</div></div></li>
-        <li class="flex items-start gap-3"><span class="chip warn mt-0.5"><k-ic n="triangle-alert"></k-ic> Atención</span><div class="flex-1"><b>Modelo de respaldo</b><div class="text-sm muted"><b style="color:var(--ink)" x-text="modos.r"></b> casos (<span x-text="pct(modos.r,tot)"></span> %). Entra cuando el principal falla.</div></div></li>
-        <li class="flex items-start gap-3"><span class="chip bad mt-0.5"><k-ic n="octagon-alert"></k-ic> Problema</span><div class="flex-1"><b>Revisión manual</b><div class="text-sm muted"><b style="color:var(--ink)" x-text="modos.m"></b> casos (<span x-text="pct(modos.m,tot)"></span> %). Nadie recibió sugerencia.</div></div></li>
+      <div class="big" :class="sugPct>=90?'s-ok':'s-warn'"><span class="kv" x-count="sugPct"></span><span class="kt-u">% con sugerencia</span></div>
+      <div class="mb mb-lg mt-2" role="img" :aria-label="'Principal '+modos.o+', respaldo '+modos.r+', manual '+modos.m" style="display:flex;gap:2px"><i class="s-ok" :style="'width:'+pct(modos.o,tot)+'%'"></i><i class="s-warn" :style="'width:'+pct(modos.r,tot)+'%'"></i><i class="s-bad" :style="'width:'+pct(modos.m,tot)+'%'"></i></div>
+      <ul class="list-none p-0 m-0 mt-2">
+        <li class="rw s-ok"><k-ic n="circle-check"></k-ic><span>Modelo principal</span><b x-text="modos.o"></b><em x-text="pct(modos.o,tot)+' %'"></em></li>
+        <li class="rw s-warn"><k-ic n="triangle-alert"></k-ic><span>Modelo de respaldo</span><b x-text="modos.r"></b><em x-text="pct(modos.r,tot)+' %'"></em></li>
+        <li class="rw s-bad"><k-ic n="octagon-alert"></k-ic><span>Revisión manual</span><b x-text="modos.m"></b><em x-text="pct(modos.m,tot)+' %'"></em></li>
       </ul>
     </div>
   </section>
 
-  <!-- calidad + latencia -->
-  <section class="grid lg:grid-cols-2 gap-4">
+  <!-- calidad + rapidez -->
+  <section class="grid lg:grid-cols-2 gap-3 md:gap-4 items-start">
+    <div class="grid gap-3 md:gap-4 content-start">
     <div class="card p-4">
-      <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Qué tan buenas son las sugerencias?</h2><k-tip g="calidad"></k-tip></div>
-      <div class="grid sm:grid-cols-2 gap-2 items-center">
-        <div id="ch-gauge" style="height:210px" role="img" aria-label="Medidor de acierto: 74 por ciento, meta 80 por ciento"></div>
-        <div>
-          <span class="chip warn"><k-ic n="triangle-alert"></k-ic> 6 puntos bajo la meta</span>
-          <p class="m-0 mt-2 text-sm">Cuando existe un artículo correcto, <b>Kerna lo incluye entre sus 5 primeras sugerencias el 74 % de las veces</b>. La meta es 80 %.</p>
-          <p class="m-0 mt-2 text-xs muted">Medido sobre el conjunto público de pruebas · corte 11 nov</p>
-        </div>
-      </div>
-      <h3 class="text-sm font-bold mt-4 mb-2 flex items-center gap-1.5">Acierto por ley <k-tip g="acierto_ley"></k-tip></h3>
+      <div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Acierto por ley</h2><k-tip g="acierto_ley"></k-tip><span class="lgd"><span><i class="tk"></i>Meta 80 %</span></span></div>
       <ul class="list-none p-0 m-0 grid gap-3">
-        <template x-for="l in aciertos" :key="l.n"><li>
-          <div class="flex items-center justify-between gap-2 text-sm"><span x-text="l.n"></span><span class="chip" :class="l.e"><k-ic :n="ico[l.e]"></k-ic><span x-text="l.v+' %'"></span></span></div>
-          <div class="relative h-3 rounded-full mt-1.5" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+l.e" :style="'width:'+l.v+'%'"></div><div class="absolute -top-1 w-0.5 h-5 rounded" style="left:80%;background:var(--ink)" title="Meta 80 %"></div></div>
+        <template x-for="l in aciertos" :key="l.n"><li class="mr" :class="'s-'+l.e">
+          <div class="mr-h"><span x-text="l.n"></span><b><k-ic :n="ico[l.e]"></k-ic><span x-text="l.v+' %'"></span></b></div>
+          <div class="mb"><i :style="'width:'+l.v+'%'"></i><u style="left:80%"></u></div>
         </li></template>
       </ul>
-      <p class="m-0 mt-2 text-xs muted flex items-center gap-1"><span class="inline-block w-0.5 h-3 rounded" style="background:var(--ink)"></span> Meta: 80 %</p>
-      <div class="mt-4 rounded-xl p-3 flex gap-3 items-start" style="background:var(--na-bg)"><k-ic n="message-square-off" style="width:22px;height:22px;color:var(--na)"></k-ic><div class="text-sm"><b class="flex items-center gap-1.5">Valoraciones de auditores <span class="chip na"><k-ic n="circle-minus"></k-ic> Sin datos</span><k-tip g="valoraciones"></k-tip></b><span class="muted">Aún nadie ha marcado una sugerencia como útil o no útil. Cuando lo hagan, verás aquí el porcentaje.</span></div></div>
+      <div class="pe pe-na mt-3"><k-ic n="message-square-off"></k-ic><span class="flex-1"><b>Valoraciones de auditores</b></span><span class="chip na"><k-ic n="circle-minus"></k-ic> Sin datos</span><k-tip g="valoraciones"></k-tip></div>
+    </div>
+
+      <div class="card p-4">
+        <div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Leyes más sugeridas</h2><k-tip g="leyes"></k-tip></div>
+        <div class="pe pe-na"><k-ic n="chart-no-axes-column"></k-ic><span class="flex-1 text-xs">Aún no se registran</span><span class="chip na"><k-ic n="circle-minus"></k-ic> Sin datos</span></div>
+      </div>
     </div>
 
     <div class="card p-4">
-      <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Qué tan rápido responde?</h2><k-tip g="latencia"></k-tip></div>
-      <p class="m-0 mb-2 text-sm">La mitad de los casos recibe sugerencia en <b x-text="p50+' s'"></b>; la meta es 15 s.</p>
-      <div id="ch-lat" style="height:250px" role="img" aria-label="Gráfico de área del tiempo de respuesta por día frente a la meta de 15 segundos"></div>
-      <div class="grid grid-cols-2 gap-3 mt-3">
-        <div class="rounded-xl p-3" style="background:var(--warn-bg)"><span class="chip warn"><k-ic n="triangle-alert"></k-ic> Sobre la meta</span><div class="mt-1.5 text-sm">Caso típico: <b x-text="p50+' s'"></b></div></div>
-        <div class="rounded-xl p-3" style="background:var(--bad-bg)"><span class="chip bad"><k-ic n="octagon-alert"></k-ic> Muy lento</span><div class="mt-1.5 text-sm">9 de cada 10 casos: <b class="whitespace-nowrap" x-text="'menos de '+p95+' s'"></b></div></div>
+      <div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Rapidez</h2><k-tip g="latencia"></k-tip></div>
+      <div class="stats">
+        <div class="s-warn"><span>Caso típico</span><b><span x-text="p50"></span> s</b></div>
+        <div class="s-bad"><span>9 de cada 10</span><b>&lt; <span x-text="p95"></span> s</b></div>
+        <div class="s-ok"><span>Meta</span><b>15 s</b></div>
       </div>
-      <h3 class="text-sm font-bold mt-4 mb-2">¿Dónde se va el tiempo de un caso?</h3>
-      <ul class="list-none p-0 m-0 grid gap-2"><template x-for="e in etapas" :key="e.n"><li class="grid grid-cols-[120px_1fr_44px] items-center gap-3 text-sm"><span x-text="e.n"></span><div class="h-3 rounded-full" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+e.e" :style="'width:'+(e.s/20*100)+'%'"></div></div><b class="tabular-nums text-right" x-text="e.s+' s'"></b></li></template></ul>
-      <p class="m-0 mt-2 text-xs muted">Redactar la sugerencia ocupa 7 de cada 10 segundos: ahí está la mejora principal.</p>
+      <div id="ch-lat" class="chh2" role="img" aria-label="Gráfico de área del tiempo de respuesta por día frente a la meta de 15 segundos"></div>
+      <h3 class="sub">¿Dónde se va el tiempo?</h3>
+      <ul class="list-none p-0 m-0 grid gap-1.5"><template x-for="e in etapas" :key="e.n"><li class="et" :class="'s-'+e.e"><span x-text="e.n"></span><div class="mb"><i :style="'width:'+(e.s/20*100)+'%'"></i></div><b x-text="e.s+' s'"></b></li></template></ul>
     </div>
   </section>
 
   <!-- incidentes -->
-  <section class="card p-4 md:p-5" aria-labelledby="inc">
-    <div class="hd flex flex-wrap items-center justify-between gap-3 mb-3"><div class="flex items-center gap-1.5"><h2 id="inc" class="text-base font-bold m-0">¿Qué falló y qué hacer?</h2><k-tip g="incidentes"></k-tip></div>
-      <a href="#ajustes" class="btn btn-sec !min-h-[38px]"><k-ic n="sliders-horizontal"></k-ic> Ir a Ajustes</a></div>
-    <div class="grid gap-3">
-      <template x-for="i in incidentes" :key="i.c"><div class="rounded-xl border p-3 md:p-4 grid md:grid-cols-[1.1fr_100px_2fr] gap-2 md:gap-4 items-start bg-white" :class="'bd-'+i.e" style="border-color:var(--line)">
-        <div><span class="chip" :class="i.e"><k-ic :n="ico[i.e]"></k-ic><span x-text="est[i.e]"></span></span><b class="block mt-1.5" x-text="i.c"></b></div>
-        <div><span class="kv-s tabular-nums" x-count="i.n"></span><span class="text-xs muted block">casos</span></div>
-        <div class="text-sm flex gap-2"><k-ic n="lightbulb" style="color:var(--brand-2);margin-top:2px"></k-ic><span><b>Qué hacer:</b> <span x-text="i.a"></span></span></div>
-      </div></template>
+  <section class="card p-4" aria-labelledby="inc">
+    <div class="hd flex flex-wrap items-center justify-between gap-2 mb-2"><div class="flex items-center gap-1.5"><h2 id="inc" class="text-base font-bold m-0">¿Qué falló y qué hacer?</h2><k-tip g="incidentes"></k-tip></div>
+      <a href="#ajustes" class="btn btn-sec"><k-ic n="sliders-horizontal"></k-ic> Ajustes</a></div>
+    <div>
+      <template x-for="i in incidentes" :key="i.c"><details class="ic" :class="'s-'+i.e" :open="wide">
+        <summary><k-ic :n="ico[i.e]"></k-ic><b x-text="i.c"></b><span class="n"><span x-count="i.n"></span><small>casos</small></span><k-ic n="chevron-down" class="chev"></k-ic></summary>
+        <p><k-ic n="lightbulb"></k-ic><span x-text="i.a"></span></p>
+      </details></template>
     </div>
-    <div class="mt-4 rounded-xl p-4 flex flex-wrap items-center gap-4" style="background:var(--warn-bg)">
-      <k-ic n="rotate-cw" style="width:26px;height:26px;color:var(--warn)"></k-ic>
-      <div class="flex-1 min-w-[200px] text-sm"><b>12 casos esperan un nuevo intento</b> <k-tip g="pendientes"></k-tip><br><span>Próximo intento automático: mañana 09:00 · hasta 3 intentos por caso, cada 24 h.</span></div>
-      <div class="w-full sm:w-48"><div class="flex justify-between text-xs mb-1"><span>Intentos usados</span><b>1 de 3</b></div><div class="h-2.5 rounded-full" style="background:#fff"><div class="h-2.5 rounded-full f-warn" style="width:33%"></div></div></div>
-    </div>
+    <div class="pe pe-warn mt-3"><k-ic n="rotate-cw"></k-ic><span class="flex-1 min-w-[150px]"><b>12 casos esperan reintento</b> <k-tip g="pendientes"></k-tip><span class="block text-xs muted">Próximo intento: mañana 09:00</span></span><span class="seg3" role="img" aria-label="Intentos usados: 1 de 3"><i class="on"></i><i></i><i></i><b>1 de 3</b></span></div>
   </section>
 
-  <!-- heatmap + costo -->
-  <section class="grid lg:grid-cols-2 gap-4">
-    <div class="card p-4">
+  <!-- horarios + costo -->
+  <section class="grid lg:grid-cols-3 gap-3 md:gap-4">
+    <div class="card p-4 lg:col-span-2">
       <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Cuándo llegan las denuncias?</h2><k-tip g="mapa"></k-tip></div>
-      <p class="m-0 mb-2 text-sm muted">Más oscuro = más denuncias. Sirve para saber cuándo conviene tener a alguien atento.</p>
-      <div id="ch-heat" style="height:270px" role="img" aria-label="Mapa de calor de denuncias por día de la semana y franja horaria; más denuncias entre lunes y viernes de 9 a 18 horas"></div>
+      <div id="ch-heat" class="chh3" role="img" aria-label="Mapa de calor de denuncias por día de la semana y franja horaria; más denuncias entre lunes y viernes de 9 a 18 horas"></div>
     </div>
-    <div class="card p-4">
-      <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Costo del período</h2><k-tip g="costo"></k-tip></div>
-      <p class="m-0 mb-4 text-sm">El costo de los últimos <span x-text="per"></span> días es <b x-text="usd(costoTot)"></b>, unos <b x-text="usd(costoCaso,4)"></b> por denuncia.</p>
-      <ul class="list-none p-0 m-0 grid gap-4">
-        <template x-for="(c,i) in costo" :key="c.n"><li>
-          <div class="flex items-center justify-between gap-2 text-sm"><span class="flex items-center gap-2 flex-wrap"><b x-text="c.n"></b><span class="chip" :class="i===0?'brand':'na'" x-text="i===0?'Principal':'Respaldo'"></span></span><b class="tabular-nums" x-text="usd(c.tot)"></b></div>
-          <div class="h-3 rounded-full mt-1.5" style="background:#E3E7F2"><div class="h-3 rounded-full" :style="'width:'+Math.max(3,c.tot/costoTot*100)+'%;background:'+(i===0?'var(--brand-2)':'#8E9AD0')"></div></div>
-          <div class="text-xs muted mt-1" x-text="c.casos+' denuncias · '+usd(c.caso,4)+' por denuncia'"></div>
-        </li></template>
-      </ul>
+    <div class="grid gap-3 md:gap-4 content-start">
+      <div class="card p-4">
+        <div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Costo</h2><k-tip g="costo"></k-tip></div>
+        <div class="big"><span class="kt-u">US$</span><span class="kv" style="color:var(--brand)" x-text="usd(costoTot).replace('US$ ','')"></span></div>
+        <p class="m-0 text-xs muted"><span x-text="usd(costoCaso,4)"></span> por denuncia</p>
+        <div class="mb mt-2" style="display:flex;gap:2px"><i :style="'width:'+(costo[0].tot/costoTot*100)+'%;background:var(--brand-2)'"></i><i :style="'width:'+(costo[1].tot/costoTot*100)+'%;background:#8E9AD0'"></i></div>
+        <ul class="list-none p-0 m-0 mt-1">
+          <template x-for="(c,i) in costo" :key="c.n"><li class="rw rw3"><i class="dt" :style="'background:'+(i===0?'var(--brand-2)':'#8E9AD0')"></i><span x-text="i===0?'Principal':'Respaldo'"></span><b x-text="usd(c.tot)"></b></li></template>
+        </ul>
+      </div>
     </div>
-  </section>
-
-  <!-- leyes -->
-  <section class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">¿Qué leyes aparecen más?</h2><k-tip g="leyes"></k-tip></div>
-    <div class="rounded-xl p-5 flex gap-4 items-center" style="background:var(--na-bg)"><k-ic n="chart-no-axes-column" style="width:32px;height:32px;color:var(--na)"></k-ic><div class="text-sm"><span class="chip na mb-1"><k-ic n="circle-minus"></k-ic> Sin datos</span><p class="m-0 muted">Todavía no se registran los artículos sugeridos. Se activará al actualizar el núcleo de Kerna; después verás aquí el ranking de leyes y artículos.</p></div></div>
   </section>
 </div>
 
 <!-- ========== INFORME (asistente) ========== -->
-<div x-show="view==='informe'" class="grid gap-5">
-  <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Generar informe de gestión</h1><p class="m-0 mt-1 muted text-sm">Tres pasos: elige el período, revisa la vista previa y descarga.</p></div>
+<div x-show="view==='informe'" class="grid gap-3 md:gap-4">
+  <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Generar informe</h1><p class="pg-s">3 pasos: período, vista previa, descarga</p></div>
 
   <ol class="card p-3 md:p-4 flex gap-2 md:gap-6 list-none m-0 overflow-x-auto" aria-label="Pasos">
     <template x-for="(s,i) in ['Período','Vista previa','Descargar']" :key="i"><li class="flex items-center gap-2.5 flex-1 min-w-0">
@@ -705,7 +893,7 @@ k-tip k-ic{width:20px;height:20px}
         <div class="flex items-center gap-1.5 mb-2"><h3>1. Resumen ejecutivo</h3></div>
         <p class="conc">Kerna entregó sugerencia en <span x-text="inf.sug"></span> de cada 100 denuncias, 3 puntos menos que el período anterior; la calidad y la rapidez están por debajo de la meta.</p>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <template x-for="s in infKpi" :key="s.l"><div class="rounded-xl border p-3 bg-white" :class="'bd-'+s.e" style="border-color:var(--line)"><div class="text-xs muted font-semibold" x-text="s.l"></div><div class="text-2xl font-bold tabular-nums" x-text="s.v"></div><span class="chip mt-1" :class="s.e"><k-ic :n="ico[s.e]"></k-ic><span x-text="s.t"></span></span></div></template>
+          <template x-for="s in infKpi" :key="s.l"><div class="iv" :class="'s-'+s.e"><small x-text="s.l"></small><b class="v" x-text="s.v"></b><span class="kt-s"><k-ic :n="ico[s.e]"></k-ic><span x-text="s.t"></span></span></div></template>
         </div>
       </section>
 
@@ -774,67 +962,82 @@ k-tip k-ic{width:20px;height:20px}
 </div>
 
 <!-- ========== NEGOCIO ========== -->
-<div x-show="view==='negocio'" class="grid gap-5">
-  <div class="flex flex-wrap items-start justify-between gap-4">
-    <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Negocio</h1><p class="m-0 mt-1 muted text-sm max-w-xl">Kerna como servicio: quién lo usa, cuánto cuesta atenderlo y cuánto deja. Últimos 30 días · fuente: almacén de solicitudes (sin textos de denuncias).</p></div>
-    <a href="#informe" class="btn btn-pri w-full sm:w-auto"><k-ic n="file-down"></k-ic> Generar informe de gestión</a>
+<div x-show="view==='negocio'" class="grid gap-3 md:gap-4">
+  <div class="pg-h">
+    <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Negocio</h1><p class="pg-s">Últimos 30 días · sin textos de denuncias</p></div>
+    <div class="pg-a"><a href="#informe" class="btn btn-pri"><k-ic n="file-down"></k-ic><span>Informe</span></a></div>
   </div>
 
-  <section class="card card-hi p-5 bd-ok"><div class="flex flex-wrap items-start gap-4">
-    <span class="grid place-items-center w-14 h-14 orb-ic rounded-2xl shrink-0" style="background:var(--ok-bg);color:var(--ok)"><k-ic n="trending-up" style="width:30px;height:30px"></k-ic></span>
-    <div class="flex-1 min-w-[220px]"><div class="flex items-center gap-2 flex-wrap"><h2 class="disp text-xl font-bold m-0">Negocio saludable, con un cliente en riesgo</h2><k-tip g="neg_estado"></k-tip></div>
-    <p class="m-0 mt-1 text-[15px]"><b>Cada denuncia deja margen</b> porque la IA cuesta centavos. Los puntos a vigilar: <b>Constructora Los Maitenes dejó de usar Kerna</b> y casi nadie valora las sugerencias.</p></div></div></section>
-
-  <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" aria-label="Indicadores de negocio">
-    <template x-for="k in negKpis" :key="k.k"><article class="card card-k p-4 flex flex-col" :class="'bd-'+k.e">
-      <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 text-[15px] font-semibold muted"><k-ic :n="k.i"></k-ic><span x-text="k.l"></span></span><k-tip :g="k.k"></k-tip></div>
-      <div class="flex items-center justify-between gap-3 mt-4"><div class="min-w-0"><span class="kv" x-count="k.v"></span><span class="text-[15px] font-semibold muted ml-1.5" x-text="k.u"></span></div>
-        <template x-if="k.ring!==undefined"><div class="orbring" :class="'rg-'+k.e" :style="'--v:'+k.ring"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="rg-r"><circle class="rg-t" cx="32" cy="32" r="26"/><circle class="rg-p" cx="32" cy="32" r="26" pathLength="100"/><g class="rg-m" x-show="k.meta" :style="'transform:rotate('+(k.meta*3.6)+'deg)'"><line x1="55" y1="32" x2="63" y2="32"/></g><g class="rg-s"><circle cx="58" cy="32" r="4.6"/></g></g></svg><span class="rg-n sm" x-show="k.rc" x-text="k.rc"></span></div></template></div>
-      <div class="flex flex-wrap items-center gap-2 mt-3"><span class="chip" :class="k.e"><k-ic :n="ico[k.e]"></k-ic><span x-text="k.et"></span></span><span class="chip" :class="k.de" x-show="k.dt"><k-ic :n="k.da"></k-ic><span x-text="k.dt"></span></span></div>
-      <p class="m-0 mt-3 text-[14.5px] leading-snug" x-text="k.f"></p><p class="m-0 mt-auto pt-2 text-xs muted" x-text="k.m"></p></article></template>
+  <section class="eg s-ok" aria-labelledby="neg-t">
+    <div class="eg-main">
+      <span class="eg-ic"><k-ic n="trending-up"></k-ic></span>
+      <div class="min-w-0">
+        <p class="eg-k">¿Cómo va el negocio?</p>
+        <h2 id="neg-t" class="eg-t"><span class="sr-only">Estado del negocio: </span>Saludable <k-tip g="neg_estado"></k-tip></h2>
+        <p class="eg-s">Cada denuncia deja margen. Hay 2 puntos a vigilar.</p>
+      </div>
+    </div>
+    <ul class="eg-l">
+      <li class="pl s-bad"><k-ic n="octagon-alert"></k-ic><span class="pl-n"><span>Constructora Los Maitenes</span><b>19 días sin uso</b></span></li>
+      <li class="pl s-bad"><k-ic n="octagon-alert"></k-ic><span class="pl-n"><span>Sugerencias valoradas</span><b>Muy pocas</b></span></li>
+    </ul>
   </section>
 
-  <section class="card p-4 md:p-5"><div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Clientes: uso, costo y actividad</h2><k-tip g="neg_clientes"></k-tip></div>
-    <div class="grid gap-3">
-      <template x-for="c in clientes" :key="c.n"><div class="rounded-xl border p-3 md:p-4 bg-white grid lg:grid-cols-[1.2fr_1.6fr_1fr_1fr] gap-3 lg:gap-5 items-center" :class="'bd-'+c.re" style="border-color:var(--line)">
-        <div class="flex items-center justify-between lg:block gap-2"><b class="block" x-text="c.n"></b><span class="text-xs muted" x-text="c.plan+' denuncias/mes contratadas'"></span>
-          <svg viewBox="0 0 100 30" class="w-24 h-7 hidden lg:block mt-1" aria-hidden="true"><path :d="spark(c.s)" fill="none" stroke="var(--brand-2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div><div class="flex justify-between text-sm mb-1 gap-2"><span><b class="tabular-nums" x-text="c.tot"></b> denuncias <span class="muted">(30 días)</span></span><span class="chip" :class="c.ue"><k-ic :n="ico[c.ue]"></k-ic><span x-text="c.uso+' % del plan'"></span></span></div>
-          <div class="relative h-3 rounded-full" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+c.ue" :style="'width:'+Math.min(100,c.uso)+'%'"></div></div><p class="m-0 mt-1 text-xs muted" x-text="c.nota"></p></div>
-        <div class="text-sm"><div class="muted text-xs">Ingreso · Costo de IA</div><b class="tabular-nums" x-text="usd(c.ing)"></b> · <span class="tabular-nums" x-text="usd(c.cos,3)"></span><div class="mt-1"><span class="chip ok"><k-ic n="circle-check"></k-ic> Margen alto</span></div></div>
-        <div class="text-sm"><div class="muted text-xs">Último uso</div><span class="chip" :class="c.re"><k-ic :n="ico[c.re]"></k-ic><span x-text="c.ult"></span></span><div class="text-xs muted mt-1" x-text="c.rt"></div></div>
+  <section class="kg" aria-label="Indicadores de negocio">
+    <template x-for="k in negKpis" :key="k.k"><article class="kt" :class="'s-'+k.e">
+        <div class="kt-h"><span class="kt-l"><k-ic :n="k.i"></k-ic><span x-text="k.l"></span></span><k-tip :g="k.k" :x="k.x"></k-tip></div>
+        <template x-if="k.form==='gauge'"><div class="gg"><svg viewBox="0 0 100 60" :aria-label="k.l+': '+k.v+' '+k.u+', '+k.et" role="img">
+          <path class="zn" :class="'s-'+k.z[0][2]" :d="gArc(k.z[0][0],k.z[0][1])"/><path class="zn" :class="'s-'+k.z[1][2]" :d="gArc(k.z[1][0],k.z[1][1])"/><path class="zn" :class="'s-'+k.z[2][2]" :d="gArc(k.z[2][0],k.z[2][1])"/>
+          <line class="gg-tk" :x1="gTick(k.zm).x1" :y1="gTick(k.zm).y1" :x2="gTick(k.zm).x2" :y2="gTick(k.zm).y2"/><text class="gg-tx" :x="gTick(k.zm).tx" :y="gTick(k.zm).ty" x-text="k.zl"></text>
+          <line class="gg-n" x1="50" y1="50" x2="50" y2="18" :style="'transform:rotate('+((k.f-.5)*180)+'deg)'"/><circle cx="50" cy="50" r="3.6" class="gg-h"/></svg></div></template>
+        <div class="kt-v"><span class="kt-u" x-show="k.p" x-text="k.p"></span><span class="kv" x-count="k.v"></span><span class="kt-u" x-text="k.u"></span></div>
+        <template x-if="k.form==='spark'"><svg viewBox="0 0 100 30" preserveAspectRatio="none" class="sp" aria-hidden="true"><path :d="sparkA(k.s)" class="sp-a"/><path :d="spark(k.s)" class="sp-l" vector-effect="non-scaling-stroke"/></svg></template>
+        <template x-if="k.form==='bullet'"><div class="bu" role="img" :aria-label="k.l+': '+k.v+' '+k.u+', meta '+k.metaT"><div class="bu-t"><template x-for="z in k.z" :key="z[0]"><i :class="'s-'+z[2]" :style="'flex:'+(z[1]-z[0])"></i></template><b class="bu-m" :style="'left:'+Math.min(100,k.v/k.max*100)+'%'"></b><u class="bu-g" :style="'left:'+(k.meta/k.max*100)+'%'"></u></div>
+          <div class="bu-s"><span>0</span><span class="bu-gl" :style="'left:'+(k.meta/k.max*100)+'%'" x-text="k.metaT"></span><span x-text="k.max+(k.u==='s'?' s':' %')"></span></div></div></template>
+        <template x-if="k.form==='dots'"><div class="dots" role="img" :aria-label="k.x"><template x-for="(d,ix) in k.dots" :key="ix"><i :class="'s-'+d.e" :title="d.n"><k-ic :n="ico[d.e]"></k-ic></i></template></div></template>
+        <div class="kt-f"><span class="kt-s"><k-ic :n="ico[k.e]"></k-ic><span x-text="k.et"></span></span><span class="kt-t" :class="'t-'+k.te" x-show="k.tr"><k-ic :n="k.ta"></k-ic><span x-text="k.tr"></span></span></div>
+      </article></template>
+
+  </section>
+
+  <section class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Clientes</h2><k-tip g="neg_clientes"></k-tip></div>
+    <div class="cl-head" aria-hidden="true"><span>Cliente</span><span>Uso del plan (30 días)</span><span>Ingreso · costo IA</span><span>Último uso</span></div>
+    <div>
+      <template x-for="c in clientes" :key="c.n"><div class="cl" :class="'s-'+c.re">
+        <div class="cl-n"><b x-text="c.n"></b><span class="muted" x-text="c.plan+' al mes'"></span><svg viewBox="0 0 100 30" class="cl-sp" aria-hidden="true" preserveAspectRatio="none"><path :d="spark(c.s)" fill="none" stroke="var(--brand-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg></div>
+        <div class="cl-u" :class="'s-'+c.ue"><div class="mr-h"><span><b x-text="c.tot"></b> denuncias</span><b class="vv"><k-ic :n="ico[c.ue]"></k-ic><span x-text="c.uso+' %'"></span></b></div><div class="mb"><i :style="'width:'+Math.min(100,c.uso)+'%'"></i><u style="left:100%;opacity:.5"></u></div></div>
+        <div class="cl-m"><b x-text="usd(c.ing)"></b> · <span x-text="usd(c.cos,3)"></span></div>
+        <div class="cl-l"><span class="chip" :class="c.re"><k-ic :n="ico[c.re]"></k-ic><span x-text="c.ult"></span></span><k-tip g="neg_clientes" :x="c.nota"></k-tip></div>
       </div></template>
     </div></section>
 
-  <section class="grid lg:grid-cols-3 gap-4">
-    <div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por cliente</h2><k-tip g="neg_denuncias"></k-tip></div><p class="m-0 mb-2 text-sm">Veridy aporta <b x-text="pct(clientes[0].tot,neg.tot)+' %'"></b> del volumen. Con un solo cliente grande, perderlo sería un riesgo alto.</p>
-      <div id="ch-cli" style="height:260px" role="img" aria-label="Gráfico de área apilada de denuncias por cliente en 30 días"></div></div>
+  <section class="grid lg:grid-cols-3 gap-3 md:gap-4">
+    <div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por cliente</h2><k-tip g="neg_denuncias"></k-tip>
+      <span class="chip warn ml-auto"><k-ic n="triangle-alert"></k-ic> Veridy: <span x-text="pct(clientes[0].tot,neg.tot)+' %'"></span></span></div>
+      <div id="ch-cli" class="chh" role="img" aria-label="Gráfico de área apilada de denuncias por cliente en 30 días"></div></div>
     <div class="card p-4"><div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Adopción</h2><k-tip g="neg_adopcion"></k-tip></div>
-      <p class="m-0 mb-3 text-sm"><b>De cada 100 denuncias, <span x-text="sugPct"></span> recibieron sugerencia pero solo 16 fueron valoradas</b> por auditores.</p>
-      <ul class="list-none p-0 m-0 grid gap-3"><template x-for="a in embudo" :key="a.n"><li><div class="flex justify-between text-sm gap-2"><span x-text="a.n"></span><span class="chip" :class="a.e"><k-ic :n="ico[a.e]"></k-ic><span x-text="a.v+' %'"></span></span></div><div class="h-3 rounded-full mt-1.5" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+a.e" :style="'width:'+a.v+'%'"></div></div></li></template></ul>
-      <p class="m-0 mt-3 text-xs muted">Útiles se calcula sobre las valoradas (11 de 14).</p></div>
+      <ul class="list-none p-0 m-0 grid gap-3"><template x-for="a in embudo" :key="a.n"><li class="mr" :class="'s-'+a.e"><div class="mr-h"><span x-text="a.n"></span><b><k-ic :n="ico[a.e]"></k-ic><span x-text="a.v+' %'"></span></b></div><div class="mb"><i :style="'width:'+a.v+'%'"></i></div></li></template></ul>
+    </div>
   </section>
 
-  <section class="grid lg:grid-cols-3 gap-4">
-    <div class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Supuestos editables</h2></div>
-      <span class="chip warn mb-3"><k-ic n="pencil"></k-ic> Tarifa de referencia</span>
-      <div class="mb-4"><div class="flex justify-between items-center"><label for="tf" class="font-semibold text-sm flex items-center gap-1.5">Tarifa por denuncia <k-tip g="tarifa"></k-tip></label><b class="text-lg" style="color:var(--brand)" x-text="usd(tarifa)"></b></div>
+  <section class="grid lg:grid-cols-3 gap-3 md:gap-4">
+    <div class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Supuestos</h2><span class="chip warn ml-auto"><k-ic n="pencil"></k-ic> Editables</span></div>
+      <div class="mb-3"><div class="flex justify-between items-center"><label for="tf" class="font-semibold text-sm flex items-center gap-1.5">Tarifa por denuncia <k-tip g="tarifa"></k-tip></label><b class="text-base" style="color:var(--brand)" x-text="usd(tarifa)"></b></div>
         <input id="tf" type="range" class="range" min="0.1" max="2" step="0.05" x-model.number="tarifa" :style="'--p:'+((tarifa-0.1)/1.9*100)+'%'" aria-valuetext="tarifa por denuncia"><div class="flex justify-between text-xs muted"><span>US$ 0,10</span><span>US$ 2,00</span></div></div>
-      <div><div class="flex justify-between items-center"><label for="cr" class="font-semibold text-sm flex items-center gap-1.5">Crecimiento mensual <k-tip g="crecimiento"></k-tip></label><b class="text-lg" style="color:var(--brand)" x-text="crec+' %'"></b></div>
+      <div><div class="flex justify-between items-center"><label for="cr" class="font-semibold text-sm flex items-center gap-1.5">Crecimiento mensual <k-tip g="crecimiento"></k-tip></label><b class="text-base" style="color:var(--brand)" x-text="crec+' %'"></b></div>
         <input id="cr" type="range" class="range" min="0" max="30" step="1" x-model.number="crec" :style="'--p:'+(crec/30*100)+'%'" @input="$nextTick(()=>charts())"><div class="flex justify-between text-xs muted"><span>0 %</span><span>30 %</span></div></div>
-      <button type="button" class="btn btn-sec mt-4 w-full" @click="tarifa=0.5;crec=15;$nextTick(()=>charts())"><k-ic n="rotate-ccw"></k-ic> Volver a lo recomendado</button></div>
-    <div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Proyección de ingresos y costo</h2><k-tip g="proyeccion"></k-tip></div>
-      <p class="m-0 mb-2 text-sm">Con <b x-text="crec+' %'"></b> de crecimiento mensual, en 6 meses Kerna ingresaría <b x-text="usd(proy[5].ing,0)"></b> al mes con un margen de <b x-text="proy[5].mp+' %'"></b>.</p>
-      <div id="ch-proy" style="height:240px" role="img" aria-label="Proyección a 6 meses de ingresos, costo total y margen"></div>
-      <p class="m-0 mt-2 text-xs muted">Costo = IA + costos fijos (US$ 40/mes de infraestructura).</p></div>
+      <button type="button" class="btn btn-sec mt-3 w-full" @click="tarifa=0.5;crec=15;$nextTick(()=>charts())"><k-ic n="rotate-ccw"></k-ic> Volver a lo recomendado</button></div>
+    <div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Proyección a 6 meses</h2><k-tip g="proyeccion"></k-tip></div>
+      <div class="stats"><div class="s-ok"><span>Ingreso al mes</span><b x-text="usd(proy[5].ing,0)"></b></div><div :class="proy[5].mp>=60?'s-ok':proy[5].mp>=30?'s-warn':'s-bad'"><span>Margen</span><b x-text="proy[5].mp+' %'"></b></div></div>
+      <div id="ch-proy" class="chh2" role="img" aria-label="Proyección a 6 meses de ingresos, costo total y margen"></div></div>
   </section>
 </div>
 
 <!-- ========== AJUSTES ========== -->
-<div x-show="view==='ajustes'" class="grid gap-5 pb-24">
+<div x-show="view==='ajustes'" class="grid gap-3 md:gap-4 pb-24">
   <div class="flex flex-wrap items-start justify-between gap-3">
-    <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Ajustes</h1><p class="m-0 mt-1 muted text-sm max-w-xl">Cambia cómo trabaja Kerna. Cada ajuste tiene un «?» que explica qué es y qué pasa si lo cambias. Los valores recomendados están marcados.</p></div>
-    <button type="button" class="btn btn-sec" @click="restaurar()"><k-ic n="rotate-ccw"></k-ic> Volver a lo recomendado</button>
+    <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Ajustes</h1><p class="pg-s">Cómo trabaja Kerna · cada ajuste tiene un «?» que lo explica</p></div>
+    <button type="button" class="btn btn-sec" @click="restaurar()"><k-ic n="rotate-ccw"></k-ic> Valores recomendados</button>
   </div>
 
   <template x-for="g in grupos" :key="g.id"><section class="card mod" :aria-labelledby="'g-'+g.id">
@@ -845,12 +1048,11 @@ k-tip k-ic{width:20px;height:20px}
     </div>
     <div class="mod-body">
     <div class="flex items-center gap-4 mb-3"><span class="orb-ic grid place-items-center w-12 h-12 shrink-0" style="background:var(--brand-soft);color:var(--brand)"><k-ic :n="g.i" style="width:24px;height:24px"></k-ic></span><div><h2 :id="'g-'+g.id" class="mod-h" x-text="g.t"></h2><p class="m-0 text-sm muted" x-text="g.d"></p></div></div>
-    <div class="grid">
-      <template x-for="it in g.items" :key="it.k"><div class="ctl" :class="(it.dep&&!s[it.dep])?'opacity-60':''">
+    <div class="gi">
+      <template x-for="it in g.items" :key="it.k"><div class="ctl" :class="((it.dep&&!s[it.dep])?'opacity-60 ':'')+((it.t==='cd'||it.t==='ch')?'ctl-w':'')">
         <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0"><div class="flex items-center gap-1.5 flex-wrap"><span :id="'l-'+it.k" class="font-semibold text-[17px]" x-text="it.l"></span><k-tip :g="it.k"></k-tip>
-            <span x-show="esRec(it.k)" class="chip ok"><k-ic n="check"></k-ic> Recomendado</span><span x-show="!esRec(it.k)" class="chip warn"><k-ic n="pencil"></k-ic> Cambiado</span></div>
-            <p class="m-0 mt-0.5 text-sm muted" x-text="it.d"></p></div>
+          <div class="min-w-0"><div class="flex items-center gap-1.5 flex-wrap"><span :id="'l-'+it.k" class="font-semibold text-[17px]" x-text="it.l"></span><k-tip :g="it.k" :x="it.d"></k-tip>
+            <span x-show="!esRec(it.k)" class="chip warn"><k-ic n="pencil"></k-ic> Cambiado</span></div></div>
           <template x-if="it.t==='sw'"><div class="flex items-center gap-3 shrink-0"><span class="swt" x-text="s[it.k]?'Encendido':'Apagado'"></span><button type="button" role="switch" class="sw" :aria-checked="s[it.k]" :aria-labelledby="'l-'+it.k" @click="s[it.k]=!s[it.k]"></button></div></template>
           <template x-if="it.t==='rg'"><span class="kv-s whitespace-nowrap" style="color:var(--brand)" x-text="it.f(s[it.k])"></span></template>
         </div>
@@ -864,16 +1066,15 @@ k-tip k-ic{width:20px;height:20px}
         <template x-if="it.t==='cd'"><div class="grid gap-3">
           <template x-for="(m,ix) in s.cadena" :key="m.v"><div class="cn-row" :style="m.on?'':'opacity:.65'">
             <span class="cn-n" x-text="ix+1"></span>
-            <div class="flex-1 min-w-0"><b class="block text-[15.5px]" x-text="nombreModelo(m.v).t"></b><span class="text-xs muted" x-text="nombreModelo(m.v).d"></span></div>
-            <div class="flex items-center gap-1.5"><button type="button" class="btn btn-sec !min-h-[44px] !w-11 !px-0" :disabled="ix===0" @click="mover(ix,-1)" :aria-label="'Acercar al centro: '+nombreModelo(m.v).t"><k-ic n="arrow-up"></k-ic></button><button type="button" class="btn btn-sec !min-h-[44px] !w-11 !px-0" :disabled="ix===s.cadena.length-1" @click="mover(ix,1)" :aria-label="'Alejar del centro: '+nombreModelo(m.v).t"><k-ic n="arrow-down"></k-ic></button>
-            <button type="button" role="switch" class="sw ml-1" :aria-checked="m.on" :aria-label="'Usar '+nombreModelo(m.v).t" @click="m.on=!m.on"></button></div></div></template>
-          <p class="m-0 text-xs muted">Cada modelo es una órbita: el primero está más cerca del centro y se prueba antes. Si uno falla, pasa al siguiente. Si fallan todos, el caso queda en revisión manual.</p></div></template>
+            <div class="flex-1 min-w-0"><b class="block text-[14px]" x-text="nombreModelo(m.v).c"></b><span class="text-xs muted" x-text="nombreModelo(m.v).d"></span></div>
+            <div class="flex items-center gap-1.5"><button type="button" class="btn btn-sec !min-h-[40px] !w-10 !px-0" :disabled="ix===0" @click="mover(ix,-1)" :aria-label="'Acercar al centro: '+nombreModelo(m.v).t"><k-ic n="arrow-up"></k-ic></button><button type="button" class="btn btn-sec !min-h-[40px] !w-10 !px-0" :disabled="ix===s.cadena.length-1" @click="mover(ix,1)" :aria-label="'Alejar del centro: '+nombreModelo(m.v).t"><k-ic n="arrow-down"></k-ic></button>
+            <button type="button" role="switch" class="sw ml-1" :aria-checked="m.on" :aria-label="'Usar '+nombreModelo(m.v).t" @click="m.on=!m.on"></button></div></div></template></div></template>
       </div></template>
     </div>
     </div>
   </section></template>
 
-  <div class="fixed bottom-[62px] lg:bottom-0 left-0 right-0 lg:left-72 z-40 p-3" x-show="cambios.length" x-transition>
+  <div class="fixed bottom-[56px] lg:bottom-0 left-0 right-0 lg:left-64 z-40 p-3" x-show="cambios.length" x-transition>
     <div class="max-w-3xl mx-auto rounded-2xl p-3 pl-4 flex flex-wrap items-center gap-3 justify-between" style="background:var(--brand);color:#fff;box-shadow:0 8px 30px rgba(15,23,54,.35)">
       <span class="font-semibold text-sm flex items-center gap-2"><k-ic n="pencil-line"></k-ic><span x-text="cambios.length+(cambios.length===1?' cambio sin guardar':' cambios sin guardar')"></span></span>
       <span class="flex gap-2"><button type="button" class="btn !min-h-[40px]" style="background:rgba(255,255,255,.15);color:#fff" @click="descartar()">Descartar</button><button type="button" class="btn btn-pri !min-h-[40px]" @click="resumenAbierto=true">Revisar y guardar</button></span>
@@ -922,6 +1123,7 @@ customElements.define('k-ic',KIc);
 
 /* ---------- glosario de ayudas ---------- */
 const G={
+envivo:{t:'En vivo',q:'Los números se actualizan solos cada minuto, sin recargar la página.',c:'No necesitas hacer nada: el punto late cada vez que llegan datos nuevos.',l:'Cómo leerlo'},
 estado:{t:'Estado general',q:'Resumen de 5 segundos: junta la salud de cada componente, la calidad y la rapidez. Verde = todo bien, ámbar = atención, rojo = problema.',c:'Un solo indicador en rojo hace que el estado general sea «problema»; en ámbar, «atención».',l:'Cómo leerlo'},
 salud_nucleo:{t:'Motor de Kerna',q:'Es el motor que analiza cada denuncia y propone leyes.',c:'Si está en rojo, no se generan sugerencias nuevas.',l:'Cómo leerlo'},
 salud_conector:{t:'Enlace con Veridy',q:'Es el puente que lleva las denuncias de Veridy a Kerna y devuelve la sugerencia al caso.',c:'Si falla, las denuncias se acumulan y se reenvían solas cuando vuelva.',l:'Cómo leerlo'},
@@ -971,8 +1173,8 @@ inf_negocio:{t:'Sección de negocio',q:'Agrega al informe una sección con clien
 alerta:{t:'Avisar si un caso sigue sin sugerencia',q:'Pasado este tiempo sin sugerencia, el caso aparece destacado en el panel.',c:'Plazos cortos avisan antes pero pueden generar falsas alarmas.',l:'Si lo cambias'}
 };
 const tt=document.getElementById('tt');let ttFor=null,pinned=false;
-function showTip(el){const g=G[el.closest('k-tip').getAttribute('g')];if(!g)return;ttFor=el;
-  tt.innerHTML='<b>'+g.t+'</b>'+g.q+'<span class="l">'+g.l+'</span>'+g.c;el.setAttribute('aria-describedby','tt');
+function showTip(el){const hh=el.closest('k-tip')||el,key=hh.getAttribute('g')||hh.getAttribute('data-tip'),g=G[key];if(!g)return;ttFor=el;
+  let xt=hh.getAttribute('x');if(key==='envivo'){const q=Math.round((Date.now()-(window.__ult||Date.now()))/1000);xt='Último dato: '+(q<5?'ahora mismo':q<60?'hace '+q+' s':'hace '+Math.floor(q/60)+' min')+'. Próxima actualización en unos '+Math.max(1,60-q)+' s.'}tt.innerHTML='<b>'+g.t+'</b>'+g.q+'<span class="l">'+g.l+'</span>'+g.c+(xt?'<span class="l">En este caso</span>'+xt:'');el.setAttribute('aria-describedby','tt');
   tt.classList.add('on');const r=el.getBoundingClientRect(),w=tt.offsetWidth,h=tt.offsetHeight;
   let x=Math.min(Math.max(12,r.left+r.width/2-w/2),innerWidth-w-12),y=r.bottom+8;if(y+h>innerHeight-8)y=r.top-h-8;tt.style.left=x+'px';tt.style.top=Math.max(8,y)+'px'}
 function hideTip(){tt.classList.remove('on');if(ttFor)ttFor.removeAttribute('aria-describedby');ttFor=null;pinned=false}
@@ -980,11 +1182,11 @@ class KTip extends HTMLElement{connectedCallback(){if(this.querySelector('button
   this.innerHTML='<button type="button" aria-label="Ayuda: '+(g?g.t:'')+'"><k-ic n="circle-help"></k-ic></button>'}
   static get observedAttributes(){return['g']}attributeChangedCallback(){const b=this.querySelector('button'),g=G[this.getAttribute('g')];if(b&&g)b.setAttribute('aria-label','Ayuda: '+g.t)}}
 customElements.define('k-tip',KTip);
-document.addEventListener('pointerover',e=>{const b=e.target.closest&&e.target.closest('k-tip button');if(b&&e.pointerType==='mouse'&&!pinned)showTip(b)});
-document.addEventListener('pointerout',e=>{if(e.target.closest&&e.target.closest('k-tip button')&&!pinned&&e.pointerType==='mouse')hideTip()});
-document.addEventListener('focusin',e=>{const b=e.target.closest&&e.target.closest('k-tip button');if(b)showTip(b)});
-document.addEventListener('focusout',e=>{if(e.target.closest&&e.target.closest('k-tip button')&&!pinned)hideTip()});
-document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('k-tip button');if(b){if(pinned&&ttFor===b){hideTip()}else{showTip(b);pinned=true}}else if(pinned)hideTip()});
+document.addEventListener('pointerover',e=>{const b=e.target.closest&&e.target.closest('k-tip button,[data-tip]');if(b&&e.pointerType==='mouse'&&!pinned)showTip(b)});
+document.addEventListener('pointerout',e=>{if(e.target.closest&&e.target.closest('k-tip button,[data-tip]')&&!pinned&&e.pointerType==='mouse')hideTip()});
+document.addEventListener('focusin',e=>{const b=e.target.closest&&e.target.closest('k-tip button,[data-tip]');if(b)showTip(b)});
+document.addEventListener('focusout',e=>{if(e.target.closest&&e.target.closest('k-tip button,[data-tip]')&&!pinned)hideTip()});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('k-tip button,[data-tip]');if(b){if(pinned&&ttFor===b){hideTip()}else{showTip(b);pinned=true}}else if(pinned)hideTip()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')hideTip()});
 addEventListener('hashchange',hideTip);addEventListener('scroll',()=>{if(!pinned)hideTip()},{passive:true});
 
@@ -1037,32 +1239,38 @@ function app(){return{
   const nav=()=>{const id=(location.hash||'#portada').slice(1);const v=RUTAS.includes(id)?id:this.view;
    if(v!==this.view){this.view=v;scrollTo({top:0,behavior:'instant'})}
    this.$nextTick(()=>{this.charts();window.kernaRv&&kernaRv()})};
+  window.__ult=Date.now();this.beat=1;setInterval(()=>this.refrescar(),60000);
   addEventListener('hashchange',nav);nav();
   document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey||e.shiftKey)return;const id=a.getAttribute('href').slice(1);if(!id)return;
    if(RUTAS.includes(id)){if(id===this.view){e.preventDefault();scrollTo({top:0,behavior:'smooth'});if(location.hash!=='#'+id)history.replaceState(null,'','#'+id)}return}
    const t=document.getElementById(id);if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}});
-  addEventListener('resize',()=>['ch-casos','ch-lat','ch-heat','ch-gauge'].forEach(i=>{const c=echarts.getInstanceByDom(document.getElementById(i));c&&c.resize()}));
+  addEventListener('resize',()=>{this.wide=innerWidth>=1024});addEventListener('resize',()=>['ch-casos','ch-lat','ch-heat','ch-cli','ch-proy'].forEach(i=>{const e=document.getElementById(i);const c=e&&echarts.getInstanceByDom(e);c&&c.resize()}));
  },
  /* derivados */
- get sl(){return DIA.slice(30-this.per)},
+ wide:innerWidth>=1024,beat:0,dx:0,dp:0,chg:{},
+ gArc(a,b){const r=38,g=.006,P=f=>{const t=Math.PI*(1-f);return[(50+r*Math.cos(t)).toFixed(2),(50-r*Math.sin(t)).toFixed(2)]},p0=P(a+(a>0?g:0)),p1=P(b-(b<1?g:0));return'M'+p0[0]+' '+p0[1]+'A'+r+' '+r+' 0 0 1 '+p1[0]+' '+p1[1]},
+ gTick(f){const t=Math.PI*(1-f),c=Math.cos(t),s=Math.sin(t),q=(r)=>[(50+r*c).toFixed(2),(50-r*s).toFixed(2)],a=q(31),b=q(45),l=q(48);return{x1:a[0],y1:a[1],x2:b[0],y2:b[1],tx:l[0],ty:l[1]}},
+ sparkA(a){return this.spark(a)+' L100 30 L0 30Z'},
+ get sl(){const a=DIA.slice(30-this.per),n=a.length-1;return a.map((d,i)=>i===n&&this.dx?{...d,c:d.c+this.dx,o:d.o+this.dx}:d)},
+ refrescar(){if(document.hidden)return;const antes=this.kpis.map(k=>String(k.v));this.dx+=1+Math.floor(Math.random()*3);this.dp=[-1,0,1][Math.floor(Math.random()*3)];window.__ult=Date.now();this.beat++;
+  this.$nextTick(()=>{const c={};this.kpis.forEach((k,i)=>{if(String(k.v)!==antes[i])c[k.k]=1});this.chg=c;clearTimeout(this._cg);this._cg=setTimeout(()=>this.chg={},1000);if(this.view==='resumen')this.charts()})},
  get tot(){return this.sl.reduce((a,d)=>a+d.c,0)},
  get modos(){return{o:this.sl.reduce((a,d)=>a+d.o,0),r:this.sl.reduce((a,d)=>a+d.r,0),m:this.sl.reduce((a,d)=>a+d.m,0)}},
  pct(a,b){return b?Math.round(a/b*100):0},
  get sugPct(){return this.pct(this.modos.o+this.modos.r,this.tot)},
- get p50(){const a=P50.slice(30-this.per);return Math.round(a.reduce((x,y)=>x+y,0)/a.length)},
+ get p50(){const a=P50.slice(30-this.per);return Math.round(a.reduce((x,y)=>x+y,0)/a.length)+this.dp},
  get p95(){const a=P95.slice(30-this.per);return Math.round(a.reduce((x,y)=>x+y,0)/a.length)},
  get costo(){const mk=(n,casos,[pi,po])=>{const caso=(TOK_IN*pi+TOK_OUT*po)/1e6;return{n,casos,caso,tot:caso*casos}};return[mk('Claude Haiku 5.5',this.tot,PREC.haiku),mk('Claude Sonnet 5.5',this.modos.r,PREC.sonnet)]},
  get costoTot(){return this.costo.reduce((a,c)=>a+c.tot,0)},
  get costoCaso(){return this.tot?this.costoTot/this.tot:0},
  usd(v,d){d=d||2;if(v<0.005&&!(d>2))return 'US$ '+v.toLocaleString('es-CL',{minimumFractionDigits:3,maximumFractionDigits:3});return 'US$ '+v.toLocaleString('es-CL',{minimumFractionDigits:d,maximumFractionDigits:d})},
  spark(a){const mx=Math.max(...a),mn=Math.min(...a),r=(mx-mn)||1;return a.map((v,i)=>(i?'L':'M')+(i/(a.length-1)*100).toFixed(1)+' '+(27-(v-mn)/r*24).toFixed(1)).join(' ')},
- get kpis(){const w=this.per===7,prev=w?.93:.88,tot=this.tot,sl=this.sl;
-  const dc=Math.round((tot/(tot*prev)-1)*100);
+ get kpis(){const w=this.per===7,prev=w?.93:.88,tot=this.tot,sl=this.sl,dc=Math.round((tot/(tot*prev)-1)*100);
   return[
-  {k:'casos',i:'inbox',l:'Denuncias analizadas',v:tot,u:'denuncias',e:'ok',et:'Sin problemas',de:'na',da:'arrow-up-right',dt:'+'+dc+' % vs período anterior',f:'Llegaron '+tot+' denuncias en '+this.per+' días; algo más que en el período anterior.',m:'Período anterior: '+Math.round(tot*prev),s:sl.map(d=>d.c)},
-  {k:'calidad',i:'target',l:'Acierto de las sugerencias',v:74,ring:74,meta:80,rc:'meta 80',u:'%',e:'warn',et:'Bajo la meta',de:'bad',da:'arrow-down-right',dt:'6 puntos bajo la meta',f:'Cuando existe un artículo correcto, Kerna lo incluye entre sus 5 primeras sugerencias el 74 % de las veces.',m:'Meta: 80 % o más · prueba con casos conocidos',s:[78,77,76,77,75,76,74,75,74,74]},
-  {k:'tiempo',i:'timer',l:'Tiempo de respuesta típico',v:this.p50,u:'segundos',e:'warn',et:'Sobre la meta',de:'bad',da:'arrow-up-right',dt:'4 s más lento',f:'La mitad de los casos recibe su sugerencia en '+this.p50+' s; la meta es 15 s.',m:'Meta: 15 s o menos',s:P50.slice(30-this.per)},
-  {k:'costo_k',i:'coins',l:'Costo del período',v:this.usd(this.costoTot).replace('US$ ',''),u:'US$',e:'ok',et:'Sin alertas',de:'na',da:'minus',dt:'',f:'Costo por denuncia: '+this.usd(this.costoCaso,4)+'.',m:'Haiku '+this.usd(this.costo[0].tot)+' · Sonnet '+this.usd(this.costo[1].tot),s:sl.map(d=>d.c)}]},
+  {k:'casos',i:'inbox',l:'Denuncias',v:tot,u:'',e:'ok',form:'spark',et:'Normal',te:'na',ta:'arrow-up-right',tr:'+'+dc+' %',s:sl.map(d=>d.c),x:'Llegaron '+tot+' denuncias en '+this.per+' días. Período anterior: '+Math.round(tot*prev)+'.'},
+  {k:'calidad',i:'target',l:'Acierto',v:74,u:'%',e:'warn',form:'gauge',f:.74,zm:.8,zl:'80',z:[[0,.7,'bad'],[.7,.8,'warn'],[.8,1,'ok']],et:'Bajo la meta',te:'bad',ta:'arrow-down-right',tr:'−6 pts',x:'Cuando existe un artículo correcto, Kerna lo incluye entre sus 5 primeras sugerencias el 74 % de las veces. Meta: 80 %.'},
+  {k:'tiempo',i:'timer',l:'Respuesta típica',v:this.p50,u:'s',e:'warn',form:'bullet',max:45,meta:15,metaT:'meta 15 s',z:[[0,15,'ok'],[15,30,'warn'],[30,45,'bad']],et:'Sobre la meta',te:'bad',ta:'arrow-up-right',tr:'+4 s',x:'La mitad de los casos recibe su sugerencia en '+this.p50+' s. Meta: 15 s o menos.'},
+  {k:'costo_k',i:'coins',l:'Costo',p:'US$',v:this.usd(this.costoTot).replace('US$ ',''),u:'',e:'ok',form:'spark',et:'Sin alertas',te:'na',ta:'minus',tr:'',s:sl.map(d=>d.c),x:'Costo por denuncia: '+this.usd(this.costoCaso,4)+'. Haiku '+this.usd(this.costo[0].tot)+' · Sonnet '+this.usd(this.costo[1].tot)+'.'}]},
  get incidentes(){const m=this.modos.m,a=Math.round(m*.5),b=Math.round(m*.3);return[
   {c:'Modelo de IA no disponible',n:a,e:'bad',a:'Revisa que el modelo principal esté activo. Si se repite, deja el de respaldo en primer lugar en Ajustes.'},
   {c:'Citas que no respaldan el artículo',n:b,e:'warn',a:'Mantén encendido el revisor automático y revisa estos casos a mano.'},
@@ -1078,11 +1286,11 @@ function app(){return{
    re:c.dias>14?'bad':c.dias>3?'warn':'ok',ing:tot*this.tarifa,cos:tot*caso}})},
  get neg(){const c=this.clientes,tot=c.reduce((a,x)=>a+x.tot,0),ing=c.reduce((a,x)=>a+x.ing,0),cos=c.reduce((a,x)=>a+x.cos,0),fijo=40,mg=ing-cos-fijo;
   return{tot,ing,cos,fijo,mg,margenPct:Math.round(mg/ing*100),activos:c.filter(x=>x.dias<=14).length}},
- get negKpis(){const n=this.neg,mp=n.margenPct;return[
-  {k:'neg_clientes_k',i:'building-2',l:'Clientes activos',v:n.activos,u:'de '+this.clientes.length,e:'warn',et:'1 en riesgo',de:'na',da:'minus',dt:'',f:n.activos+' de '+this.clientes.length+' clientes usaron Kerna en las últimas 2 semanas.',m:'Clientes con denuncias en 30 días'},
-  {k:'neg_denuncias_k',i:'inbox',l:'Denuncias procesadas',v:n.tot,u:'en 30 días',e:'ok',et:'Creciendo',de:'ok',da:'arrow-up-right',dt:'+14 % vs 30 días previos',f:'Se procesaron '+n.tot+' denuncias entre todos los clientes; 14 % más que el mes anterior.',m:'Mes anterior: '+Math.round(n.tot/1.14)},
-  {k:'neg_margen',i:'piggy-bank',l:'Margen mensual',v:mp,ring:Math.max(0,Math.min(100,mp)),u:'%',e:mp>=60?'ok':mp>=30?'warn':'bad',et:mp>=60?'Alto':mp>=30?'Medio':'Bajo',de:'na',da:'minus',dt:'',f:'De '+this.usd(n.ing)+' de ingresos, quedan '+this.usd(n.mg)+' tras pagar IA ('+this.usd(n.cos,2)+') y costos fijos.',m:'Con tarifa de referencia de '+this.usd(this.tarifa)+' por denuncia'},
-  {k:'neg_adopcion_k',i:'thumbs-up',l:'Sugerencias valoradas',v:16,ring:16,u:'%',e:'bad',et:'Muy pocas',de:'na',da:'minus',dt:'',f:'Solo 16 de cada 100 sugerencias fueron valoradas; de esas, 8 de cada 10 resultaron útiles.',m:'Esperado: 50 % o más · hoy Veridy: sin valoraciones'}]},
+ get negKpis(){const n=this.neg,mp=n.margenPct,cs=this.clientes,serie=CASOS.map((_,i)=>cs.reduce((a,c)=>a+c.s[i],0));return[
+  {k:'neg_clientes_k',i:'building-2',l:'Clientes activos',v:n.activos,u:'de '+cs.length,e:'warn',form:'dots',dots:cs.map(c=>({e:c.re,n:c.n+': '+c.ult})),et:'1 en riesgo',te:'na',ta:'minus',tr:'',x:n.activos+' de '+cs.length+' clientes usaron Kerna en las últimas 2 semanas. Cada círculo es un cliente.'},
+  {k:'neg_denuncias_k',i:'inbox',l:'Denuncias',v:n.tot,u:'en 30 días',e:'ok',form:'spark',s:serie,et:'Creciendo',te:'ok',ta:'arrow-up-right',tr:'+14 %',x:'Se procesaron '+n.tot+' denuncias entre todos los clientes; 14 % más que el mes anterior ('+Math.round(n.tot/1.14)+').'},
+  {k:'neg_margen',i:'piggy-bank',l:'Margen',v:mp,u:'%',e:mp>=60?'ok':mp>=30?'warn':'bad',form:'gauge',f:Math.max(0,Math.min(1,mp/100)),zm:.6,zl:'60',z:[[0,.3,'bad'],[.3,.6,'warn'],[.6,1,'ok']],et:mp>=60?'Alto':mp>=30?'Medio':'Bajo',te:'na',ta:'minus',tr:'',x:'De '+this.usd(n.ing)+' de ingresos, quedan '+this.usd(n.mg)+' tras pagar IA ('+this.usd(n.cos,2)+') y costos fijos. Tarifa de referencia: '+this.usd(this.tarifa)+' por denuncia.'},
+  {k:'neg_adopcion_k',i:'thumbs-up',l:'Valoradas',v:16,u:'%',e:'bad',form:'bullet',max:100,meta:50,metaT:'meta 50 %',z:[[0,30,'bad'],[30,50,'warn'],[50,100,'ok']],et:'Muy pocas',te:'na',ta:'minus',tr:'',x:'Solo 16 de cada 100 sugerencias fueron valoradas; de esas, 8 de cada 10 resultaron útiles. Esperado: 50 % o más.'}]},
  get embudo(){return[{n:'Con sugerencia',v:this.sugPct,e:'ok'},{n:'Valoradas por auditores',v:16,e:'bad'},{n:'Valoradas como útiles',v:79,e:'ok'}]},
  get proy(){const out=[];let v=this.neg.tot*(1+0);for(let m=1;m<=6;m++){v=this.neg.tot*Math.pow(1+this.crec/100,m);const ing=v*this.tarifa,cos=v*((TOK_IN*.1+TOK_OUT*.5)/1e6)+40;out.push({m:'Mes +'+m,ing,cos,mp:Math.round((ing-cos)/ing*100)})}return out},
  get ipDias(){if(this.custom){const d=(new Date(this.hasta)-new Date(this.desde))/864e5+1;return Math.max(1,Math.round(d)||1)}return this.ip},
@@ -1116,41 +1324,37 @@ function app(){return{
  charts(){
   const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim(),mkc=(id,opt)=>{const el=document.getElementById(id);if(!el)return;let c=echarts.getInstanceByDom(el);if(!c){c=echarts.init(el,null,{renderer:'svg'});new ResizeObserver(()=>c.resize()).observe(el)}c.setOption(opt,true);c.resize()};
   if(this.view==='negocio'){const mu=css('--muted'),ink=css('--ink'),ok=css('--ok-bar'),cs=['#1C2A6B','#6E7FD0','#B7C0E8'];
-   mkc('ch-cli',{textStyle:{fontFamily:'Inter'},aria:{enabled:true},grid:{left:34,right:8,top:30,bottom:28},tooltip:{trigger:'axis'},legend:{top:0,left:0,textStyle:{color:ink,fontSize:12},itemWidth:12,itemHeight:12},
-    xAxis:{type:'category',boundaryGap:false,data:DIA.map(d=>d.f),axisLabel:{color:mu,fontSize:11,interval:4},axisTick:{show:false},axisLine:{lineStyle:{color:'#DDE2EF'}}},yAxis:{type:'value',axisLabel:{color:mu,fontSize:11},splitLine:{lineStyle:{color:'#EEF1F8'}}},
+   mkc('ch-cli',{textStyle:{fontFamily:'Inter'},aria:{enabled:true},animationDuration:450,animationDurationUpdate:200,grid:{left:28,right:6,top:40,bottom:22},tooltip:{trigger:'axis'},legend:{top:0,left:0,textStyle:{color:ink,fontSize:11},itemWidth:10,itemHeight:10},
+    xAxis:{type:'category',boundaryGap:false,data:DIA.map(d=>d.f),axisLabel:{color:mu,fontSize:10.5,interval:4},axisTick:{show:false},axisLine:{lineStyle:{color:'#DDE2EF'}}},yAxis:{type:'value',axisLabel:{color:mu,fontSize:10.5},splitLine:{lineStyle:{color:'#EEF1F8'}}},
     series:this.clientes.map((c,i)=>({name:c.n,type:'line',stack:'t',smooth:true,symbol:'none',data:c.s,itemStyle:{color:cs[i]},lineStyle:{width:1.5,color:cs[i]},areaStyle:{color:cs[i],opacity:.9}}))});
-   const P=this.proy;mkc('ch-proy',{textStyle:{fontFamily:'Inter'},aria:{enabled:true},grid:{left:62,right:12,top:34,bottom:26},tooltip:{trigger:'axis'},legend:{top:0,left:0,textStyle:{color:ink,fontSize:12},itemWidth:12,itemHeight:12},
-    xAxis:{type:'category',data:P.map(p=>p.m),axisLabel:{color:mu,fontSize:11},axisTick:{show:false}},yAxis:[{type:'value',axisLabel:{color:mu,fontSize:11,formatter:v=>'US$ '+v},splitLine:{lineStyle:{color:'#EEF1F8'}}}],
+   const P=this.proy;mkc('ch-proy',{textStyle:{fontFamily:'Inter'},aria:{enabled:true},animationDuration:450,animationDurationUpdate:200,grid:{left:52,right:6,top:28,bottom:22},tooltip:{trigger:'axis'},legend:{top:0,left:0,textStyle:{color:ink,fontSize:11},itemWidth:10,itemHeight:10},
+    xAxis:{type:'category',data:P.map(p=>p.m),axisLabel:{color:mu,fontSize:10.5},axisTick:{show:false}},yAxis:[{type:'value',axisLabel:{color:mu,fontSize:10.5,formatter:v=>'US$ '+v},splitLine:{lineStyle:{color:'#EEF1F8'}}}],
     series:[{name:'Ingresos',type:'bar',data:P.map(p=>Math.round(p.ing)),itemStyle:{color:'#3B4FB4',borderRadius:[4,4,0,0]},barMaxWidth:26},{name:'Costo total',type:'bar',data:P.map(p=>Math.round(p.cos)),itemStyle:{color:'#A8B1CC',borderRadius:[4,4,0,0]},barMaxWidth:26}]})}
   if(this.view==='resumen'){
   const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim(),sl=this.sl;
   const ok=css('--ok-bar'),wa=css('--warn-bar'),ba=css('--bad-bar'),ink=css('--ink'),mu=css('--muted'),ln='#DDE2EF';
   const mk=(id,opt)=>{const el=document.getElementById(id);if(!el)return;let c=echarts.getInstanceByDom(el);if(!c){c=echarts.init(el,null,{renderer:'svg'});new ResizeObserver(()=>c.resize()).observe(el)}c.setOption(opt,true);c.resize()};
-  const base={textStyle:{fontFamily:'Inter'},aria:{enabled:true}};
+  const base={textStyle:{fontFamily:'Inter'},aria:{enabled:true},animationDuration:450,animationDurationUpdate:200,animationEasing:'cubicOut'};
   const labs=sl.map(d=>d.f),inc=INC_IDX-(30-this.per);
-  const inM=inc>=0?[{xAxis:inc,label:{formatter:'Modelo caído\n(3 h)',color:ba,fontWeight:700,fontSize:11,position:'end'},lineStyle:{color:ba,type:'dashed',width:1.5}}]:[];
-  mk('ch-casos',{...base,grid:{left:34,right:8,top:30,bottom:28},tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},legend:{show:false},
-   xAxis:{type:'category',data:labs,axisLabel:{color:mu,fontSize:11,interval:this.per===7?0:4},axisLine:{lineStyle:{color:ln}},axisTick:{show:false}},
-   yAxis:{type:'value',name:'denuncias',nameTextStyle:{color:mu,fontSize:11,align:'left'},axisLabel:{color:mu,fontSize:11},splitLine:{lineStyle:{color:'#EEF1F8'}}},
-   series:[{name:'Modelo principal',type:'bar',stack:'a',data:sl.map(d=>d.o),itemStyle:{color:ok},barMaxWidth:22},{name:'Modelo de respaldo',type:'bar',stack:'a',data:sl.map(d=>d.r),itemStyle:{color:wa}},
+  const inM=inc>=0?[{xAxis:inc,label:{formatter:'Modelo caído',color:ba,fontWeight:700,fontSize:10.5,position:'insideEndTop'},lineStyle:{color:ba,type:'dashed',width:1.5}}]:[];
+  mk('ch-casos',{...base,grid:{left:26,right:4,top:12,bottom:22},tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},legend:{show:false},
+   xAxis:{type:'category',data:labs,axisLabel:{color:mu,fontSize:10.5,interval:this.per===7?0:4},axisLine:{lineStyle:{color:ln}},axisTick:{show:false}},
+   yAxis:{type:'value',axisLabel:{color:mu,fontSize:10.5},splitLine:{lineStyle:{color:'#EEF1F8'}}},
+   series:[{name:'Modelo principal',type:'bar',stack:'a',data:sl.map(d=>d.o),itemStyle:{color:ok},barMaxWidth:18},{name:'Modelo de respaldo',type:'bar',stack:'a',data:sl.map(d=>d.r),itemStyle:{color:wa}},
     {name:'Revisión manual',type:'bar',stack:'a',data:sl.map(d=>d.m),itemStyle:{color:ba,borderRadius:[3,3,0,0]},markLine:{symbol:'none',data:inM}}]});
-  mk('ch-lat',{...base,grid:{left:36,right:12,top:34,bottom:28},tooltip:{trigger:'axis',valueFormatter:v=>v+' s'},legend:{top:0,right:0,textStyle:{color:ink,fontSize:12},itemWidth:14,itemHeight:4},
-   xAxis:{type:'category',data:labs,boundaryGap:false,axisLabel:{color:mu,fontSize:11,interval:this.per===7?0:4},axisLine:{lineStyle:{color:ln}},axisTick:{show:false}},
-   yAxis:{type:'value',name:'segundos',nameTextStyle:{color:mu,fontSize:11,align:'left'},axisLabel:{color:mu,fontSize:11},splitLine:{lineStyle:{color:'#EEF1F8'}},max:70},
+  mk('ch-lat',{...base,grid:{left:28,right:6,top:24,bottom:22},tooltip:{trigger:'axis',valueFormatter:v=>v+' s'},legend:{top:0,right:0,textStyle:{color:ink,fontSize:11},itemWidth:12,itemHeight:4},
+   xAxis:{type:'category',data:labs,boundaryGap:false,axisLabel:{color:mu,fontSize:10.5,interval:this.per===7?0:4},axisLine:{lineStyle:{color:ln}},axisTick:{show:false}},
+   yAxis:{type:'value',axisLabel:{color:mu,fontSize:10.5},splitLine:{lineStyle:{color:'#EEF1F8'}},max:70},
    series:[{name:'9 de cada 10 casos',type:'line',data:P95.slice(30-this.per),smooth:true,symbol:'none',lineStyle:{color:'#7C88B8',width:2},areaStyle:{color:'rgba(124,136,184,.18)'}},
     {name:'Caso típico',type:'line',data:P50.slice(30-this.per),smooth:true,symbol:'none',lineStyle:{color:'#3B4FB4',width:3},areaStyle:{color:'rgba(59,79,180,.22)'},
-     markLine:{symbol:'none',silent:true,data:[{yAxis:15,label:{formatter:'Meta 15 s',color:ok,fontWeight:700,position:'insideEndTop'},lineStyle:{color:ok,type:'dashed',width:2}}]}}]});
-  mk('ch-gauge',{...base,series:[{type:'gauge',startAngle:200,endAngle:-20,min:0,max:100,radius:'95%',center:['50%','62%'],
-   axisLine:{lineStyle:{width:16,color:[[.7,ba],[.8,wa],[1,ok]]}},pointer:{width:5,length:'62%',itemStyle:{color:ink}},anchor:{show:true,size:10,itemStyle:{color:ink}},
-   axisTick:{show:false},splitLine:{show:false},axisLabel:{distance:-34,color:mu,fontSize:10,formatter:v=>[0,70,80,100].includes(v)?v:''},splitNumber:10,
-   detail:{valueAnimation:true,formatter:'{value} %',fontSize:26,fontWeight:700,color:ink,offsetCenter:[0,'38%']},title:{show:true,offsetCenter:[0,'66%'],fontSize:12,color:mu},data:[{value:74,name:'Meta: 80 %'}]}]});
-  const dias=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],fr=['0-3 h','3-6 h','6-9 h','9-12 h','12-15 h','15-18 h','18-21 h','21-24 h'],hd=[];
+     markLine:{symbol:'none',silent:true,data:[{yAxis:15,label:{formatter:'Meta 15 s',color:ok,fontWeight:700,fontSize:10.5,position:'insideEndTop'},lineStyle:{color:ok,type:'dashed',width:2}}]}}]});
+  const dias=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],fr=['0-3 h','3-6 h','6-9 h','9-12 h','12-15 h','15-18 h','18-21 h','21-24 h'],fh=v=>parseInt(v)+' h',hd=[];
   dias.forEach((d,i)=>fr.forEach((f,j)=>{const lab=i<5?[1,0,4,13,10,12,4,2][j]:[1,0,0,3,4,3,1,1][j];hd.push([j,i,Math.max(0,lab+((i*3+j*2)%4)-1)])}));
-  mk('ch-heat',{...base,grid:{left:40,right:8,top:8,bottom:62},tooltip:{formatter:p=>dias[p.value[1]]+' '+fr[p.value[0]]+': '+p.value[2]+' denuncias'},
-   xAxis:{type:'category',data:fr,splitArea:{show:false},axisLabel:{color:mu,fontSize:10,interval:0,rotate:35},axisLine:{show:false},axisTick:{show:false}},
-   yAxis:{type:'category',data:dias,inverse:true,axisLabel:{color:mu,fontSize:11},axisLine:{show:false},axisTick:{show:false}},
-   visualMap:{min:0,max:16,orient:'horizontal',left:'center',bottom:0,itemWidth:12,itemHeight:90,text:['Más','Menos'],textStyle:{color:mu,fontSize:11},inRange:{color:['#EEF1FB','#9AA8E0','#3B4FB4','#1C2A6B']}},
-   series:[{type:'heatmap',data:hd,itemStyle:{borderColor:'#fff',borderWidth:2,borderRadius:3},label:{show:true,fontSize:10,formatter:p=>p.value[2]>=6?(p.value[2]>=10?'{w|'+p.value[2]+'}':'{d|'+p.value[2]+'}'):'',rich:{w:{color:'#fff',fontSize:10},d:{color:'#0F1736',fontSize:10}}}}]});
+  mk('ch-heat',{...base,grid:{left:30,right:4,top:4,bottom:46},tooltip:{formatter:p=>dias[p.value[1]]+' '+fr[p.value[0]]+': '+p.value[2]+' denuncias'},
+   xAxis:{type:'category',data:fr,splitArea:{show:false},axisLabel:{color:mu,fontSize:10,interval:0,formatter:fh},axisLine:{show:false},axisTick:{show:false}},
+   yAxis:{type:'category',data:dias,inverse:true,axisLabel:{color:mu,fontSize:10.5},axisLine:{show:false},axisTick:{show:false}},
+   visualMap:{min:0,max:16,orient:'horizontal',left:'center',bottom:0,itemWidth:10,itemHeight:80,text:['Más','Menos'],textStyle:{color:mu,fontSize:10.5},inRange:{color:['#EEF1FB','#9AA8E0','#3B4FB4','#1C2A6B']}},
+   series:[{type:'heatmap',data:hd,itemStyle:{borderColor:'#fff',borderWidth:1.5,borderRadius:2},label:{show:true,fontSize:10,formatter:p=>p.value[2]>=6?(p.value[2]>=10?'{w|'+p.value[2]+'}':'{d|'+p.value[2]+'}'):'',rich:{w:{color:'#fff',fontSize:10},d:{color:'#0F1736',fontSize:10}}}}]});
   }
  }
 }}
