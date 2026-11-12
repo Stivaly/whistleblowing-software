@@ -1,0 +1,821 @@
+<title>Kerna AI Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6FB; --surface:#FFFFFF; --ink:#0F1736; --muted:#4F5B85; --line:#DDE2EF; --line-strong:#B9C1DA;
+  --brand:#1C2A6B; --brand-2:#3B4FB4; --brand-soft:#E8ECFA; --lime:#CFFF5E; --lime-ink:#3F6212;
+  --ok:#1F7A3D; --ok-bg:#E5F5EA; --ok-bar:#2F9255;
+  --warn:#8F5200; --warn-bg:#FFF1D6; --warn-bar:#D68A00;
+  --bad:#B42318; --bad-bg:#FDE9E7; --bad-bar:#D4372A;
+  --na:#4F5B85; --na-bg:#ECEFF6; --na-bar:#A8B1CC;
+  --radius:14px; --shadow:0 1px 2px rgba(15,23,54,.05),0 4px 16px rgba(15,23,54,.05);
+}
+html{color-scheme:light}
+body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;margin:0}
+*{box-sizing:border-box}
+.disp{font-family:Unbounded,Inter,sans-serif;letter-spacing:-.01em}
+.muted{color:var(--muted)}
+:focus-visible{outline:3px solid var(--brand-2);outline-offset:2px;border-radius:6px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--brand);color:#fff;padding:8px 14px;border-radius:8px;z-index:100}
+.skip:focus{left:8px}
+k-ic{display:inline-flex;width:1.1em;height:1.1em;flex:none;vertical-align:-.15em}k-ic svg{width:100%;height:100%}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;font-weight:600;font-size:14px;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background .15s,transform .05s;font-family:inherit}
+.btn:active{transform:translateY(1px)}
+.btn-pri{background:var(--lime);color:var(--brand);border-color:#A9D43A;box-shadow:0 1px 0 rgba(28,42,107,.15)}
+.btn-pri:hover{background:#C2F54A}
+.btn-dark{background:var(--brand);color:#fff}.btn-dark:hover{background:#26398C}
+.btn-sec{background:#fff;color:var(--brand);border-color:var(--line-strong)}.btn-sec:hover{background:var(--brand-soft)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 7px;border-radius:999px;font-size:12.5px;font-weight:600;line-height:1.4;white-space:nowrap}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.chip.bad{background:var(--bad-bg);color:var(--bad)}.chip.na{background:var(--na-bg);color:var(--na)}
+.chip.brand{background:var(--brand-soft);color:var(--brand)}
+.bd-ok{border-left:4px solid var(--ok-bar)}.bd-warn{border-left:4px solid var(--warn-bar)}.bd-bad{border-left:4px solid var(--bad-bar)}.bd-na{border-left:4px solid var(--na-bar)}
+.t-ok{color:var(--ok)}.t-warn{color:var(--warn)}.t-bad{color:var(--bad)}.t-na{color:var(--na)}
+.f-ok{background:var(--ok-bar)}.f-warn{background:var(--warn-bar)}.f-bad{background:var(--bad-bar)}.f-na{background:var(--na-bar)}
+/* tooltip trigger */
+k-tip{display:inline-flex;vertical-align:middle}
+k-tip button{all:unset;cursor:help;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;color:var(--muted);box-sizing:border-box}
+k-tip button{position:relative}k-tip button::after{content:'';position:absolute;inset:-11px}
+k-tip button:hover{color:var(--brand);background:var(--brand-soft)}
+k-tip button:focus-visible{outline:3px solid var(--brand-2);outline-offset:1px}
+k-tip k-ic{width:17px;height:17px}
+#tt{position:fixed;z-index:80;max-width:min(320px,calc(100vw - 24px));background:var(--brand);color:#fff;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;box-shadow:0 10px 30px rgba(15,23,54,.35);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+#tt.on{opacity:1;transform:none}
+#tt b{display:block;font-size:13px;margin-bottom:4px}
+#tt .l{display:block;margin-top:8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--lime)}
+/* nav */
+.nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--ink);font-weight:500;font-size:14px;text-decoration:none;position:relative}
+.nav a:hover{background:var(--brand-soft)}
+.nav a.on{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.nav a.on::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:4px;border-radius:0 4px 4px 0;background:var(--brand)}
+.nav a.gen{background:var(--lime);color:var(--brand);font-weight:700;border:1px solid #A9D43A}
+.nav a.gen:hover{background:#C2F54A}
+.tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 10px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;min-height:56px;justify-content:center}
+.tabbar a.on{color:var(--brand)}.tabbar a.on k-ic{background:var(--brand-soft);border-radius:8px;width:44px;height:26px;padding:3px 13px}
+.tabbar a.gen{color:var(--brand)}.tabbar a.gen k-ic{background:var(--lime);border-radius:8px;width:44px;height:26px;padding:3px 13px}
+/* segmented */
+.seg{display:inline-flex;background:var(--na-bg);padding:3px;border-radius:12px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;min-height:44px;padding:0 14px;border-radius:9px;font:600 13px Inter;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed=true]{background:#fff;color:var(--brand);box-shadow:0 1px 3px rgba(15,23,54,.18)}
+/* switch */
+.sw{width:50px;height:30px;border-radius:999px;background:#8E98BB;border:0;position:relative;cursor:pointer;flex:none;transition:background .15s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw[aria-checked=true]{background:var(--ok)}.sw[aria-checked=true]::after{transform:translateX(20px)}
+/* range */
+.range{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;cursor:pointer;--p:50%}
+.range::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--brand-2) var(--p),#D5DBEC var(--p))}
+.range::-moz-range-track{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--brand-2) var(--p),#D5DBEC var(--p))}
+.range::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--brand);margin-top:-8px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.range::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--brand)}
+.range:disabled{opacity:.4}
+.field{display:block;width:100%;min-height:44px;border:1px solid var(--line-strong);border-radius:10px;padding:0 12px;font:500 14px Inter;color:var(--ink);background:#fff}
+.hm text{font-family:Inter}
+.spin{animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.orbit{transform-origin:32px 32px;animation:orb 40s linear infinite}@keyframes orb{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.orbit,.spin{animation:none}*{transition:none!important}}
+.stepdot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--na-bg);color:var(--muted);flex:none}
+.stepdot.on{background:var(--brand);color:#fff}.stepdot.done{background:var(--ok);color:#fff}
+.doc h3{font-size:17px;font-weight:700;color:var(--brand);margin:0}
+.conc{font-weight:700;font-size:15.5px;line-height:1.45;margin:0 0 12px}
+[x-cloak]{display:none!important}
+.gl{width:100%;height:100%}
+.text-xs{font-size:12.5px!important;line-height:1.45!important}
+.btn.\!min-h-\[38px\]{min-height:44px!important}
+@media(max-width:639px){.estado-ic{width:44px!important;height:44px!important}.estado-t{font-size:18px!important}}
+</style>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>tailwind.config={theme:{extend:{colors:{brand:'var(--brand)',ink:'var(--ink)',line:'var(--line)',surface:'var(--surface)',mut:'var(--muted)'}}}}</script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="kmark" viewBox="-1 -1 66 66"><g class="orbit" fill="none" stroke="#1C2A6B" stroke-linecap="round"><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.4" opacity=".7" transform="rotate(30 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.4" opacity=".7" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.4" opacity=".7" transform="rotate(90 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.4" opacity=".7" transform="rotate(120 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.4" opacity=".7" transform="rotate(150 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.6"/><circle cx="59" cy="32" r="3.8" fill="#CFFF5E" stroke-width="1.6"/></g><circle cx="32" cy="32" r="5.4" fill="#1C2A6B"/><circle cx="32" cy="32" r="2" fill="#CFFF5E"/></symbol>
+</defs></svg>
+
+<div id="tt" role="tooltip"></div>
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<div x-data="app()" x-init="init()" x-cloak class="min-h-screen">
+
+<!-- ================= PORTADA PUBLICA ================= -->
+<div x-show="view==='portada'">
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b" style="border-color:var(--line)">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+      <a href="#/portada" class="flex items-center gap-2.5 no-underline" style="color:var(--brand)"><svg width="34" height="34"><use href="#kmark"/></svg><span class="disp font-bold tracking-wider">KERNA<span class="text-[10px] ml-1 align-top" style="color:var(--lime-ink)">AI</span></span></a>
+      <nav aria-label="Portada" class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="#como" class="hover:underline" style="color:var(--ink)">Cómo funciona</a><a href="#proteccion" class="hover:underline" style="color:var(--ink)">Protección</a><a href="#leyes" class="hover:underline" style="color:var(--ink)">Leyes</a>
+      </nav>
+      <a href="#/resumen" class="btn btn-dark">Entrar al panel <k-ic n="arrow-right"></k-ic></a>
+    </div>
+  </header>
+
+  <section class="max-w-6xl mx-auto px-4 pt-10 pb-12 md:pt-16 grid md:grid-cols-2 gap-10 items-center">
+    <div>
+      <span class="chip brand mb-4"><k-ic n="shield-check"></k-ic> Para el canal de denuncias Veridy</span>
+      <h1 class="disp text-[32px] md:text-[46px] leading-[1.1] font-bold m-0" style="color:var(--brand)">De los hechos a la norma, en <span style="background:linear-gradient(transparent 62%,var(--lime) 62%)">segundos</span>.</h1>
+      <p class="text-lg mt-4 mb-6 muted max-w-[34em]">Kerna lee cada denuncia dentro de Veridy y sugiere qué leyes y artículos chilenos podrían aplicar, con la cita exacta que los respalda. Una persona decide siempre.</p>
+      <div class="flex flex-wrap gap-3"><a href="#/resumen" class="btn btn-pri">Ver el panel <k-ic n="layout-dashboard"></k-ic></a><a href="#como" class="btn btn-sec">Cómo funciona</a></div>
+      <ul class="flex flex-wrap gap-x-5 gap-y-2 mt-6 p-0 list-none text-sm muted"><li class="flex items-center gap-1.5"><k-ic n="eye-off"></k-ic> Sin datos personales</li><li class="flex items-center gap-1.5"><k-ic n="lock"></k-ic> Cifrado de punta a punta</li><li class="flex items-center gap-1.5"><k-ic n="quote"></k-ic> Siempre con cita</li></ul>
+    </div>
+    <div class="relative">
+      <div class="card p-5 md:p-6 relative overflow-hidden">
+        <div class="absolute -right-16 -bottom-16 opacity-[.09] pointer-events-none" aria-hidden="true"><svg width="220" height="220"><use href="#kmark"/></svg></div>
+        <div class="flex items-center justify-between mb-3 relative"><span class="chip brand"><k-ic n="sparkles"></k-ic> Sugerencia de Kerna</span><span class="text-xs muted">Ejemplo ilustrativo</span></div>
+        <p class="text-sm muted m-0 mb-3 relative">Caso 1042 · «Un jefe me grita y me humilla frente al equipo desde hace meses…»</p>
+        <div class="rounded-xl border p-4 mb-3 relative bg-white" style="border-color:var(--line)">
+          <div class="flex items-center justify-between gap-2 mb-1"><b class="text-sm">Ley 21.643 (Ley Karin) · art. 2</b><span class="chip ok"><k-ic n="circle-check"></k-ic> Alta coincidencia</span></div>
+          <p class="text-sm m-0" style="color:var(--ink)">«…el acoso laboral es toda conducta que constituya agresión u hostigamiento ejercida por el empleador o por uno o más trabajadores…»</p>
+        </div>
+        <div class="rounded-xl border p-4 relative bg-white" style="border-color:var(--line)">
+          <div class="flex items-center justify-between gap-2 mb-1"><b class="text-sm">Código del Trabajo · art. 160</b><span class="chip warn"><k-ic n="triangle-alert"></k-ic> Revisar</span></div>
+          <p class="text-sm m-0 muted">Posible causal de término del contrato por conducta indebida.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="como" class="max-w-6xl mx-auto px-4 py-10">
+    <p class="text-xs font-semibold tracking-widest uppercase m-0 muted">Cómo funciona</p>
+    <h2 class="disp text-2xl font-bold mt-1 mb-6" style="color:var(--brand)">Cuatro pasos, ninguno expone a nadie</h2>
+    <ol class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 p-0 list-none m-0">
+      <template x-for="(p,i) in pasos" :key="i"><li class="card p-5">
+        <div class="flex items-center justify-between mb-3"><span class="grid place-items-center w-11 h-11 rounded-xl" :style="i===3?'background:var(--lime);color:var(--brand)':'background:var(--brand-soft);color:var(--brand)'"><k-ic :n="p.i" style="width:22px;height:22px"></k-ic></span><span class="text-xs font-bold muted" x-text="'Paso '+(i+1)"></span></div>
+        <b class="block mb-1" x-text="p.t"></b><p class="m-0 text-sm muted" x-text="p.d"></p></li></template>
+    </ol>
+  </section>
+
+  <section id="proteccion" class="max-w-6xl mx-auto px-4 py-10">
+    <div class="rounded-3xl p-6 md:p-10 grid md:grid-cols-2 gap-8" style="background:var(--brand);color:#fff">
+      <div><p class="text-xs font-semibold tracking-widest uppercase m-0" style="color:var(--lime)">Protección</p><h2 class="disp text-2xl font-bold mt-1 mb-3">Primero se anonimiza, siempre</h2><p class="m-0" style="color:#DCE2FA">Ningún modelo de IA ve nombres, RUT, correos ni teléfonos: se reemplazan antes de enviar el texto. Lo que Kerna produce queda cifrado con la clave del caso en Veridy.</p></div>
+      <ul class="list-none p-0 m-0 grid gap-3">
+        <li class="flex gap-3 items-start rounded-xl p-4" style="background:rgba(255,255,255,.1)"><k-ic n="eye-off" style="width:24px;height:24px;color:var(--lime)"></k-ic><div><b>Anonimizador previo</b><p class="m-0 text-sm" style="color:#DCE2FA">Datos personales fuera antes de cualquier modelo.</p></div></li>
+        <li class="flex gap-3 items-start rounded-xl p-4" style="background:rgba(255,255,255,.1)"><k-ic n="lock" style="width:24px;height:24px;color:var(--lime)"></k-ic><div><b>Cifrado de Veridy</b><p class="m-0 text-sm" style="color:#DCE2FA">La denuncia solo existe en claro en memoria.</p></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="leyes" class="max-w-6xl mx-auto px-4 py-10">
+    <p class="text-xs font-semibold tracking-widest uppercase m-0 muted">Leyes cubiertas</p>
+    <h2 class="disp text-2xl font-bold mt-1 mb-6" style="color:var(--brand)">Normativa chilena vigente</h2>
+    <div class="grid md:grid-cols-3 gap-4">
+      <template x-for="l in leyes" :key="l.n"><div class="card p-5"><span class="inline-block disp font-bold text-sm px-2.5 py-1 rounded-lg mb-3" style="background:var(--lime);color:var(--brand)" x-text="l.n"></span><b class="block" x-text="l.t"></b><p class="m-0 mt-1 text-sm muted" x-text="l.d"></p></div></template>
+    </div>
+    <div class="card p-5 mt-6 flex gap-4 items-start bd-warn"><k-ic n="triangle-alert" style="width:24px;height:24px;color:var(--warn)"></k-ic><div><b>Es una sugerencia, no un dictamen</b><p class="m-0 text-sm muted">Kerna orienta a quien analiza el caso; no reemplaza el criterio ni la asesoría jurídica. La decisión siempre es de una persona.</p></div></div>
+  </section>
+  <footer class="max-w-6xl mx-auto px-4 pb-10 pt-4 text-sm muted">Kerna AI · parte de Veridy · normativa según la Biblioteca del Congreso Nacional de Chile</footer>
+</div>
+
+<!-- ================= APP ================= -->
+<div x-show="view!=='portada'" class="lg:flex">
+  <aside class="hidden lg:flex flex-col w-64 shrink-0 h-screen sticky top-0 bg-white border-r p-5 gap-6" style="border-color:var(--line)" aria-label="Menú lateral">
+    <a href="#/portada" class="flex items-center gap-2.5 no-underline" style="color:var(--brand)" aria-label="Kerna AI, ir a la portada"><svg width="38" height="38"><use href="#kmark"/></svg><span class="disp font-bold tracking-wider text-lg">KERNA<span class="text-[10px] ml-1 align-top" style="color:var(--lime-ink)">AI</span></span></a>
+    <nav class="nav grid gap-1.5 ml-3" aria-label="Principal">
+      <a href="#/informe" class="gen" :aria-current="view==='informe'?'page':null" :class="view==='informe'?'ring-2 ring-[#1C2A6B]':''"><k-ic n="file-down"></k-ic> Generar informe</a>
+      <p class="m-0 mt-3 px-3 text-[11px] font-bold tracking-widest uppercase muted">Operación</p>
+      <a href="#/resumen" :class="view==='resumen'?'on':''" :aria-current="view==='resumen'?'page':null"><k-ic n="layout-dashboard"></k-ic> Resumen</a>
+      <a href="#/ajustes" :class="view==='ajustes'?'on':''" :aria-current="view==='ajustes'?'page':null"><k-ic n="sliders-horizontal"></k-ic> Ajustes<span x-show="cambios.length" class="chip warn ml-auto" x-text="cambios.length"></span></a>
+      <p class="m-0 mt-3 px-3 text-[11px] font-bold tracking-widest uppercase muted">Negocio</p>
+      <a href="#/negocio" :class="view==='negocio'?'on':''" :aria-current="view==='negocio'?'page':null"><k-ic n="briefcase-business"></k-ic> Clientes y márgenes</a>
+    </nav>
+    <div class="mt-auto grid gap-3">
+      <div class="rounded-xl p-3 text-xs" style="background:var(--warn-bg);color:var(--warn)"><b class="flex items-center gap-1.5"><k-ic n="flask-conical"></k-ic> Datos de ejemplo</b><span class="block mt-1">Esta maqueta no está conectada a datos reales.</span></div>
+      <a href="#/portada" class="flex items-center gap-2 text-sm font-medium no-underline" style="color:var(--muted)"><k-ic n="globe"></k-ic> Ver portada pública</a>
+    </div>
+  </aside>
+
+  <div class="flex-1 min-w-0 pb-24 lg:pb-10">
+    <header class="lg:hidden sticky top-0 z-30 bg-white border-b h-14 px-4 flex items-center justify-between" style="border-color:var(--line)">
+      <a href="#/portada" class="flex items-center gap-2 no-underline" style="color:var(--brand)" aria-label="Kerna AI, portada"><svg width="30" height="30"><use href="#kmark"/></svg><span class="disp font-bold tracking-wider">KERNA</span></a>
+      <span class="chip warn"><k-ic n="flask-conical"></k-ic> Ejemplo</span>
+    </header>
+
+    <main id="main" class="max-w-6xl mx-auto px-4 lg:px-8 pt-6 lg:pt-8">
+
+<!-- ========== RESUMEN ========== -->
+<div x-show="view==='resumen'" class="grid gap-5">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div><h1 class="disp text-2xl font-bold m-0" style="color:var(--brand)">Resumen</h1><p class="m-0 mt-1 muted text-sm">Cómo está funcionando Kerna · actualizado hoy 12 nov, 10:42</p></div>
+    <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+      <div class="seg" role="group" aria-label="Período"><template x-for="p in [7,30]"><button type="button" :aria-pressed="per===p" @click="setPer(p)" x-text="'Últimos '+p+' días'"></button></template></div>
+      <a href="#/informe" class="btn btn-pri w-full sm:w-auto"><k-ic n="file-down"></k-ic> Generar informe de gestión</a>
+    </div>
+  </div>
+
+  <!-- estado general -->
+  <section aria-labelledby="eg" class="card p-5 md:p-6 bd-warn">
+    <div class="flex flex-wrap items-start gap-4">
+      <span class="estado-ic grid place-items-center w-14 h-14 rounded-2xl shrink-0" style="background:var(--warn-bg);color:var(--warn)"><k-ic n="triangle-alert" style="width:30px;height:30px"></k-ic></span>
+      <div class="flex-1 min-w-[220px]">
+        <div class="flex flex-wrap items-center gap-2"><h2 id="eg" class="estado-t disp text-xl font-bold m-0">Estado general: atención</h2><k-tip g="estado"></k-tip></div>
+        <p class="m-0 mt-1 text-[15px]"><b>Kerna está funcionando</b>, pero hay 2 cosas por mejorar: las sugerencias aciertan menos de lo esperado y las respuestas son lentas. <a href="#inc" @click.prevent="document.getElementById('inc').scrollIntoView({behavior:'smooth',block:'center'})" class="font-semibold underline" style="color:var(--brand)">Ver qué hacer</a></p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
+      <template x-for="c in salud" :key="c.k"><div class="rounded-xl border p-3 bg-white" :class="'bd-'+c.e" style="border-color:var(--line)">
+        <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 font-semibold text-sm"><k-ic :n="c.i"></k-ic><span x-text="c.n"></span></span><k-tip :g="'salud_'+c.k"></k-tip></div>
+        <div class="mt-2"><span class="chip" :class="c.e"><k-ic :n="ico[c.e]"></k-ic><span x-text="est[c.e]"></span></span></div>
+        <p class="m-0 mt-2 text-[12.5px] sm:text-[13px] muted leading-snug" x-text="c.d"></p>
+      </div></template>
+    </div>
+  </section>
+
+  <!-- KPIs -->
+  <section aria-label="Indicadores clave" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <template x-for="k in kpis" :key="k.k"><article class="card p-4 flex flex-col" :class="'bd-'+k.e">
+      <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 text-sm font-semibold muted"><k-ic :n="k.i"></k-ic><span x-text="k.l"></span></span><k-tip :g="k.k"></k-tip></div>
+      <div class="flex items-end justify-between gap-2 mt-2">
+        <div><span class="text-[32px] leading-none font-bold tabular-nums" x-text="k.v"></span><span class="text-sm font-semibold muted ml-1" x-text="k.u"></span></div>
+        <svg viewBox="0 0 100 30" class="w-[88px] h-[30px] shrink-0" aria-hidden="true"><path :d="spark(k.s)" fill="none" :stroke="'var(--'+(k.e==='na'?'na':k.e)+'-bar)'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 mt-3">
+        <span class="chip" :class="k.e"><k-ic :n="ico[k.e]"></k-ic><span x-text="k.et"></span></span>
+        <span class="chip" :class="k.de" x-show="k.dt"><k-ic :n="k.da"></k-ic><span x-text="k.dt"></span></span>
+      </div>
+      <p class="m-0 mt-3 text-[13px] leading-snug" x-text="k.f"></p>
+      <p class="m-0 mt-auto pt-2 text-xs muted" x-text="k.m"></p>
+    </article></template>
+  </section>
+
+  <!-- casos por dia + modos -->
+  <section class="grid lg:grid-cols-3 gap-4">
+    <div class="card p-4 lg:col-span-2">
+      <div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por día y cómo se resolvieron</h2><k-tip g="casos_dia"></k-tip></div>
+      <p class="m-0 mb-2 text-sm muted">Cada barra es un día. Verde: resuelto por el modelo principal; ámbar: con respaldo; rojo: pasó a revisión manual.</p>
+      <div id="ch-casos" class="w-full" style="height:290px" role="img" aria-label="Gráfico de barras apiladas de denuncias por día y modo de resolución"></div>
+    </div>
+    <div class="card p-4">
+      <div class="flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">¿Cómo se resolvieron?</h2><k-tip g="modos"></k-tip></div>
+      <div class="flex h-4 rounded-full overflow-hidden mb-4" role="img" :aria-label="'Principal '+modos.o+', respaldo '+modos.r+', manual '+modos.m"><div class="f-ok" :style="'width:'+pct(modos.o,tot)+'%'"></div><div class="f-warn" :style="'width:'+pct(modos.r,tot)+'%'"></div><div class="f-bad" :style="'width:'+pct(modos.m,tot)+'%'"></div></div>
+      <p class="m-0 mb-3 text-sm"><b x-text="sugPct+' de cada 100'"></b> denuncias recibieron sugerencia (principal + respaldo).</p>
+      <ul class="list-none p-0 m-0 grid gap-3">
+        <li class="flex items-start gap-3"><span class="chip ok mt-0.5"><k-ic n="circle-check"></k-ic> Bien</span><div class="flex-1"><b>Modelo principal</b><div class="text-sm muted">Resolvió <b class="text-ink" style="color:var(--ink)" x-text="modos.o"></b> de <span x-text="tot"></span> (<span x-text="pct(modos.o,tot)"></span> %)</div></div></li>
+        <li class="flex items-start gap-3"><span class="chip warn mt-0.5"><k-ic n="triangle-alert"></k-ic> Atención</span><div class="flex-1"><b>Modelo de respaldo</b><div class="text-sm muted"><b style="color:var(--ink)" x-text="modos.r"></b> casos (<span x-text="pct(modos.r,tot)"></span> %). Entra cuando el principal falla.</div></div></li>
+        <li class="flex items-start gap-3"><span class="chip bad mt-0.5"><k-ic n="octagon-alert"></k-ic> Problema</span><div class="flex-1"><b>Revisión manual</b><div class="text-sm muted"><b style="color:var(--ink)" x-text="modos.m"></b> casos (<span x-text="pct(modos.m,tot)"></span> %). Nadie recibió sugerencia.</div></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- calidad + latencia -->
+  <section class="grid lg:grid-cols-2 gap-4">
+    <div class="card p-4">
+      <div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Qué tan buenas son las sugerencias?</h2><k-tip g="calidad"></k-tip></div>
+      <div class="grid sm:grid-cols-2 gap-2 items-center">
+        <div id="ch-gauge" style="height:210px" role="img" aria-label="Medidor de acierto: 74 por ciento, meta 80 por ciento"></div>
+        <div>
+          <span class="chip warn"><k-ic n="triangle-alert"></k-ic> 6 puntos bajo la meta</span>
+          <p class="m-0 mt-2 text-sm">Cuando existe un artículo correcto, <b>Kerna lo incluye entre sus 5 primeras sugerencias el 74 % de las veces</b>. La meta es 80 %.</p>
+          <p class="m-0 mt-2 text-xs muted">Medido sobre el conjunto público de pruebas · corte 11 nov</p>
+        </div>
+      </div>
+      <h3 class="text-sm font-bold mt-4 mb-2 flex items-center gap-1.5">Acierto por ley <k-tip g="acierto_ley"></k-tip></h3>
+      <ul class="list-none p-0 m-0 grid gap-3">
+        <template x-for="l in aciertos" :key="l.n"><li>
+          <div class="flex items-center justify-between gap-2 text-sm"><span x-text="l.n"></span><span class="chip" :class="l.e"><k-ic :n="ico[l.e]"></k-ic><span x-text="l.v+' %'"></span></span></div>
+          <div class="relative h-3 rounded-full mt-1.5" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+l.e" :style="'width:'+l.v+'%'"></div><div class="absolute -top-1 w-0.5 h-5 rounded" style="left:80%;background:var(--ink)" title="Meta 80 %"></div></div>
+        </li></template>
+      </ul>
+      <p class="m-0 mt-2 text-xs muted flex items-center gap-1"><span class="inline-block w-0.5 h-3 rounded" style="background:var(--ink)"></span> Meta: 80 %</p>
+      <div class="mt-4 rounded-xl p-3 flex gap-3 items-start" style="background:var(--na-bg)"><k-ic n="message-square-off" style="width:22px;height:22px;color:var(--na)"></k-ic><div class="text-sm"><b class="flex items-center gap-1.5">Valoraciones de auditores <span class="chip na"><k-ic n="circle-minus"></k-ic> Sin datos</span><k-tip g="valoraciones"></k-tip></b><span class="muted">Aún nadie ha marcado una sugerencia como útil o no útil. Cuando lo hagan, verás aquí el porcentaje.</span></div></div>
+    </div>
+
+    <div class="card p-4">
+      <div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Qué tan rápido responde?</h2><k-tip g="latencia"></k-tip></div>
+      <p class="m-0 mb-2 text-sm">La mitad de los casos recibe sugerencia en <b x-text="p50+' s'"></b>; la meta es 15 s.</p>
+      <div id="ch-lat" style="height:250px" role="img" aria-label="Gráfico de área del tiempo de respuesta por día frente a la meta de 15 segundos"></div>
+      <div class="grid grid-cols-2 gap-3 mt-3">
+        <div class="rounded-xl p-3" style="background:var(--warn-bg)"><span class="chip warn"><k-ic n="triangle-alert"></k-ic> Sobre la meta</span><div class="mt-1.5 text-sm">Caso típico: <b x-text="p50+' s'"></b></div></div>
+        <div class="rounded-xl p-3" style="background:var(--bad-bg)"><span class="chip bad"><k-ic n="octagon-alert"></k-ic> Muy lento</span><div class="mt-1.5 text-sm">9 de cada 10 casos: <b class="whitespace-nowrap" x-text="'menos de '+p95+' s'"></b></div></div>
+      </div>
+      <h3 class="text-sm font-bold mt-4 mb-2">¿Dónde se va el tiempo de un caso?</h3>
+      <ul class="list-none p-0 m-0 grid gap-2"><template x-for="e in etapas" :key="e.n"><li class="grid grid-cols-[120px_1fr_44px] items-center gap-3 text-sm"><span x-text="e.n"></span><div class="h-3 rounded-full" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+e.e" :style="'width:'+(e.s/20*100)+'%'"></div></div><b class="tabular-nums text-right" x-text="e.s+' s'"></b></li></template></ul>
+      <p class="m-0 mt-2 text-xs muted">Redactar la sugerencia ocupa 7 de cada 10 segundos: ahí está la mejora principal.</p>
+    </div>
+  </section>
+
+  <!-- incidentes -->
+  <section class="card p-4 md:p-5" aria-labelledby="inc">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-3"><div class="flex items-center gap-1.5"><h2 id="inc" class="text-base font-bold m-0">¿Qué falló y qué hacer?</h2><k-tip g="incidentes"></k-tip></div>
+      <a href="#/ajustes" class="btn btn-sec !min-h-[38px]"><k-ic n="sliders-horizontal"></k-ic> Ir a Ajustes</a></div>
+    <div class="grid gap-3">
+      <template x-for="i in incidentes" :key="i.c"><div class="rounded-xl border p-3 md:p-4 grid md:grid-cols-[1.1fr_100px_2fr] gap-2 md:gap-4 items-start bg-white" :class="'bd-'+i.e" style="border-color:var(--line)">
+        <div><span class="chip" :class="i.e"><k-ic :n="ico[i.e]"></k-ic><span x-text="est[i.e]"></span></span><b class="block mt-1.5" x-text="i.c"></b></div>
+        <div><span class="text-2xl font-bold tabular-nums" x-text="i.n"></span><span class="text-xs muted block">casos</span></div>
+        <div class="text-sm flex gap-2"><k-ic n="lightbulb" style="color:var(--brand-2);margin-top:2px"></k-ic><span><b>Qué hacer:</b> <span x-text="i.a"></span></span></div>
+      </div></template>
+    </div>
+    <div class="mt-4 rounded-xl p-4 flex flex-wrap items-center gap-4" style="background:var(--warn-bg)">
+      <k-ic n="rotate-cw" style="width:26px;height:26px;color:var(--warn)"></k-ic>
+      <div class="flex-1 min-w-[200px] text-sm"><b>12 casos esperan un nuevo intento</b> <k-tip g="pendientes"></k-tip><br><span>Próximo intento automático: mañana 09:00 · hasta 3 intentos por caso, cada 24 h.</span></div>
+      <div class="w-full sm:w-48"><div class="flex justify-between text-xs mb-1"><span>Intentos usados</span><b>1 de 3</b></div><div class="h-2.5 rounded-full" style="background:#fff"><div class="h-2.5 rounded-full f-warn" style="width:33%"></div></div></div>
+    </div>
+  </section>
+
+  <!-- heatmap + costo -->
+  <section class="grid lg:grid-cols-2 gap-4">
+    <div class="card p-4">
+      <div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Cuándo llegan las denuncias?</h2><k-tip g="mapa"></k-tip></div>
+      <p class="m-0 mb-2 text-sm muted">Más oscuro = más denuncias. Sirve para saber cuándo conviene tener a alguien atento.</p>
+      <div id="ch-heat" style="height:270px" role="img" aria-label="Mapa de calor de denuncias por día de la semana y franja horaria; más denuncias entre lunes y viernes de 9 a 18 horas"></div>
+    </div>
+    <div class="card p-4">
+      <div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Cuánto costaría con Claude?</h2><k-tip g="costo"></k-tip></div>
+      <p class="m-0 mb-3 text-sm">Con Claude Haiku 5.5, <b>cada 1.000 denuncias costarían unos <span x-text="usd(costo[0].m1000)"></span></b>. El gasto del período sería de <b x-text="usd(costo[0].tot)"></b>.</p>
+      <ul class="list-none p-0 m-0 grid gap-3">
+        <template x-for="(c,i) in costo" :key="c.n"><li>
+          <div class="flex items-center justify-between gap-2 text-sm"><span class="flex items-center gap-2"><b x-text="c.n"></b><span x-show="i===0" class="chip brand">Escenario principal</span></span><b class="tabular-nums" x-text="usd(c.tot)"></b></div>
+          <div class="h-3 rounded-full mt-1.5" style="background:#E3E7F2"><div class="h-3 rounded-full" :style="'width:'+Math.max(3,c.tot/costo[2].tot*100)+'%;background:'+(i===0?'var(--brand-2)':'#8E9AD0')"></div></div>
+          <div class="text-xs muted mt-1" x-text="'1.000 denuncias al mes: '+usd(c.m1000)+' · por denuncia: '+usd(c.caso,4)"></div>
+        </li></template>
+      </ul>
+      <div class="mt-4 flex flex-wrap gap-2 items-center"><span class="chip na"><k-ic n="circle-minus"></k-ic> Sin presupuesto definido</span><span class="text-xs muted">Precios de la API de Anthropic al 3 nov 2026. Estimación sobre el uso medido.</span></div>
+    </div>
+  </section>
+
+  <!-- leyes -->
+  <section class="card p-4"><div class="flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">¿Qué leyes aparecen más?</h2><k-tip g="leyes"></k-tip></div>
+    <div class="rounded-xl p-5 flex gap-4 items-center" style="background:var(--na-bg)"><k-ic n="chart-no-axes-column" style="width:32px;height:32px;color:var(--na)"></k-ic><div class="text-sm"><span class="chip na mb-1"><k-ic n="circle-minus"></k-ic> Sin datos</span><p class="m-0 muted">Todavía no se registran los artículos sugeridos. Se activará al actualizar el núcleo de Kerna; después verás aquí el ranking de leyes y artículos.</p></div></div>
+  </section>
+</div>
+
+<!-- ========== INFORME (asistente) ========== -->
+<div x-show="view==='informe'" class="grid gap-5">
+  <div><h1 class="disp text-2xl font-bold m-0" style="color:var(--brand)">Generar informe de gestión</h1><p class="m-0 mt-1 muted text-sm">Tres pasos: elige el período, revisa la vista previa y descarga.</p></div>
+
+  <ol class="card p-3 md:p-4 flex gap-2 md:gap-6 list-none m-0 overflow-x-auto" aria-label="Pasos">
+    <template x-for="(s,i) in ['Período','Vista previa','Descargar']" :key="i"><li class="flex items-center gap-2.5 flex-1 min-w-0">
+      <button type="button" @click="paso=i+1" class="flex items-center gap-2.5 bg-transparent border-0 cursor-pointer p-1 rounded-lg min-w-0" :aria-current="paso===i+1?'step':null" style="font-family:inherit">
+        <span class="stepdot" :class="paso===i+1?'on':(paso>i+1?'done':'')"><k-ic x-show="paso>i+1" n="check"></k-ic><span x-show="paso<=i+1" x-text="i+1"></span></span>
+        <span class="font-semibold text-sm truncate" :class="paso===i+1?'':'hidden sm:inline'" :style="paso===i+1?'color:var(--brand)':'color:var(--muted)'" x-text="s"></span></button>
+      <span class="hidden md:block flex-1 h-px" style="background:var(--line)"></span></li></template>
+  </ol>
+
+  <!-- paso 1 -->
+  <section x-show="paso===1" class="card p-5 md:p-6 grid gap-5 max-w-3xl">
+    <div><h2 class="text-lg font-bold m-0 flex items-center gap-1.5">¿Qué período quieres informar? <k-tip g="periodo"></k-tip></h2></div>
+    <div class="grid grid-cols-3 gap-3">
+      <template x-for="p in [7,30,90]"><button type="button" @click="ip=p;custom=false" class="rounded-xl border-2 p-4 text-left cursor-pointer bg-white" style="font-family:inherit" :style="(!custom&&ip===p)?'border-color:var(--brand);background:var(--brand-soft)':'border-color:var(--line)'" :aria-pressed="!custom&&ip===p">
+        <span class="block text-2xl font-bold" x-text="p"></span><span class="text-sm muted">últimos días</span></button></template>
+    </div>
+    <div>
+      <label class="flex items-center gap-2 text-sm font-semibold mb-2 cursor-pointer"><input type="checkbox" x-model="custom" class="w-5 h-5" style="accent-color:var(--brand)"> Elegir fechas exactas</label>
+      <div class="grid sm:grid-cols-2 gap-3" :class="custom?'':'opacity-50'">
+        <div><label for="d1" class="text-sm font-medium block mb-1">Desde</label><input id="d1" type="date" class="field" x-model="desde" :disabled="!custom" max="2026-11-12"></div>
+        <div><label for="d2" class="text-sm font-medium block mb-1">Hasta</label><input id="d2" type="date" class="field" x-model="hasta" :disabled="!custom" max="2026-11-12"></div>
+      </div>
+    </div>
+    <label class="flex items-start gap-3 rounded-xl border p-3 cursor-pointer" style="border-color:var(--line)"><input type="checkbox" x-model="conNegocio" class="w-5 h-5 mt-0.5" style="accent-color:var(--brand)"><span class="text-sm"><b class="flex items-center gap-1.5">Incluir sección de negocio (opcional) <k-tip g="inf_negocio"></k-tip></b><span class="muted">Clientes, uso del plan, costo y margen. Pensada para la dirección, no para auditoría.</span></span></label>
+    <div class="rounded-xl p-3 flex gap-2 items-center text-sm" style="background:var(--brand-soft);color:var(--brand)"><k-ic n="calendar-range"></k-ic><span>Se informará: <b x-text="rangoTxt"></b> (<span x-text="ipDias"></span> días)</span></div>
+    <div class="flex justify-end"><button type="button" class="btn btn-dark" @click="paso=2">Ver vista previa <k-ic n="arrow-right"></k-ic></button></div>
+  </section>
+
+  <!-- paso 2: vista previa -->
+  <section x-show="paso===2" class="grid gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-3"><span class="chip brand"><k-ic n="eye"></k-ic> Vista previa · <span x-text="rangoTxt"></span></span>
+      <div class="flex gap-2"><button class="btn btn-sec" @click="paso=1"><k-ic n="arrow-left"></k-ic> Cambiar período</button><button class="btn btn-dark" @click="paso=3">Continuar a descargar <k-ic n="arrow-right"></k-ic></button></div></div>
+
+    <article class="card doc p-5 md:p-8 grid gap-7" aria-label="Vista previa del informe">
+      <header class="flex flex-wrap items-center gap-4 pb-5 border-b" style="border-color:var(--line)">
+        <svg width="54" height="54"><use href="#kmark"/></svg>
+        <div class="flex-1 min-w-[200px]"><p class="m-0 text-xs font-semibold tracking-widest uppercase muted">Informe de gestión · Kerna AI</p><h2 class="disp text-xl font-bold m-0" style="color:var(--brand)" x-text="rangoTxt"></h2></div>
+        <span class="chip warn !text-sm !px-3 !py-1.5"><k-ic n="triangle-alert"></k-ic> Estado general: atención</span>
+      </header>
+
+      <section>
+        <div class="flex items-center gap-1.5 mb-2"><h3>1. Resumen ejecutivo</h3></div>
+        <p class="conc">Kerna entregó sugerencia en <span x-text="inf.sug"></span> de cada 100 denuncias, 3 puntos menos que el período anterior; la calidad y la rapidez están por debajo de la meta.</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <template x-for="s in infKpi" :key="s.l"><div class="rounded-xl border p-3 bg-white" :class="'bd-'+s.e" style="border-color:var(--line)"><div class="text-xs muted font-semibold" x-text="s.l"></div><div class="text-2xl font-bold tabular-nums" x-text="s.v"></div><span class="chip mt-1" :class="s.e"><k-ic :n="ico[s.e]"></k-ic><span x-text="s.t"></span></span></div></template>
+        </div>
+      </section>
+
+      <section>
+        <h3 class="mb-2">2. Calidad de las sugerencias</h3>
+        <p class="conc">El acierto es 74 %, 6 puntos bajo la meta de 80 %; la Ley 20.393 es la más débil (66 %) y necesita revisión del corpus.</p>
+        <div class="grid md:grid-cols-2 gap-5">
+          <ul class="list-none p-0 m-0 grid gap-3"><template x-for="l in aciertos" :key="l.n"><li><div class="flex justify-between text-sm"><span x-text="l.n"></span><span class="chip" :class="l.e"><k-ic :n="ico[l.e]"></k-ic><span x-text="l.v+' %'"></span></span></div><div class="relative h-3 rounded-full mt-1.5" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+l.e" :style="'width:'+l.v+'%'"></div><div class="absolute -top-1 w-0.5 h-5" style="left:80%;background:var(--ink)"></div></div></li></template></ul>
+          <div class="grid gap-2 content-start"><b class="text-sm">Anonimizador: datos detectados</b>
+            <template x-for="a in anon" :key="a.t"><div class="flex justify-between items-center text-sm border-b pb-1.5" style="border-color:var(--line)"><span x-text="a.t"></span><span class="chip" :class="a.e"><k-ic :n="ico[a.e]"></k-ic><span x-text="a.v+' %'"></span></span></div></template></div>
+        </div>
+      </section>
+
+      <section>
+        <h3 class="mb-2">3. Rapidez</h3>
+        <p class="conc">La mitad de los casos tarda <span x-text="p50"></span> s (meta: 15 s); la etapa que más demora es redactar la sugerencia.</p>
+        <ul class="list-none p-0 m-0 grid gap-2.5"><template x-for="e in etapas" :key="e.n"><li class="grid grid-cols-[130px_1fr_52px] sm:grid-cols-[170px_1fr_60px] items-center gap-3 text-sm"><span x-text="e.n"></span><div class="h-3 rounded-full" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+e.e" :style="'width:'+(e.s/20*100)+'%'"></div></div><b class="tabular-nums text-right" x-text="e.s+' s'"></b></li></template></ul>
+      </section>
+
+      <section>
+        <h3 class="mb-2">4. Costo con precios de Anthropic</h3>
+        <p class="conc">Operar con Claude Haiku 5.5 costaría <span x-text="usd(costo[0].tot*inf.f)"></span> en el período, unos <span x-text="usd(costo[0].m1000)"></span> por cada 1.000 denuncias.</p>
+        <div class="grid gap-2"><template x-for="(c,i) in costo" :key="c.n"><div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1.4fr_1fr_1fr] gap-x-4 gap-y-0.5 items-center rounded-xl border p-3 bg-white text-sm" style="border-color:var(--line)"><b x-text="c.n"></b><span class="text-right sm:text-left"><b class="tabular-nums" x-text="usd(c.tot*inf.f)"></b> <span class="muted">período</span></span><span class="col-span-2 sm:col-span-1 muted"><b class="tabular-nums" style="color:var(--ink)" x-text="usd(c.m1000)"></b> por 1.000 denuncias/mes</span></div></template></div>
+      </section>
+
+      <section>
+        <h3 class="mb-2">5. Cobertura normativa</h3>
+        <p class="conc">La base tiene 3 leyes cargadas con 412 artículos; todavía no hay datos de qué artículos se sugieren.</p>
+        <div class="grid gap-2"><template x-for="l in cobertura" :key="l.n"><div class="flex flex-wrap items-center justify-between gap-2 rounded-xl border p-3 bg-white text-sm" style="border-color:var(--line)"><b x-text="l.n"></b><span class="muted"><span x-text="l.a"></span> artículos en la base</span><span class="chip na"><k-ic n="circle-minus"></k-ic> Sugeridos: sin datos</span></div></template></div>
+      </section>
+
+      <section>
+        <h3 class="mb-2">6. Incidentes y acciones</h3>
+        <p class="conc"><span x-text="modos.m"></span> casos pasaron a revisión manual; la causa principal fue que el modelo no estaba disponible.</p>
+        <div class="grid gap-2"><template x-for="i in incidentes" :key="i.c"><div class="rounded-xl border p-3 bg-white grid sm:grid-cols-[1.2fr_100px_2fr] gap-2 sm:gap-4 items-start text-sm" :class="'bd-'+i.e" style="border-color:var(--line)"><div><span class="chip" :class="i.e"><k-ic :n="ico[i.e]"></k-ic><span x-text="est[i.e]"></span></span> <b class="block mt-1" x-text="i.c"></b></div><b class="text-lg tabular-nums whitespace-nowrap" x-text="i.n+' casos'"></b><span><b>Qué hacer:</b> <span x-text="i.a"></span></span></div></template></div>
+      </section>
+      <section x-show="conNegocio">
+        <h3 class="mb-2">7. Negocio (opcional)</h3>
+        <p class="conc">Hay <span x-text="neg.activos"></span> clientes activos de <span x-text="clientes.length"></span>; con una tarifa de ejemplo de <span x-text="usd(tarifa)"></span> por denuncia, el margen es de <span x-text="neg.margenPct"></span> %, y un cliente lleva <span x-text="clientes[2].dias"></span> días sin usar Kerna.</p>
+        <div class="grid gap-2"><template x-for="c in clientes" :key="c.n"><div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1.4fr_1fr_1fr_1fr] gap-x-4 gap-y-1 items-center rounded-xl border p-3 bg-white text-sm" :class="'bd-'+c.ue" style="border-color:var(--line)"><b x-text="c.n"></b><span><b class="tabular-nums" x-text="c.tot"></b> <span class="muted">denuncias</span></span><span><span class="chip" :class="c.ue"><k-ic :n="ico[c.ue]"></k-ic><span x-text="c.uso+' % del plan'"></span></span></span><span class="chip" :class="c.re"><k-ic :n="ico[c.re]"></k-ic><span x-text="c.ult"></span></span></div></template></div>
+        <p class="text-xs muted mt-2">Tarifa de ejemplo, no contractual. Costos de IA a precios de Anthropic.</p>
+      </section>
+      <footer class="text-xs muted pt-3 border-t" style="border-color:var(--line)">Datos de ejemplo · Fuentes: registros del núcleo, conjunto público de pruebas y precios de la API de Anthropic al 3 nov 2026.</footer>
+    </article>
+  </section>
+
+  <!-- paso 3 -->
+  <section x-show="paso===3" class="grid gap-4 max-w-4xl">
+    <div class="card p-5 md:p-6">
+      <h2 class="text-lg font-bold m-0 mb-1">Elige el formato</h2>
+      <p class="m-0 mb-4 text-sm muted">Informe de <b x-text="rangoTxt"></b>. Los tres tienen la misma información.</p>
+      <div class="grid md:grid-cols-3 gap-4">
+        <template x-for="f in formatos" :key="f.k"><div class="rounded-2xl border-2 p-4 flex flex-col gap-3 bg-white" style="border-color:var(--line)">
+          <div class="flex items-center justify-between"><span class="grid place-items-center w-12 h-12 rounded-xl" style="background:var(--brand-soft);color:var(--brand)"><k-ic :n="f.i" style="width:26px;height:26px"></k-ic></span><k-tip :g="'fmt_'+f.k"></k-tip></div>
+          <div><b class="block text-base" x-text="f.n"></b><span class="text-sm muted" x-text="f.d"></span></div>
+          <button type="button" class="btn mt-auto" :class="f.k==='pdf'?'btn-pri':'btn-dark'" :disabled="gen.estado==='cargando'" @click="generar(f)">
+            <k-ic x-show="!(gen.estado==='cargando'&&gen.k===f.k)" n="download"></k-ic><k-ic x-show="gen.estado==='cargando'&&gen.k===f.k" n="loader-circle" class="spin"></k-ic>
+            <span x-text="(gen.estado==='cargando'&&gen.k===f.k)?'Generando…':'Descargar '+f.n"></span></button>
+        </div></template>
+      </div>
+    </div>
+    <div x-show="gen.estado==='cargando'" role="status" class="card p-4 flex items-center gap-3 bd-na"><k-ic n="loader-circle" class="spin" style="width:24px;height:24px;color:var(--brand)"></k-ic><div class="flex-1"><b>Preparando tu informe…</b><div class="h-2 rounded-full mt-2" style="background:var(--na-bg)"><div class="h-2 rounded-full" :style="'width:'+gen.p+'%;background:var(--brand-2);transition:width 1.7s linear'"></div></div></div></div>
+    <div x-show="gen.estado==='listo'" role="status" class="card p-4 flex flex-wrap items-center gap-3 bd-ok"><k-ic n="circle-check" style="width:28px;height:28px;color:var(--ok)"></k-ic><div class="flex-1 min-w-[200px]"><b class="t-ok">Informe listo</b><div class="text-sm">Se descargó <code class="text-[13px]" x-text="gen.archivo"></code> (maqueta: no se creó ningún archivo real).</div></div><button class="btn btn-sec" @click="gen={estado:'',k:'',p:0,archivo:''}">Generar otro</button></div>
+    <div><button class="btn btn-sec" @click="paso=2"><k-ic n="arrow-left"></k-ic> Volver a la vista previa</button></div>
+  </section>
+</div>
+
+<!-- ========== NEGOCIO ========== -->
+<div x-show="view==='negocio'" class="grid gap-5">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div><h1 class="disp text-2xl font-bold m-0" style="color:var(--brand)">Negocio</h1><p class="m-0 mt-1 muted text-sm max-w-xl">Kerna como servicio: quién lo usa, cuánto cuesta atenderlo y cuánto deja. Últimos 30 días · fuente: almacén de solicitudes (sin textos de denuncias).</p></div>
+    <a href="#/informe" class="btn btn-pri w-full sm:w-auto"><k-ic n="file-down"></k-ic> Generar informe de gestión</a>
+  </div>
+  <div class="rounded-xl p-3 flex gap-3 items-start text-sm" style="background:var(--warn-bg);color:var(--warn)"><k-ic n="flask-conical" style="margin-top:2px"></k-ic><span><b>Datos y tarifa de ejemplo.</b> Solo Veridy existe hoy; los otros dos clientes y las tarifas son ficticios para mostrar cómo se vería con varios clientes.</span></div>
+
+  <section class="card p-5 bd-ok"><div class="flex flex-wrap items-start gap-4">
+    <span class="grid place-items-center w-14 h-14 rounded-2xl shrink-0" style="background:var(--ok-bg);color:var(--ok)"><k-ic n="trending-up" style="width:30px;height:30px"></k-ic></span>
+    <div class="flex-1 min-w-[220px]"><div class="flex items-center gap-2 flex-wrap"><h2 class="disp text-xl font-bold m-0">Negocio saludable, con un cliente en riesgo</h2><k-tip g="neg_estado"></k-tip></div>
+    <p class="m-0 mt-1 text-[15px]"><b>Cada denuncia deja margen</b> porque la IA cuesta centavos. Los puntos a vigilar: <b>el Cliente C dejó de usar Kerna</b> y casi nadie valora las sugerencias.</p></div></div></section>
+
+  <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" aria-label="Indicadores de negocio">
+    <template x-for="k in negKpis" :key="k.k"><article class="card p-4 flex flex-col" :class="'bd-'+k.e">
+      <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 text-sm font-semibold muted"><k-ic :n="k.i"></k-ic><span x-text="k.l"></span></span><k-tip :g="k.k"></k-tip></div>
+      <div class="mt-2"><span class="text-[32px] leading-none font-bold tabular-nums" x-text="k.v"></span><span class="text-sm font-semibold muted ml-1" x-text="k.u"></span></div>
+      <div class="flex flex-wrap items-center gap-2 mt-3"><span class="chip" :class="k.e"><k-ic :n="ico[k.e]"></k-ic><span x-text="k.et"></span></span><span class="chip" :class="k.de" x-show="k.dt"><k-ic :n="k.da"></k-ic><span x-text="k.dt"></span></span></div>
+      <p class="m-0 mt-3 text-[13px] leading-snug" x-text="k.f"></p><p class="m-0 mt-auto pt-2 text-xs muted" x-text="k.m"></p></article></template>
+  </section>
+
+  <section class="card p-4 md:p-5"><div class="flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Clientes: uso, costo y actividad</h2><k-tip g="neg_clientes"></k-tip></div>
+    <div class="grid gap-3">
+      <template x-for="c in clientes" :key="c.n"><div class="rounded-xl border p-3 md:p-4 bg-white grid lg:grid-cols-[1.2fr_1.6fr_1fr_1fr] gap-3 lg:gap-5 items-center" :class="'bd-'+c.re" style="border-color:var(--line)">
+        <div class="flex items-center justify-between lg:block gap-2"><b class="block" x-text="c.n"></b><span class="text-xs muted" x-text="c.plan+' denuncias/mes contratadas'"></span>
+          <svg viewBox="0 0 100 30" class="w-24 h-7 hidden lg:block mt-1" aria-hidden="true"><path :d="spark(c.s)" fill="none" stroke="var(--brand-2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="flex justify-between text-sm mb-1 gap-2"><span><b class="tabular-nums" x-text="c.tot"></b> denuncias <span class="muted">(30 días)</span></span><span class="chip" :class="c.ue"><k-ic :n="ico[c.ue]"></k-ic><span x-text="c.uso+' % del plan'"></span></span></div>
+          <div class="relative h-3 rounded-full" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+c.ue" :style="'width:'+Math.min(100,c.uso)+'%'"></div></div><p class="m-0 mt-1 text-xs muted" x-text="c.nota"></p></div>
+        <div class="text-sm"><div class="muted text-xs">Ingreso · Costo de IA</div><b class="tabular-nums" x-text="usd(c.ing)"></b> · <span class="tabular-nums" x-text="usd(c.cos,3)"></span><div class="mt-1"><span class="chip ok"><k-ic n="circle-check"></k-ic> Margen alto</span></div></div>
+        <div class="text-sm"><div class="muted text-xs">Último uso</div><span class="chip" :class="c.re"><k-ic :n="ico[c.re]"></k-ic><span x-text="c.ult"></span></span><div class="text-xs muted mt-1" x-text="c.rt"></div></div>
+      </div></template>
+    </div></section>
+
+  <section class="grid lg:grid-cols-3 gap-4">
+    <div class="card p-4 lg:col-span-2"><div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por cliente</h2><k-tip g="neg_denuncias"></k-tip></div><p class="m-0 mb-2 text-sm">Veridy aporta <b x-text="pct(clientes[0].tot,neg.tot)+' %'"></b> del volumen. Con un solo cliente grande, perderlo sería un riesgo alto.</p>
+      <div id="ch-cli" style="height:260px" role="img" aria-label="Gráfico de área apilada de denuncias por cliente en 30 días"></div></div>
+    <div class="card p-4"><div class="flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Adopción</h2><k-tip g="neg_adopcion"></k-tip></div>
+      <p class="m-0 mb-3 text-sm"><b>De cada 100 denuncias, <span x-text="sugPct"></span> recibieron sugerencia pero solo 16 fueron valoradas</b> por auditores.</p>
+      <ul class="list-none p-0 m-0 grid gap-3"><template x-for="a in embudo" :key="a.n"><li><div class="flex justify-between text-sm gap-2"><span x-text="a.n"></span><span class="chip" :class="a.e"><k-ic :n="ico[a.e]"></k-ic><span x-text="a.v+' %'"></span></span></div><div class="h-3 rounded-full mt-1.5" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+a.e" :style="'width:'+a.v+'%'"></div></div></li></template></ul>
+      <p class="m-0 mt-3 text-xs muted">Útiles se calcula sobre las valoradas (11 de 14 en el ejemplo).</p></div>
+  </section>
+
+  <section class="grid lg:grid-cols-3 gap-4">
+    <div class="card p-4"><div class="flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Supuestos editables</h2></div>
+      <span class="chip warn mb-3"><k-ic n="pencil"></k-ic> Tarifa de ejemplo, no contractual</span>
+      <div class="mb-4"><div class="flex justify-between items-center"><label for="tf" class="font-semibold text-sm flex items-center gap-1.5">Tarifa por denuncia <k-tip g="tarifa"></k-tip></label><b class="text-lg" style="color:var(--brand)" x-text="usd(tarifa)"></b></div>
+        <input id="tf" type="range" class="range" min="0.1" max="2" step="0.05" x-model.number="tarifa" :style="'--p:'+((tarifa-0.1)/1.9*100)+'%'" aria-valuetext="tarifa por denuncia"><div class="flex justify-between text-xs muted"><span>US$ 0,10</span><span>US$ 2,00</span></div></div>
+      <div><div class="flex justify-between items-center"><label for="cr" class="font-semibold text-sm flex items-center gap-1.5">Crecimiento mensual <k-tip g="crecimiento"></k-tip></label><b class="text-lg" style="color:var(--brand)" x-text="crec+' %'"></b></div>
+        <input id="cr" type="range" class="range" min="0" max="30" step="1" x-model.number="crec" :style="'--p:'+(crec/30*100)+'%'" @input="$nextTick(()=>charts())"><div class="flex justify-between text-xs muted"><span>0 %</span><span>30 %</span></div></div>
+      <button type="button" class="btn btn-sec mt-4 w-full" @click="tarifa=0.5;crec=15;$nextTick(()=>charts())"><k-ic n="rotate-ccw"></k-ic> Volver a lo recomendado</button></div>
+    <div class="card p-4 lg:col-span-2"><div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Proyección de ingresos y costo</h2><k-tip g="proyeccion"></k-tip></div>
+      <p class="m-0 mb-2 text-sm">Con <b x-text="crec+' %'"></b> de crecimiento mensual, en 6 meses Kerna ingresaría <b x-text="usd(proy[5].ing,0)"></b> al mes con un margen de <b x-text="proy[5].mp+' %'"></b>.</p>
+      <div id="ch-proy" style="height:240px" role="img" aria-label="Proyección a 6 meses de ingresos, costo total y margen"></div>
+      <p class="m-0 mt-2 text-xs muted">Costo = IA a precios de Anthropic + costos fijos de ejemplo (US$ 40/mes de infraestructura). Supuesto, no dato.</p></div>
+  </section>
+</div>
+
+<!-- ========== AJUSTES ========== -->
+<div x-show="view==='ajustes'" class="grid gap-5 pb-24">
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div><h1 class="disp text-2xl font-bold m-0" style="color:var(--brand)">Ajustes</h1><p class="m-0 mt-1 muted text-sm max-w-xl">Cambia cómo trabaja Kerna. Cada ajuste tiene un «?» que explica qué es y qué pasa si lo cambias. Los valores recomendados están marcados.</p></div>
+    <button type="button" class="btn btn-sec" @click="restaurar()"><k-ic n="rotate-ccw"></k-ic> Volver a lo recomendado</button>
+  </div>
+
+  <template x-for="g in grupos" :key="g.id"><section class="card p-4 md:p-5" :aria-labelledby="'g-'+g.id">
+    <div class="flex items-center gap-3 mb-4"><span class="grid place-items-center w-10 h-10 rounded-xl" style="background:var(--brand-soft);color:var(--brand)"><k-ic :n="g.i"></k-ic></span><div><h2 :id="'g-'+g.id" class="text-base font-bold m-0" x-text="g.t"></h2><p class="m-0 text-sm muted" x-text="g.d"></p></div></div>
+    <div class="grid">
+      <template x-for="it in g.items" :key="it.k"><div class="py-4 border-t grid gap-2" style="border-color:var(--line)" :class="(it.dep&&!s[it.dep])?'opacity-60':''">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0"><div class="flex items-center gap-1.5 flex-wrap"><span :id="'l-'+it.k" class="font-semibold text-[15px]" x-text="it.l"></span><k-tip :g="it.k"></k-tip>
+            <span x-show="esRec(it.k)" class="chip ok"><k-ic n="check"></k-ic> Recomendado</span><span x-show="!esRec(it.k)" class="chip warn"><k-ic n="pencil"></k-ic> Cambiado</span></div>
+            <p class="m-0 mt-0.5 text-sm muted" x-text="it.d"></p></div>
+          <template x-if="it.t==='sw'"><button type="button" role="switch" class="sw" :aria-checked="s[it.k]" :aria-labelledby="'l-'+it.k" @click="s[it.k]=!s[it.k]"></button></template>
+          <template x-if="it.t==='rg'"><span class="font-bold text-lg tabular-nums whitespace-nowrap" style="color:var(--brand)" x-text="it.f(s[it.k])"></span></template>
+        </div>
+        <template x-if="it.t==='rg'"><div>
+          <input type="range" class="range" :min="it.min" :max="it.max" :step="it.step||1" x-model.number="s[it.k]" :aria-labelledby="'l-'+it.k" :aria-valuetext="it.f(s[it.k])" :disabled="!!(it.dep&&!s[it.dep])" :style="'--p:'+((s[it.k]-it.min)/(it.max-it.min)*100)+'%'">
+          <div class="flex justify-between text-xs muted"><span x-text="it.f(it.min)"></span><span x-text="'Recomendado: '+it.f(rec[it.k])"></span><span x-text="it.f(it.max)"></span></div>
+          <p x-show="it.av&&it.av(s[it.k])" class="m-0 mt-1 text-sm flex items-center gap-1.5 t-warn font-medium"><k-ic n="triangle-alert"></k-ic><span x-text="it.av&&it.av(s[it.k])"></span></p>
+        </div></template>
+        <template x-if="it.t==='sg'"><div class="seg self-start" role="group" :aria-labelledby="'l-'+it.k"><template x-for="o in it.o" :key="o.v"><button type="button" :aria-pressed="s[it.k]===o.v" @click="s[it.k]=o.v" x-text="o.t+(o.v===rec[it.k]?' ★':'')"></button></template></div></template>
+        <template x-if="it.t==='ch'"><div class="flex flex-wrap gap-2" role="group" :aria-labelledby="'l-'+it.k"><template x-for="o in it.o" :key="o.v"><button type="button" class="chip !text-sm !py-2 !px-3 cursor-pointer border" :class="s[it.k].includes(o.v)?'brand':'na'" :style="s[it.k].includes(o.v)?'border-color:var(--brand)':'border-color:transparent'" :aria-pressed="s[it.k].includes(o.v)" @click="toggleCh(it.k,o.v)"><k-ic :n="s[it.k].includes(o.v)?'user-check':'user'"></k-ic><span x-text="o.t"></span></button></template></div></template>
+        <template x-if="it.t==='cd'"><div class="grid gap-2">
+          <template x-for="(m,ix) in s.cadena" :key="m.v"><div class="flex items-center gap-3 rounded-xl border p-3 bg-white" style="border-color:var(--line)" :style="m.on?'':'opacity:.6'">
+            <span class="grid place-items-center w-7 h-7 rounded-full text-xs font-bold shrink-0" style="background:var(--brand);color:#fff" x-text="ix+1"></span>
+            <div class="flex-1 min-w-0"><b class="block text-sm" x-text="nombreModelo(m.v).t"></b><span class="text-xs muted" x-text="nombreModelo(m.v).d"></span></div>
+            <div class="flex items-center gap-1"><button type="button" class="btn btn-sec !min-h-[44px] !w-11 !px-0" :disabled="ix===0" @click="mover(ix,-1)" :aria-label="'Subir '+nombreModelo(m.v).t"><k-ic n="arrow-up"></k-ic></button><button type="button" class="btn btn-sec !min-h-[44px] !w-11 !px-0" :disabled="ix===s.cadena.length-1" @click="mover(ix,1)" :aria-label="'Bajar '+nombreModelo(m.v).t"><k-ic n="arrow-down"></k-ic></button>
+            <button type="button" role="switch" class="sw ml-1" :aria-checked="m.on" :aria-label="'Usar '+nombreModelo(m.v).t" @click="m.on=!m.on"></button></div></div></template>
+          <p class="m-0 text-xs muted">Se prueban en este orden. Si uno falla, pasa al siguiente. Si fallan todos, el caso queda en revisión manual.</p></div></template>
+      </div></template>
+    </div>
+  </section></template>
+
+  <div class="fixed bottom-[62px] lg:bottom-0 left-0 right-0 lg:left-64 z-40 p-3" x-show="cambios.length" x-transition>
+    <div class="max-w-3xl mx-auto rounded-2xl p-3 pl-4 flex flex-wrap items-center gap-3 justify-between" style="background:var(--brand);color:#fff;box-shadow:0 8px 30px rgba(15,23,54,.35)">
+      <span class="font-semibold text-sm flex items-center gap-2"><k-ic n="pencil-line"></k-ic><span x-text="cambios.length+(cambios.length===1?' cambio sin guardar':' cambios sin guardar')"></span></span>
+      <span class="flex gap-2"><button type="button" class="btn !min-h-[40px]" style="background:rgba(255,255,255,.15);color:#fff" @click="descartar()">Descartar</button><button type="button" class="btn btn-pri !min-h-[40px]" @click="resumenAbierto=true">Revisar y guardar</button></span>
+    </div>
+  </div>
+
+  <div x-show="resumenAbierto" class="fixed inset-0 z-50 grid place-items-center p-4" style="background:rgba(15,23,54,.55)" @keydown.escape.window="resumenAbierto=false" x-transition.opacity>
+    <div class="card max-w-lg w-full max-h-[90vh] overflow-auto p-5" role="dialog" aria-modal="true" aria-labelledby="rt" @click.outside="resumenAbierto=false">
+      <h2 id="rt" class="text-lg font-bold m-0 flex items-center gap-2"><k-ic n="clipboard-check"></k-ic> Revisa antes de guardar</h2>
+      <p class="m-0 mt-1 mb-4 text-sm muted">Estos son los cambios y qué significan:</p>
+      <ul class="list-none p-0 m-0 grid gap-3">
+        <template x-for="c in cambios" :key="c.k"><li class="rounded-xl border p-3" style="border-color:var(--line)">
+          <b class="block text-sm" x-text="c.l"></b>
+          <div class="flex flex-wrap items-center gap-2 mt-1 text-sm"><span class="chip na" x-text="c.de"></span><k-ic n="arrow-right"></k-ic><span class="chip brand" x-text="c.a"></span></div>
+          <p class="m-0 mt-1.5 text-xs muted" x-text="c.n"></p></li></template>
+      </ul>
+      <div class="flex flex-wrap justify-end gap-2 mt-5"><button class="btn btn-sec" @click="resumenAbierto=false">Seguir editando</button><button class="btn btn-dark" @click="guardar()"><k-ic n="save"></k-ic> Confirmar y guardar</button></div>
+    </div>
+  </div>
+</div>
+
+    </main>
+  </div>
+
+  <nav class="tabbar lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t flex" style="border-color:var(--line)" aria-label="Principal">
+    <a href="#/resumen" :class="view==='resumen'?'on':''" :aria-current="view==='resumen'?'page':null"><k-ic n="layout-dashboard"></k-ic>Resumen</a>
+    <a href="#/informe" class="gen" :aria-current="view==='informe'?'page':null"><k-ic n="file-down"></k-ic>Informe</a>
+    <a href="#/negocio" :class="view==='negocio'?'on':''" :aria-current="view==='negocio'?'page':null"><k-ic n="briefcase-business"></k-ic>Negocio</a>
+    <a href="#/ajustes" :class="view==='ajustes'?'on':''" :aria-current="view==='ajustes'?'page':null"><k-ic n="sliders-horizontal"></k-ic>Ajustes</a>
+  </nav>
+</div>
+
+<div x-show="toast" x-transition role="status" class="fixed top-4 left-1/2 -translate-x-1/2 z-[90] rounded-xl px-4 py-3 text-sm font-semibold flex items-center gap-2" style="background:var(--ok);color:#fff;box-shadow:0 8px 30px rgba(15,23,54,.3)"><k-ic n="circle-check"></k-ic><span x-text="toast"></span></div>
+</div>
+
+<script>
+/* ---------- iconos: <k-ic n="nombre"> con Lucide ---------- */
+const pas=n=>n.split('-').map(s=>s[0].toUpperCase()+s.slice(1)).join('');
+class KIc extends HTMLElement{
+  static get observedAttributes(){return['n']}
+  connectedCallback(){this.r()} attributeChangedCallback(){this.r()}
+  r(){const n=this.getAttribute('n');if(!n||!window.lucide)return;const d=lucide.icons[pas(n)];if(!d){this.innerHTML='';return}
+    const nodes=Array.isArray(d[2])?d[2]:d;let h='';for(const [t,a] of nodes){h+='<'+t+' '+Object.entries(a).map(([k,v])=>k+'="'+v+'"').join(' ')+'/>'}
+    this.setAttribute('aria-hidden','true');this.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+h+'</svg>'}}
+customElements.define('k-ic',KIc);
+
+/* ---------- glosario de ayudas ---------- */
+const G={
+estado:{t:'Estado general',q:'Resumen de 5 segundos: junta la salud de cada componente, la calidad y la rapidez. Verde = todo bien, ámbar = atención, rojo = problema.',c:'Un solo indicador en rojo hace que el estado general sea «problema»; en ámbar, «atención».',l:'Cómo leerlo'},
+salud_nucleo:{t:'Motor de Kerna',q:'Es el motor que analiza cada denuncia y propone leyes.',c:'Si está en rojo, no se generan sugerencias nuevas.',l:'Cómo leerlo'},
+salud_conector:{t:'Enlace con Veridy',q:'Es el puente que lleva las denuncias de Veridy a Kerna y devuelve la sugerencia al caso.',c:'Si falla, las denuncias se acumulan y se reenvían solas cuando vuelva.',l:'Cómo leerlo'},
+salud_modelo:{t:'Modelo de IA',q:'El modelo de lenguaje que redacta la sugerencia. Hay uno principal y uno de respaldo.',c:'Ámbar: el principal falla a veces y entra el respaldo (más lento o menos preciso).',l:'Cómo leerlo'},
+salud_busqueda:{t:'Búsqueda de leyes',q:'Encuentra en la base de leyes los artículos más parecidos a la denuncia.',c:'Si falla, la sugerencia no tendría respaldo legal y se manda a revisión manual.',l:'Cómo leerlo'},
+casos:{t:'Denuncias analizadas',q:'Cuántas denuncias de Veridy procesó Kerna en el período.',c:'Sirve para dimensionar la carga. Un salto brusco puede ser una carga masiva o un problema.',l:'Cómo leerlo'},
+sugerencia:{t:'Con sugerencia',q:'De cada 100 denuncias, cuántas terminaron con una sugerencia de leyes lista para la persona que las revisa.',c:'Si baja, más casos requieren revisión manual: mira «¿Qué falló y qué hacer?».',l:'Cómo leerlo'},
+tiempo:{t:'Tiempo de respuesta',q:'Cuánto tarda Kerna en entregar la sugerencia. «Caso típico» significa que la mitad de los casos tarda menos que eso.',c:'La meta es 15 segundos. Más lento no rompe nada, pero la persona espera más.',l:'Cómo leerlo'},
+costo_k:{t:'Costo estimado',q:'Lo que costaría el uso medido si se pagara a los precios de la API de Anthropic (Claude Haiku 5.5).',c:'Es una estimación: hoy el modelo real puede ser otro. Sube con más denuncias o textos más largos.',l:'Cómo leerlo'},
+casos_dia:{t:'Denuncias por día',q:'Cada barra es un día, dividida según cómo se resolvió el caso. Las líneas punteadas marcan incidentes.',c:'Muchas barras rojas o ámbar indican que el modelo principal está fallando.',l:'Cómo leerlo'},
+modos:{t:'Cómo se resolvieron',q:'Reparte las denuncias entre modelo principal, de respaldo y revisión manual.',c:'Lo ideal es que casi todo sea verde.',l:'Cómo leerlo'},
+calidad:{t:'Calidad de las sugerencias',q:'Se prueba a Kerna con casos cuya respuesta correcta ya se conoce. El acierto indica con qué frecuencia el artículo correcto aparece entre sus 5 primeras sugerencias.',c:'Bajo 80 % es ámbar; bajo 70 % es rojo. Se mide sobre un conjunto público de pruebas, no sobre denuncias reales.',l:'Cómo leerlo'},
+acierto_ley:{t:'Acierto por ley',q:'El mismo acierto, desglosado por cada ley. Muestra dónde Kerna se equivoca más.',c:'La raya negra es la meta. Una ley baja suele indicar artículos mal cargados o poco claros.',l:'Cómo leerlo'},
+valoraciones:{t:'Valoraciones de auditores',q:'Opinión de quienes revisan: «útil», «no útil» o «ninguno aplica» en cada sugerencia.',c:'Es la señal de calidad más real. Sin datos hasta que haya valoraciones.',l:'Cómo leerlo'},
+latencia:{t:'Rapidez por día',q:'Línea azul: la mitad de los casos del día. Línea gris: los casos más lentos (9 de cada 10 terminan antes).',c:'La línea punteada verde es la meta de 15 s. Por encima, la respuesta es lenta.',l:'Cómo leerlo'},
+incidentes:{t:'Incidentes',q:'Motivos por los que un caso no recibió sugerencia automática y qué conviene hacer.',c:'Los casos afectados no se pierden: pasan a revisión manual y pueden reintentarse.',l:'Cómo leerlo'},
+pendientes:{t:'Casos esperando reintento',q:'Casos que fallaron y se volverán a intentar solos, con la frecuencia y el máximo que definas en Ajustes.',c:'Al agotar los intentos quedan en revisión manual definitiva.',l:'Cómo leerlo'},
+mapa:{t:'Mapa de horarios',q:'Muestra en qué días y horas llegan más denuncias.',c:'Útil para planificar turnos y para elegir una hora de bajo uso al actualizar el sistema.',l:'Cómo leerlo'},
+costo:{t:'Costo con Claude',q:'Convierte los tokens consumidos (trozos de texto que lee y escribe el modelo) en dólares, según la tabla de precios de Anthropic.',c:'Haiku es el escenario principal; Sonnet y Opus son comparaciones por si se quiere más calidad.',l:'Cómo leerlo'},
+leyes:{t:'Leyes más frecuentes',q:'Ranking de las leyes que Kerna más sugiere.',c:'Ayuda a ver qué tipo de denuncias predominan.',l:'Cómo leerlo'},
+periodo:{t:'Período del informe',q:'Rango de fechas que cubrirá el informe. Se compara con el período anterior de igual largo.',c:'Períodos más largos suavizan altibajos; más cortos muestran lo reciente.',l:'Qué pasa si cambia'},
+fmt_pdf:{t:'PDF',q:'Documento listo para leer, imprimir o adjuntar a un correo, con gráficos y conclusiones.',c:'Ideal para comités y auditorías. No se edita fácilmente.',l:'Cuándo usarlo'},
+fmt_xlsx:{t:'Excel (XLSX)',q:'Planilla con una hoja por sección, con tablas y fórmulas listas para trabajar.',c:'Ideal si quieres filtrar, hacer tus propios gráficos o cruzar datos.',l:'Cuándo usarlo'},
+fmt_csv:{t:'CSV',q:'Un único archivo de texto con todas las cifras en una tabla larga (separador «;»).',c:'Ideal para cargarlo en otro programa o base de datos.',l:'Cuándo usarlo'},
+envios:{t:'Casos que se analizan a la vez',q:'Cuántas denuncias envía el conector a Kerna al mismo tiempo en cada ronda.',c:'Más casos: se vacía antes la fila, pero se puede superar el límite del proveedor de IA y aumentar los fallos. Menos: más lento, pero más estable.',l:'Si lo cambias'},
+reintentos:{t:'Reintentos por caso',q:'Cuántas veces se vuelve a intentar un caso que quedó en revisión manual por una falla de los modelos.',c:'Más reintentos: se rescatan más casos, con más costo. Cero: nunca se reintenta.',l:'Si lo cambias'},
+espera:{t:'Espera entre reintentos',q:'Tiempo que se deja pasar antes de volver a intentar un caso fallido.',c:'Esperas cortas pueden chocar con la misma falla; largas retrasan la sugerencia.',l:'Si lo cambias'},
+revision:{t:'Buscar denuncias nuevas cada',q:'Cada cuánto el conector revisa Veridy en busca de denuncias nuevas.',c:'Más seguido: sugerencias más rápidas, pero más consultas a Veridy. Menos seguido: ahorra recursos.',l:'Si lo cambias'},
+reprocesar:{t:'Reintentar casos en revisión manual',q:'Si está encendido, los casos que ya están en revisión manual vuelven a la fila una vez.',c:'Úsalo después de arreglar una falla grande. Puede generar muchos envíos de golpe.',l:'Si lo cambias'},
+evaluador:{t:'Revisor de calidad automático',q:'Un segundo modelo que revisa si las citas de cada sugerencia realmente respaldan el artículo propuesto.',c:'Apagado: más rápido y barato, pero pueden pasar sugerencias con citas débiles.',l:'Si lo cambias'},
+candidatos:{t:'Artículos que compara el revisor',q:'Cuántos artículos candidatos mira el revisor por cada caso antes de decidir.',c:'Más: más cuidado y más costo y tiempo. Menos: más rápido, pero puede pasar por alto el artículo correcto.',l:'Si lo cambias'},
+cadena:{t:'Orden de modelos',q:'Lista de modelos de IA que Kerna prueba en orden. Se usa el primero; si falla, el siguiente.',c:'Poner un modelo más preciso primero sube la calidad y el costo. Apagar todos deja los casos en revisión manual.',l:'Si lo cambias'},
+compartir:{t:'Quién ve las sugerencias',q:'Personas o equipos de Veridy con quienes se comparte automáticamente cada sugerencia.',c:'Quitar a alguien no borra lo ya compartido; solo deja de compartir los casos nuevos.',l:'Si lo cambias'},
+maxresp:{t:'Tiempo objetivo de respuesta',q:'Tiempo que Kerna se da para entregar una sugerencia antes de considerarla lenta.',c:'Más bajo: el panel marcará más casos como lentos. Más alto: tolera esperas largas sin avisar.',l:'Si lo cambias'},
+neg_estado:{t:'Estado del negocio',q:'Resume si Kerna como servicio va bien: clientes que lo usan, margen y riesgos.',c:'Rojo si un cliente grande se va o el margen es bajo; ámbar si hay algo por vigilar.',l:'Cómo leerlo'},
+neg_clientes_k:{t:'Clientes activos',q:'Clientes que enviaron al menos una denuncia en los últimos 30 días.',c:'Un cliente sin uso reciente es candidato a abandonar el servicio.',l:'Cómo leerlo'},
+neg_denuncias_k:{t:'Denuncias procesadas',q:'Total de denuncias analizadas entre todos los clientes en 30 días.',c:'Es la base de tus ingresos: más denuncias, más ingreso y más costo de IA.',l:'Cómo leerlo'},
+neg_margen:{t:'Margen',q:'Lo que queda de los ingresos después de pagar la IA y los costos fijos. Se calcula con la tarifa de ejemplo.',c:'Verde sobre 60 %, ámbar entre 30 y 60 %, rojo bajo 30 %. Si subes la tarifa, sube el margen.',l:'Cómo leerlo'},
+neg_adopcion_k:{t:'Valoración por auditores',q:'Qué parte de las sugerencias fue marcada por una persona como útil o no útil.',c:'Si casi nadie valora, no sabemos si las sugerencias sirven. Conviene pedirlo más.',l:'Cómo leerlo'},
+neg_clientes:{t:'Clientes',q:'Cada fila es un cliente: cuánto usa de lo contratado, cuánto ingresa y cuesta, y cuándo fue su último uso.',c:'Uso muy bajo o muy alto del plan, o días sin actividad, son señales para contactar al cliente.',l:'Cómo leerlo'},
+neg_denuncias:{t:'Denuncias por cliente',q:'Evolución diaria del volumen de cada cliente, apilado.',c:'Una franja que desaparece significa que ese cliente dejó de usar Kerna.',l:'Cómo leerlo'},
+neg_adopcion:{t:'Adopción',q:'Embudo: de las denuncias recibidas, cuántas recibieron sugerencia, cuántas fueron valoradas y cuántas valoradas resultaron útiles.',c:'Barras cortas en valoración indican poca participación de los auditores.',l:'Cómo leerlo'},
+tarifa:{t:'Tarifa por denuncia',q:'Supuesto de cuánto se le cobraría al cliente por cada denuncia analizada. No es un precio real.',c:'Sube o baja ingresos y margen en toda la página y en la proyección.',l:'Si lo cambias'},
+crecimiento:{t:'Crecimiento mensual',q:'Cuánto crece el volumen de denuncias cada mes en la proyección.',c:'Más crecimiento: más ingresos y más costo. No es una predicción, es un escenario.',l:'Si lo cambias'},
+proyeccion:{t:'Proyección',q:'Escenario a 6 meses con la tarifa y el crecimiento que elijas. Barras: ingresos y costo; línea: margen.',c:'Sirve para decidir precios o planes, no para comprometer cifras.',l:'Cómo leerlo'},
+inf_negocio:{t:'Sección de negocio',q:'Agrega al informe una sección con clientes, uso del plan, costos y margen.',c:'Déjala apagada si el informe es para auditoría o para un cliente.',l:'Si la activas'},
+alerta:{t:'Avisar si un caso sigue sin sugerencia',q:'Pasado este tiempo sin sugerencia, el caso aparece destacado en el panel.',c:'Plazos cortos avisan antes pero pueden generar falsas alarmas.',l:'Si lo cambias'}
+};
+const tt=document.getElementById('tt');let ttFor=null,pinned=false;
+function showTip(el){const g=G[el.closest('k-tip').getAttribute('g')];if(!g)return;ttFor=el;
+  tt.innerHTML='<b>'+g.t+'</b>'+g.q+'<span class="l">'+g.l+'</span>'+g.c;el.setAttribute('aria-describedby','tt');
+  tt.classList.add('on');const r=el.getBoundingClientRect(),w=tt.offsetWidth,h=tt.offsetHeight;
+  let x=Math.min(Math.max(12,r.left+r.width/2-w/2),innerWidth-w-12),y=r.bottom+8;if(y+h>innerHeight-8)y=r.top-h-8;tt.style.left=x+'px';tt.style.top=Math.max(8,y)+'px'}
+function hideTip(){tt.classList.remove('on');if(ttFor)ttFor.removeAttribute('aria-describedby');ttFor=null;pinned=false}
+class KTip extends HTMLElement{connectedCallback(){if(this.querySelector('button'))return;const g=G[this.getAttribute('g')];
+  this.innerHTML='<button type="button" aria-label="Ayuda: '+(g?g.t:'')+'"><k-ic n="circle-help"></k-ic></button>'}
+  static get observedAttributes(){return['g']}attributeChangedCallback(){const b=this.querySelector('button'),g=G[this.getAttribute('g')];if(b&&g)b.setAttribute('aria-label','Ayuda: '+g.t)}}
+customElements.define('k-tip',KTip);
+document.addEventListener('pointerover',e=>{const b=e.target.closest&&e.target.closest('k-tip button');if(b&&e.pointerType==='mouse'&&!pinned)showTip(b)});
+document.addEventListener('pointerout',e=>{if(e.target.closest&&e.target.closest('k-tip button')&&!pinned&&e.pointerType==='mouse')hideTip()});
+document.addEventListener('focusin',e=>{const b=e.target.closest&&e.target.closest('k-tip button');if(b)showTip(b)});
+document.addEventListener('focusout',e=>{if(e.target.closest&&e.target.closest('k-tip button')&&!pinned)hideTip()});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('k-tip button');if(b){if(pinned&&ttFor===b){hideTip()}else{showTip(b);pinned=true}}else if(pinned)hideTip()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')hideTip()});
+addEventListener('hashchange',hideTip);addEventListener('scroll',()=>{if(!pinned)hideTip()},{passive:true});
+
+/* ---------- datos de ejemplo (formas tomadas de /api/metricas) ---------- */
+const CASOS=[4,6,9,8,3,2,11,12,10,9,13,5,3,14,16,12,11,15,6,4,17,15,13,12,16,7,5,14,14,17];
+const INC_IDX=26; const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const fecha=i=>{const d=new Date(2026,10,12-(29-i));return d.getDate()+' '+MES[d.getMonth()]};
+const DIA=CASOS.map((c,i)=>{let m=Math.round(c*.1),r=Math.round(c*.14);if(i===INC_IDX){m=Math.round(c*.7);r=Math.round(c*.2)}return{f:fecha(i),c,m,r,o:c-m-r}});
+const P50=CASOS.map((c,i)=>22+((i*7)%9)+(i===INC_IDX?9:0)), P95=P50.map((p,i)=>p+9+((i*5)%11)+(i===INC_IDX?18:0));
+const PREC={'Claude Haiku 5.5':[.10,.50],'Claude Sonnet 5.5':[2,10],'Claude Opus 5.5':[4,20]};
+const TOK_IN=1165,TOK_OUT=114;
+
+function app(){return{
+ view:'portada',conNegocio:false,tarifa:0.5,crec:15,per:30,paso:1,ip:30,custom:false,desde:'2026-10-14',hasta:'2026-11-12',gen:{estado:'',k:'',p:0,archivo:''},
+ toast:'',resumenAbierto:false,
+ ico:{ok:'circle-check',warn:'triangle-alert',bad:'octagon-alert',na:'circle-minus'},est:{ok:'Bien',warn:'Atención',bad:'Problema',na:'Sin datos'},
+ pasos:[{i:'inbox',t:'Llega la denuncia',d:'Una persona denuncia en Veridy, como siempre.'},{i:'eye-off',t:'Se anonimiza',d:'Se tapan nombres, RUT, correos y teléfonos.'},{i:'search',t:'Se busca en la ley',d:'Kerna encuentra los artículos más parecidos.'},{i:'quote',t:'Sugerencia con cita',d:'Ves la ley, el artículo y el texto que lo respalda.'}],
+ leyes:[{n:'21.643',t:'Ley Karin',d:'Acoso laboral, sexual y violencia en el trabajo.'},{n:'19.628',t:'Datos personales',d:'Protección de la vida privada, con la reforma de la Ley 21.719.'},{n:'20.393',t:'Responsabilidad penal',d:'De las personas jurídicas y modelos de prevención de delitos.'}],
+ salud:[{k:'nucleo',n:'Motor de Kerna',i:'cpu',e:'ok',d:'Responde bien. Último caso procesado hace 4 min.'},{k:'conector',n:'Enlace con Veridy',i:'plug',e:'warn',d:'Conectado. 12 casos esperan reintento.'},{k:'modelo',n:'Modelo de IA',i:'bot',e:'warn',d:'El principal falló en 1 de cada 7 casos; entró el respaldo.'},{k:'busqueda',n:'Búsqueda de leyes',i:'search',e:'ok',d:'Encuentra artículos en menos de 4 s.'}],
+ aciertos:[{n:'Ley 21.643 · Karin',v:81,e:'ok'},{n:'Ley 19.628 · Datos personales',v:74,e:'warn'},{n:'Ley 20.393 · Responsabilidad penal',v:66,e:'bad'}],
+ anon:[{t:'Correos',v:100,e:'ok'},{t:'RUT',v:100,e:'ok'},{t:'Teléfonos',v:93,e:'ok'},{t:'Nombres de personas',v:86,e:'warn'}],
+ etapas:[{n:'Anonimizar',s:1.4,e:'ok'},{n:'Buscar en la ley',s:3.9,e:'ok'},{n:'Redactar sugerencia',s:18.6,e:'bad'},{n:'Verificar citas',s:3.1,e:'ok'}],
+ cobertura:[{n:'Ley 21.643 · Karin',a:96},{n:'Ley 19.628 · Datos personales',a:231},{n:'Ley 20.393 · Responsabilidad penal',a:85}],
+ formatos:[{k:'pdf',n:'PDF',i:'file-text',d:'Para leer, imprimir o enviar por correo.'},{k:'xlsx',n:'Excel',i:'file-spreadsheet',d:'Para filtrar y hacer tus propios gráficos.'},{k:'csv',n:'CSV',i:'table',d:'Para cargar los datos en otro programa.'}],
+ /* ajustes */
+ rec:{envios:5,reintentos:3,espera:24,revision:30,reprocesar:false,evaluador:true,candidatos:10,cadena:[{v:'nano',on:true},{v:'haiku',on:true}],compartir:['analista','comite'],maxresp:15,alerta:6},
+ s:{},
+ modelos:{nano:{t:'GPT-5 nano · Azure OpenAI',d:'Rápido y económico. Modelo principal actual.'},haiku:{t:'Claude Haiku 5.5',d:'Más preciso; algo más caro. Respaldo.'},sonnet:{t:'Claude Sonnet 5.5',d:'Muy preciso; más lento y caro.'}},
+ grupos:[],
+ init(){
+  this.s=JSON.parse(JSON.stringify(this.rec));this.s.cadena=[{v:'nano',on:true},{v:'haiku',on:true},{v:'sonnet',on:false}];this.rec.cadena=JSON.parse(JSON.stringify(this.s.cadena));
+  const sg=(arr,u)=>arr.map(v=>({v,t:v>=3600?v/3600+' h':v>=60?v/60+' min':v+' s'}));
+  this.grupos=[
+   {id:'proc',t:'Cómo se procesan los casos',d:'Ritmo del conector entre Veridy y Kerna',i:'workflow',items:[
+    {k:'envios',t:'rg',l:'Casos que se analizan a la vez',d:'Cuántas denuncias se envían juntas a Kerna.',min:1,max:10,f:v=>v+(v===1?' caso':' casos'),av:v=>v>7?'Con tantos casos juntos puede superarse el límite del proveedor de IA.':''},
+    {k:'reintentos',t:'rg',l:'Reintentos por caso',d:'Veces que se vuelve a probar un caso que falló.',min:0,max:5,f:v=>v===0?'No reintentar':v+(v===1?' vez':' veces'),av:v=>v===0?'Los casos fallidos quedarán en revisión manual sin nuevo intento.':''},
+    {k:'espera',t:'sg',l:'Esperar entre reintentos',d:'Tiempo antes de volver a intentar.',o:[6,12,24,48].map(v=>({v,t:v+' h'}))},
+    {k:'revision',t:'sg',l:'Buscar denuncias nuevas cada',d:'Frecuencia con que el conector mira Veridy.',o:sg([15,30,60,300])},
+    {k:'reprocesar',t:'sw',l:'Volver a intentar los que ya están en revisión manual',d:'Una vez, al guardar. Úsalo tras arreglar una falla.'}]},
+   {id:'ia',t:'Inteligencia artificial',d:'Calidad, modelos y revisor automático',i:'sparkles',items:[
+    {k:'evaluador',t:'sw',l:'Revisor de calidad automático',d:'Comprueba que las citas respalden cada artículo.'},
+    {k:'candidatos',t:'rg',l:'Artículos que compara el revisor',d:'Por cada caso.',min:3,max:20,dep:'evaluador',f:v=>v+' artículos'},
+    {k:'cadena',t:'cd',l:'Modelos de IA y su orden',d:'Cuál se usa primero y cuáles respaldan.'}]},
+   {id:'comp',t:'Quién ve las sugerencias',d:'Con quién se comparte cada caso en Veridy',i:'users',items:[
+    {k:'compartir',t:'ch',l:'Compartir con',d:'Equipos que reciben el caso con la sugerencia.',o:[{v:'analista',t:'Analistas de cumplimiento'},{v:'comite',t:'Comité de ética'},{v:'auditoria',t:'Auditoría interna'},{v:'legal',t:'Fiscalía legal'}]}]},
+   {id:'plazos',t:'Plazos',d:'Cuándo algo se considera lento o atrasado',i:'timer',items:[
+    {k:'maxresp',t:'rg',l:'Tiempo objetivo de respuesta',d:'Más allá de esto, un caso se marca como lento.',min:5,max:60,step:5,f:v=>v+' segundos'},
+    {k:'alerta',t:'sg',l:'Avisar si un caso sigue sin sugerencia después de',d:'Se destaca en el panel.',o:[1,6,24].map(v=>({v,t:v+' h'}))}]}];
+  const nav=()=>{const h=(location.hash||'#/portada').replace('#/','');this.view=['portada','resumen','informe','ajustes','negocio'].includes(h)?h:(['como','proteccion','leyes'].includes(h)?this.view:'portada');
+   if(['como','proteccion','leyes'].includes(h)){this.view='portada';setTimeout(()=>document.getElementById(h)&&document.getElementById(h).scrollIntoView(),30)}else window.scrollTo(0,0);this.$nextTick(()=>this.charts())};
+  addEventListener('hashchange',nav);nav();
+  addEventListener('resize',()=>['ch-casos','ch-lat','ch-heat','ch-gauge'].forEach(i=>{const c=echarts.getInstanceByDom(document.getElementById(i));c&&c.resize()}));
+ },
+ /* derivados */
+ get sl(){return DIA.slice(30-this.per)},
+ get tot(){return this.sl.reduce((a,d)=>a+d.c,0)},
+ get modos(){return{o:this.sl.reduce((a,d)=>a+d.o,0),r:this.sl.reduce((a,d)=>a+d.r,0),m:this.sl.reduce((a,d)=>a+d.m,0)}},
+ pct(a,b){return b?Math.round(a/b*100):0},
+ get sugPct(){return this.pct(this.modos.o+this.modos.r,this.tot)},
+ get p50(){const a=P50.slice(30-this.per);return Math.round(a.reduce((x,y)=>x+y,0)/a.length)},
+ get p95(){const a=P95.slice(30-this.per);return Math.round(a.reduce((x,y)=>x+y,0)/a.length)},
+ get costo(){return Object.entries(PREC).map(([n,[pi,po]])=>{const caso=(TOK_IN*pi+TOK_OUT*po)/1e6;return{n,caso,tot:caso*this.tot,m1000:caso*1000}})},
+ usd(v,d){d=d||2;if(v<0.005&&!(d>2))return 'US$ '+v.toLocaleString('es-CL',{minimumFractionDigits:3,maximumFractionDigits:3});return 'US$ '+v.toLocaleString('es-CL',{minimumFractionDigits:d,maximumFractionDigits:d})},
+ spark(a){const mx=Math.max(...a),mn=Math.min(...a),r=(mx-mn)||1;return a.map((v,i)=>(i?'L':'M')+(i/(a.length-1)*100).toFixed(1)+' '+(27-(v-mn)/r*24).toFixed(1)).join(' ')},
+ get kpis(){const w=this.per===7,prev=w?.93:.88,tot=this.tot,sl=this.sl;
+  const dc=Math.round((tot/(tot*prev)-1)*100);
+  return[
+  {k:'casos',i:'inbox',l:'Denuncias analizadas',v:tot,u:'denuncias',e:'ok',et:'Sin problemas',de:'na',da:'arrow-up-right',dt:'+'+dc+' % vs período anterior',f:'Llegaron '+tot+' denuncias en '+this.per+' días; algo más que en el período anterior.',m:'Período anterior: '+Math.round(tot*prev),s:sl.map(d=>d.c)},
+  {k:'calidad',i:'target',l:'Acierto de las sugerencias',v:74,u:'%',e:'warn',et:'Bajo la meta',de:'bad',da:'arrow-down-right',dt:'6 puntos bajo la meta',f:'Cuando existe un artículo correcto, Kerna lo incluye entre sus 5 primeras sugerencias el 74 % de las veces.',m:'Meta: 80 % o más · prueba con casos conocidos',s:[78,77,76,77,75,76,74,75,74,74]},
+  {k:'tiempo',i:'timer',l:'Tiempo de respuesta típico',v:this.p50,u:'segundos',e:'warn',et:'Sobre la meta',de:'bad',da:'arrow-up-right',dt:'4 s más lento',f:'La mitad de los casos recibe su sugerencia en '+this.p50+' s; la meta es 15 s.',m:'Meta: 15 s o menos',s:P50.slice(30-this.per)},
+  {k:'costo_k',i:'coins',l:'Costo estimado con Claude',v:this.usd(this.costo[0].tot).replace('US$ ',''),u:'US$',e:'na',et:'Sin presupuesto',de:'na',da:'minus',dt:'',f:'Unos '+this.usd(this.costo[0].m1000)+' cada 1.000 denuncias con Claude Haiku 5.5.',m:'Precios Anthropic, 3 nov 2026',s:sl.map(d=>d.c)}]},
+ get incidentes(){const m=this.modos.m,a=Math.round(m*.5),b=Math.round(m*.3);return[
+  {c:'Modelo de IA no disponible',n:a,e:'bad',a:'Revisa que el modelo principal esté activo. Si se repite, deja el de respaldo en primer lugar en Ajustes.'},
+  {c:'Citas que no respaldan el artículo',n:b,e:'warn',a:'Mantén encendido el revisor automático y revisa estos casos a mano.'},
+  {c:'Tiempo de espera agotado',n:m-a-b,e:'warn',a:'Baja «Casos que se analizan a la vez» en Ajustes para no saturar al proveedor.'}]},
+ /* informe */
+
+ get clientes(){const base=[
+  {n:'Veridy',plan:500,s:CASOS,ult:'hace 4 minutos',dias:0,rt:'Uso diario',sug:86},
+  {n:'Cliente B (ejemplo)',plan:300,s:CASOS.map((c,i)=>Math.round(c*.5+((i*3)%3))),ult:'hace 2 horas',dias:0,rt:'Uso diario',sug:91},
+  {n:'Cliente C (ejemplo)',plan:100,s:CASOS.map((c,i)=>i<12?Math.round(c*.45):0),ult:'hace 19 días',dias:19,rt:'Sin actividad: contactar',sug:78}];
+  return base.map(c=>{const tot=c.s.reduce((a,b)=>a+b,0),uso=Math.round(tot/c.plan*100),caso=(TOK_IN*.1+TOK_OUT*.5)/1e6;
+   return{...c,tot,uso,ue:c.dias>14?'warn':uso>100?'bad':uso>=80?'warn':uso<20?'warn':'ok',nota:c.dias>14?'Usó el plan al comienzo y luego se detuvo':uso>100?'Superó el plan: ofrecer un plan mayor':uso>=80?'Cerca del límite del plan':uso<20?'Usa muy poco de lo contratado':'Uso sano del plan',
+   re:c.dias>14?'bad':c.dias>3?'warn':'ok',ing:tot*this.tarifa,cos:tot*caso}})},
+ get neg(){const c=this.clientes,tot=c.reduce((a,x)=>a+x.tot,0),ing=c.reduce((a,x)=>a+x.ing,0),cos=c.reduce((a,x)=>a+x.cos,0),fijo=40,mg=ing-cos-fijo;
+  return{tot,ing,cos,fijo,mg,margenPct:Math.round(mg/ing*100),activos:c.filter(x=>x.dias<=14).length}},
+ get negKpis(){const n=this.neg,mp=n.margenPct;return[
+  {k:'neg_clientes_k',i:'building-2',l:'Clientes activos',v:n.activos,u:'de '+this.clientes.length,e:'warn',et:'1 en riesgo',de:'na',da:'minus',dt:'',f:n.activos+' de '+this.clientes.length+' clientes usaron Kerna en las últimas 2 semanas.',m:'Hoy solo Veridy es real'},
+  {k:'neg_denuncias_k',i:'inbox',l:'Denuncias procesadas',v:n.tot,u:'en 30 días',e:'ok',et:'Creciendo',de:'ok',da:'arrow-up-right',dt:'+14 % vs 30 días previos',f:'Se procesaron '+n.tot+' denuncias entre todos los clientes; 14 % más que el mes anterior.',m:'Mes anterior: '+Math.round(n.tot/1.14)},
+  {k:'neg_margen',i:'piggy-bank',l:'Margen mensual',v:mp,u:'%',e:mp>=60?'ok':mp>=30?'warn':'bad',et:mp>=60?'Alto':mp>=30?'Medio':'Bajo',de:'na',da:'minus',dt:'',f:'De '+this.usd(n.ing)+' de ingresos de ejemplo, quedan '+this.usd(n.mg)+' tras pagar IA ('+this.usd(n.cos,2)+') y costos fijos.',m:'Con tarifa de ejemplo de '+this.usd(this.tarifa)+' por denuncia'},
+  {k:'neg_adopcion_k',i:'thumbs-up',l:'Sugerencias valoradas',v:16,u:'%',e:'bad',et:'Muy pocas',de:'na',da:'minus',dt:'',f:'Solo 16 de cada 100 sugerencias fueron valoradas; de esas, 8 de cada 10 resultaron útiles.',m:'Esperado: 50 % o más · hoy Veridy: sin valoraciones'}]},
+ get embudo(){return[{n:'Con sugerencia',v:this.sugPct,e:'ok'},{n:'Valoradas por auditores',v:16,e:'bad'},{n:'Valoradas como útiles',v:79,e:'ok'}]},
+ get proy(){const out=[];let v=this.neg.tot*(1+0);for(let m=1;m<=6;m++){v=this.neg.tot*Math.pow(1+this.crec/100,m);const ing=v*this.tarifa,cos=v*((TOK_IN*.1+TOK_OUT*.5)/1e6)+40;out.push({m:'Mes +'+m,ing,cos,mp:Math.round((ing-cos)/ing*100)})}return out},
+ get ipDias(){if(this.custom){const d=(new Date(this.hasta)-new Date(this.desde))/864e5+1;return Math.max(1,Math.round(d)||1)}return this.ip},
+ get rangoTxt(){const f=d=>{const x=new Date(d+'T12:00:00');return x.getDate()+' '+MES[x.getMonth()]+' '+x.getFullYear()};
+  if(this.custom)return f(this.desde)+' al '+f(this.hasta);const h=new Date(2026,10,12),d=new Date(h);d.setDate(h.getDate()-this.ip+1);return d.getDate()+' '+MES[d.getMonth()]+' al 12 nov 2026'},
+ get inf(){const f=this.ipDias/30;return{f,sug:this.sugPct}},
+ get infKpi(){const f=this.inf.f;return[{l:'Denuncias',v:Math.round(303*f),e:'ok',t:'Normal'},{l:'Con sugerencia',v:this.sugPct+' %',e:'ok',t:'Dentro de lo esperado'},{l:'Respuesta típica',v:this.p50+' s',e:'warn',t:'Sobre la meta'},{l:'Acierto de artículos',v:'74 %',e:'warn',t:'Bajo la meta'}]},
+ generar(f){if(this.gen.estado==='cargando')return;this.gen={estado:'cargando',k:f.k,p:5,archivo:''};setTimeout(()=>this.gen.p=100,60);
+  setTimeout(()=>{const ext=f.k;this.gen={estado:'listo',k:f.k,p:100,archivo:'informe-kerna-'+(this.custom?this.desde+'_a_'+this.hasta:'ultimos-'+this.ip+'-dias')+'.'+ext}},1800)},
+ /* ajustes */
+ setPer(p){this.per=p;this.$nextTick(()=>this.charts())},
+ esRec(k){return JSON.stringify(this.s[k])===JSON.stringify(this.rec[k])},
+ nombreModelo(v){return this.modelos[v]},
+ toggleCh(k,v){const a=this.s[k];this.s[k]=a.includes(v)?a.filter(x=>x!==v):[...a,v]},
+ mover(i,d){const a=[...this.s.cadena],j=i+d;[a[i],a[j]]=[a[j],a[i]];this.s.cadena=a},
+ fmtVal(it,v){if(it.t==='sw')return v?'Encendido':'Apagado';if(it.t==='rg')return it.f(v);if(it.t==='sg')return it.o.find(o=>o.v===v).t;
+  if(it.t==='ch')return v.length?v.map(x=>it.o.find(o=>o.v===x).t).join(', '):'Nadie';
+  if(it.t==='cd')return v.filter(m=>m.on).map(m=>this.modelos[m.v].t.split(' · ')[0]).join(' → ')||'Ninguno'},
+ notaCambio(it,v){const n={envios:'Más casos juntos acelera la fila pero aumenta el riesgo de fallos por límites del proveedor.',reintentos:'Cambia cuántos casos fallidos se rescatan solos.',espera:'Modifica cuánto tarda en repetirse un intento.',revision:'Cambia la rapidez con que Kerna ve denuncias nuevas.',reprocesar:'Los casos en revisión manual volverán a la fila una vez.',evaluador:v?'Se revisarán las citas de cada sugerencia.':'Será más rápido y barato, con menos control de citas.',candidatos:'Cambia el cuidado y el costo del revisor.',cadena:'Cambia qué modelo responde primero y cuál respalda.',compartir:'Solo afecta a los casos nuevos.',maxresp:'Cambia desde cuándo un caso se marca como lento.',alerta:'Cambia cuándo se destaca un caso sin sugerencia.'};return n[it.k]},
+ get cambios(){const out=[];for(const g of this.grupos)for(const it of g.items){if(!this.esRec(it.k)&&this.s[it.k]!==undefined)out.push({k:it.k,l:it.l,de:this.fmtVal(it,this.rec[it.k]),a:this.fmtVal(it,this.s[it.k]),n:this.notaCambio(it,this.s[it.k])})}return out},
+ restaurar(){this.s=JSON.parse(JSON.stringify(this.rec));this.say('Volviste a los valores recomendados')},
+ descartar(){this.s=JSON.parse(JSON.stringify(this.base||this.rec))},
+ guardar(){this.base=JSON.parse(JSON.stringify(this.s));this.rec2=1;this.resumenAbierto=false;this.say('Ajustes guardados (maqueta: no se guardó nada real)')},
+ say(t){this.toast=t;clearTimeout(this._t);this._t=setTimeout(()=>this.toast='',3200)},
+ /* graficos */
+ charts(){
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim(),mkc=(id,opt)=>{const el=document.getElementById(id);if(!el)return;let c=echarts.getInstanceByDom(el);if(!c){c=echarts.init(el,null,{renderer:'svg'});new ResizeObserver(()=>c.resize()).observe(el)}c.setOption(opt,true);c.resize()};
+  if(this.view==='negocio'){const mu=css('--muted'),ink=css('--ink'),ok=css('--ok-bar'),cs=['#1C2A6B','#6E7FD0','#B7C0E8'];
+   mkc('ch-cli',{textStyle:{fontFamily:'Inter'},aria:{enabled:true},grid:{left:34,right:8,top:30,bottom:28},tooltip:{trigger:'axis'},legend:{top:0,left:0,textStyle:{color:ink,fontSize:12},itemWidth:12,itemHeight:12},
+    xAxis:{type:'category',boundaryGap:false,data:DIA.map(d=>d.f),axisLabel:{color:mu,fontSize:11,interval:4},axisTick:{show:false},axisLine:{lineStyle:{color:'#DDE2EF'}}},yAxis:{type:'value',axisLabel:{color:mu,fontSize:11},splitLine:{lineStyle:{color:'#EEF1F8'}}},
+    series:this.clientes.map((c,i)=>({name:c.n.replace(' (ejemplo)',''),type:'line',stack:'t',smooth:true,symbol:'none',data:c.s,itemStyle:{color:cs[i]},lineStyle:{width:1.5,color:cs[i]},areaStyle:{color:cs[i],opacity:.9}}))});
+   const P=this.proy;mkc('ch-proy',{textStyle:{fontFamily:'Inter'},aria:{enabled:true},grid:{left:62,right:12,top:34,bottom:26},tooltip:{trigger:'axis'},legend:{top:0,left:0,textStyle:{color:ink,fontSize:12},itemWidth:12,itemHeight:12},
+    xAxis:{type:'category',data:P.map(p=>p.m),axisLabel:{color:mu,fontSize:11},axisTick:{show:false}},yAxis:[{type:'value',axisLabel:{color:mu,fontSize:11,formatter:v=>'US$ '+v},splitLine:{lineStyle:{color:'#EEF1F8'}}}],
+    series:[{name:'Ingresos',type:'bar',data:P.map(p=>Math.round(p.ing)),itemStyle:{color:'#3B4FB4',borderRadius:[4,4,0,0]},barMaxWidth:26},{name:'Costo total',type:'bar',data:P.map(p=>Math.round(p.cos)),itemStyle:{color:'#A8B1CC',borderRadius:[4,4,0,0]},barMaxWidth:26}]})}
+  if(this.view==='resumen'){
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim(),sl=this.sl;
+  const ok=css('--ok-bar'),wa=css('--warn-bar'),ba=css('--bad-bar'),ink=css('--ink'),mu=css('--muted'),ln='#DDE2EF';
+  const mk=(id,opt)=>{const el=document.getElementById(id);if(!el)return;let c=echarts.getInstanceByDom(el);if(!c){c=echarts.init(el,null,{renderer:'svg'});new ResizeObserver(()=>c.resize()).observe(el)}c.setOption(opt,true);c.resize()};
+  const base={textStyle:{fontFamily:'Inter'},aria:{enabled:true}};
+  const labs=sl.map(d=>d.f),inc=INC_IDX-(30-this.per);
+  const inM=inc>=0?[{xAxis:inc,label:{formatter:'Modelo caído\n(3 h)',color:ba,fontWeight:700,fontSize:11,position:'end'},lineStyle:{color:ba,type:'dashed',width:1.5}}]:[];
+  mk('ch-casos',{...base,grid:{left:34,right:8,top:30,bottom:28},tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},legend:{show:false},
+   xAxis:{type:'category',data:labs,axisLabel:{color:mu,fontSize:11,interval:this.per===7?0:4},axisLine:{lineStyle:{color:ln}},axisTick:{show:false}},
+   yAxis:{type:'value',name:'denuncias',nameTextStyle:{color:mu,fontSize:11,align:'left'},axisLabel:{color:mu,fontSize:11},splitLine:{lineStyle:{color:'#EEF1F8'}}},
+   series:[{name:'Modelo principal',type:'bar',stack:'a',data:sl.map(d=>d.o),itemStyle:{color:ok},barMaxWidth:22},{name:'Modelo de respaldo',type:'bar',stack:'a',data:sl.map(d=>d.r),itemStyle:{color:wa}},
+    {name:'Revisión manual',type:'bar',stack:'a',data:sl.map(d=>d.m),itemStyle:{color:ba,borderRadius:[3,3,0,0]},markLine:{symbol:'none',data:inM}}]});
+  mk('ch-lat',{...base,grid:{left:36,right:12,top:34,bottom:28},tooltip:{trigger:'axis',valueFormatter:v=>v+' s'},legend:{top:0,right:0,textStyle:{color:ink,fontSize:12},itemWidth:14,itemHeight:4},
+   xAxis:{type:'category',data:labs,boundaryGap:false,axisLabel:{color:mu,fontSize:11,interval:this.per===7?0:4},axisLine:{lineStyle:{color:ln}},axisTick:{show:false}},
+   yAxis:{type:'value',name:'segundos',nameTextStyle:{color:mu,fontSize:11,align:'left'},axisLabel:{color:mu,fontSize:11},splitLine:{lineStyle:{color:'#EEF1F8'}},max:70},
+   series:[{name:'9 de cada 10 casos',type:'line',data:P95.slice(30-this.per),smooth:true,symbol:'none',lineStyle:{color:'#7C88B8',width:2},areaStyle:{color:'rgba(124,136,184,.18)'}},
+    {name:'Caso típico',type:'line',data:P50.slice(30-this.per),smooth:true,symbol:'none',lineStyle:{color:'#3B4FB4',width:3},areaStyle:{color:'rgba(59,79,180,.22)'},
+     markLine:{symbol:'none',silent:true,data:[{yAxis:15,label:{formatter:'Meta 15 s',color:ok,fontWeight:700,position:'insideEndTop'},lineStyle:{color:ok,type:'dashed',width:2}}]}}]});
+  mk('ch-gauge',{...base,series:[{type:'gauge',startAngle:200,endAngle:-20,min:0,max:100,radius:'95%',center:['50%','62%'],
+   axisLine:{lineStyle:{width:16,color:[[.7,ba],[.8,wa],[1,ok]]}},pointer:{width:5,length:'62%',itemStyle:{color:ink}},anchor:{show:true,size:10,itemStyle:{color:ink}},
+   axisTick:{show:false},splitLine:{show:false},axisLabel:{distance:-34,color:mu,fontSize:10,formatter:v=>[0,70,80,100].includes(v)?v:''},splitNumber:10,
+   detail:{valueAnimation:true,formatter:'{value} %',fontSize:26,fontWeight:700,color:ink,offsetCenter:[0,'38%']},title:{show:true,offsetCenter:[0,'66%'],fontSize:12,color:mu},data:[{value:74,name:'Meta: 80 %'}]}]});
+  const dias=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],fr=['0-3 h','3-6 h','6-9 h','9-12 h','12-15 h','15-18 h','18-21 h','21-24 h'],hd=[];
+  dias.forEach((d,i)=>fr.forEach((f,j)=>{const lab=i<5?[1,0,4,13,10,12,4,2][j]:[1,0,0,3,4,3,1,1][j];hd.push([j,i,Math.max(0,lab+((i*3+j*2)%4)-1)])}));
+  mk('ch-heat',{...base,grid:{left:40,right:8,top:8,bottom:62},tooltip:{formatter:p=>dias[p.value[1]]+' '+fr[p.value[0]]+': '+p.value[2]+' denuncias'},
+   xAxis:{type:'category',data:fr,splitArea:{show:false},axisLabel:{color:mu,fontSize:10,interval:0,rotate:35},axisLine:{show:false},axisTick:{show:false}},
+   yAxis:{type:'category',data:dias,inverse:true,axisLabel:{color:mu,fontSize:11},axisLine:{show:false},axisTick:{show:false}},
+   visualMap:{min:0,max:16,orient:'horizontal',left:'center',bottom:0,itemWidth:12,itemHeight:90,text:['Más','Menos'],textStyle:{color:mu,fontSize:11},inRange:{color:['#EEF1FB','#9AA8E0','#3B4FB4','#1C2A6B']}},
+   series:[{type:'heatmap',data:hd,itemStyle:{borderColor:'#fff',borderWidth:2,borderRadius:3},label:{show:true,fontSize:10,formatter:p=>p.value[2]>=6?(p.value[2]>=10?'{w|'+p.value[2]+'}':'{d|'+p.value[2]+'}'):'',rich:{w:{color:'#fff',fontSize:10},d:{color:'#0F1736',fontSize:10}}}}]});
+  }
+ }
+}}
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
