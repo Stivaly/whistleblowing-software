@@ -415,8 +415,16 @@ Desplegado con `desplegar.sh --ref HEAD` (último commit: "paneles orbitales de 
 - PDF (`exportar.py`, `a_pdf` ~119): página 1 con cabecera, baldosa del veredicto (PNG en `app/estaticos/img/baldosa-*.png`, `herramientas/rasterizar_baldosas.sh`), KPI y modos; una página por pestaña (indicadores, barras y notas); anexo de tablas. Prueba `test_pdf_primera_pagina...`.
 - Capturas `kerna/front/diseno-v2/capturas/prod8-*.png` y `prod8.json` (alturas: Resumen 850 / 1.537, Negocio 948 / 1.371, Ajustes 850 / 1.623, Informe 850 / 1.100-1.265, Datos 1.120 / 1.550; sin desborde horizontal; TTFB 12-30 ms, Ajustes ~135 ms, HTML 9-10 KB, Informe 219 KB).
 
+### Relevo 2026-11-12 (agente 5): hecho y desplegado (commit 4e37b1142 y anteriores; 107 pruebas del front)
+- Móvil 390 px (`kerna.css`, bloque «v8 · móvil compacto» al final): leyes en columnas que se ajustan (`repeat(auto-fit,minmax(84px,1fr))`, anillos de 56 px, etiqueta en dos líneas con `.ly-n`, `panel.html` y `vistas._ley_n`); chips de leyes en 3 columnas; pestañas del informe en 2 filas (`.tabs2` en grilla de 3); «Compartir» en una fila que se desplaza dentro de sí misma con degradado de borde; bandas a 16 px, KPI en 2 columnas compactas, diagrama orbital de 200 px con leyenda en una fila (`.orb-lg`), cola de reintentos con íconos de 32 px y botón de ancho completo, paneles azules de Ajustes bajos (64 px, 56 px en «Compartir»; no se quitaron), Datos con filas de 30 px, cascada con etiquetas completas (`kerna.js` `cascada`, `bottom` 50), clientes de Negocio en menos líneas.
+- Alturas a 390 px (producción, antes → ahora): Resumen 1.537 → 1.185, Ajustes 1.623 → 1.370, Negocio 1.371 → 1.240, Datos 1.550 → 1.339; pestañas del informe 1.006 a 1.156. Sin desborde horizontal en ninguna vista ni pestaña (`prod9.json`).
+- Diagrama orbital: satélite con radio según el largo de la cifra y total largo más chico (`orbital.radio_satelite`, `geometria_orbital`); geometría compartida entre el SVG y el PDF.
+- PDF (`exportar.py` `a_pdf`, `pdf_orbital.py`, `vistas.visuales_pdf`): vector con la misma geometría que la vista (no PNG: los datos cambian en cada informe). Página 1 = cabecera, veredicto, KPI, diagrama orbital del período y camino de una denuncia. Una página por pestaña con su visual: anillos por ley (Calidad, con Cobertura debajo), camino (Rapidez), diagrama por modelo (Costos), cascada y proyección (Rentabilidad), camino de fallas y motivos (Incidentes). Pruebas `test_pdf_usa_las_visuales_orbitales_de_la_vista`, `test_pdf_con_rentabilidad_dibuja_cascada_y_proyeccion`.
+- `herramientas/medir_vistas.py`: las capturas ya no llevan la barra inferior fija encima.
+- Capturas `kerna/front/diseno-v2/capturas/prod9-*.png` (390 = `-m`, 1366 = `-d`; vistas, 6 pestañas, portada y `prod9-reintentar-modal-{d,m}.png`), `prod9.json`, `prod9-extra.json` (TTFB 11-94 ms, HTML 8-10 KB, Informe 220 KB, CPU en reposo 0-0,4 %).
+
 ### Falta (en este orden)
-1. Alturas en 390 aún altas: Resumen 1.537, Ajustes 1.623, Negocio 1.371, Datos 1.550 (`kerna.css` bloque v6 y media <= 599 px, ~948); Datos 1.120 en 1366.
-2. PDF: las páginas de pestaña usan barras (clase `Barras`, `exportar.py` ~215), no las visuales orbitales; página 1 deja mitad de la hoja vacía (se podría subir la página de Calidad a la 1).
-3. Ajustes en móvil: sección "Compartir" con chips en 3 filas; considerar chips en una fila con scroll.
-4. Informe en móvil: pestañas Incidentes y Datos quedan fuera de vista (scroll horizontal interno de `.tabs2`); considerar 2 filas.
+1. Datos a 390 px sigue en ~1.340 px (lista de ~28 tablas plegadas, `informe_datos.html`, `kerna.css` `.dat-d`): agrupar por sección en un solo plegable o paginar.
+2. PDF: las páginas de Rapidez e Incidentes quedan con media hoja libre (la visual es corta); se pueden subir los apoyos (notas, KPI) o fusionar Rapidez con Incidentes (`exportar.py` `visual_de`, ~295-335).
+3. Anillos por ley en la pestaña Calidad del informe: «Global» no lleva ícono y su anillo queda unos px más abajo (`vistas.informe_vis` ~655).
+4. Revisar en celular real el degradado de «Compartir» en Ajustes (`#app .as-1 .as-ch.ctl`, `kerna.css` v8).
