@@ -1,100 +1,107 @@
 <title>Logo Kerna AI</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: lámina de marca; una pieza grande arriba y una retícula de usos debajo, todo sobre papel liso */
+/* Layout: tres láminas oscuras apiladas, cada una con su pieza grande, su versión chica y su idea en una línea */
 :root{
-  --papel:#F7F8FB; --tinta:#0B1020; --sec:#4A5578; --linea:#D5DAE8; --lima:#CFFF5E; --hueco:#FFFFFF;
+  --fondo:#070A14; --panel:#0B1020; --tinta:#F2F5FF; --sec:#A9B2CF; --linea:#26304D; --lima:#CFFF5E;
   --display:"Unbounded","Arial Black",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--papel:#0B1020;--tinta:#F2F5FF;--sec:#A9B2CF;--linea:#26304D;--hueco:#0B1020;color-scheme:dark}}
-:root[data-theme="dark"]{--papel:#0B1020;--tinta:#F2F5FF;--sec:#A9B2CF;--linea:#26304D;--hueco:#0B1020;color-scheme:dark}
-body{background:var(--papel);color:var(--tinta);font-family:var(--mono);font-size:14px;line-height:1.6}
-.pag{max-width:1080px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:48px}
-.eti{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sec)}
-.k-o{fill:none;stroke:var(--t,var(--tinta));stroke-width:2;stroke-dasharray:3 5;stroke-linecap:round;opacity:.55}
-.k-s{stroke:var(--t,var(--tinta));stroke-width:5.5;stroke-linecap:round}
-.k-b{stroke:var(--t,var(--tinta));stroke-width:4;stroke-linecap:round;fill:none}
-.k-n{fill:var(--t,var(--tinta))}
-.k-l{fill:var(--lima);stroke:var(--t,var(--tinta));stroke-width:2.5}
-.k-c{fill:var(--h,var(--hueco));stroke:var(--t,var(--tinta));stroke-width:2.5}
-.marca{display:flex;align-items:center;gap:.45em}
-.marca svg{width:1.9em;height:1.9em;flex:none}
-.marca b{font-family:var(--display);font-weight:700;letter-spacing:.04em;line-height:1}
-.marca i{font-style:normal;font-family:var(--mono);font-weight:500;font-size:.5em;align-self:flex-end;margin-bottom:.15em;letter-spacing:.08em}
-.heroe{display:grid;gap:20px;padding-block:24px;border-bottom:1px solid var(--linea)}
-.heroe .marca{font-size:clamp(40px,9vw,96px)}
-.heroe p{max-width:62ch;color:var(--sec);margin:0}
-.reji{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
-.caja{border:1px solid var(--linea);display:grid;gap:16px;padding:20px;min-width:0}
-.lienzo{min-height:150px;display:grid;place-items:center;padding:16px}
-.inv{--t:#F2F5FF;--h:#0B1020;background:#0B1020;color:#F2F5FF}
-.cla{--t:#0B1020;--h:#FFFFFF;background:#FFFFFF;color:#0B1020;border:1px solid #E3E7F1}
-.lima{--t:#0B1020;--h:#CFFF5E;background:#CFFF5E;color:#0B1020}
-.apil{display:grid;justify-items:center;gap:10px}
-.apil svg{width:72px;height:72px}
-.apil b{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:.06em}
-.apil i{font-style:normal;font-size:12px;letter-spacing:.3em}
-.tams{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap}
-.tams figure{margin:0;display:grid;justify-items:center;gap:6px}
-.tams figcaption{font-size:11px;color:var(--sec);font-variant-numeric:tabular-nums}
-.anat{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:24px;align-items:center}
-.anat svg{width:100%;max-width:220px}
-.anat ol{margin:0;padding-left:1.2em;display:grid;gap:8px}
-.anat li b{font-family:var(--display);font-weight:500;font-size:13px}
-h2{font-family:var(--display);font-weight:500;font-size:18px;margin:0;text-wrap:balance}
-@media (max-width:560px){.anat{grid-template-columns:1fr}}
+body{background:var(--fondo);color:var(--tinta);font-family:var(--mono);font-size:14px;line-height:1.6}
+.pag{max-width:1080px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+header{display:grid;gap:6px}
+header h1{font-family:var(--display);font-weight:500;font-size:clamp(20px,3vw,28px);margin:0;text-wrap:balance}
+header p{margin:0;color:var(--sec);max-width:62ch}
+.eti{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sec)}
+.dir{background:var(--panel);border:1px solid var(--linea);display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);min-width:0}
+.esc{display:grid;place-items:center;padding:48px 24px;min-height:260px;border-right:1px solid var(--linea);
+  background-image:linear-gradient(var(--linea) 1px,transparent 1px),linear-gradient(90deg,var(--linea) 1px,transparent 1px);background-size:32px 32px;background-position:center}
+.info{display:grid;align-content:space-between;gap:20px;padding:24px;min-width:0}
+.info h2{font-family:var(--display);font-weight:700;font-size:22px;margin:0;letter-spacing:.02em}
+.info p{margin:0;color:var(--sec)}
+.chicos{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.chicos figure{margin:0;display:grid;justify-items:center;gap:4px}
+.chicos figcaption{font-size:10px;color:var(--sec);font-variant-numeric:tabular-nums}
+.chip{display:inline-grid;place-items:center;border:1px solid var(--linea);background:var(--fondo);padding:6px}
+.marca{display:flex;align-items:center;gap:.4em;font-size:clamp(34px,6vw,58px)}
+.marca svg.sim{width:1.6em;height:1.6em;flex:none}
+.wm{font-family:var(--display);font-weight:700;letter-spacing:.06em;line-height:1}
+.ai{font-family:var(--mono);font-weight:500;font-size:.38em;letter-spacing:.12em;color:var(--lima);align-self:flex-start;margin-top:.1em}
+.letraA{height:.74em;width:auto;flex:none;margin-left:.04em}
+.letras{display:flex;align-items:baseline}
+@media (max-width:720px){.dir{grid-template-columns:1fr}.esc{border-right:0;border-bottom:1px solid var(--linea)}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="k" viewBox="0 0 64 64">
-    <circle class="k-o" cx="32" cy="32" r="28"/>
-    <path class="k-s" d="M21 14 V50"/>
-    <path class="k-b" d="M23.5 32 L43 16.5 M23.5 32 L43 47.5"/>
-    <circle class="k-n" cx="23.5" cy="32" r="4.5"/>
-    <circle class="k-l" cx="46" cy="14" r="6"/>
-    <circle class="k-c" cx="46" cy="50" r="4"/>
+  <!-- A · Órbita: anillo grueso con un hueco; el satélite lima entra por el hueco hacia el núcleo -->
+  <symbol id="orbita" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="22" fill="none" stroke="#F2F5FF" stroke-width="7" stroke-dasharray="99.6 22 16.6 0"/>
+    <circle cx="32" cy="32" r="6.5" fill="#F2F5FF"/>
+    <circle cx="47.6" cy="16.4" r="7.5" fill="#CFFF5E"/>
+  </symbol>
+  <!-- B · Señal: placa con el núcleo lima en la esquina y dos ondas que salen hacia la norma -->
+  <symbol id="senal" viewBox="0 0 64 64">
+    <rect x="2" y="2" width="60" height="60" rx="14" fill="#F2F5FF"/>
+    <circle cx="20" cy="44" r="7" fill="#0B1020"/>
+    <circle cx="20" cy="44" r="3.4" fill="#CFFF5E"/>
+    <path d="M20 28 A16 16 0 0 1 36 44" fill="none" stroke="#0B1020" stroke-width="5" stroke-linecap="round"/>
+    <path d="M20 16 A28 28 0 0 1 48 44" fill="none" stroke="#0B1020" stroke-width="5" stroke-linecap="round"/>
+  </symbol>
+  <!-- C · A con núcleo: la A del nombre lleva el núcleo lima en lugar de la barra -->
+  <symbol id="letraA" viewBox="0 0 40 48">
+    <path d="M4 46 L20 4 L36 46" fill="none" stroke="#F2F5FF" stroke-width="8" stroke-linejoin="miter" stroke-linecap="butt"/>
+    <circle cx="20" cy="31" r="5.5" fill="#CFFF5E"/>
   </symbol>
 </svg>
 
 <main class="pag">
-  <section class="heroe">
-    <span class="eti">Kerna AI · marca</span>
-    <div class="marca" role="img" aria-label="Kerna AI"><svg><use href="#k"/></svg><b>KERNA</b><i>AI</i></div>
-    <p>La K está hecha con el núcleo de Kerna: un trazo firme, el núcleo en la unión y dos satélites. El lima es el artículo que encaja con los hechos; el hueco, el candidato que todavía no. La órbita punteada recuerda que la sugerencia gira alrededor del caso, nunca lo reemplaza.</p>
-  </section>
+  <header>
+    <span class="eti">Kerna AI · logo · ronda 2</span>
+    <h1>Tres direcciones para elegir</h1>
+    <p>Las tres usan la paleta oscura de Núcleo con el lima como único acento. Elige una o dime qué mezclar.</p>
+  </header>
 
-  <section class="reji" aria-label="Versiones">
-    <div class="caja"><span class="eti">Horizontal · fondo claro</span>
-      <div class="lienzo cla"><div class="marca" style="font-size:40px"><svg><use href="#k"/></svg><b>KERNA</b><i>AI</i></div></div></div>
-    <div class="caja"><span class="eti">Horizontal · fondo oscuro</span>
-      <div class="lienzo inv"><div class="marca" style="font-size:40px"><svg><use href="#k"/></svg><b>KERNA</b><i>AI</i></div></div></div>
-    <div class="caja"><span class="eti">Apilado</span>
-      <div class="lienzo cla"><div class="apil"><svg><use href="#k"/></svg><b>KERNA</b><i>AI</i></div></div></div>
-    <div class="caja"><span class="eti">Símbolo sobre lima</span>
-      <div class="lienzo lima"><svg style="width:96px;height:96px"><use href="#k"/></svg></div></div>
-  </section>
-
-  <section class="caja">
-    <h2>Tamaños mínimos</h2>
-    <div class="tams">
-      <figure><svg width="16" height="16"><use href="#k"/></svg><figcaption>16 px</figcaption></figure>
-      <figure><svg width="24" height="24"><use href="#k"/></svg><figcaption>24 px</figcaption></figure>
-      <figure><svg width="32" height="32"><use href="#k"/></svg><figcaption>32 px</figcaption></figure>
-      <figure><svg width="48" height="48"><use href="#k"/></svg><figcaption>48 px</figcaption></figure>
-      <figure><svg width="96" height="96"><use href="#k"/></svg><figcaption>96 px</figcaption></figure>
+  <section class="dir" aria-labelledby="t-a">
+    <div class="esc"><div class="marca" role="img" aria-label="Kerna AI, dirección Órbita">
+      <svg class="sim"><use href="#orbita"/></svg><span class="wm">KERNA</span><span class="ai">AI</span></div></div>
+    <div class="info">
+      <div><span class="eti">A</span><h2 id="t-a">Órbita</h2></div>
+      <p>Un anillo grueso con una abertura. El satélite lima entra por ahí hacia el núcleo: el artículo que encaja con el caso.</p>
+      <div class="chicos">
+        <figure><span class="chip"><svg width="16" height="16"><use href="#orbita"/></svg></span><figcaption>16</figcaption></figure>
+        <figure><span class="chip"><svg width="32" height="32"><use href="#orbita"/></svg></span><figcaption>32</figcaption></figure>
+        <figure><span class="chip"><svg width="56" height="56"><use href="#orbita"/></svg></span><figcaption>56</figcaption></figure>
+      </div>
     </div>
   </section>
 
-  <section class="caja anat">
-    <svg viewBox="0 0 64 64"><use href="#k"/></svg>
-    <ol>
-      <li><b>Trazo</b> · la norma: firme, vertical, no se mueve.</li>
-      <li><b>Núcleo</b> · Kerna, donde se cruzan hechos y ley.</li>
-      <li><b>Satélite lima</b> · el artículo que encaja.</li>
-      <li><b>Satélite hueco</b> · el candidato aún sin confirmar.</li>
-      <li><b>Órbita</b> · la revisión humana alrededor de todo.</li>
-    </ol>
+  <section class="dir" aria-labelledby="t-b">
+    <div class="esc"><div class="marca" role="img" aria-label="Kerna AI, dirección Señal">
+      <svg class="sim"><use href="#senal"/></svg><span class="wm">KERNA</span><span class="ai">AI</span></div></div>
+    <div class="info">
+      <div><span class="eti">B</span><h2 id="t-b">Señal</h2></div>
+      <p>Una placa clara con el núcleo lima en la esquina y dos ondas que salen de él: Kerna lee el caso y responde con la norma. Funciona muy bien como ícono de app.</p>
+      <div class="chicos">
+        <figure><span class="chip"><svg width="16" height="16"><use href="#senal"/></svg></span><figcaption>16</figcaption></figure>
+        <figure><span class="chip"><svg width="32" height="32"><use href="#senal"/></svg></span><figcaption>32</figcaption></figure>
+        <figure><span class="chip"><svg width="56" height="56"><use href="#senal"/></svg></span><figcaption>56</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="dir" aria-labelledby="t-c">
+    <div class="esc"><div class="marca" role="img" aria-label="Kerna AI, dirección A con núcleo">
+      <span class="letras"><span class="wm">KERN</span><svg class="letraA" viewBox="0 0 40 48"><use href="#letraA"/></svg></span><span class="ai">AI</span></div></div>
+    <div class="info">
+      <div><span class="eti">C</span><h2 id="t-c">A con núcleo</h2></div>
+      <p>El logo es la palabra. La A cambia su barra por el núcleo lima, y esa A sola sirve de ícono. La más sobria y formal de las tres.</p>
+      <div class="chicos">
+        <figure><span class="chip"><svg width="16" height="19" viewBox="0 0 40 48"><use href="#letraA"/></svg></span><figcaption>16</figcaption></figure>
+        <figure><span class="chip"><svg width="32" height="38" viewBox="0 0 40 48"><use href="#letraA"/></svg></span><figcaption>32</figcaption></figure>
+        <figure><span class="chip"><svg width="56" height="67" viewBox="0 0 40 48"><use href="#letraA"/></svg></span><figcaption>56</figcaption></figure>
+      </div>
+    </div>
   </section>
 </main>
