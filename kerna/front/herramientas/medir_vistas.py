@@ -29,6 +29,7 @@ with sync_playwright() as p:
                 d = pg.evaluate(JS_DESB); d.update(nav_t if tab is None else {})
                 res[f"{clave_v}@{w}"] = d
                 if pref != "-":
+                    pg.evaluate("() => { if (!document.getElementById('__cap')) { const s = document.createElement('style'); s.id = '__cap'; s.textContent = 'nav.tabbar{position:static!important}'; document.head.appendChild(s) } }")  # la barra inferior fija no tapa el contenido en la captura de página completa
                     pg.screenshot(path=f"{pref}{clave_v}-{'m' if w < 600 else 'd'}{'' if w in (390, 1366) else w}.png", full_page=True)
         ctx.close()
     nav.close()

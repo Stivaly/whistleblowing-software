@@ -1001,9 +1001,9 @@ html,body{max-width:100%}
   .cm::before{top:24px}.cm i{margin:calc((48px - var(--d)) / 2) 0}
   .cm b{font-size:12.5px}.cm span{font-size:10.5px}
   .ley-b{gap:6px}
-  .ly-l{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
-  .ly{grid-template-columns:auto auto;justify-content:center;gap:2px 6px}
-  .ly .lx{--s:22px!important}.ly svg.ani{width:56px;height:56px}
+  .ly-l{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:6px;width:100%}
+  .ly{grid-template-columns:auto auto;justify-content:center;gap:2px 4px}
+  .ly .lx{--s:18px!important}.ly svg.ani{width:56px;height:56px}
   .ly>span{text-align:center;font-size:11.5px;line-height:1.25}
   .ly-n em{display:none}.ly-n>span{display:block;font-weight:500;color:var(--muted)}
   .ch-l{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
