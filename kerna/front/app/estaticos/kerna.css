@@ -114,15 +114,15 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 
 /* ---------- logo vivo (se dibuja con JS en cada svg[data-logo]) ---------- */
 .kl{display:block;position:relative;overflow:visible;flex:none}
-/* movimiento a 10 cuadros/s con steps() sincronizados: giros de fracciones de grado por cuadro, imperceptibles, y el compositor recompone 6 veces menos */
+/* giro continuo y suave: linear, sin steps(); solo transform en capas HTML propias (lo acelera la GPU). Camino del satélite 15 s por vuelta, roseta 50 s */
 /* logo en capas: cada capa es un <svg> HTML propio que se rasteriza una vez; solo se anima transform/opacity (compositor, sin repintar) */
 .kl .ly{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;will-change:transform;contain:layout style}
 .kl .ly.st{will-change:auto}
-.kl .roseta{animation:rot 90s steps(900) infinite}
-.kl .camino{animation:rot 36s steps(360) infinite reverse}
-.kl .latido{animation:bt 7s steps(35) infinite}
-.kl .xr1{animation:rot 170s steps(1700) infinite reverse}.kl .xr2{animation:rot 260s steps(2600) infinite}
-.kl.rapido .roseta{animation-duration:24s;animation-timing-function:steps(240)}.kl.rapido .camino{animation-duration:6s;animation-timing-function:steps(60)}
+.kl .roseta{animation:rot 50s linear infinite}
+.kl .camino{animation:rot 15s linear infinite reverse}
+.kl .latido{animation:bt 5s ease-in-out infinite}
+.kl .xr1{animation:rot 120s linear infinite reverse}.kl .xr2{animation:rot 180s linear infinite}
+.kl.rapido .roseta{animation-duration:20s}.kl.rapido .camino{animation-duration:6s}
 .kl:not(.vis) .ly,.orb-wrap:not(.vis) .orb-lay{animation-play-state:paused}
 .kl .orb{fill:none;stroke:#1C2A6B;stroke-linecap:round}
 .kl .ros{stroke-width:.6;stroke-dasharray:.1 2.1}
@@ -153,7 +153,7 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 .bgfx.bg-p{opacity:.3}.bgfx.bg-a{opacity:.1}
 .bgfx .b-rot{will-change:transform;contain:strict}
 @keyframes rotb{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
-.b1{animation:rotb 400s steps(2000) infinite}.b2{display:none}.b3{animation:rotb 600s steps(3000) infinite reverse}
+.b1{animation:rotb 300s linear infinite}.b2{display:none}.b3{animation:rotb 450s linear infinite reverse}
 .bo{fill:none;stroke:#1C2A6B;stroke-opacity:.4;stroke-width:3;stroke-dasharray:.1 15;stroke-linecap:round}
 .bs{fill:#CFFF5E;stroke:#1C2A6B;stroke-width:4}
 .bro{fill:none;stroke:#1C2A6B;stroke-opacity:.3;stroke-width:2.4;stroke-dasharray:.1 13;stroke-linecap:round}
@@ -329,13 +329,13 @@ k-tip k-ic{width:20px;height:20px}
 /* capas orbitales: cada una es un <svg> propio, rasterizado una vez y girado por el compositor */
 .orb-lay{pointer-events:none;will-change:transform;contain:layout style;transition:opacity .4s}
 .orb-lay.off{opacity:0}
-.orb-lay.spin{animation:rot 90s steps(900) infinite}
-.orb-lay.spin2{animation:rot 70s steps(700) infinite reverse}
-.orb-lay.spin3{animation:rot 120s steps(1200) infinite}
-.orb-lay.core{animation:orbt 9s steps(45) infinite}
+.orb-lay.spin{animation:rot 60s linear infinite}
+.orb-lay.spin2{animation:rot 45s linear infinite reverse}
+.orb-lay.spin3{animation:rot 80s linear infinite}
+.orb-lay.core{animation:orbt 7s ease-in-out infinite}
 @keyframes orbt{50%{transform:scale(1.07)}}
 .orb-lay.pulse{opacity:0}
-.orb-lay.pulse.on{opacity:1;animation:orbp 4.8s steps(24) infinite}
+.orb-lay.pulse.on{opacity:1;animation:orbp 4.8s ease-in-out infinite}
 @keyframes orbp{50%{transform:scale(1.1);opacity:.45}}
 .ao{fill:none;stroke:rgba(255,255,255,.7);stroke-width:2.2;stroke-dasharray:.1 9;stroke-linecap:round;transition:stroke .4s,stroke-width .4s,stroke-dasharray .4s,opacity .4s}
 .ao.solid{stroke:#fff;stroke-width:3;stroke-dasharray:none}
@@ -644,3 +644,55 @@ a.btn{text-decoration:none}
 .seg a{display:inline-flex;align-items:center;min-height:34px;padding:0 12px;border-radius:3px;font:600 12.5px Inter,sans-serif;color:var(--muted);text-decoration:none}
 .seg a[aria-current=true]{background:#fff;color:var(--brand);box-shadow:0 1px 3px rgba(15,23,54,.18)}
 .seg a:hover{background:rgba(255,255,255,.85);color:var(--brand)}
+.pv-top{flex:none;gap:8px}.pv-top .pl{padding:5px 8px 5px 10px}
+@media(max-width:639px){.pv-top{gap:6px}}
+.ajs-barra{position:fixed;left:12px;right:12px;bottom:68px;z-index:40;max-width:46rem;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:16px;background:var(--brand);color:#fff;box-shadow:0 8px 30px rgba(15,23,54,.35)}
+.ajs-barra[hidden],[data-cambiado][hidden],[data-av][hidden]{display:none!important}
+@media(min-width:1024px){.ajs-barra{bottom:12px;left:calc(16rem + 12px)}}
+.aviso-r.s-warn{display:flex;gap:10px;align-items:flex-start;border-left:4px solid var(--warn)}
+.aviso-r.s-warn k-ic{flex:none;color:var(--warn)}
+
+/* ---------- informe compacto ---------- */
+.inf-bar{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.inf-f,.inf-d{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.inf-k{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.inf-f .field{width:9.2rem;min-height:38px;padding:4px 8px}.inf-bar .btn{min-height:38px;padding:0 14px}
+.inf{gap:18px!important}
+.inf-h{font:700 16px/1.2 Unbounded,Inter,sans-serif;color:var(--brand);margin:0 0 8px;padding-bottom:6px;border-bottom:2px solid var(--line-strong)}
+.inf-s{font-size:13.5px;font-weight:700;margin:0}
+.inf-kg{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:900px){.inf-kg{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1280px){.inf-kg{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.inf-kg .kt{padding:10px 11px;gap:6px}.inf-kg .kv{font-size:21px}.inf-kg .gg{max-width:110px;margin:0 auto}
+.inf-iv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media(min-width:700px){.inf-iv{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1100px){.inf-iv{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1280px){.inf-iv{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.inf .iv{position:relative;padding:6px 26px 6px 9px}.inf .iv small{font-size:11px;line-height:1.25}.inf .iv b.v{font:700 16px/1.25 Unbounded,Inter,sans-serif;color:var(--st)}
+.inf .iv .kt-u{font:600 11px Inter,sans-serif}.iv-i{position:absolute;right:7px;top:7px;color:var(--st)}.iv-i k-ic{width:16px;height:16px}
+.v-na{font:500 12px Inter,sans-serif!important;color:var(--muted)!important}
+.inf-tg{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:10px}
+@media(min-width:1000px){.inf-tg{grid-template-columns:repeat(2,minmax(0,1fr))}.inf-t-w{grid-column:1/-1}}
+.inf-tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
+@media(min-width:700px){.inf-tr{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.inf .tabla table{font-size:12px}.inf .tabla th,.inf .tabla td{padding:4px 7px}.inf .sub{margin:0 0 4px;font-size:12.5px}
+.inf-mb{height:6px}
+.inf .nota{margin:4px 0 0;font-size:12px}
+.inf .mr-h{margin-bottom:3px}
+.hb-l{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.hb{display:grid;grid-template-columns:minmax(96px,38%) minmax(0,1fr) auto;align-items:center;gap:8px;font-size:12.5px}
+.hb-n{overflow-wrap:anywhere;line-height:1.2}
+.hb-v{display:inline-flex;align-items:center;gap:4px;color:var(--st);font-size:12.5px;min-width:3.2em;justify-content:flex-end;font-variant-numeric:tabular-nums}.hb-v k-ic{width:13px;height:13px}
+.inf .hb .mb{height:6px}
+.inf-mo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.inf-iv{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important;gap:6px!important}
+.inf .iv{padding:5px 24px 5px 8px}.inf .iv small{font-size:10.5px;line-height:1.2}.inf .iv b.v{font-size:15px}
+.inf{gap:12px!important}.inf-tg{gap:8px 14px;margin-top:8px}.inf-h{margin-bottom:6px;padding-bottom:4px}
+.inf .tabla th,.inf .tabla td{padding:3px 6px}
+.inf-kg .kt{min-height:0}.inf-kg .kt-f{margin-top:0}
+@media(max-width:699px){.inf-kg .kv{font-size:19px}.inf .tabla table{font-size:11.5px}.inf .tabla th,.inf .tabla td{padding:3px 5px}.inf-t-w .tabla{overflow-x:auto}
+ .inf-kg .sp,.inf-kg .gg{max-height:64px}.inf-kg .gg{margin:0 auto}}
+.pg-a{flex-wrap:wrap;max-width:100%}.seg{max-width:100%}@media(max-width:480px){.pg-a .btn span{display:none}.pg-a .btn{padding:0 12px}}
+#main>.grid>*{min-width:0}
+.hb{grid-template-columns:minmax(165px,40%) minmax(0,1fr) auto}.inf-mo{grid-template-columns:repeat(2,minmax(0,1fr))}.inf-mo .rw{white-space:nowrap}@media(max-width:699px){.hb{grid-template-columns:minmax(110px,40%) minmax(0,1fr) auto}.inf-mo{grid-template-columns:minmax(0,1fr)}}
+.inf-tr td,.inf-tr th{white-space:nowrap}

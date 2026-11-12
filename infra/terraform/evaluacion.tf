@@ -282,3 +282,19 @@ resource "azurerm_role_assignment" "front_reintentos" {
   role_definition_name = "Storage Table Data Contributor"
   principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
 }
+
+# Ajustes del panel (Ajustes de Kerna): una sola fila (PartitionKey "kerna", RowKey "actual") con los valores en JSON.
+# Solo la escribe una sesión del panel (con protección CSRF). El núcleo y el conector aún no la leen.
+resource "azapi_resource" "tabla_ajustes" {
+  type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2023-05-01"
+  name      = "ajustes"
+  parent_id = "${azurerm_storage_account.nucleo.id}/tableServices/default"
+  body      = { properties = {} }
+}
+
+resource "azurerm_role_assignment" "front_ajustes" {
+  count                = var.crear_front ? 1 : 0
+  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${azapi_resource.tabla_ajustes.name}"
+  role_definition_name = "Storage Table Data Contributor"
+  principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
+}

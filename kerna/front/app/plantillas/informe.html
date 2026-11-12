@@ -1,37 +1,35 @@
 {% extends "base_panel.html" %}{% block titulo %}Informe de gestión · Kerna AI{% endblock %}
 {% set seccion = 'informe' %}
+{% macro tabla_html(t, filas) %}<div class="tabla"><table><thead><tr>{% for c in t.cols %}<th{% if t.nums[loop.index0] %} class="n"{% endif %}>{{ c }}</th>{% endfor %}</tr></thead><tbody>
+{% for fila in filas %}<tr>{% for c in fila %}<td{% if c.n %} class="n"{% endif %}>{% if c.chip %}<span class="chip {{ c.chip }}">{{ ic(ICONO[c.chip]) }}{{ c.t }}</span>{% elif c.na %}<span class="v-na">—</span>{% else %}{{ c.t }}{% endif %}</td>{% endfor %}</tr>{% else %}<tr><td colspan="{{ t.cols|length }}"><span class="v-na">—</span></td></tr>{% endfor %}</tbody></table></div>{% endmacro %}
 {% block vista %}
-<div class="pg-h"><div><h1 class="disp ph-t m-0" style="color:var(--brand)">Informe de gestión</h1><p class="pg-s">Período {{ inf.meta.periodo }} · corte {{ inf.meta.corte }}</p></div></div>
+<div class="pg-h"><div><h1 class="disp ph-t m-0" style="color:var(--brand)">Informe de gestión</h1><p class="pg-s">Período {{ inf.meta.periodo }} · corte {{ inf.meta.corte }}</p></div>
+<div class="pg-a"><div class="seg" role="group" aria-label="Período">{% for d in (7, 30, 90) %}<a href="/panel/informe?dias={{ d }}"{% if dias == d %} aria-current="true"{% endif %}>{{ d }} días</a>{% endfor %}</div></div></div>
 
-<section class="card p-5 md:p-6 grid gap-5 max-w-4xl" aria-labelledby="inf-p">
-<h2 id="inf-p" class="text-lg font-bold m-0 flex items-center gap-1.5">¿Qué período quieres informar? {{ tip('periodo') }}</h2>
-<div class="grid grid-cols-3 gap-3">{% for d in (7, 30, 90) %}<a href="/panel/informe?dias={{ d }}" class="rounded-xl border-2 p-4 text-left bg-white no-underline" style="color:inherit;{% if dias == d %}border-color:var(--brand);background:var(--brand-soft){% else %}border-color:var(--line){% endif %}"{% if dias == d %} aria-current="true"{% endif %}><span class="block text-2xl font-bold">{{ d }}</span><span class="text-sm muted">últimos días</span></a>{% endfor %}</div>
-<form method="get" action="/panel/informe" class="grid sm:grid-cols-[1fr_1fr_auto] gap-3 items-end"><div><label for="d1" class="text-sm font-medium block mb-1">Desde</label><input id="d1" name="desde" type="date" class="field" value="{{ desde }}"></div>
-<div><label for="d2" class="text-sm font-medium block mb-1">Hasta</label><input id="d2" name="hasta" type="date" class="field" value="{{ hasta }}"></div><button class="btn btn-dark" type="submit">Aplicar fechas</button></form>
-<div class="rounded-xl p-3 flex gap-2 items-center text-sm" style="background:var(--brand-soft);color:var(--brand)">{{ ic('calendar-range') }}<span>Se informa: <b>{{ inf.meta.periodo }}</b>. Solo cifras agregadas; donde no hay datos se dice «sin datos».</span></div>
-</section>
+<section class="card p-3 inf-bar" aria-label="Período y descargas">
+<form method="get" action="/panel/informe" class="inf-f"><span class="inf-k flex items-center gap-1.5">Otro período {{ tip('periodo') }}</span><label class="sr-only" for="d1">Desde</label><input id="d1" name="desde" type="date" class="field" value="{{ desde }}"><span class="muted">a</span><label class="sr-only" for="d2">Hasta</label><input id="d2" name="hasta" type="date" class="field" value="{{ hasta }}"><button class="btn btn-dark" type="submit">Aplicar</button></form>
+<div class="inf-d"><span class="inf-k">Descargar</span>{% for k, n, i, cl in (('pdf','PDF','file-text','btn-pri'),('xlsx','Excel','file-spreadsheet','btn-dark'),('csv','CSV','table','btn-dark')) %}<a class="btn {{ cl }}" href="/panel/informe/descargar.{{ k }}?{{ q }}">{{ ic(i) }}<span>{{ n }}</span></a>{{ tip('fmt_' ~ k) }}{% endfor %}</div></section>
 
-<section class="card p-5 md:p-6" aria-labelledby="inf-f"><h2 id="inf-f" class="text-lg font-bold m-0 mb-1">Descarga el informe</h2>
-<p class="m-0 mb-4 text-sm muted">Los tres formatos tienen la misma información.</p>
-<div class="grid md:grid-cols-3 gap-4">{% for k, n, i, d, cl in (('pdf','PDF','file-text','Para leer, imprimir o enviar por correo.','btn-pri'),('xlsx','Excel','file-spreadsheet','Para filtrar y hacer tus propios gráficos.','btn-dark'),('csv','CSV','table','Para cargar los datos en otro programa.','btn-dark')) %}
-<div class="rounded-2xl border-2 p-4 flex flex-col gap-3 bg-white" style="border-color:var(--line)"><div class="flex items-center justify-between"><span class="grid place-items-center w-12 h-12 orb-ic rounded-xl" style="background:var(--brand-soft);color:var(--brand)"><span style="width:26px;height:26px;display:inline-flex">{{ ic(i) }}</span></span>{{ tip('fmt_' ~ k) }}</div>
-<div><b class="block text-base">{{ n }}</b><span class="text-sm muted">{{ d }}</span></div>
-<a class="btn mt-auto {{ cl }}" href="/panel/informe/descargar.{{ k }}?{{ q }}">{{ ic('download') }}<span>Descargar {{ n }}</span></a></div>{% endfor %}</div></section>
-
-<article class="card doc p-5 md:p-8 grid gap-7" aria-label="Informe de gestión">
-<header class="flex flex-wrap items-center gap-4 pb-5 border-b" style="border-color:var(--line)">
-<svg class="kl" width="72" height="72" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg>
-<div class="flex-1 min-w-[200px]"><p class="m-0 text-xs font-semibold tracking-widest uppercase muted">Informe de gestión · Kerna AI</p><h2 class="disp text-xl font-bold m-0" style="color:var(--brand)">{{ inf.meta.periodo }}</h2></div></header>
-<nav aria-label="Índice"><p class="eg-k" style="margin-bottom:6px">Contenido</p><ol class="m-0 pl-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1 text-sm">{% for s in secciones %}<li><a href="#{{ s.id }}" style="color:var(--brand);font-weight:600">{{ s.titulo }}</a></li>{% endfor %}</ol></nav>
+<article class="card doc inf p-4 md:p-5 grid gap-5" aria-label="Informe de gestión">
 {% for s in secciones %}<section id="{{ s.id }}" style="scroll-margin-top:90px">
-<h3 class="mb-2">{{ loop.index }}. {{ s.titulo }}</h3>
-{% if s.justificacion %}<p class="conc">{{ s.justificacion }}</p>{% endif %}
-{% if s.kpis %}<div class="grid grid-cols-2 lg:grid-cols-4 gap-3">{% for k in s.kpis %}<div class="iv {{ ('s-' ~ k.e) if k.e else 'n' }}" title="Fuente: {{ k.fuente }}"><small>{{ k.etiqueta }}</small><b class="v">{{ k.v }}{% if k.u %} <span class="kt-u">{{ k.u }}</span>{% endif %}</b>{% if k.e %}<span class="kt-s">{{ ic(ICONO[k.e]) }}<span>{{ ESTADO_TXT[k.e] }}</span></span>{% endif %}</div>{% endfor %}</div>{% endif %}
-{% for g in s.graficos %}<div class="mt-4"><b class="text-sm block mb-1">{{ g.titulo }}</b>{{ barras_v(g["items"]) if g.tipo == "v" else barras_h(g["items"]) }}</div>{% endfor %}
-{% for t in s.tablas %}<h4 class="sub">{{ t.titulo }}</h4><div class="tabla"><table><thead><tr>{% for c in t.cols %}<th>{{ c }}</th>{% endfor %}</tr></thead><tbody>
-{% for fila in t.filas %}<tr>{% for c in fila %}<td{% if c.n %} class="n"{% endif %}>{% if c.chip %}<span class="chip {{ c.chip }}">{{ ic(ICONO[c.chip]) }}{{ c.t }}</span>{% else %}{{ c.t }}{% endif %}</td>{% endfor %}</tr>{% else %}<tr><td colspan="{{ t.cols|length }}">Sin datos en el período.</td></tr>{% endfor %}</tbody></table></div><p class="nota">Fuente: {{ t.fuente }}</p>{% endfor %}
-{% for n in s.notas %}<p class="nota">Nota: {{ n }}</p>{% endfor %}
+<h3 class="inf-h">{{ s.titulo }}</h3>
+{% if s.id == 'resumen' %}<div class="kg inf-kg">{% for k in ej.tarjetas %}{{ kpi(k) }}{% endfor %}</div>
+<div class="grid lg:grid-cols-2 gap-3 mt-3 items-start">
+<div class="card p-3"><div class="hd flex items-center gap-1.5 mb-2"><h4 class="inf-s">¿Cómo se resolvieron?</h4>{{ tip('modos') }}</div>
+{% if ej.n_modos %}<div class="mb mb-lg" role="img" aria-label="Reparto de los casos por modo" style="display:flex;gap:2px">{% for x in ej.modos %}<i class="s-{{ x.est }}" style="width:{{ x.w }}%" title="{{ x.t }}: {{ miles(x.n) }}"></i>{% endfor %}</div>
+<ul class="list-none p-0 m-0 mt-2 inf-mo">{% for x in ej.modos %}<li class="rw s-{{ x.est }}">{{ ic(ICONO[x.est]) }}<span>{{ x.t }}</span><b>{{ miles(x.n) }}</b><em>{{ x.p }} %</em></li>{% endfor %}</ul>
+{% else %}<p class="muted m-0 text-sm">—</p>{% endif %}</div>
+<div class="card p-3"><div class="hd flex items-center gap-1.5 mb-2"><h4 class="inf-s">Casos por día</h4>{{ tip('casos_dia') }}</div>
+{% if ej.dias %}<div class="inf-tr">{% for ch in ej.dias|batch(((ej.dias|length / 3)|round(0, 'ceil')|int) if ej.dias|length > 12 else ej.dias|length) %}<div class="tabla"><table><thead><tr><th>Día</th><th class="n">Casos</th><th class="n">Con sug.</th></tr></thead><tbody>{% for r in ch %}<tr><td>{{ r.d }}</td><td class="n">{{ r.c }}</td><td class="n">{{ r.s }}</td></tr>{% endfor %}</tbody></table></div>{% endfor %}</div>
+{% else %}<p class="muted m-0 text-sm">—</p>{% endif %}</div></div>
+{% endif %}
+{% if s.kpis and s.id != 'resumen' %}<div class="inf-iv">{% for k in s.kpis %}<div class="iv {{ ('s-' ~ k.e) if k.e else 'n' }}" title="Fuente: {{ k.fuente }}"><small>{{ k.etiqueta }}</small>{% if k.e == 'na' %}<b class="v v-na">—</b>{% else %}<b class="v">{{ k.v }}{% if k.u %}<span class="kt-u"> {{ k.u }}</span>{% endif %}</b>{% endif %}{% if k.e and k.e != 'na' %}<span class="iv-i">{{ ic(ICONO[k.e]) }}</span>{% endif %}</div>{% endfor %}</div>{% endif %}
+{% if s.graficos or s.tablas %}<div class="inf-tg">
+{% for g in s.graficos %}<div class="inf-t"><h4 class="sub">{{ g.titulo }}</h4><ul class="hb-l">{% for b in g.barras %}<li class="hb s-{{ b.e }}" title="{{ b.full }}"><span class="hb-n">{{ b.n }}</span><span class="mb inf-mb"><i style="width:{{ b.w }}%"></i>{% if g.meta_pos %}<u style="left:{{ g.meta_pos }}%"></u>{% endif %}</span><b class="hb-v">{% if b.e != 'na' %}{{ ic(ICONO[b.e]) }}{% endif %}<span>{{ b.v }}</span></b></li>{% endfor %}</ul></div>{% endfor %}
+{% for t in s.tablas %}<div class="inf-t{% if t.trozos or t.cols|length > 5 %} inf-t-w{% endif %}"><h4 class="sub">{{ t.titulo }}</h4>
+{% if t.trozos %}<div class="inf-tr">{% for ch in t.trozos %}{{ tabla_html(t, ch) }}{% endfor %}</div>{% else %}{{ tabla_html(t, t.filas) }}{% endif %}</div>{% endfor %}</div>{% endif %}
+{% for n in s.notas %}<p class="nota">{{ n }}</p>{% endfor %}
 </section>{% endfor %}
-<footer class="text-xs muted pt-3 border-t" style="border-color:var(--line)">Fuentes: registros del núcleo de Kerna (Log Analytics), mediciones guardadas y tablas de clientes; capítulo 25 del informe para costos y rentabilidad.</footer>
+<footer class="text-xs muted pt-2 border-t" style="border-color:var(--line)">Fuentes: registros del núcleo de Kerna (Log Analytics), mediciones guardadas y tablas de clientes; capítulo 25 del informe para costos y rentabilidad. Pasa el cursor sobre una cifra para ver su fuente.</footer>
 </article>
 {% endblock %}

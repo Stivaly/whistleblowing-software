@@ -111,15 +111,15 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 
 /* ---------- logo vivo (se dibuja con JS en cada svg[data-logo]) ---------- */
 .kl{display:block;position:relative;overflow:visible;flex:none}
-/* movimiento a 10 cuadros/s con steps() sincronizados: giros de fracciones de grado por cuadro, imperceptibles, y el compositor recompone 6 veces menos */
+/* giro continuo y suave: linear, sin steps(); solo transform en capas HTML propias (lo acelera la GPU). Camino del satélite 15 s por vuelta, roseta 50 s */
 /* logo en capas: cada capa es un <svg> HTML propio que se rasteriza una vez; solo se anima transform/opacity (compositor, sin repintar) */
 .kl .ly{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;will-change:transform;contain:layout style}
 .kl .ly.st{will-change:auto}
-.kl .roseta{animation:rot 90s steps(900) infinite}
-.kl .camino{animation:rot 36s steps(360) infinite reverse}
-.kl .latido{animation:bt 7s steps(35) infinite}
-.kl .xr1{animation:rot 170s steps(1700) infinite reverse}.kl .xr2{animation:rot 260s steps(2600) infinite}
-.kl.rapido .roseta{animation-duration:24s;animation-timing-function:steps(240)}.kl.rapido .camino{animation-duration:6s;animation-timing-function:steps(60)}
+.kl .roseta{animation:rot 50s linear infinite}
+.kl .camino{animation:rot 15s linear infinite reverse}
+.kl .latido{animation:bt 5s ease-in-out infinite}
+.kl .xr1{animation:rot 120s linear infinite reverse}.kl .xr2{animation:rot 180s linear infinite}
+.kl.rapido .roseta{animation-duration:20s}.kl.rapido .camino{animation-duration:6s}
 .kl:not(.vis) .ly,.orb-wrap:not(.vis) .orb-lay{animation-play-state:paused}
 .kl .orb{fill:none;stroke:#1C2A6B;stroke-linecap:round}
 .kl .ros{stroke-width:.6;stroke-dasharray:.1 2.1}
@@ -150,7 +150,7 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 .bgfx.bg-p{opacity:.3}.bgfx.bg-a{opacity:.1}
 .bgfx .b-rot{will-change:transform;contain:strict}
 @keyframes rotb{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
-.b1{animation:rotb 400s steps(2000) infinite}.b2{display:none}.b3{animation:rotb 600s steps(3000) infinite reverse}
+.b1{animation:rotb 300s linear infinite}.b2{display:none}.b3{animation:rotb 450s linear infinite reverse}
 .bo{fill:none;stroke:#1C2A6B;stroke-opacity:.4;stroke-width:3;stroke-dasharray:.1 15;stroke-linecap:round}
 .bs{fill:#CFFF5E;stroke:#1C2A6B;stroke-width:4}
 .bro{fill:none;stroke:#1C2A6B;stroke-opacity:.3;stroke-width:2.4;stroke-dasharray:.1 13;stroke-linecap:round}
@@ -326,13 +326,13 @@ k-tip k-ic{width:20px;height:20px}
 /* capas orbitales: cada una es un <svg> propio, rasterizado una vez y girado por el compositor */
 .orb-lay{pointer-events:none;will-change:transform;contain:layout style;transition:opacity .4s}
 .orb-lay.off{opacity:0}
-.orb-lay.spin{animation:rot 90s steps(900) infinite}
-.orb-lay.spin2{animation:rot 70s steps(700) infinite reverse}
-.orb-lay.spin3{animation:rot 120s steps(1200) infinite}
-.orb-lay.core{animation:orbt 9s steps(45) infinite}
+.orb-lay.spin{animation:rot 60s linear infinite}
+.orb-lay.spin2{animation:rot 45s linear infinite reverse}
+.orb-lay.spin3{animation:rot 80s linear infinite}
+.orb-lay.core{animation:orbt 7s ease-in-out infinite}
 @keyframes orbt{50%{transform:scale(1.07)}}
 .orb-lay.pulse{opacity:0}
-.orb-lay.pulse.on{opacity:1;animation:orbp 4.8s steps(24) infinite}
+.orb-lay.pulse.on{opacity:1;animation:orbp 4.8s ease-in-out infinite}
 @keyframes orbp{50%{transform:scale(1.1);opacity:.45}}
 .ao{fill:none;stroke:rgba(255,255,255,.7);stroke-width:2.2;stroke-dasharray:.1 9;stroke-linecap:round;transition:stroke .4s,stroke-width .4s,stroke-dasharray .4s,opacity .4s}
 .ao.solid{stroke:#fff;stroke-width:3;stroke-dasharray:none}

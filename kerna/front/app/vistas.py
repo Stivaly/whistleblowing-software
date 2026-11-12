@@ -111,7 +111,7 @@ def etapas_lista(filas: list[dict]) -> list[dict]:
     for x in out:
         share = x["ms"] / tot
         x["e"] = "bad" if share >= 0.5 else ("warn" if share >= 0.25 else "ok")
-        x["s"] = f.segundos(x["ms"])
+        x["s"] = "< 0,1" if 0 < x["ms"] < 50 else f.segundos(x["ms"])
         x["ancho"] = round(100 * x["ms"] / mx, 1)
     return out
 
@@ -365,10 +365,15 @@ def negocio(n: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------------------------------------------------
+import re as _re
+
+_ISO = _re.compile(r"^\d{4}-\d{2}-\d{2}(?:[T ].*)?$")
+
+
 def _celda(v, col: str = "") -> dict:
-    """Celda de tabla legible: milisegundos a segundos, miles con punto, decimales con coma, sí/no como chips."""
+    """Celda de tabla legible: milisegundos a segundos, miles con punto, decimales con coma, fechas «11 nov», sí/no como chips."""
     if v is None:
-        return {"t": "sin datos", "n": False}
+        return {"t": "—", "n": True, "na": True}
     if col.endswith("(ms)") and isinstance(v, (int, float)) and not isinstance(v, bool):
         return {"t": f.segundos(v), "n": True}
     if isinstance(v, bool):
@@ -378,37 +383,132 @@ def _celda(v, col: str = "") -> dict:
     if isinstance(v, int):
         return {"t": f.miles(v), "n": True}
     t = str(v)
+    if _ISO.match(t) and col.lower().startswith(("día", "dia")):
+        return {"t": f.fecha_corta(t), "n": False}
     return {"t": t, "n": False, "chip": "ok" if t == "sí" else "bad" if t == "no" else None}
+
+
+def _fmt_g(v, fmt) -> str:
+    return f.dec_corto(v, 3) if fmt == "ratio" else (f.dec_corto(v, 4) if fmt == "usd" else f.miles(v))
+
+
+def _meta_pos(g: dict):
+    if not g.get("meta"):
+        return None
+    return round(100 * g["meta"] / (max([abs(v) for _, v in g["items"]] + [g["meta"]]) or 1), 1)
+
+
+def _barras(g: dict) -> list[dict]:
+    """Barras horizontales del informe: etiqueta corta (nombre completo en `full`), ancho en % y estado frente a la meta."""
+    items = list(g["items"])
+    mx = max([abs(v) for _, v in items] + [g.get("meta") or 0]) or 1
+    out = []
+    for et, v in items:
+        e = "na"
+        if g.get("meta"):
+            e = "ok" if v >= g["meta"] else ("warn" if v >= g["meta"] - RECALL_ALERTA else "bad")
+        full = inf.nombre_ley(et)
+        out.append({"n": inf.ley_corta(et), "full": full, "v": _fmt_g(v, g.get("fmt")), "w": round(100 * abs(v) / mx, 1), "e": e})
+    return out
+
+
+def _tarjeta(k: str, i: str, l: str, v, u: str, e: str, x: str, **extra) -> dict:
+    return {"k": k, "i": i, "l": l, "form": "none", "e": e, "p": "", "u": u, "v": "—" if v is None else v, "et": ESTADO_TXT[e], "tr": "", "te": "na", "ta": "minus", "x": x, **extra}
+
+
+def informe_ejecutivo(inf_: dict) -> dict:
+    """Panel del resumen ejecutivo: medidores con meta, modos en una barra apilada y casos por día."""
+    sec = {s["id"]: s for s in inf_["secciones"]}
+    kp = {}
+    for s in inf_["secciones"]:
+        for k in s["kpis"]:
+            kp.setdefault(k["etiqueta"], k["valor"])
+    casos = kp.get("Casos procesados") or 0
+    ctx = {"casos": casos}
+    est = lambda et: inf.estado_kpi(et, kp.get(et), ctx) or "na"  # noqa: E731
+    dias = next((t["filas"] for t in sec["resumen"]["tablas"] if t["id"] == "casos_dia"), [])
+    serie = [r[1] for r in dias]
+    cards = []
+    e_c = "ok" if casos else "na"
+    cards.append(_tarjeta("casos", "inbox", "Denuncias", f.miles(casos), "", e_c, f"{f.miles(casos)} casos procesados en el período.", form="spark", s=serie,
+                          d_l=graficos.spark(serie), d_a=graficos.spark_area(serie), et="Llegando con normalidad" if casos else "Sin denuncias"))
+    p_sug = kp.get("% con sugerencia")
+    e_s = est("% con sugerencia")
+    cards.append(_tarjeta("neg_sug", "sparkles", "Con sugerencia", None if not casos else f.dec_corto(p_sug, 1), "%", e_s if casos else "na", "De cada 100 denuncias, cuántas terminaron con una sugerencia lista. Meta: 90 % o más.",
+                          form="gauge", f=(p_sug or 0) / 100, zm=.9, zl="90", z=zonas([(0, .7, "bad"), (.7, .9, "warn"), (.9, 1, "ok")]), tick=graficos.g_tick(.9),
+                          et={"ok": "Dentro de lo esperado", "warn": "Bajo lo esperado", "bad": "Muy bajo", "na": "Sin datos"}[e_s if casos else "na"]))
+    rc = kp.get("Recall@5 por artículo (global)")
+    meta_r = kp.get("Meta de recall@5") or META_RECALL
+    e_r = est("Recall@5 por artículo (global)")
+    cards.append(_tarjeta("calidad", "target", "Acierto", None if rc is None else f.dec_corto(rc, 3), "", e_r, f"Cuando existe un artículo correcto, Kerna lo incluye entre sus 5 primeras sugerencias con esta frecuencia. Meta: {f.dec_corto(meta_r, 2)}.",
+                          form="gauge", f=rc or 0, zm=meta_r, zl=f.dec_corto(meta_r, 1), z=zonas([(0, meta_r - RECALL_ALERTA, "bad"), (meta_r - RECALL_ALERTA, meta_r, "warn"), (meta_r, 1, "ok")]),
+                          tick=graficos.g_tick(meta_r), et={"ok": "Cumple la meta", "warn": "Cerca de la meta", "bad": "Bajo la meta", "na": "Sin datos"}[e_r]))
+    pv = kp.get("% de sugerencias valoradas útiles")
+    e_v = est("% de sugerencias valoradas útiles")
+    cards.append(_tarjeta("valoraciones", "thumbs-up", "Valoradas útiles", None if pv is None else f.dec_corto(pv, 0), "%" if pv is not None else "", e_v, "De las sugerencias valoradas por auditores, cuántas resultaron útiles. Esperado: 70 % o más.",
+                          form="bullet" if pv is not None else "none", max=100, meta=70, metaT="meta 70 %", z=[{"a": 0, "b": 50, "e": "bad"}, {"a": 50, "b": 70, "e": "warn"}, {"a": 70, "b": 100, "e": "ok"}], mx_txt="100 %", pos=min(100, pv or 0), pos_meta=70,
+                          et={"ok": "Bien", "warn": "Atención", "bad": "Bajo", "na": "Sin valoraciones"}[e_v]))
+    p95 = kp.get("Latencia P95 (máximo diario)")
+    e_p = est("Latencia P95 (máximo diario)")
+    mx = 3 * META_P95_S
+    cards.append(_tarjeta("tiempo", "timer", "Respuesta", None if p95 is None else f.segundos(p95), "s" if p95 is not None else "", e_p, f"9 de cada 10 casos reciben su sugerencia en menos de este tiempo (el peor día). Meta: {f.dec_corto(META_P95_S, 0)} s.",
+                          form="bullet", max=mx, meta=META_P95_S, metaT=f"meta {f.dec_corto(META_P95_S, 0)} s", z=[{"a": 0, "b": META_P95_S, "e": "ok"}, {"a": META_P95_S, "b": 2 * META_P95_S, "e": "warn"}, {"a": 2 * META_P95_S, "b": mx, "e": "bad"}],
+                          mx_txt=f"{f.dec_corto(mx, 0)} s", pos=min(100, (p95 or 0) / 1000 / mx * 100), pos_meta=META_P95_S / mx * 100, et={"ok": "Dentro de la meta", "warn": "Sobre la meta", "bad": "Muy sobre la meta", "na": "Sin datos"}[e_p]))
+    ctotal = kp.get("Costo del período")
+    cards.append(_tarjeta("costo_k", "coins", "Costo", None if ctotal is None else f.usd(ctotal), "", "na" if ctotal is None else "ok",
+                          "Lo que cuesta atender las denuncias del período, según los tokens de cada modelo y su precio." if ctotal is not None else "No hay tokens medidos en el período.", et="Sin alertas" if ctotal is not None else "Sin datos", p="US$" if ctotal is not None else ""))
+    n_modos = [("oficial", "Modelo principal", "ok", kp.get("Modo oficial") or 0), ("respaldo", "Modelo de respaldo", "warn", kp.get("Modo respaldo") or 0),
+               ("local", "Modelo local", "warn", kp.get("Modo local (gemma)") or 0), ("manual", "Revisión manual", "bad", kp.get("Revisión manual") or 0)]
+    tot = sum(n for *_, n in n_modos)
+    modos = [{"k": k, "t": t, "e": e, "n": n, "p": pct(n, tot), "w": round(100 * n / tot, 1) if tot else 0, "est": est("Revisión manual") if k == "manual" else ("ok" if k == "oficial" else est("Modo respaldo"))} for k, t, e, n in n_modos]
+    return {"tarjetas": cards, "modos": modos, "n_modos": tot, "dias": [{"d": f.fecha_corta(str(r[0])), "c": f.miles(r[1]), "s": f.miles(r[2])} for r in dias]}
 
 
 def informe(inf_: dict) -> list[dict]:
     """Secciones del informe listas para la plantilla (copia: las descargas XLSX, CSV y PDF no cambian)."""
     out = []
+    kp_all = {k["etiqueta"]: k["valor"] for s in inf_["secciones"] for k in s.get("kpis", [])}
+    ctx = {"casos": kp_all.get("Casos procesados") or 0, "meta_recall": kp_all.get("Meta de recall@5")}
     for s in inf_["secciones"]:
         kp = []
         for k in s.get("kpis", []):
             v, u = k["valor"], k["unidad"]
             if v is None:
-                txt, e = "sin datos", "na"
+                txt = "—"
             elif u == "ms" and isinstance(v, (int, float)):
-                txt, u, e = f.segundos(v), "segundos", None
+                txt, u = f.segundos(v), "s"
             elif isinstance(v, float) and u == "ratio":
-                txt, e = f.dec_corto(v, 3), None
+                txt = f.dec_corto(v, 3)
             elif isinstance(v, float):
-                txt, e = f.dec_corto(v, 4), None
+                txt = f.dec_corto(v, 4)
             elif isinstance(v, int) and not isinstance(v, bool):
-                txt, e = f.miles(v), None
+                txt = f.miles(v)
             else:
-                txt, e = str(v), None
+                txt = str(v)
+            e = inf.estado_kpi(k["etiqueta"], v, ctx)
             if txt in ("sí", "no"):
                 e = "ok" if txt == "sí" else "bad"
-            kp.append({"etiqueta": k["etiqueta"].replace("(ms)", "").replace("  ", " "), "v": txt, "u": u if v is not None else "", "fuente": k["fuente"], "e": e})
+            kp.append({"etiqueta": _re.sub(r" \(\d+ días hasta [\d-]+\)", "", k["etiqueta"]).replace("(ms)", "").replace("  ", " "), "v": txt, "u": u if v is not None and u not in ("casos", "ratio", "valoraciones", "pruebas") else "", "fuente": k["fuente"], "e": e})
         gr = []
         for g in s.get("graficos", []):
+            if g["titulo"] in ("Casos por modo", "Casos procesados por día"):  # los resume el panel ejecutivo
+                continue
             ms = g["titulo"].endswith("(ms)")
-            items = [(a, round(b / 1000, 1) if ms else b) for a, b in g["items"]]
-            gr.append({**g, "titulo": g["titulo"].replace("(ms)", "(segundos)") if ms else g["titulo"], "items": items})
-        tb = [{"titulo": t["titulo"].replace("(ms)", "(s)"), "cols": [c.replace("(ms)", "(s)") for c in t["cols"]], "fuente": t["fuente"],
-               "filas": [[_celda(v, c) for v, c in zip(fila, t["cols"])] for fila in t["filas"]]} for t in s.get("tablas", [])]
-        out.append({"id": s["id"], "titulo": s["titulo"], "justificacion": s.get("justificacion", ""), "kpis": kp, "graficos": gr, "tablas": tb, "notas": s.get("notas", [])})
+            g2 = {**g, "items": [(a, round(b / 1000, 1) if ms else b) for a, b in g["items"]], "titulo": g["titulo"].replace("(ms)", "(segundos)") if ms else g["titulo"]}
+            if not any(v for _, v in g2["items"]):
+                continue
+            gr.append({"titulo": g2["titulo"], "barras": _barras(g2), "meta": g.get("meta"), "meta_pos": _meta_pos(g2)})
+        tb = []
+        for t in s.get("tablas", []):
+            if t["titulo"] in ("Casos por día", "Casos en revisión manual por motivo", "Artículos sugeridos por ley"):  # ya están en el panel o en el gráfico de la sección
+                continue
+            if not t["filas"]:  # sin filas no hay nada que mostrar: la nota de la sección lo explica
+                continue
+            filas = [[_celda(v, c) for v, c in zip(fila, t["cols"])] for fila in t["filas"]]
+            cols = [c.replace("(ms)", "(s)") for c in t["cols"]]
+            nums = [bool(filas) and all(r[i]["n"] for r in filas) for i in range(len(cols))]
+            largo = len(filas) > 12 and len(cols) <= 3
+            n = -(-len(filas) // 3) if largo else 0
+            tb.append({"titulo": t["titulo"].replace("(ms)", "(s)"), "cols": cols, "nums": nums, "fuente": t["fuente"], "filas": filas, "trozos": [filas[i:i + n] for i in range(0, len(filas), n)] if largo else None})
+        out.append({"id": s["id"], "titulo": s["titulo"], "justificacion": "", "kpis": kp, "graficos": gr, "tablas": tb, "notas": s.get("notas", [])})
     return out

@@ -1,1 +1,10 @@
 arrow-down arrow-down-right arrow-left arrow-right arrow-up arrow-up-right bot briefcase-business building-2 calendar-range check circle-check circle-help circle-minus coins cpu download eye eye-off file-down file-spreadsheet file-text globe inbox layout-dashboard loader-circle lock message-square-off minus octagon-alert piggy-bank plug quote rotate-ccw rotate-cw search shield-check sparkles table target thumbs-up timer trending-up trending-down triangle-alert chart-no-axes-column external-link key-round log-in wallet landmark clock scale users percent
+sliders-horizontal
+pencil
+pencil-line
+user-check
+user
+save
+workflow
+clipboard-check
+gauge

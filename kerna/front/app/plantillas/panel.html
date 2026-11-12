@@ -7,17 +7,11 @@
 <div class="pg-a"><div class="seg" role="group" aria-label="Período"><a href="/panel?dias=7"{% if dias == 7 %} aria-current="true"{% endif %}>7 días</a><a href="/panel?dias=30"{% if dias == 30 %} aria-current="true"{% endif %}>30 días</a></div>
 <a href="/panel/informe" class="btn btn-pri">{{ ic('file-down') }}<span>Informe</span></a></div></div>
 
-{% if aviso %}<div class="card p-3 aviso-r" role="status">{% if aviso == 'solicitado' %}<b>Listo.</b> Pedimos al conector que reintente los casos pendientes. Verás el resultado aquí en unos minutos.{% elif aviso == 'ya_solicitado' %}<b>Ya estaba pedido.</b> El conector todavía no atiende la solicitud anterior.{% else %}<b>No se pudo registrar el pedido.</b> Inténtalo de nuevo en un momento.{% endif %}</div>{% endif %}
-
-{% if V %}
-<section aria-labelledby="eg" class="eg s-{{ V.eg.e }}" data-s="eg">
-<div class="eg-main"><span class="eg-ic">{{ ic(ICONO[V.eg.e], 'eg') }}</span>
-<div class="min-w-0"><p class="eg-k">¿Está todo bien?</p>
-<h2 id="eg" class="eg-t"><span class="sr-only">Estado general: </span><span data-t="eg.t">{{ V.eg.t }}</span> {{ tip('estado') }}</h2>
-<p class="eg-s"><span data-t="eg.s">{{ V.eg.s }}</span>{% if rei and rei.r.reintentables %} <a href="#rei">Ver qué hacer</a>{% endif %}</p></div></div>
-<ul class="eg-l">{% for c in V.salud %}<li class="pl s-{{ c.e }}" data-s="sal.{{ c.k }}">{{ ic(ICONO[c.e], 'sal.' ~ c.k) }}<span class="pl-n"><span>{{ c.n }}</span><b data-t="sal.{{ c.k }}.t">{{ ESTADO_TXT[c.e] }}</b></span>{{ tip('salud_' ~ c.k, c.d, 'sal.' ~ c.k) }}</li>{% endfor %}</ul>
-</section>
+{% if V and V.proveedores %}
+<ul class="pv-l pv-top" aria-label="Disponibilidad de los modelos según cada proveedor">{% for p in V.proveedores %}<li class="pl s-{{ p.e }}" id="pv-{{ p.id }}">{{ ic(ICONO[p.e]) }}<span class="pl-n"><a href="{{ p.enlace }}" target="_blank" rel="noopener noreferrer">{{ p.nombre }}</a><b><span>{{ p.modelo }}</span> · <span data-pt>{{ p.txt }}</span></b></span>{{ tip('prov_' ~ p.id, p.mensaje) }}</li>{% endfor %}</ul>
 {% endif %}
+
+{% if aviso %}<div class="card p-3 aviso-r" role="status">{% if aviso == 'solicitado' %}<b>Listo.</b> Pedimos al conector que reintente los casos pendientes. Verás el resultado aquí en unos minutos.{% elif aviso == 'ya_solicitado' %}<b>Ya estaba pedido.</b> El conector todavía no atiende la solicitud anterior.{% else %}<b>No se pudo registrar el pedido.</b> Inténtalo de nuevo en un momento.{% endif %}</div>{% endif %}
 
 {% if rei %}{% set n = rei.r.reintentables %}
 <section id="rei" aria-labelledby="rei-t" class="card p-4 rei{% if not n %} rei-o{% endif %}">
@@ -59,11 +53,6 @@
 {% if V.etapas %}<h3 class="sub flex items-center gap-1.5">¿Dónde se va el tiempo? {{ tip('etapas') }}</h3>
 <ul class="list-none p-0 m-0 grid gap-1.5">{% for e in V.etapas %}<li class="et s-{{ e.e }}" data-s="et.{{ e.id }}"><span>{{ e.n }}</span><div class="mb"><i style="width:{{ e.ancho }}%" data-w="et.{{ e.id }}"></i></div><b data-t="et.{{ e.id }}">{{ e.s }} s</b></li>{% endfor %}</ul>{% endif %}</div>
 </section>
-
-{% if V.proveedores %}
-<section aria-label="Disponibilidad de los modelos según cada proveedor" class="card p-4 pv-r"><span class="pv-k">Según el proveedor</span>
-<ul class="pv-l">{% for p in V.proveedores %}<li class="pl s-{{ p.e }}" id="pv-{{ p.id }}">{{ ic(ICONO[p.e]) }}<span class="pl-n"><a href="{{ p.enlace }}" target="_blank" rel="noopener noreferrer">{{ p.nombre }}</a><b><span>{{ p.modelo }}</span> · <span data-pt>{{ p.txt }}</span></b></span>{{ tip('prov_' ~ p.id, p.mensaje) }}</li>{% endfor %}</ul></section>
-{% endif %}
 
 <section class="grid lg:grid-cols-3 gap-3 md:gap-4">
 <div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Cuándo llegan las denuncias?</h2>{{ tip('mapa') }}</div>

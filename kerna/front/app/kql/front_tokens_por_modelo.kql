@@ -1,7 +1,9 @@
-// Informe de gestión: consumo por modelo de generación (modelo exacto del evento solicitud_terminada). Solo conteos.
+// Informe de gestión y Resumen: consumo por modelo exacto. Los tokens y el modelo los registra el núcleo en los eventos de etapa
+// (clasificacion y generacion); solicitud_terminada solo trae el total de la cadena, sin modelo. Solo conteos.
 AppTraces
-| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
-| extend modelo = coalesce(tostring(Properties.modelo), ""), entrada = todouble(Properties.tokens_entrada), salida = todouble(Properties.tokens_salida)
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and tostring(Properties.clase) == "etapa"
+| where tostring(Properties.etapa) in ("clasificacion", "generacion")
+| extend modelo = tostring(Properties.modelo), entrada = todouble(Properties.tokens_entrada), salida = todouble(Properties.tokens_salida), id = tostring(Properties.id_solicitud)
 | where isnotnull(entrada) and modelo != ""
-| summarize solicitudes = count(), tokens_entrada_total = sum(entrada), tokens_salida_total = sum(salida), tokens_entrada_prom = round(avg(entrada)) by modelo
+| summarize solicitudes = dcount(id), tokens_entrada_total = sum(entrada), tokens_salida_total = sum(salida), tokens_entrada_prom = round(avg(entrada)) by modelo
 | order by solicitudes desc

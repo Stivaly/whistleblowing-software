@@ -213,7 +213,7 @@
         ...base(), grid: { left: 56, right: 6, top: 28, bottom: 22 }, tooltip: { trigger: 'axis', valueFormatter: (v) => fmtUF(v) + ' UF' }, legend: { top: 0, left: 0, textStyle: { color: ink, fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
         xAxis: { type: 'category', data: p.labels, axisLabel: { color: mu, fontSize: 10.5 }, axisTick: { show: false } },
         yAxis: { type: 'value', axisLabel: { color: mu, fontSize: 10.5, formatter: (v) => fmtUF(v) + ' UF' }, splitLine: { lineStyle: { color: '#EEF1F8' } } },
-        series: [{ name: 'Ventas', type: 'bar', data: p.ventas, itemStyle: { color: '#3B4FB4', borderRadius: [4, 4, 0, 0] }, barMaxWidth: 26 },
+        series: [{ name: 'Ingresos (UF)', type: 'bar', data: p.ventas, itemStyle: { color: '#3B4FB4', borderRadius: [4, 4, 0, 0] }, barMaxWidth: 26 },
           { name: 'Costos', type: 'bar', data: p.costos, itemStyle: { color: '#A8B1CC', borderRadius: [4, 4, 0, 0] }, barMaxWidth: 26 },
           { name: 'Utilidad', type: 'bar', data: p.utilidad, itemStyle: { color: ok, borderRadius: [4, 4, 0, 0] }, barMaxWidth: 26 }],
       });

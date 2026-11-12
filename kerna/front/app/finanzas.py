@@ -161,8 +161,10 @@ def proyeccion_capitulo() -> dict:
     anios = []
     for a in range(1, p["horizonte_anios"] + 1):
         ventas = costo = 0.0
+        clientes = 0
         for plan in p["planes"].values():
             n = plan["clientes_por_anio"][a - 1]
+            clientes += n
             ventas += n * plan["precio_anual_clp_anio1"] * factor(a)
             costo += n * plan["costo_servir_anual_clp_anio1"] * factor(a)
         ext = p["planes"]["plataforma"]["clientes_por_anio"][a - 1] - p["planes"]["plataforma"]["origen_veridy_por_anio"][a - 1]
@@ -172,7 +174,7 @@ def proyeccion_capitulo() -> dict:
         imp = max(uai, 0.0) * tasa_impuesto(a)
         util = uai - imp
         flujo = util + dep - cred[a - 1]["amortizacion"]
-        anios.append({"anio": a, "calendario": date.fromisoformat(p["inicio_operacion"]).year + a - 1, "ventas": ventas, "costo_ventas": costo,
+        anios.append({"anio": a, "calendario": date.fromisoformat(p["inicio_operacion"]).year + a - 1, "ventas": ventas, "clientes": clientes, "costo_ventas": costo,
                       "participacion_veridy": particip, "costos_fijos": fijos, "depreciacion": dep, "interes": interes, "uai": uai,
                       "impuesto": imp, "utilidad": util, "amortizacion": cred[a - 1]["amortizacion"], "flujo": flujo,
                       "margen_operativo": ventas - costo - particip - fijos})

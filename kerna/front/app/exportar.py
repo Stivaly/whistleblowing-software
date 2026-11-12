@@ -140,47 +140,101 @@ def a_pdf(inf: dict) -> bytes:
     P = lambda t, e="p": Paragraph(escape(str(t)), est[e])  # noqa: E731
     ancho = A4[0] - 36 * mm
 
+    COL = {"neutro": az, "ok": HexColor("#1F7A3D"), "warn": HexColor("#8F5200"), "bad": HexColor("#B42318"), "na": sec}
+    BAR = {"neutro": HexColor("#8E9AD0"), "ok": HexColor("#2F9255"), "warn": HexColor("#D68A00"), "bad": HexColor("#D4372A"), "na": HexColor("#8E9AD0")}
+    FON = {"neutro": HexColor("#FFFFFF"), "ok": HexColor("#E5F5EA"), "warn": HexColor("#FFF1D6"), "bad": HexColor("#FDE9E7"), "na": HexColor("#F5F7FB")}
+    TXT = {"ok": "Bien", "warn": "Atención", "bad": "Mal", "na": "Sin dato"}
+
+    def marca(c, e, x, y, r=3.2):
+        """Ícono de estado: círculo (bien), triángulo (atención), cuadrado (mal), guion (sin dato)."""
+        c.setFillColor(COL[e]); c.setStrokeColor(COL[e])
+        if e == "neutro":
+            return
+        if e == "ok":
+            c.circle(x, y, r, stroke=0, fill=1)
+        elif e == "warn":
+            p = c.beginPath(); p.moveTo(x - r, y - r * .8); p.lineTo(x + r, y - r * .8); p.lineTo(x, y + r); p.close(); c.drawPath(p, stroke=0, fill=1)
+        elif e == "bad":
+            c.rect(x - r, y - r, 2 * r, 2 * r, stroke=0, fill=1)
+        else:
+            c.setLineWidth(1); c.line(x - r, y, x + r, y)
+
+    class Tarjetas(Flowable):
+        """Cuadrícula de cifras con color de estado: etiqueta, valor y estado (semáforo)."""
+        def __init__(self, filas, cols=3, alto=26):
+            super().__init__()
+            self.filas, self.cols, self.alto = filas, cols, alto
+            self.nf = -(-len(filas) // cols)
+            self.width, self.height = ancho, self.nf * (alto + 3)
+
+        def wrap(self, aw, ah):
+            return ancho, self.height
+
+        def draw(self):
+            c, w = self.canv, (ancho - (self.cols - 1) * 4) / self.cols
+            for i, (et, v, u, e) in enumerate(self.filas):
+                x, y = (i % self.cols) * (w + 4), self.height - (i // self.cols + 1) * (self.alto + 3) + 3
+                c.setFillColor(FON[e]); c.setStrokeColor(ln); c.setLineWidth(.4); c.rect(x, y, w, self.alto, stroke=1, fill=1)
+                c.setFillColor(BAR[e]); c.rect(x, y, 2.4, self.alto, stroke=0, fill=1)
+                c.setFont("Mono", 6.3); c.setFillColor(sec); c.drawString(x + 6, y + self.alto - 8.5, et[:int((w - 12) / 3.7)])
+                c.setFont("Unbounded", 9.5 if e != "na" else 8); c.setFillColor(COL[e]); c.drawString(x + 6, y + 5, ("—" if e == "na" else v) + (f" {u}" if u and e != "na" else ""))
+                if e not in ("na", "neutro"):
+                    marca(c, e, x + w - 8, y + 8)
+
+    class Modos(Flowable):
+        """Los cuatro modos en una sola barra apilada, con leyenda."""
+        def __init__(self, ej):
+            super().__init__()
+            self.ej = ej
+            self.width, self.height = ancho, 44
+
+        def wrap(self, aw, ah):
+            return ancho, 44
+
+        def draw(self):
+            c, ej = self.canv, self.ej
+            c.setFont("Unbounded-M", 7); c.setFillColor(az); c.drawString(0, 35, "Cómo se resolvieron")
+            tot = ej["n_modos"]
+            if not tot:
+                c.setFont("Mono", 7); c.setFillColor(sec); c.drawString(0, 20, "—"); return
+            x = 0
+            for m in ej["modos"]:
+                w = ancho * m["n"] / tot
+                if w:
+                    c.setFillColor(BAR[m["est"]]); c.rect(x, 20, w, 9, stroke=0, fill=1)
+                x += w
+            x = 0
+            for m in ej["modos"]:
+                marca(c, m["est"], x + 3, 9, 2.6)
+                c.setFont("Mono", 6.6); c.setFillColor(az)
+                c.drawString(x + 9, 6.5, f"{m['t']}: {_fmt(m['n'])} ({m['p']} %)")
+                x += ancho / 4
+
     class Barras(Flowable):
+        """Barras horizontales delgadas, etiquetas cortas completas, estado por barra y meta marcada."""
         def __init__(self, g):
             super().__init__()
-            self.g, self.items = g, [(str(a), float(b)) for a, b in g["items"]]
-            self.h = 14 + (len(self.items) * 13 if g["tipo"] == "h" else 90)
+            self.g, self.b = g, g["barras"]
+            self.h = 14 + max(1, len(self.b)) * 11
             self.width, self.height = ancho, self.h
 
         def wrap(self, aw, ah):
             return ancho, self.h
 
         def draw(self):
-            c, it, g = self.canv, self.items, self.g
-            c.setFont("Unbounded-M", 7); c.setFillColor(az)
-            c.drawString(0, self.h - 8, g["titulo"])
-            if not it or not any(v for _, v in it):
-                c.setFont("Mono", 7); c.setFillColor(sec); c.drawString(0, self.h - 22, "Sin datos en el período."); return
-            mx = max(max(v for _, v in it), g.get("meta") or 0) or 1
-            c.setLineWidth(.8); c.setStrokeColor(az)
-            if g["tipo"] == "h":
-                x0, maxw = 120, ancho - 190
-                for i, (et, v) in enumerate(it):
-                    y = self.h - 22 - i * 13
-                    c.setFillColor(az); c.setFont("Mono", 6.8); c.drawString(0, y, et[:24])
-                    c.setFillColor(li if v == max(x for _, x in it) else HexColor("#FFFFFF"))
-                    c.rect(x0, y - 2, max(1.5, maxw * v / mx), 9, stroke=1, fill=1)
-                    c.setFillColor(sec); c.drawString(x0 + max(1.5, maxw * v / mx) + 4, y, _fmt(round(v, 3) if g.get("fmt") == "ratio" else (round(v, 4) if g.get("fmt") == "usd" else int(v))))
-                if g.get("meta"):
-                    xm = x0 + maxw * g["meta"] / mx
-                    c.setStrokeColor(sec); c.setDash(2, 2); c.line(xm, 2, xm, self.h - 14); c.setDash()
-            else:
-                n, paso = len(it), (ancho - 10) / len(it)
-                ba = min(22, paso * .7)
-                c.setStrokeColor(ln); c.line(0, 14, ancho, 14); c.setStrokeColor(az)
-                for i, (et, v) in enumerate(it):
-                    h = (self.h - 40) * v / mx
-                    x = 5 + i * paso + (paso - ba) / 2
-                    c.setFillColor(li); c.rect(x, 14, ba, h, stroke=1, fill=1)
-                    c.setFillColor(sec); c.setFont("Mono", 6)
-                    c.drawCentredString(x + ba / 2, 16 + h, str(int(v)))
-                    if n <= 14 or i % max(1, n // 10) == 0:
-                        c.drawCentredString(x + ba / 2, 5, et)
+            c, g = self.canv, self.g
+            c.setFont("Unbounded-M", 7); c.setFillColor(az); c.drawString(0, self.h - 8, g["titulo"])
+            if not self.b:
+                c.setFont("Mono", 7); c.setFillColor(sec); c.drawString(0, self.h - 21, "—"); return
+            x0, maxw = 150, ancho - 215
+            for i, b in enumerate(self.b):
+                y = self.h - 21 - i * 11
+                c.setFont("Mono", 6.8); c.setFillColor(az); c.drawString(0, y, b["n"][:38])
+                c.setFillColor(BAR[b["e"]]); c.rect(x0, y, max(1.2, maxw * b["w"] / 100), 5, stroke=0, fill=1)
+                c.setFillColor(COL[b["e"]]); c.drawString(x0 + max(1.2, maxw * b["w"] / 100) + 4, y - .5, b["v"])
+            if g.get("meta_pos") is not None:
+                xm = x0 + maxw * g["meta_pos"] / 100
+                c.setStrokeColor(az); c.setLineWidth(.8); c.line(xm, self.h - 20 - (len(self.b) - 1) * 11 - 2, xm, self.h - 14)
 
     def pie(c, d):
         c.saveState(); c.setFont("Mono", 6.5); c.setFillColor(sec)
@@ -210,30 +264,55 @@ def a_pdf(inf: dict) -> bytes:
     fr = Frame(18 * mm, 20 * mm, ancho, A4[1] - 36 * mm, id="f", leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
     doc.addPageTemplates([PageTemplate(id="portada", frames=[Frame(18 * mm, 20 * mm, ancho, 20 * mm)], onPage=portada, autoNextPageTemplate="normal"),
                           PageTemplate(id="normal", frames=[fr], onPage=pie)])
-    h = [Spacer(1, 1), PageBreak(), P("Índice", "h1")]
-    h += [P(f"{i}. {s['titulo']}") for i, s in enumerate(inf["secciones"], 1)]
-    h += [Spacer(1, 8), P("Cada cifra indica su fuente. Donde no hay datos se escribe «sin datos»; no se estima ni se inventa.", "n"), PageBreak()]
-    for i, s in enumerate(inf["secciones"], 1):
-        h.append(P(f"{i}. {s['titulo']}", "h1"))
-        h.append(P(s["justificacion"], "n"))
-        if s["kpis"]:
-            filas = [[P("Métrica", "ch"), P("Valor", "ch"), P("Fuente", "ch")]] + [[P(k["etiqueta"], "c"), P(_fmt(k["valor"]) + (f" {k['unidad']}" if k["unidad"] and k["valor"] is not None else ""), "c"), P(k["fuente"], "c")] for k in s["kpis"]]
-            t = Table(filas, colWidths=[ancho * .36, ancho * .2, ancho * .44], repeatRows=1)
-            t.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), li), ("BOX", (0, 0), (-1, -1), .8, az), ("LINEBELOW", (0, 0), (-1, 0), .8, az), ("LINEBELOW", (0, 1), (-1, -1), .4, ln), ("VALIGN", (0, 0), (-1, -1), "TOP")]))
-            h += [Spacer(1, 6), t]
+    from reportlab.platypus import CondPageBreak
+    from . import vistas
+    secs, ej = vistas.informe(inf), vistas.informe_ejecutivo(inf)
+    estilo = TableStyle([("BACKGROUND", (0, 0), (-1, 0), li), ("BOX", (0, 0), (-1, -1), .6, az), ("LINEBELOW", (0, 0), (-1, 0), .6, az), ("LINEBELOW", (0, 1), (-1, -1), .3, ln),
+                         ("VALIGN", (0, 0), (-1, -1), "TOP"), ("TOPPADDING", (0, 0), (-1, -1), 2), ("BOTTOMPADDING", (0, 0), (-1, -1), 2), ("LEFTPADDING", (0, 0), (-1, -1), 3), ("RIGHTPADDING", (0, 0), (-1, -1), 3)])
+    from reportlab.lib.styles import ParagraphStyle as PS
+
+    def PN(t, e="c", der=False, color=None):
+        base = est[e] if not der else PS("r" + e, parent=est[e], alignment=2)
+        if color is not None:
+            base = PS("k" + e + str(color), parent=base, textColor=color)
+        return Paragraph(escape(str(t)), base)
+
+    def tabla(t, filas, ancho_t):
+        nc = len(t["cols"])
+        cab = [PN(c, "ch", t["nums"][i]) for i, c in enumerate(t["cols"])]
+        rows = [[PN(c["t"], "c", c["n"], COL.get(c.get("chip") or "", None) if c.get("chip") else None) for c in r] for r in filas] or [[PN("—")] + [PN("")] * (nc - 1)]
+        tb = Table([cab] + rows, colWidths=[ancho_t / nc] * nc, repeatRows=1)
+        tb.setStyle(estilo)
+        return tb
+
+    h = [Spacer(1, 1), PageBreak()]
+    for i, s in enumerate(secs):
+        h.append(CondPageBreak(60 * mm))
+        h.append(P(s["titulo"], "h1"))
+        if s["id"] == "resumen":
+            h += [Tarjetas([(t["l"], str(t["v"]), t["u"], t["e"]) for t in ej["tarjetas"]]), Spacer(1, 6), Modos(ej), Spacer(1, 4)]
+            if ej["dias"]:
+                n = -(-len(ej["dias"]) // 3)
+                trozos = [ej["dias"][j:j + n] for j in range(0, len(ej["dias"]), n)]
+                tablas = []
+                for tz in trozos:
+                    tb = Table([[PN("Día", "ch"), PN("Casos", "ch", True), PN("Con sug.", "ch", True)]] + [[PN(r["d"]), PN(r["c"], "c", True), PN(r["s"], "c", True)] for r in tz], colWidths=[(ancho / 3 - 6) * .38, (ancho / 3 - 6) * .26, (ancho / 3 - 6) * .36], repeatRows=1)
+                    tb.setStyle(estilo); tablas.append(tb)
+                h += [P("Casos por día", "h2"), Table([tablas], colWidths=[ancho / 3] * len(tablas), style=[("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 0), ("RIGHTPADDING", (0, 0), (-1, -1), 6)])]
+        elif s["kpis"]:
+            h.append(Tarjetas([(k["etiqueta"], k["v"], k["u"], k["e"] if k["e"] in COL and k["e"] != "na" else ("na" if k["e"] == "na" else "neutro")) for k in s["kpis"]], cols=3))
         for g in s["graficos"]:
-            h += [Spacer(1, 8), Barras(g)]
+            h += [Spacer(1, 5), Barras(g)]
         for tb in s["tablas"]:
             h.append(P(tb["titulo"], "h2"))
-            rows = tb["filas"] or [["sin datos en el período"] + [""] * (len(tb["cols"]) - 1)]
-            nc = len(tb["cols"])
-            anchos = [ancho / nc] * nc
-            t = Table([[P(c, "ch") for c in tb["cols"]]] + [[P(_fmt(v), "c") for v in r] for r in rows], colWidths=anchos, repeatRows=1)
-            t.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), li), ("BOX", (0, 0), (-1, -1), .8, az), ("LINEBELOW", (0, 0), (-1, 0), .8, az), ("LINEBELOW", (0, 1), (-1, -1), .4, ln), ("VALIGN", (0, 0), (-1, -1), "TOP")]))
-            h += [t, P("Fuente: " + tb["fuente"], "n")]
+            if tb["trozos"]:
+                w = ancho / 3
+                h.append(Table([[tabla(tb, ch, w - 6) for ch in tb["trozos"]]], colWidths=[w] * len(tb["trozos"]), style=[("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 0), ("RIGHTPADDING", (0, 0), (-1, -1), 6)]))
+            else:
+                h.append(tabla(tb, tb["filas"], ancho))
         for n in s["notas"]:
-            h += [Spacer(1, 3), P("Nota: " + n, "n")]
-        if i < len(inf["secciones"]):
-            h.append(PageBreak())
+            h += [Spacer(1, 2), P("Nota: " + n, "n")]
+        h.append(Spacer(1, 8))
+    h.append(P("Verde: dentro de la meta. Ámbar: atención. Rojo: bajo la meta. Un guion (—) es una cifra sin dato. La fuente de cada cifra está en el XLSX y el CSV.", "n"))
     doc.build(h)
     return out.getvalue()

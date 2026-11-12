@@ -113,7 +113,7 @@ def construir(clientes: list[dict], uso: list[dict], hoy: date | None = None, di
             "inicio_operacion": par["inicio_operacion"], "inversion": _uf(finanzas.a_uf(pc["inversion"])),
             "van": _uf(finanzas.a_uf(pc["van"])), "tir_pct": round(pc["tir"] * 100, 1) if pc["tir"] is not None else None,
             "indice_rentabilidad": round(pc["indice_rentabilidad"], 2), "recuperacion_anio": pc["recuperacion_anio"],
-            "anios": [{"anio": a["anio"], "calendario": a["calendario"], **{k: _uf(finanzas.a_uf(a[k], a["anio"])) for k in
+            "anios": [{"anio": a["anio"], "calendario": a["calendario"], "clientes": a["clientes"], **{k: _uf(finanzas.a_uf(a[k], a["anio"])) for k in
                        ("ventas", "costo_ventas", "participacion_veridy", "costos_fijos", "depreciacion", "interes", "uai", "impuesto", "utilidad", "flujo", "margen_operativo")},
                        "margen_operativo_pct": _pct(a["margen_operativo"], a["ventas"])} for a in pc["anios"]]}
     return {

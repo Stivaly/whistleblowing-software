@@ -43,6 +43,59 @@ def nombre_ley(ley) -> str:
     return NOMBRE_19628 if ("19.628" in t or "19628" in t) else t
 
 
+LEY_CORTA = {"19.628": "Ley 19.628 · datos personales", "19628": "Ley 19.628 · datos personales", "20.393": "Ley 20.393 · personas jurídicas", "20393": "Ley 20.393 · personas jurídicas",
+             "21.643": "Ley 21.643 · Ley Karin", "21643": "Ley 21.643 · Ley Karin"}
+
+
+def ley_corta(ley) -> str:
+    """Etiqueta corta para gráficos («Ley 21.643 · Ley Karin»); el nombre completo va en el tooltip."""
+    t = str(ley or "")
+    for k, v in LEY_CORTA.items():
+        if k in t:
+            return v
+    return t if len(t) <= 34 else t[:33] + "…"
+
+
+def estado_kpi(etiqueta: str, valor, ctx: dict) -> str | None:
+    """Semáforo de una cifra del informe frente a las metas reales: "ok", "warn", "bad", "na" (sin dato) o None (cifra sin meta)."""
+    e = etiqueta.lower()
+    casos = ctx.get("casos") or 0
+    def tres(v, ok, warn):
+        return "ok" if v >= ok else ("warn" if v >= warn else "bad")
+    def cuenta(v):  # casos que no salieron por el camino normal: peso sobre el total
+        pc = 100 * v / casos if casos else 0
+        return "bad" if pc >= 10 else ("warn" if v else "ok")
+    if valor is None:
+        return "na"
+    if e.startswith("% con sugerencia") or e.startswith("disponibilidad efectiva"):
+        return None if not casos else tres(valor, 90, 70)
+    if e.startswith("% de sugerencias valoradas"):
+        return tres(valor, 70, 50)
+    if e.startswith("modo oficial"):
+        return None if not casos else tres(100 * valor / casos, 90, 70)
+    if e.startswith(("modo respaldo", "modo local")):
+        return "warn" if valor else "ok"
+    if e.startswith(("revisión manual", "casos en revisión manual", "casos fuera del modo oficial")):
+        return cuenta(valor)
+    if e.startswith("recall@5 por artículo") or e.startswith("recall por ley"):
+        meta = ctx.get("meta_recall") or META_RECALL
+        return tres(valor, meta, meta - .10)
+    if e.startswith("latencia p50"):
+        return "ok" if valor <= META_P95_MS else "warn"
+    if e.startswith("latencia p95"):
+        return "ok" if valor <= META_P95_MS else ("warn" if valor <= 2 * META_P95_MS else "bad")
+    if e.startswith("eventos de falla"):
+        return "warn" if valor else "ok"
+    if e.startswith("pruebas automáticas") and isinstance(valor, str) and "/" in valor:
+        a, b = valor.split("/", 1)
+        return "ok" if a == b else "bad"
+    if e.startswith("utilidad después de impuestos"):
+        return "ok" if valor > 0 else ("bad" if valor < 0 else "na")
+    if e.startswith("margen operativo en porcentaje"):
+        return tres(valor, 60, 30)
+    return None
+
+
 def periodo(dias: int | None = None, desde: str | None = None, hasta: str | None = None, ahora: datetime | None = None):
     """(inicio, fin) en UTC. Fechas AAAA-MM-DD inclusivas; si no, los últimos `dias` (7, 30 o 90)."""
     ahora = ahora or datetime.now(timezone.utc)
@@ -128,7 +181,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
             {"etiqueta": "Casos procesados", "valor": casos, "unidad": "casos", "fuente": LF_LA + ", evento solicitud_terminada"},
             {"etiqueta": "Casos con sugerencia (estado completada)", "valor": con_sug, "unidad": "casos", "fuente": LF_LA},
             {"etiqueta": "% con sugerencia", "valor": _pct(con_sug, casos), "unidad": "%", "fuente": "con sugerencia / casos procesados"},
-            {"etiqueta": "% de sugerencias valoradas útiles", "valor": _pct(val["util"], total_val), "unidad": "%", "fuente": LF_LA + ", eventos feedback y clasificacion_auditor"},
+            {"etiqueta": "% de sugerencias valoradas útiles", "valor": _pct(val["util"], total_val) if total_val else None, "unidad": "%", "fuente": LF_LA + ", eventos feedback y clasificacion_auditor"},
             {"etiqueta": "Disponibilidad efectiva", "valor": _pct(con_dis, val_dis), "unidad": "%", "fuente": "con sugerencia / solicitudes válidas (excluye sin_normativa_aplicable)"},
             {"etiqueta": "Modo oficial", "valor": modos["oficial"], "unidad": "casos", "fuente": LF_LA},
             {"etiqueta": "Modo respaldo", "valor": modos["respaldo"], "unidad": "casos", "fuente": LF_LA},
@@ -335,8 +388,8 @@ def _rentabilidad(n: dict | None) -> dict:
         sec["kpis"].append({"etiqueta": f"{et} en porcentaje del ingreso", "valor": t[k], "unidad": "%", "fuente": fte})
     sec["tablas"].append({"id": "rent_clientes", "titulo": "Rentabilidad por cliente (UF, período)", "cols": ["Cliente", "Plan", "Tarifa al año", "Ingreso", "Costo de IA", "Costo de servir", "Margen", "Margen %"],
                           "filas": [[c["nombre"], c["plan_tipo"], c["tarifa_uf_anual"], c["ingreso"], c["costo_ia"], c["costo_servir"], c["margen"], c["margen_pct"]] for c in n["clientes"]], "fuente": fte})
-    sec["tablas"].append({"id": "rent_proyeccion", "titulo": "Proyección a cinco años (UF)", "cols": ["Año", "Ventas", "Costo de servir", "Parte de Veridy", "Costos fijos", "Margen operativo", "Utilidad después de impuestos", "Caja del año"],
-                          "filas": [[f"{a['anio']} ({a['calendario']})", a["ventas"], a["costo_ventas"], a["participacion_veridy"], a["costos_fijos"], a["margen_operativo"], a["utilidad"], a["flujo"]] for a in p["anios"]],
+    sec["tablas"].append({"id": "rent_proyeccion", "titulo": "Proyección a cinco años (UF)", "cols": ["Año", "Clientes", "Ingresos (UF)", "Costo de servir", "Parte de Veridy", "Costos fijos", "Margen operativo", "Utilidad después de impuestos", "Caja del año"],
+                          "filas": [[f"{a['anio']} ({a['calendario']})", a["clientes"], a["ventas"], a["costo_ventas"], a["participacion_veridy"], a["costos_fijos"], a["margen_operativo"], a["utilidad"], a["flujo"]] for a in p["anios"]],
                           "fuente": f})
     sec["kpis"] += [{"etiqueta": "Valor actual neto de la proyección", "valor": p["van"], "unidad": "UF", "fuente": f},
                     {"etiqueta": "Retorno anual del proyecto", "valor": p["tir_pct"], "unidad": "%", "fuente": f},

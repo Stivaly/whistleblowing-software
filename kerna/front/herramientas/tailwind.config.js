@@ -1,1 +1,1 @@
-module.exports = { content: ["__APP__/plantillas/**/*.html", "__APP__/estaticos/kerna.js", "__APP__/graficos.py", "__APP__/vistas.py"], theme: { extend: {} }, plugins: [] };
+module.exports = { content: ["__APP__/plantillas/**/*.html", "__APP__/estaticos/kerna.js", "__APP__/estaticos/ajustes.js", "__APP__/informe.py", "__APP__/exportar.py", "__APP__/graficos.py", "__APP__/vistas.py"], theme: { extend: {} }, plugins: [] };

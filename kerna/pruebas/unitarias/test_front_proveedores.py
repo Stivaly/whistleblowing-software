@@ -97,4 +97,4 @@ def test_endpoint_y_panel_con_fuentes_caidas(cliente, monkeypatch):
 def test_panel_muestra_proveedor_caido(cliente, monkeypatch):
     monkeypatch.setattr(pv, "_get", lambda u: guardado({pv.URL_AZURE: "azure_incidente_nuestro.xml", pv.URL_GOOGLE: "google_operativo.json", pv.URL_VOYAGE: "voyage_operativo.json"}[u]).encode())
     p = cliente.get("/panel", headers={"X-Clave": "clave-de-prueba"})
-    assert "Atención: proveedor caído" in p.text and "Azure OpenAI" in p.text
+    assert "Caído" in p.text and "Azure OpenAI" in p.text and "¿Está todo bien?" not in p.text

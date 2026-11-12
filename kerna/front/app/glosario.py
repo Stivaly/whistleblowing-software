@@ -5,6 +5,25 @@ from . import formato as f
 from . import informe as inf
 
 
+def par_uf() -> int:
+    from . import finanzas
+    return round(finanzas.parametros()["uf_clp"])
+
+
+NOTAS_AJUSTE = {
+    "envios": "Más casos juntos acelera la fila, pero aumenta el riesgo de fallos por límites del proveedor.", "reintentos": "Cambia cuántos casos fallidos se rescatan solos.",
+    "espera": "Modifica cuánto tarda en repetirse un intento.", "revision": "Cambia la rapidez con que Kerna ve denuncias nuevas.",
+    "reprocesar": "Los casos en revisión manual volverán a la fila una vez.", "evaluador": "Apagado es más rápido y barato, con menos control de citas.",
+    "candidatos": "Cambia el cuidado y el costo del revisor.", "cadena": "Cambia qué modelo responde primero y cuál respalda.",
+    "compartir": "Solo afecta a los casos nuevos.", "maxresp": "Cambia desde cuándo un caso se marca como lento.", "alerta": "Cambia cuándo se destaca un caso sin sugerencia.",
+}
+
+
+def _ajustes(L: str) -> dict:
+    from . import ajustes
+    return {it["k"]: {"t": it["l"], "q": it["d"], "c": NOTAS_AJUSTE[it["k"]], "l": L} for g in ajustes.GRUPOS for it in g["items"]}
+
+
 def glosario() -> dict:
     meta_r = f.dec_corto(inf.META_RECALL * 100, 0)
     meta_t = f.dec_corto(inf.META_P95_MS / 1000, 0)
@@ -58,5 +77,7 @@ def glosario() -> dict:
         "neg_adopcion": {"t": "Adopción", "q": "Embudo: de las denuncias recibidas, cuántas recibieron sugerencia, cuántas fueron valoradas y cuántas valoradas resultaron útiles.", "c": "Barras cortas en valoración indican poca participación de los auditores.", "l": L},
         "neg_resultado": {"t": "Resultado del período", "q": "Cómo se pasa del ingreso a la utilidad, con todos los costos del informe de Kerna (capítulo 25).", "c": "Las barras muestran cada partida como parte del ingreso.", "l": L},
         "neg_supuestos": {"t": "Supuestos", "q": "Los supuestos son los del informe de Kerna: no se editan aquí.", "c": "Cambian en el archivo de parámetros financieros o con variables de entorno.", "l": L},
-        "proyeccion": {"t": "Proyección a 5 años", "q": "Ventas, costos y utilidad de cada año con el método del capítulo 25 del informe: clientes por plan, precios en UF, inflación y descuento.", "c": "Sirve para decidir precios o planes, no para comprometer cifras.", "l": L},
+        "proyeccion": {"t": "Proyección a 5 años", "q": "Ingresos, costos y utilidad de cada año según el plan de negocio del capítulo 25 del informe: clientes esperados por año (de 5 a 17), precios en UF, inflación y descuento.", "c": "Sirve para decidir precios o planes, no para comprometer cifras. El año 0 es 2026; el año 1 es 2027.", "l": L},
+        **_ajustes(L),
+        "ingresos_uf": {"t": "Ingresos (UF)", "q": "Es la proyección del plan de negocio del capítulo 25 del informe: lo que se espera facturar cada año, en UF, con los clientes esperados por año (de 5 a 17). Así, los 638 UF del año 1 salen de 5 clientes.", "c": "El año 0 es 2026, así que el año 1 es 2027. Para pasar las UF a pesos se usa una UF supuesta de {uf} pesos: es un valor configurable que falta confirmar con el valor oficial.".replace("{uf}", f.miles(par_uf())), "l": L},
     }

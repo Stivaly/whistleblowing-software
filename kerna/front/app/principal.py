@@ -15,7 +15,7 @@ from fastapi.responses import Response
 import json
 import time
 
-from . import consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
+from . import ajustes as aj, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
@@ -191,7 +191,7 @@ def panel_informe(request: Request, dias: int = 30, desde: str = "", hasta: str 
         return RedirectResponse("/acceso", status_code=303)
     inf = _informe(dias, desde or None, hasta or None)
     q = f"desde={desde}&hasta={hasta}" if desde else f"dias={dias if dias in inf_mod.RANGOS else 30}"
-    return plantillas.TemplateResponse(request, "informe.html", {"inf": inf, "secciones": vistas.informe(inf), "dias": dias if not desde else 0, "q": q, "desde": desde, "hasta": hasta, "fmt": exportar._fmt})
+    return plantillas.TemplateResponse(request, "informe.html", {"inf": inf, "secciones": vistas.informe(inf), "ej": vistas.informe_ejecutivo(inf), "dias": dias if not desde else 0, "q": q, "desde": desde, "hasta": hasta, "fmt": exportar._fmt})
 
 
 _FORMATOS = {"xlsx": (exportar.a_xlsx, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
@@ -232,3 +232,43 @@ def panel_negocio(request: Request, dias: int = 30):
     dias = 30 if dias not in (7, 30, 90) else dias
     V = vistas.negocio(n) if n else None
     return plantillas.TemplateResponse(request, "negocio.html", {"n": n, "V": V, "error": error, "dias": dias})
+
+
+def _origen_ok(request: Request) -> bool:
+    origen = request.headers.get("origin")
+    return not ((origen and origen.rstrip("/") != str(request.base_url).rstrip("/")) or request.headers.get("sec-fetch-site", "same-origin") not in ("same-origin", "none"))
+
+
+@app.get("/panel/ajustes", response_class=HTMLResponse)
+def panel_ajustes(request: Request):
+    if not _permitido(request):
+        return RedirectResponse("/acceso", status_code=303)
+    try:
+        est, error = aj.cargar(), None
+    except Exception as e:
+        est, error = {"valores": aj.RECOMENDADO, "guardado_en": None}, type(e).__name__
+    return plantillas.TemplateResponse(request, "ajustes.html", {
+        "grupos": aj.GRUPOS, "datos": {"valores": est["valores"], "recomendado": aj.RECOMENDADO, "grupos": aj.GRUPOS, "modelos": aj.MODELOS},
+        "guardado_en": est["guardado_en"], "error": error, "csrf": seguridad.token_csrf(request.cookies), "aviso": request.query_params.get("guardado"),
+        "modelos": aj.MODELOS, "valores": est["valores"], "rec": aj.RECOMENDADO})
+
+
+@app.post("/panel/ajustes")
+def guardar_ajustes(request: Request, csrf: str = Form(""), valores: str = Form("")):
+    if not _permitido(request):
+        return JSONResponse({"detalle": "no autorizado"}, status_code=401)
+    if not _origen_ok(request):
+        return JSONResponse({"detalle": "origen no permitido"}, status_code=403)
+    if not seguridad.csrf_valido(request.cookies, csrf):
+        return JSONResponse({"detalle": "token inválido"}, status_code=403)
+    try:
+        v = json.loads(valores)
+        aj.validar(v)
+    except (ValueError, TypeError, AttributeError):
+        return RedirectResponse("/panel/ajustes?guardado=invalido", status_code=303)
+    try:
+        aj.guardar(v)
+        r = "ok"
+    except Exception:
+        r = "error"
+    return RedirectResponse(f"/panel/ajustes?guardado={r}", status_code=303)

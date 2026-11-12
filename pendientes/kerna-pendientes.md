@@ -342,10 +342,27 @@ Pendiente:
 
 ## Diseño de la maqueta en el front real (2026-11-12)
 Hecho y desplegado (app-kerna-dev-front-g6mzy): portada, acceso, Resumen, Negocio (UF, capítulo 25, proyección a 5 años), Informe y confirmación de reintento, con los datos reales del backend (`vistas.py`, `formato.py`, `glosario.py`). Tailwind 3.4.17 compilado, ECharts 5.5.1, sprite de íconos Lucide 0.469.0 e Inter locales (`kerna/front/herramientas/construir_estaticos.sh`); sin CDN y sin cambios en la CSP. «En vivo»: el Resumen consulta `/api/metricas` y `/api/proveedores` cada 60 s si la pestaña está visible. Capturas reales en `kerna/front/diseno-v2/capturas/prod-*`.
-- [ ] **Ajustes** queda fuera del menú: no hay App Configuration ni datos reales que editar.
+- [x] Ajustes restaurado (ver sección posterior).
 - [ ] Gráfico «Denuncias por día»: la telemetría no separa el modo por día, así que muestra con y sin sugerencia (la maqueta apilaba principal, respaldo y manual). Para igualarla falta un KQL de modo por día.
 - [ ] Sin comparación de tendencia contra el período anterior en los indicadores (la API entrega un solo rango).
 - [ ] Bloque de reintentos y evaluación de calidad no se refrescan en vivo (se actualizan al recargar); el resto sí.
 - [ ] «Costo» del Resumen sale «Sin datos» si la telemetría por modelo no trae tokens (hoy pasa en producción); la consulta `front_horarios.kql` usa hora de Chile y es nueva.
 - [ ] La portada conserva la tarjeta ilustrativa de sugerencia (cita de la Ley 21.643 y CT art. 160), sin caso inventado.
 - [ ] Comparación con la maqueta hecha a ojo con capturas de ambos tamaños; no se midió píxel a píxel. Etiquetas largas del informe (gráfico de barras horizontales) pueden recortarse.
+
+## Front: ajustes, costo, informe compacto y logo continuo (2026-11-12)
+Hecho y desplegado:
+- Resumen sin el bloque «¿Está todo bien?»; los tres proveedores van arriba y los reintentos justo después. Negocio sin el bloque «¿Cómo va el negocio?».
+- Costo vacío: la causa estaba en la consulta, no en el núcleo. Los tokens y el modelo están en los eventos de etapa (`clasificacion` y `generacion`: `modelo`, `proveedor`, `tokens_entrada`, `tokens_salida`), no en `solicitud_terminada` (esta solo trae `modo` y el total de la cadena, sin `modelo`). `front_tokens_por_modelo.kql` ahora suma esos eventos (ya devuelve gpt-5-nano, gemini-3.5-flash-lite y gemini-3.6-flash). `tokens_por_solicitud.kql` ya funcionaba. El workbook de Terraform se actualizó con la consulta (aplicado: 2 recursos nuevos y 1 cambio, sin destruir).
+- «¿Dónde se va el tiempo?»: los eventos de etapa que fallan se registran con `duracion_ms = 0` (clasificación 151 de 207, generación 138 de 198) y hundían el P50 en 0. La consulta excluye `duracion_ms = 0` y las etapas que no son de la cadena (carga de modelo local, etc.). Etapas bajo 0,05 s se muestran «< 0,1 s».
+- «Leyes más sugeridas» vacía: no es de la consulta. El evento `articulo_sugerido` nunca llegó a Log Analytics: los últimos casos son de las 02:48 UTC y el código que lo emite (commit faac6d7b7, `orquestador.py`) quedó después; la revisión activa del núcleo (`ca-kerna-dev-nucleo--0000012`, imagen `kerna-nucleo:6c1da9bad-ids3`, creada 05:15 UTC) lo incluye, pero no ha procesado casos desde entonces. Mismo motivo para que `solicitud_terminada` no traiga `modelo`. Se verá al llegar el primer caso; si sigue vacío, revisar que `telemetria.evento` envíe `articulo_sugerido`. El núcleo no se tocó.
+- Ajustes restaurado (menú y vista de la maqueta) con tabla nueva `ajustes` (Azure Table Storage, `infra/terraform/evaluacion.tf`, rol Table Data Contributor del front solo sobre esa tabla), escritura solo con sesión del panel, mismo origen y token CSRF, validación de tipos y rangos en el servidor. La vista avisa que el núcleo y el conector aún no leen estos valores.
+- Logo y fondos: giro continuo con `linear` (sin `steps()`), camino del satélite 15 s por vuelta, roseta 50 s, fondo y órbitas de Ajustes a 45-80 s; en el front real y en la maqueta. Medido con CDP: sin diferencia en el hilo principal (0,0-0,1 %).
+- Negocio: «Ingresos (UF)» en lugar de «Ventas», con columna de clientes por año (5 a 17) y «?» que explica que es la proyección del capítulo 25, año 0 = 2026 y UF supuesta de 40.000 pendiente de confirmar.
+- Informe: sin índice ni frases de justificación; semáforo (verde/ámbar/rojo con ícono) en cada cifra con meta; sin dato = «—»; modos en una barra apilada; medidores con meta; barras delgadas con etiquetas cortas («Ley 21.643 · Ley Karin») y nombre completo en el tooltip; tablas con números a la derecha y fechas «11 nov». Altura con datos reales: 9.657 px a 4.735 px en escritorio (51 % menos) y 11.132 px a 8.416 px en móvil (24 % menos). El PDF sigue el mismo diseño (sin índice, cifras con color, modos apilados, tablas alineadas). Las fuentes de cada cifra ya no están en el PDF: siguen en XLSX/CSV y en el tooltip de la vista.
+Pendiente:
+- [ ] Informe en móvil: no llega a la mitad (tablas anchas como «Recall@5 por ley» y «Fallas por evento»); evaluar tarjetas por fila en vez de tabla.
+- [ ] Ajustes aún no los lee el núcleo ni el conector (tabla `ajustes`, fila `kerna`/`actual`, JSON en `valores`): falta ese lado para que apliquen.
+- [ ] Confirmar `articulo_sugerido` y `modelo` en `solicitud_terminada` con el próximo caso real.
+- [ ] El costo cuenta una solicitud en cada modelo que usó (clasificación y generación con proveedores distintos): el «por denuncia» puede salir algo bajo cuando hay respaldo.
+- [ ] Valor de la UF en 40.000 pesos: confirmar con el oficial (`KERNA_UF_CLP`).
