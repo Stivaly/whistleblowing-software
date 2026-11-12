@@ -99,9 +99,9 @@ def icono(nombre: str, clave: str | None = None, px: int | None = None, mini: bo
         e = escape(nombre[2:])
         st = f' style="--s:{px}px"' if px else ""
         return Markup(f'<k-st data-e="{e}"{st}{" class=sm" if mini else ""} aria-hidden="true"><svg aria-hidden="true" focusable="false"><use{di} href="/estaticos/identidad.svg#{"m" if mini else "e"}-{e}"/></svg></k-st>')
-    if nombre in A_NUCLEO:
+    if nombre in A_NUCLEO or nombre in set(A_NUCLEO.values()):
         st = f' style="--s:{px}px"' if px else ""
-        return Markup(f'<k-n{st} aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="/estaticos/identidad.svg#n-{A_NUCLEO[nombre]}"/></svg></k-n>')
+        return Markup(f'<k-n{st} aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="/estaticos/identidad.svg#n-{A_NUCLEO.get(nombre, nombre)}"/></svg></k-n>')
     return Markup(f'<k-ic n="{escape(nombre)}" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use{di} href="/estaticos/iconos.svg#{escape(nombre)}"/></svg></k-ic>')
 
 

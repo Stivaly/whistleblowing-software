@@ -2,12 +2,12 @@
 {% block echarts %}<script src="/estaticos/echarts.custom.min.js?v={{ ver }}" defer></script>{% endblock %}
 {% set seccion = 'informe' %}
 {% block vista %}
-<div class="pg-h"><div><h1 class="disp ph-t m-0" style="color:var(--brand)">Informe de gestión</h1><p class="pg-s">{{ inf.meta.periodo }}</p></div>
-<div class="pg-a"><div class="seg" role="group" aria-label="Período">{% for d in (7, 30, 90) %}<a href="/panel/informe?dias={{ d }}"{% if dias == d %} aria-current="true"{% endif %}>{{ d }} días</a>{% endfor %}</div>
+<header class="bar"><div class="bar-t"><h1 class="h1">Informe de gestión</h1><span class="bar-p">{{ inf.meta.periodo }}</span>
+<div class="seg" role="group" aria-label="Período">{% for d in (7, 30, 90) %}<a href="/panel/informe?dias={{ d }}"{% if dias == d %} aria-current="true"{% endif %}>{{ d }} días</a>{% endfor %}</div>
 <details class="otro"><summary class="btn btn-sec">{{ ic('calendar-range') }}<span>Otro período</span></summary>
-<form method="get" action="/panel/informe" class="otro-f card"><label class="sr-only" for="d1">Desde</label><input id="d1" name="desde" type="date" class="field" value="{{ desde }}"><label class="sr-only" for="d2">Hasta</label><input id="d2" name="hasta" type="date" class="field" value="{{ hasta }}"><button class="btn btn-dark" type="submit">Aplicar</button></form></details>
-<div class="dl" role="group" aria-label="Descargar">{% for k, n, i, cl in (('pdf','PDF','file-text','btn-pri'),('xlsx','Excel','file-spreadsheet','btn-dark'),('csv','CSV','table','btn-dark')) %}<a class="btn {{ cl }}" href="/panel/informe/descargar.{{ k }}?{{ q }}" title="Descargar en {{ n }}">{{ ic(i) }}<span>{{ n }}</span></a>{% endfor %}</div></div></div>
-<div id="inf-cuerpo" class="grid gap-3 md:gap-4"{% if not listo %} data-carga="/panel/informe/cuerpo?{{ q }}"{% endif %}>
-{% if listo %}{% include "informe_cuerpo.html" %}{% else %}<div class="kg6 sk-g" aria-busy="true" aria-label="Cargando el informe">{% for i in range(6) %}<div class="kc sk"></div>{% endfor %}</div>{% endif %}
+<form method="get" action="/panel/informe" class="otro-f card"><label class="sr-only" for="d1">Desde</label><input id="d1" name="desde" type="date" class="field" value="{{ desde }}"><label class="sr-only" for="d2">Hasta</label><input id="d2" name="hasta" type="date" class="field" value="{{ hasta }}"><button class="btn btn-dark" type="submit">Aplicar</button></form></details></div>
+<div class="bar-a dl" role="group" aria-label="Descargar">{% for k, n, i, cl in (('pdf','PDF','file-text','btn-pri'),('xlsx','Excel','file-spreadsheet','btn-sec'),('csv','CSV','table','btn-sec')) %}<a class="btn {{ cl }}" href="/panel/informe/descargar.{{ k }}?{{ q }}" title="Descargar en {{ n }}">{{ ic(i) }}<span>{{ n }}</span></a>{% endfor %}</div></header>
+<div id="inf-cuerpo"{% if not listo %} data-carga="/panel/informe/cuerpo?{{ q }}"{% endif %}>
+{% if listo %}{% include "informe_cuerpo.html" %}{% else %}<div class="sk bn" aria-busy="true" aria-label="Cargando el informe" style="height:120px"></div>{% endif %}
 </div>
 {% endblock %}

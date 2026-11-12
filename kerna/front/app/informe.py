@@ -25,7 +25,7 @@ EQUIVALENCIA = {"gpt-5-nano": "Claude Haiku 5.5", "gpt-5-mini": "Claude Sonnet 5
 POR_DEFECTO = "Claude Haiku 5.5"  # modelos sin equivalencia (p. ej. Gemini de respaldo)
 UMBRAL_PROMPT = 100_000
 PROYECCION = (100, 1000)  # denuncias por mes
-FUENTE_FIN = "Informe de Kerna, capítulo 25 (Tablas 107 a 115), parámetros en datos/parametros_financieros.json"
+FUENTE_FIN = "Plan de negocio de Kerna, parámetros en datos/parametros_financieros.json"
 LF_LA = "Log Analytics (AppTraces del núcleo)"
 CONSULTAS_INFORME = {
     "casos": "front_casos_por_dia", "modos": "solicitudes_por_modo", "tokens": "tokens_por_solicitud",
@@ -318,7 +318,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
              + [{"etiqueta": f"Costo de IA del período en UF", "valor": round(finanzas.usd_a_uf(total, anio_op), 4) if hay else None, "unidad": "UF", "fuente": f"USD convertidos con dólar a {finanzas.parametros()['usd_clp']} y UF a {round(finanzas.uf_del_anio(anio_op))} pesos"}]
              + [{"etiqueta": f"Costo de IA mensual proyectado, {format(k, ',d').replace(',', '.')} denuncias", "valor": round(por_caso * k, 2) if hay else None, "unidad": "USD", "fuente": "costo por denuncia x volumen mensual (solo IA)"} for k in PROYECCION]
              + [{"etiqueta": f"Costo total mensual proyectado, {format(k, ',d').replace(',', '.')} denuncias", "valor": round(finanzas.usd_a_uf(por_caso * k, anio_op) + finanzas.a_uf(finanzas.total_fijos_clp(anio_op) / 12, anio_op), 2) if hay else None, "unidad": "UF",
-                 "fuente": "IA del volumen + costos fijos mensuales del capítulo 25 (Tabla 111); sin el costo de servir por cliente"} for k in PROYECCION],
+                 "fuente": "IA del volumen + costos fijos mensuales del plan de negocio; sin el costo de servir por cliente"} for k in PROYECCION],
              "tablas": [{"id": "costo_modelo", "titulo": "Costo por modelo (precios USD por millón de tokens: Haiku 5.5 0,10/0,50; Sonnet 5.5 2,00/10,00)",
                          "cols": ["Modelo Claude", "Modelo usado", "Solicitudes", "Tokens entrada", "Tokens salida", "Costo (USD)"],
                          "filas": desg, "fuente": f"{PRECIOS_FUENTE}; tokens medidos en {LF_LA}"},
@@ -402,7 +402,7 @@ def _rentabilidad(n: dict | None) -> dict:
                     {"etiqueta": "Año en que se recupera la inversión", "valor": p["recuperacion_anio"], "unidad": "año", "fuente": f}]
     sec["graficos"].append({"tipo": "h", "titulo": "Utilidad después de impuestos por año (UF)", "items": [(f"Año {a['anio']}", a["utilidad"]) for a in p["anios"]]})
     sec["notas"] += [f"Valores en UF: 1 UF = {round(n['uf_clp'])} pesos y dólar a {n['usd_clp']} pesos. El costo de IA se mide en dólares y se limita a la cuota mensual del plan (3.000, 7.000 y 15.000 pesos); sobre ella las consultas pasan al modo local.",
-                     f"Proyección con los supuestos del capítulo 25: clientes de 5 a 17, reajuste de {p['inflacion_pct']} % anual, parte de Veridy de {p['participacion_veridy_pct']} %, crédito de 36 cuotas, impuesto según la Ley 21.850 y descuento de {p['tasa_descuento_pct']} %; el año 1 es {p['inicio_operacion'][:4]}.",
+                     f"Proyección con los supuestos del plan de negocio: clientes de 5 a 17, reajuste de {p['inflacion_pct']} % anual, parte de Veridy de {p['participacion_veridy_pct']} %, crédito de 36 cuotas, impuesto según la Ley 21.850 y descuento de {p['tasa_descuento_pct']} %; el año 1 es {p['inicio_operacion'][:4]}.",
                      "Los costos fijos, la depreciación y el interés se prorratean por los días del período."]
     return sec
 

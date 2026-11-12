@@ -29,7 +29,7 @@ plantillas.env.globals.update(orbital.FUNCIONES)
 plantillas.env.filters["zip"] = lambda a, b: zip(a, b)
 _GLOS = glosario.glosario()
 plantillas.env.globals.update(
-    glos=_GLOS, glosario_json=json.dumps(_GLOS, ensure_ascii=False).replace("</", "<\\/"), ICONO=vistas.ICONO, ESTADO_TXT=vistas.ESTADO_TXT,
+    glos=_GLOS, glosario_json=json.dumps(_GLOS, ensure_ascii=False).replace("</", "<\\/"), ICONO=vistas.ICONO, motivo_ico=vistas.motivo_ico, ESTADO_TXT=vistas.ESTADO_TXT,
     ver=int(max((p.stat().st_mtime for p in (BASE / "estaticos").glob("*.*")), default=0)))
 
 CABECERAS = {

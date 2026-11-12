@@ -2,32 +2,31 @@
 {% set seccion = 'ajustes' %}
 {% block datos %}<script type="application/json" id="ajustes-datos">{{ datos|tojson }}</script>{% endblock %}
 {% block vista %}
-<div class="pg-h">
-<div class="flex items-center gap-3 flex-wrap"><h1 class="disp ph-t m-0" style="color:var(--brand)">Ajustes</h1><span class="chip warn">{{ ic('e-contingencia-modelo') }} Guardado, aún no aplicado</span>{{ tip('aj_estado') }}{% if guardado_en %}<span class="text-xs muted">{{ fecha_hora(guardado_en) }}</span>{% endif %}</div>
-<div class="pg-a"><button type="button" class="btn btn-sec" data-restaurar>{{ ic('rotate-ccw') }}<span>Valores recomendados</span></button></div></div>
+<header class="bar"><div class="bar-t"><h1 class="h1">Ajustes</h1><span class="chip warn">{{ ic('e-contingencia-modelo', px=18, mini=True) }} Guardado, aún no aplicado</span>{{ tip('aj_estado') }}{% if guardado_en %}<span class="bar-p">{{ fecha_hora(guardado_en) }}</span>{% endif %}</div>
+<div class="bar-a"><button type="button" class="btn btn-sec" data-restaurar>{{ ic('rotate-ccw') }}<span>Valores recomendados</span></button></div></header>
 
-{% if aviso == 'ok' %}<div class="card p-3 aviso-r" role="status"><b>Ajustes guardados.</b></div>
-{% elif aviso == 'error' or error %}<div class="card p-3 aviso-r bd-bad" role="alert"><b>No se pudo guardar o leer.</b> Inténtalo de nuevo en un momento.</div>
-{% elif aviso == 'invalido' %}<div class="card p-3 aviso-r bd-bad" role="alert"><b>Algún valor no es válido.</b> Revisa los ajustes e inténtalo otra vez.</div>{% endif %}
+{% if aviso == 'ok' %}<p class="cola-av s-ok" role="status">{{ ic('e-valorada', px=40) }}<span>Ajustes guardados</span></p>
+{% elif aviso in ('origen', 'token') %}<p class="cola-av s-bad" role="alert">{{ ic('e-cadena-agotada', px=40) }}<span>No se pudo guardar. Recarga la página e inténtalo otra vez</span></p>
+{% elif aviso == 'error' or error %}<p class="cola-av s-bad" role="alert">{{ ic('e-cadena-agotada', px=40) }}<span>No se pudo guardar o leer. Inténtalo en un momento</span></p>
+{% elif aviso == 'invalido' %}<p class="cola-av s-bad" role="alert">{{ ic('e-contingencia-modelo', px=40) }}<span>Algún valor no es válido. Revisa los ajustes</span></p>{% endif %}
 
-{% for g in grupos %}<section class="card mod mod-1" aria-labelledby="g-{{ g.id }}" data-g="{{ g.id }}">
-<div class="mod-body">
-<div class="flex items-center gap-4 mb-3"><span class="orb-ic grid place-items-center w-12 h-12 shrink-0" style="background:var(--brand-soft);color:var(--brand)">{{ ic(g.i) }}</span><h2 id="g-{{ g.id }}" class="mod-h">{{ g.t }}</h2></div>
-<div class="gi">{% for it in g["items"] %}<div class="ctl{% if it.t in ('cd','ch') %} ctl-w{% endif %}" data-k="{{ it.k }}" data-t="{{ it.t }}">
-<div class="flex items-start justify-between gap-3"><div class="min-w-0"><div class="flex items-center gap-1.5 flex-wrap"><span id="l-{{ it.k }}" class="font-semibold text-[17px]">{{ it.l }}</span>{{ tip(it.k) }}<span class="chip warn" data-cambiado hidden>{{ ic('pencil') }} Cambiado</span></div></div>
-{% if it.t == 'sw' %}<div class="flex items-center gap-3 shrink-0"><span class="swt" data-swt></span><button type="button" role="switch" class="sw" aria-checked="false" aria-labelledby="l-{{ it.k }}"></button></div>
-{% elif it.t == 'rg' %}<span class="kv-s whitespace-nowrap" style="color:var(--brand)" data-v></span>{% endif %}</div>
-{% if it.t == 'rg' %}<div><input type="range" class="range" min="{{ it.min }}" max="{{ it.max }}" step="{{ it.step or 1 }}" aria-labelledby="l-{{ it.k }}"{% if it.dep %} data-dep="{{ it.dep }}"{% endif %}>
-<div class="flex justify-between text-xs muted"><span data-min></span><span data-rec></span><span data-max></span></div><p class="m-0 mt-1 text-sm flex items-center gap-1.5 t-warn font-medium" data-av hidden>{{ ic('e-contingencia-modelo') }}<span></span></p></div>
-{% elif it.t == 'sg' %}<div class="seg self-start" role="group" aria-labelledby="l-{{ it.k }}">{% for o in it.o %}<button type="button" data-v="{{ o.v }}" aria-pressed="false">{{ o.t }}</button>{% endfor %}</div>
-{% elif it.t == 'ch' %}<div class="flex flex-wrap gap-2" role="group" aria-labelledby="l-{{ it.k }}">{% for o in it.o %}<button type="button" class="chip na" data-v="{{ o.v }}" aria-pressed="false">{{ ic('user') }}<span>{{ o.t }}</span></button>{% endfor %}</div>
-{% elif it.t == 'cd' %}<div class="grid gap-3" data-cadena></div>{% endif %}
+<div class="as">
+{% for g in grupos %}<section class="as-s" aria-labelledby="g-{{ g.id }}" data-g="{{ g.id }}">
+<div class="ap"><svg class="ap-svg" viewBox="0 0 300 300" role="img" data-orb="{{ g.id }}"></svg></div>
+<div class="as-r"><h2 id="g-{{ g.id }}" class="as-h">{{ ic(g.i, px=24) }}<span>{{ g.t }}</span>{% for it in g["items"] if it.t == 'ch' %}<span class="as-ch ctl" data-k="{{ it.k }}" data-t="ch" role="group" aria-labelledby="l-{{ it.k }}"><span id="l-{{ it.k }}" class="ct-n">{{ it.l }}</span>{{ tip(it.k) }}<span class="chip warn" data-cambiado hidden>{{ ic('pencil', px=14) }}</span>{% for o in it.o %}<button type="button" class="chip na" data-v="{{ o.v }}" aria-pressed="false">{{ ic('user', px=16) }}<span>{{ o.t }}</span></button>{% endfor %}</span>{% endfor %}</h2>
+<div class="gi">{% for it in g["items"] if it.t != 'ch' %}<div class="ctl{% if it.t == 'cd' %} ctl-w{% endif %}" data-k="{{ it.k }}" data-t="{{ it.t }}">
+<div class="ct-l"><span id="l-{{ it.k }}" class="ct-n">{{ it.l }}</span>{{ tip(it.k) }}<span class="chip warn" data-cambiado hidden>{{ ic('pencil', px=14) }}</span></div>
+{% if it.t == 'sw' %}<div class="ct-c"><button type="button" role="switch" class="sw" aria-checked="false" aria-labelledby="l-{{ it.k }}"></button><span class="ct-v" data-swt></span></div>
+{% elif it.t == 'rg' %}<div class="ct-c"><span class="rg-w"><input type="range" class="range" min="{{ it.min }}" max="{{ it.max }}" step="{{ it.step or 1 }}" aria-labelledby="l-{{ it.k }}"{% if it.dep %} data-dep="{{ it.dep }}"{% endif %}><i class="rc" data-rc aria-hidden="true"></i></span><span class="ct-v" data-v></span></div>
+<p class="ct-av" data-av hidden>{{ ic('e-contingencia-modelo', px=18, mini=True) }}<span></span></p>
+{% elif it.t == 'sg' %}<div class="ct-c"><div class="seg" role="group" aria-labelledby="l-{{ it.k }}">{% for o in it.o %}<button type="button" data-v="{{ o.v }}" aria-pressed="false">{{ o.t }}</button>{% endfor %}</div></div>
+{% elif it.t == 'cd' %}<div class="ct-w" data-cadena></div>{% endif %}
 </div>{% endfor %}</div></div></section>{% endfor %}
+</div>
 
 <form method="post" action="/panel/ajustes" class="ajs-barra" data-barra hidden>
 <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="valores" value="">
 <span class="font-semibold text-sm flex items-center gap-2">{{ ic('pencil-line') }}<span data-ncambios></span></span>
 <span class="flex gap-2"><button type="button" class="btn" style="background:rgba(255,255,255,.15);color:#fff" data-descartar>Descartar</button><button type="submit" class="btn btn-pri">{{ ic('save') }}<span>Guardar</span></button></span></form>
 <script src="/estaticos/ajustes.js?v={{ ver }}" defer></script>
-
 {% endblock %}

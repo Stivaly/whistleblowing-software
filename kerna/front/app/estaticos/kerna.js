@@ -222,18 +222,31 @@
       }, hay ? '' : 'Sin denuncias en el período');
     }
     if (g.proy) {
-      const p = g.proy;
+      const p = g.proy, cv = css('--c-verde'), cc = css('--c-coral'), ca = css('--c-azul');
       mk('ch-proy', {
-        ...base(), grid: { left: 56, right: 6, top: 28, bottom: 22 }, tooltip: { trigger: 'axis', valueFormatter: (v) => fmtUF(v) + ' UF' }, legend: { top: 0, left: 0, textStyle: { color: ink, fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
-        xAxis: { type: 'category', data: p.labels, axisLabel: { color: mu, fontSize: 10.5 }, axisTick: { show: false } },
-        yAxis: { type: 'value', axisLabel: { color: mu, fontSize: 10.5, formatter: (v) => fmtUF(v) + ' UF' }, splitLine: { lineStyle: { color: '#EEF1F8' } } },
-        series: [{ name: 'Ingresos (UF)', type: 'bar', data: p.ventas, itemStyle: { color: '#3B4FB4', borderRadius: [4, 4, 0, 0] }, barMaxWidth: 26 },
-          { name: 'Costos', type: 'bar', data: p.costos, itemStyle: { color: '#A8B1CC', borderRadius: [4, 4, 0, 0] }, barMaxWidth: 26 },
-          { name: 'Utilidad', type: 'bar', data: p.utilidad, itemStyle: { color: ok, borderRadius: [4, 4, 0, 0] }, barMaxWidth: 26 }],
+        ...base(), grid: { left: 6, right: 6, top: 26, bottom: 4, containLabel: true }, tooltip: { trigger: 'axis', valueFormatter: (v) => fmtUF(v) + ' UF' }, legend: { top: 0, left: 0, icon: 'roundRect', itemWidth: 10, itemHeight: 6, textStyle: { color: ink, fontSize: 11 } },
+        xAxis: { type: 'category', data: p.labels, axisLabel: { color: mu, fontSize: 10.5, interval: 0 }, axisTick: { show: false }, axisLine: { lineStyle: { color: ln } } },
+        yAxis: { type: 'value', axisLabel: { color: mu, fontSize: 10.5, formatter: (v) => fmtUF(v) }, splitLine: { lineStyle: { color: '#EEF1F8' } } },
+        series: [{ name: 'Ingresos (UF)', type: 'bar', data: p.ventas, itemStyle: { color: cv, borderRadius: [4, 4, 0, 0] }, barMaxWidth: 26 },
+          { name: 'Costos', type: 'bar', data: p.costos, itemStyle: { color: cc, borderRadius: [4, 4, 0, 0] }, barMaxWidth: 26 },
+          { name: 'Utilidad', type: 'bar', data: p.utilidad, itemStyle: { color: ca, borderRadius: [4, 4, 0, 0] }, barMaxWidth: 26 }],
       });
     }
   }
   graficos(DATOS.graficos);
+  function cascada(c) {
+    if (!c) return;
+    const col = (k) => (k === 'ok' ? css('--c-verde') : k === 'coral' ? css('--c-coral') : css('--bad-bar')), ink = css('--ink'), mu = css('--muted'), vacio = { color: 'transparent' };
+    const seg = (d) => d.map((x, i) => ({ value: x, itemStyle: { color: col(c.cols[i]), borderRadius: 2 } }));
+    mk('ch-casc', {
+      ...base(), grid: { left: 4, right: 4, top: 8, bottom: 36 }, tooltip: { trigger: 'item', formatter: (p) => (p.seriesIndex % 2 ? c.labels[p.dataIndex].replace('\n', ': ') + ' UF' : ''), confine: true },
+      xAxis: { type: 'category', data: c.labels, axisLabel: { color: ink, fontSize: 10.5, interval: 0, lineHeight: 14, margin: 8 }, axisTick: { show: false }, axisLine: { lineStyle: { color: '#B9C1DA' } } },
+      yAxis: { type: 'value', show: false },
+      series: [{ type: 'bar', stack: 'p', data: c.bp, itemStyle: vacio, silent: true, barMaxWidth: 44 }, { type: 'bar', stack: 'p', data: seg(c.sp), barMaxWidth: 44 },
+        { type: 'bar', stack: 'n', data: c.bn, itemStyle: vacio, silent: true, barMaxWidth: 44 }, { type: 'bar', stack: 'n', data: seg(c.sn), barMaxWidth: 44 }],
+    });
+  }
+  cascada(DATOS.cascada);
 
   /* ---------- Informe: pestañas, gráficos por pestaña (canvas, solo los de la pestaña abierta) y tablas bajo demanda ---------- */
   const CK = { ok: '--ok-bar', warn: '--warn-bar', bad: '--bad-bar', na: '--na-bar', pro: '--pro-bar' };
@@ -297,51 +310,44 @@
     iniciarInforme();
   })();
 
-  /* ---------- En vivo: el Resumen consulta /api/metricas y /api/proveedores cada 60 s si la pestaña está visible ---------- */
-  const PROV_E = { operativo: 'ok', degradado: 'warn', caido: 'bad', sin_informacion: 'na' };
-  const PROV_T = { operativo: 'Operativo', degradado: 'Degradado', caido: 'Caído', sin_informacion: 'Sin información' };
-  const ICO = { ok: 'e-lista', warn: 'e-contingencia-modelo', bad: 'e-cadena-agotada', na: 'e-sin-info' };
-  const icoHref = (id) => (id.startsWith('e-') ? '/estaticos/identidad.svg#' + id : '/estaticos/iconos.svg#' + id);
-  const setIco = (u, id) => { u.setAttribute('href', icoHref(id)); const t = u.closest('k-st'); if (t) t.dataset.e = id.slice(2); };
-  const setCls = (n, e) => { n.className = n.className.replace(/\bs-(ok|warn|bad|na)\b/g, '').trim() + ' s-' + e; };
-  function aplicar(m) {
-    $$('[data-t]').forEach((n) => { const k = n.dataset.t; if (k in m.t) poner(n, m.t[k]); });
-    $$('[data-s]').forEach((n) => { const k = n.dataset.s; if (k in m.s) setCls(n, m.s[k]); });
-    $$('[data-w]').forEach((n) => { const k = n.dataset.w; if (k in m.w) n.style.width = m.w[k] + '%'; });
-    $$('[data-l]').forEach((n) => { const k = n.dataset.l; if (k in m.l) n.style.left = m.l[k] + '%'; });
-    $$('[data-rot]').forEach((n) => { const k = n.dataset.rot; if (k in m.rot) n.style.transform = 'rotate(' + m.rot[k] + 'deg)'; });
-    $$('[data-d]').forEach((n) => { const k = n.dataset.d; if (k in m.d) n.setAttribute('d', m.d[k]); });
-    $$('[data-i]').forEach((n) => { const k = n.dataset.i; if (k in m.ico) setIco(n, m.ico[k]); });
-    $$('[data-xk]').forEach((n) => { const k = n.dataset.xk; if (k in m.x) n.setAttribute('x', m.x[k]); });
-    $$('.kt').forEach((n) => { n.classList.add('upd'); setTimeout(() => n.classList.remove('upd'), 900); });
-  }
-  function proveedores(p) {
-    (p.proveedores || []).forEach((x) => {
-      const e = PROV_E[x.estado] || 'na', li = document.getElementById('pv-' + x.id); if (!li) return;
-      setCls(li, e); const u = $('use', li); if (u) setIco(u, x.estado === 'sin_informacion' ? 'e-sin-conexion' : ICO[e]);
-      const t = $('[data-pt]', li); if (t) t.textContent = PROV_T[x.estado] || 'Sin información';
-      const k = $('k-tip', li); if (k) k.setAttribute('x', x.mensaje);
-    });
-  }
-  const vd = $('.vd'); let pulso = 0, cargando = false;
+  /* ---------- Reintentar: diálogo modal nativo; el POST va por fetch con el token de la sesión y el resultado queda en el mismo bloque ---------- */
+  const IC = (e, px) => '<k-st data-e="' + e + '" style="--s:' + px + 'px"><svg aria-hidden="true" focusable="false"><use href="/estaticos/identidad.svg#e-' + e + '"/></svg></k-st>';
+  const RES = { solicitado: ['lista', 'ok', 'Pedido enviado'], ya_solicitado: ['conector-en-proceso', 'pro', 'Ya había un reintento pedido'], token: ['cadena-agotada', 'bad', 'No se pudo pedir el reintento. Recarga la página e inténtalo otra vez'],
+    origen: ['cadena-agotada', 'bad', 'No se pudo pedir el reintento. Recarga la página e inténtalo otra vez'], sesion: ['cadena-agotada', 'bad', 'La sesión terminó. Vuelve a entrar'], error: ['cadena-agotada', 'bad', 'No se pudo pedir el reintento. Inténtalo en un momento'] };
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('[data-reintentar]');
+    if (a) { const d = $('#dlg-rei'); if (d && d.showModal) { e.preventDefault(); d.showModal(); } return; }          // sin JavaScript el enlace lleva a /panel/reintentar
+    if (e.target.id === 'dlg-rei') { e.target.close(); return; }                                                    // clic en el velo
+    const ok = e.target.closest && e.target.closest('[data-dlg-ok]'); if (!ok) return;
+    const d = ok.closest('dialog'), caja = $('#rei'); ok.disabled = true;
+    fetch('/panel/reintentar', { method: 'POST', credentials: 'same-origin', headers: { Accept: 'application/json' }, body: new URLSearchParams({ csrf: caja ? caja.dataset.csrf : '' }) })
+      .then((r) => r.json().catch(() => ({ estado: 'error' }))).catch(() => ({ estado: 'error' }))
+      .then((r) => { const x = RES[r.estado] || RES.error, l = caja && $('.cola-l', caja);
+        if (l) { l.innerHTML = '<p class="cola-av s-' + x[1] + '" role="status">' + IC(x[0], 40) + '<span>' + x[2] + '</span></p>'; }
+        d.close(); ok.disabled = false; });
+  });
+  /* ---------- En vivo: cada 60 s, con la pestaña visible, se pide de nuevo la vista y se reemplaza su zona (sin recargar ni perder el scroll) ---------- */
+  let pulso = 0, cargando = false;
+  const vdot = () => $('.vd');
   async function refrescar() {
-    if (cargando || document.hidden) return;
+    const z = document.getElementById('zona'); const dl = $('#dlg-rei');
+    if (cargando || document.hidden || !z || (dl && dl.open)) return;
     cargando = true;
     try {
-      const dias = (DATOS.graficos && DATOS.graficos.dias) || 7, o = { credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'application/json' } };
-      const [rm, rp] = await Promise.all([fetch('/api/metricas?dias=' + dias, o), fetch('/api/proveedores', o)]);
-      if (rm.status === 401 || rp.status === 401) { location.href = '/acceso'; return; }
-      if (!rm.ok) throw new Error('metricas');
-      const m = await rm.json(); if (rp.ok) proveedores(await rp.json());
-      if (m.vista) { aplicar(m.vista.mapas); graficos(m.vista.graficos); }
+      const r = await fetch(location.pathname + location.search, { credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'text/html' } });
+      if (r.redirected && r.url.includes('/acceso')) { location.href = '/acceso'; return; }
+      if (!r.ok) throw new Error('vista');
+      const doc = new DOMParser().parseFromString(await r.text(), 'text/html'), nz = doc.getElementById('zona'); if (!nz) throw new Error('zona');
+      soltar(z); z.innerHTML = nz.innerHTML;
+      const nd = doc.getElementById('datos'); if (nd) { try { DATOS.graficos = JSON.parse(nd.textContent).graficos; } catch (_) { /* se conservan los anteriores */ } }
+      graficos(DATOS.graficos);
       ultimo = Date.now(); fallo = false;
-      if (vd) { vd.classList.remove('b1', 'b2'); void vd.offsetWidth; vd.classList.add(++pulso % 2 ? 'b1' : 'b2'); vd.style.background = ''; }
-    } catch (_) { fallo = true; if (vd) vd.style.background = css('--warn-bar'); }
+      const vd = vdot(); if (vd && !RM) { void vd.offsetWidth; vd.classList.add(++pulso % 2 ? 'b1' : 'b2'); }
+    } catch (_) { fallo = true; const vd = vdot(); if (vd) vd.style.background = css('--warn-bar'); }
     cargando = false;
   }
   if ($('[data-vivo]')) {
     setInterval(refrescar, 60000);
     document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - ultimo > 60000) refrescar(); });
-    if (vd && !RM) vd.classList.add('b1');
   }
 })();

@@ -588,30 +588,90 @@ def informe_v2(inf_: dict) -> dict:
         serie, menos, pts, meta = extra[c["k"]]
         tr = _tendencia(serie, menos, pts=pts) if serie else {"tr": "", "te": "na", "ta": "minus"}
         d = {"d_l": graficos.spark(serie), "d_a": graficos.spark_area(serie)} if len(serie) >= 4 else {}
-        cards.append({"k": c["k"], "i": c["i"], "l": nombres[c["k"]], "v": c["v"], "u": c["u"], "p": c["p"], "e": "na" if c["k"] == "costo_k" else c["e"], "et": "" if c["k"] == "costo_k" else c["et"], "meta": meta, "x": c["x"], **tr, **d})
-    mal = [c["l"] for c in cards if c["e"] == "bad"]
-    atencion = [c["l"] for c in cards if c["e"] == "warn"]
-    if mal:
-        e_v, txt = "bad", "Bajo la meta: " + ", ".join(mal)
-    elif atencion:
-        e_v, txt = "warn", "Atención: " + ", ".join(atencion)
-    elif all(c["e"] == "na" for c in cards):
-        e_v, txt = "na", "Sin datos en el período"
+        cards.append({"k": c["k"], "i": c["i"], "l": nombres[c["k"]], "v": c["v"], "u": c["u"], "p": c["p"], "e": "na" if c["k"] == "costo_k" else c["e"], "et": "" if c["k"] == "costo_k" else c["et"], "meta": meta, "x": c["x"], **tr, **d, **{k2: c[k2] for k2 in ("form", "z", "f", "zm", "zl", "max", "pos", "pos_meta", "metaT") if k2 in c}})
+    mal = [c for c in cards if c["e"] == "bad"]
+    atencion = [c for c in cards if c["e"] == "warn"]
+    con_meta = [c for c in cards if c["e"] != "na" and c["k"] not in ("casos", "costo_k")]
+    n_ok = sum(1 for c in con_meta if c["e"] == "ok")
+    corto = {"neg_sug": "sugerencia", "calidad": "acierto", "valoraciones": "sugerencias útiles", "tiempo": "respuesta"}
+    fuera = [corto.get(c["k"], c["l"].lower()) for c in con_meta if c["e"] != "ok"]
+    if not con_meta:
+        e_v, ico, frase = "na", "sin-info", "Sin datos en el período"
+    elif not fuera:
+        e_v, ico, frase = "ok", "lista", f"{n_ok} de {len(con_meta)} metas cumplidas"
     else:
-        e_v, txt = "ok", "Todo dentro de la meta"
-    con_meta = [c for c in cards if c["e"] != "na" and c["k"] != "casos"]
-    veredicto = {"e": e_v, "t": txt, "n": f"{sum(1 for c in con_meta if c['e'] == 'ok')} de {len(con_meta)} en meta"}
+        e_v = "bad" if n_ok == 0 else "warn"
+        ico = "cadena-agotada" if n_ok == 0 else "contingencia-modelo"
+        lista = ", ".join(fuera[:-1]) + (" y " if len(fuera) > 1 else "") + fuera[-1]
+        frase = f"{n_ok} de {len(con_meta)} metas cumplidas: {lista} " + ("bajo la meta" if n_ok == 0 or e_v == "bad" else "por mejorar")
+    veredicto = {"e": e_v, "ico": ico, "t": frase[0].upper() + frase[1:] if False else frase, "n": f"{n_ok} de {len(con_meta)} en meta"}
 
     kp = {k["etiqueta"]: k for s in vistas_informe_cache(inf_) for k in s["kpis"]}
+    vis = informe_vis(inf_, kp)
     pestanas = []
     for id_, titulo, ico, g, items in PESTANAS:
+        if id_ == "resumen":
+            continue
         stats = []
-        for et, rot in items:
+        for et, rot in items[:3]:
             k = kp.get(et)
             if k:
                 stats.append({"l": rot, "v": k["v"], "u": k["u"], "e": k["e"] or "n"})
-        pestanas.append({"id": id_, "t": titulo, "i": ico, "g": g, "stats": stats})
-    return {"cards": cards, "veredicto": veredicto, "pestanas": pestanas, "charts": informe_charts(inf_)}
+        pestanas.append({"id": id_, "t": titulo, "i": ico, "g": g, "stats": stats, "vis": vis.get(id_)})
+    kbs = [_kb(c) for c in cards]
+    charts = informe_charts(inf_)
+    return {"cards": cards, "kb": kbs, "veredicto": veredicto, "pestanas": pestanas, "charts": {k: v for k, v in charts.items() if k == "rentabilidad"}, "hay_proy": bool(charts.get("rentabilidad"))}
+
+
+def _corto_n(v: float) -> str:
+    return f.dec_corto(v / 1e6, 1) + " M" if v >= 1e6 else (f.dec_corto(v / 1e3, 0) + " mil" if v >= 1e4 else f.miles(round(v)))
+
+
+def informe_vis(inf_: dict, kp: dict) -> dict:
+    """Una visualización protagonista por pestaña del informe, con el lenguaje orbital (HTML o SVG del servidor)."""
+    out: dict = {}
+    sin = lambda t: _M(f'<p class="vac">{graficos.icono("e-sin-info", px=18, mini=True)}<span>{_e(t)}</span> <b>—</b></p>')  # noqa: E731
+    rl = _tabla(inf_, "recall_ley")
+    if rl and rl["filas"]:
+        li = []
+        meta = (rl["filas"][0][7] or META_RECALL)
+        for r in rl["filas"]:
+            v = r[4]
+            e = "ok" if v >= (r[7] or META_RECALL) else ("warn" if v >= (r[7] or META_RECALL) - RECALL_ALERTA else "bad")
+            li.append(f'<li class="ly s-{e}" title="{_e(inf.nombre_ley(r[0]))}">{_o.ley_icono(inf.nombre_ley(r[0]), 32)}{_o.anillo(100 * v, e, 100 * meta, 64, f.dec_corto(100 * v, 1) + "%")}<span>{_e(inf.ley_corta(r[0]))}</span></li>')
+        out["calidad"] = _M(f'<p class="mk">Acierto por ley<span class="mk-r">marca = meta de {f.dec_corto(100 * meta, 0)} %</span></p><ul class="ly-l">{"".join(li)}</ul>')
+    else:
+        out["calidad"] = sin("Sin medición de calidad")
+    le = _tabla(inf_, "lat_etapa")
+    if le and le["filas"]:
+        mx = max(r[3] for r in le["filas"])
+        sat = [{"n": ETAPA_CORTA.get(str(r[0]), str(r[0]).capitalize()), "v": r[3], "txt": f.segundos(r[3]) + " s", "c": _o.COLOR_ETAPA.get(str(r[0]), "azul"), "hot": r[3] == mx} for r in le["filas"]]
+        out["desempeno"] = _M(f'<p class="mk">El camino de una denuncia: 9 de cada 10 casos<span class="mk-r">meta {f.dec_corto(META_P95_S, 0)} s en total</span></p>{_o.camino(sat)}')
+    else:
+        out["desempeno"] = sin("Sin tiempos por etapa")
+    tl = _tabla(inf_, "tokens_modelo")
+    if tl and tl["filas"]:
+        anillos = [{"n": str(r[0]), "v": r[2] + r[3], "txt": _corto_n(r[2] + r[3]), "c": _o.CICLO[i % len(_o.CICLO)]} for i, r in enumerate(tl["filas"][:4])]
+        ck = kp.get("Costo del período")
+        out["costo"] = _M(f'<p class="mk">Costo por modelo<span class="mk-r">el arco es la parte de los tokens de cada uno</span></p><div class="pr-d">{_o.diagrama_orbital(anillos, ("US$ " + ck["v"]) if ck else "—", "costo del período")}</div>')
+    else:
+        out["costo"] = sin("Sin tokens medidos")
+    fl = _tabla(inf_, "fallas")
+    rv = _tabla(inf_, "revision")
+    if fl and fl["filas"]:
+        agg: dict[str, int] = {}
+        for r in fl["filas"]:
+            agg[str(r[1])] = agg.get(str(r[1]), 0) + int(r[4])
+        nom = {"generacion": "Redacción", "recuperacion": "Búsqueda", "voyage": "Voyage AI", "gemini": "Gemini", "local": "Modelo local", "azure": "Azure OpenAI"}
+        it = sorted(agg.items(), key=lambda x: -x[1])
+        sat = [{"n": nom.get(a, a.capitalize()), "v": b, "txt": f.miles(b), "c": _o.CICLO[i % len(_o.CICLO)], "hot": i == 0} for i, (a, b) in enumerate(it)]
+        h = f'<p class="mk">Fallas por proveedor<span class="mk-r">el tamaño es la cantidad de eventos</span></p>{_o.camino(sat)}'
+    else:
+        h = f'<p class="vac">{graficos.icono("e-lista", px=24, mini=True)}<span>Sin fallas de proveedor en el período</span></p>'
+    if rv and rv["filas"]:
+        h += '<ul class="ch-l">' + "".join(f'<li>{graficos.icono(motivo_ico(str(r[0]).replace("_", " "), False), px=20, mini=True)}<span>{_e(str(r[0]).replace("_", " ").capitalize())}</span><b>{f.miles(r[1])}</b></li>' for r in rv["filas"][:5]) + "</ul>"
+    out["incidentes"] = _M(h)
+    return out
 
 
 def vistas_informe_cache(inf_: dict) -> list[dict]:
@@ -754,7 +814,7 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
     n_val = V["n_val"]
     util = vv.get("Útil", {}).get("p")
     e_v = "na" if not n_val else ("ok" if util >= 70 else ("warn" if util >= 50 else "bad"))
-    kb.append({"k": "valoradas", "ic": "e-valorada", "l": "Sugerencias útiles", "v": "—" if not n_val else str(util), "u": "" if not n_val else "%", "p": "", "e": e_v,
+    kb.append({"k": "valoradas", "g": "valoraciones", "ic": "e-valorada", "l": "Sugerencias útiles", "v": "—" if not n_val else str(util), "u": "" if not n_val else "%", "p": "", "e": e_v,
                "et": "Sin valoraciones" if not n_val else {"ok": "Bien", "warn": "Atención", "bad": "Bajo"}[e_v], "bar": None if not n_val else {"z": [{"w": 50, "e": "bad"}, {"w": 20, "e": "warn"}, {"w": 30, "e": "ok"}], "pos": util, "meta": 70, "t": "meta 70 %"},
                "sub": f"{f.miles(n_val)} valoradas por auditores" if n_val else "", "x": "De las sugerencias valoradas por auditores, cuántas resultaron útiles. Esperado: 70 % o más."})
     et = V["etapas"]

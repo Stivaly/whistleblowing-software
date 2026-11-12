@@ -15,6 +15,8 @@ Cada vista se lee como una lámina: **una frase titular**, **una visualización 
 
 ## 2. Reglas que no se negocian
 
+0. **Optimizar no es quitar:** lo que la usuaria aprobó (los paneles azules orbitales de Ajustes, el logo vivo, la identidad) se conserva y se hace más liviano. Antes de eliminar cualquier elemento visual, comprueba que no fue aprobado (en `pendientes/` o en esta guía); si hay duda, se optimiza y no se elimina.
+
 1. **Ningún hueco:** ningún bloque tiene más de 16 px de espacio interno vacío. Un bloque mide lo que mide su contenido. Si algo queda vacío, se rediseña el bloque o se elimina; nunca se rellena con aire.
 2. **Las tarjetas son la excepción:** se usan solo para algo agrupado e interactivo (por ejemplo, la cola de reintentos con su botón). Lo demás va sobre el fondo de la página, en **bandas** separadas por la línea punteada de la identidad (puntos de 1,5 px cada 8 px). No hay tarjeta por métrica.
 3. **La columna se elige según el dato:** usa ancho completo para lo protagonista, una fila de métricas en banda para los KPI, y 2 columnas solo cuando dos cosas se comparan.
@@ -93,13 +95,17 @@ Acierto · Respuesta · Costo · Sugerencias valoradas. Cada uno lleva:
 
 ## 6. Ajustes
 
-- **Una sola superficie** con separadores finos entre secciones. No hay tarjeta por sección.
+- **Se conserva lo que la usuaria aprobó:** cada sección tiene su panel de fondo azul (tinta de la identidad) con la ilustración orbital que muestra el efecto del ajuste. Los satélites, órbitas y equipos cambian al mover los controles. Ver `kerna/front/diseno-v2/maqueta.html` (clase `.mod-art` / `.orb-svg`) y la captura `kerna/front/diseno-v2/capturas/v4-despues-ajustes-d.png`. **No se elimina: se optimiza.**
+  - Las órbitas y tramas de fondo son una imagen estática (WebP 2x) que gira con CSS transform.
+  - Solo los satélites y estados que cambian con el control son SVG vivos, que se actualizan al mover el control, sin animación infinita.
+  - El panel azul mide lo mismo que sus filas de ajustes, a su izquierda (en escritorio, ~280 px de ancho). En móvil se muestra como una franja baja sobre las filas, no se oculta.
+- **Sin texto narrativo:** solo título, control y valor; nada de «Así queda en vivo» con frases.
 - **Encabezado de sección:** una línea con un ícono de identidad de 24 px y el título.
 - **Cada ajuste es una fila de 44–52 px:** título y «?», el control y el valor alineado a la derecha.
   - El deslizador mide 200 px y lleva el valor recomendado como marca sobre la pista.
   - El selector segmentado va en línea.
 - 2 columnas de filas en escritorio. El orden de los modelos va en filas de 44 px. Los chips de «Compartir con» van en la misma fila del título.
-- **Meta:** todo en 1366×850 sin scroll.
+- **Meta:** lo más cerca posible de 1366×850 sin scroll, sin sacrificar los paneles azules.
 
 ## 7. Informe de gestión (vista y PDF)
 

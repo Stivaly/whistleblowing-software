@@ -112,7 +112,7 @@ def construir(clientes: list[dict], uso: list[dict], hoy: date | None = None, di
     imp = max(uai, 0.0) * finanzas.tasa_impuesto(anio)
     util = uai - imp
     pc = finanzas.proyeccion_capitulo()
-    proy = {"fuente": "Informe de Kerna, capítulo 25 (Tablas 108 a 115)", "tasa_descuento_pct": round(pc["tasa_descuento"] * 100, 1),
+    proy = {"fuente": "Plan de negocio de Kerna", "tasa_descuento_pct": round(pc["tasa_descuento"] * 100, 1),
             "inflacion_pct": round(par["inflacion_anual"] * 100, 1), "participacion_veridy_pct": round(par["participacion_veridy"] * 100),
             "inicio_operacion": par["inicio_operacion"], "inversion": _uf(finanzas.a_uf(pc["inversion"])),
             "van": _uf(finanzas.a_uf(pc["van"])), "tir_pct": round(pc["tir"] * 100, 1) if pc["tir"] is not None else None,
@@ -122,7 +122,7 @@ def construir(clientes: list[dict], uso: list[dict], hoy: date | None = None, di
                        "margen_operativo_pct": _pct(a["margen_operativo"], a["ventas"])} for a in pc["anios"]]}
     return {
         "generado": datetime.now(timezone.utc).isoformat(timespec="seconds"), "dias": dias, "desde": ini.isoformat(), "hasta": hoy.isoformat(),
-        "fuente": "tablas clientes y usodiario (Azure Table Storage del núcleo); costos y supuestos del informe de Kerna, capítulo 25",
+        "fuente": "tablas clientes y usodiario (Azure Table Storage del núcleo); costos y supuestos del plan de negocio",
         "moneda": "UF", "uf_clp": round(finanzas.uf_del_anio(anio)), "usd_clp": par["usd_clp"], "anio_operacion": anio,
         "precios": {"nano": {"entrada": 0.10, "salida": 0.50, "equivale": "Claude Haiku 5.5"},
                     "mini": {"entrada": 2.00, "salida": 10.00, "equivale": "Claude Sonnet 5.5"}},
