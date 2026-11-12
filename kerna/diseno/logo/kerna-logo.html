@@ -8,8 +8,6 @@
   --papel:#F5F7FB; --hoja:#FFFFFF; --azul:#1C2A6B; --sec:#4A5578; --linea:#DCE1EC; --lima:#CFFF5E; --oliva:#3F6212;
   --display:"Unbounded","Arial Black",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--papel:#0B1020;--hoja:#10172C;--azul:#C9D3FF;--sec:#A9B2CF;--linea:#26304D;--oliva:#CFFF5E;color-scheme:dark}}
-:root[data-theme="dark"]{--papel:#0B1020;--hoja:#10172C;--azul:#C9D3FF;--sec:#A9B2CF;--linea:#26304D;--oliva:#CFFF5E;color-scheme:dark}
 body{background:var(--papel);color:var(--azul);font-family:var(--mono);font-size:14px;line-height:1.65}
 .pag{max-width:1080px;margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:48px}
 .eti{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sec)}
