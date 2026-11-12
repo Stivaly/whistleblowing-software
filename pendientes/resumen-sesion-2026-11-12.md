@@ -67,11 +67,12 @@
   - texto redundante en Negocio.
 - En prod9 corregí yo dos detalles de móvil: «+52 % sobre el plan» repetido y «Depreciación» partido a mitad de palabra, que ahora dice «Crédito y equipos».
 
-**Falta (menor):**
-- Datos a 390 px mide unos 1.340 px: se podría agrupar por sección.
-- PDF: las páginas de Rapidez e Incidentes quedan con media hoja libre.
-- En la pestaña Calidad, el anillo «Global» queda unos píxeles más abajo que los otros.
-- Revisar en un celular real el degradado de «Compartir».
+**Cerrado al final** (commit desplegado d8e33044b; 110 pruebas pasan; capturas prod10-):
+- «Datos» agrupa las tablas por sección y en móvil pasó de 1.339 a 992 px.
+- El PDF quedó en 8 páginas: Rapidez e Incidentes ahora comparten página.
+- El anillo «Global» de Calidad quedó alineado con los demás.
+
+**Falta (menor):** revisar en un celular real el degradado de «Compartir» en Ajustes.
 
 **Sigue pendiente de ti:**
 - Valor de la UF (hoy se usan 40.000).
