@@ -423,8 +423,11 @@ Desplegado con `desplegar.sh --ref HEAD` (último commit: "paneles orbitales de 
 - `herramientas/medir_vistas.py`: las capturas ya no llevan la barra inferior fija encima.
 - Capturas `kerna/front/diseno-v2/capturas/prod9-*.png` (390 = `-m`, 1366 = `-d`; vistas, 6 pestañas, portada y `prod9-reintentar-modal-{d,m}.png`), `prod9.json`, `prod9-extra.json` (TTFB 11-94 ms, HTML 8-10 KB, Informe 220 KB, CPU en reposo 0-0,4 %).
 
+### Relevo 2026-11-12 (agente 6): hecho y desplegado (commit d8e33044b; 110 pruebas del front)
+- Datos: tablas agrupadas en un plegable por sección (Calidad, Rapidez, Costos, Rentabilidad, Incidentes, Cobertura; `informe_datos.html`, `.dat-s` en `kerna.css`). A 390 px la pestaña cerrada mide 220 px (página completa 992 px; antes 1.339).
+- PDF: «Rapidez e incidentes» en una sola página (8 páginas en vez de 9; `exportar.py` `a_pdf`). Prueba `test_pdf_fusiona_rapidez_e_incidentes_en_una_pagina`.
+- Calidad: «Global» lleva el ícono `n-acierto` de la identidad al mismo tamaño que los de ley; anillos alineados.
+- Capturas `kerna/front/diseno-v2/capturas/prod10-*.png`, `prod10.json`, `prod10-informe.pdf`. Sin desborde horizontal.
+
 ### Falta (en este orden)
-1. Datos a 390 px sigue en ~1.340 px (lista de ~28 tablas plegadas, `informe_datos.html`, `kerna.css` `.dat-d`): agrupar por sección en un solo plegable o paginar.
-2. PDF: las páginas de Rapidez e Incidentes quedan con media hoja libre (la visual es corta); se pueden subir los apoyos (notas, KPI) o fusionar Rapidez con Incidentes (`exportar.py` `visual_de`, ~295-335).
-3. Anillos por ley en la pestaña Calidad del informe: «Global» no lleva ícono y su anillo queda unos px más abajo (`vistas.informe_vis` ~655).
-4. Revisar en celular real el degradado de «Compartir» en Ajustes (`#app .as-1 .as-ch.ctl`, `kerna.css` v8).
+1. Revisar en celular real el degradado de «Compartir» en Ajustes (`#app .as-1 .as-ch.ctl`, `kerna.css` v8).
