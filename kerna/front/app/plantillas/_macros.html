@@ -48,7 +48,7 @@
 <span class="kb-v">{% if k.p %}<small>{{ k.p }}</small>{% endif %}<b data-t="k.{{ k.k }}.v">{{ k.v }}</b>{% if k.u %}<small>{{ k.u }}</small>{% endif %}</span>
 {% if k.bar %}<span class="bu" role="img" aria-label="{{ k.l }}: {{ k.v }} {{ k.u }}, {{ k.bar.t }}"><span class="bu-t">{% for z in k.bar.z %}<i class="s-{{ z.e }}" style="flex:{{ z.w }}"></i>{% endfor %}<b class="bu-m" style="left:{{ k.bar.pos }}%"></b><u class="bu-g" style="left:{{ k.bar.meta }}%"></u></span><span class="bu-gl">{{ k.bar.t }}</span></span>{% endif %}
 {% if k.sub %}<span class="kb-sub">{{ k.sub }}</span>{% endif %}
-<span class="kb-e">{{ ic(ICONO[k.e], px=16, mini=True) }}<span data-t="k.{{ k.k }}.et">{{ k.et }}</span></span></div>
+{% if k.et %}<span class="kb-e">{{ ic(ICONO[k.e], px=16, mini=True) }}<span data-t="k.{{ k.k }}.et">{{ k.et }}</span></span>{% endif %}</div>
 </div>
 {%- endmacro %}
 

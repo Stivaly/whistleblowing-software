@@ -244,27 +244,27 @@ def a_pdf(inf: dict) -> bytes:
         c.drawRightString(A4[0] - 18 * mm, 10 * mm, f"Página {d.page}")
         c.setStrokeColor(az); c.setLineWidth(.6); c.line(18 * mm, 14 * mm, A4[0] - 18 * mm, 14 * mm); c.restoreState()
 
-    def portada(c, d):
+    def cabecera(c, d):
+        """Página 1: logo, nombre, título y período arriba; el veredicto y los indicadores van debajo, en el mismo folio."""
+        pie(c, d)
         c.saveState()
-        c.setFillColor(HexColor("#" + PAPEL)); c.rect(0, 0, *A4, stroke=0, fill=1)
-        logo.dibujar(c, 18 * mm, A4[1] - 100 * mm, 62 * mm)
-        c.setFillColor(az); c.setFont("Unbounded", 30); c.drawString(86 * mm, A4[1] - 62 * mm, "KERNA")
-        c.setFillColor(li); c.setStrokeColor(az); c.setLineWidth(1)
-        c.rect(150 * mm, A4[1] - 58 * mm, 14 * mm, 8 * mm, stroke=1, fill=1)
-        c.setFillColor(az); c.setFont("Unbounded", 8); c.drawString(153 * mm, A4[1] - 55.5 * mm, "AI")
-        c.setFont("Unbounded", 20); c.drawString(18 * mm, A4[1] - 135 * mm, "Informe de gestión")
-        c.setFont("Mono", 10)
-        c.drawString(18 * mm, A4[1] - 148 * mm, f"Período: {inf['meta']['periodo']}")
-        c.drawString(18 * mm, A4[1] - 155 * mm, f"Fecha de corte: {inf['meta']['corte']}")
-        c.setFillColor(sec); c.setFont("Mono", 8)
-        c.drawString(18 * mm, 24 * mm, "Sugerencia normativa para denuncias en Veridy. Solo cifras agregadas: sin texto de denuncias ni identificadores.")
+        logo.dibujar(c, 18 * mm, A4[1] - 38 * mm, 26 * mm)
+        c.setFillColor(az); c.setFont("Unbounded", 20); c.drawString(48 * mm, A4[1] - 24 * mm, "KERNA")
+        c.setFillColor(li); c.setStrokeColor(az); c.setLineWidth(.8)
+        c.rect(88 * mm, A4[1] - 26 * mm, 10 * mm, 6 * mm, stroke=1, fill=1)
+        c.setFillColor(az); c.setFont("Unbounded", 6.5); c.drawString(90.4 * mm, A4[1] - 24.2 * mm, "AI")
+        c.setFont("Unbounded", 13); c.drawString(48 * mm, A4[1] - 33 * mm, "Informe de gestión")
+        c.setFont("Mono", 8); c.setFillColor(sec)
+        c.drawString(48 * mm, A4[1] - 39 * mm, f"Período: {inf['meta']['periodo']}  ·  corte {inf['meta']['corte']}")
+        c.setStrokeColor(az); c.setLineWidth(.6); c.line(18 * mm, A4[1] - 43 * mm, A4[0] - 18 * mm, A4[1] - 43 * mm)
         c.restoreState()
 
     out = io.BytesIO()
     doc = BaseDocTemplate(out, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm, topMargin=16 * mm, bottomMargin=20 * mm,
                           title=inf["meta"]["titulo"], author="Kerna AI", subject=f"Período {inf['meta']['periodo']}")
     fr = Frame(18 * mm, 20 * mm, ancho, A4[1] - 36 * mm, id="f", leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
-    doc.addPageTemplates([PageTemplate(id="portada", frames=[Frame(18 * mm, 20 * mm, ancho, 20 * mm)], onPage=portada, autoNextPageTemplate="normal"),
+    f1 = Frame(18 * mm, 20 * mm, ancho, A4[1] - 68 * mm, id="f1", leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
+    doc.addPageTemplates([PageTemplate(id="primera", frames=[f1], onPage=cabecera, autoNextPageTemplate="normal"),
                           PageTemplate(id="normal", frames=[fr], onPage=pie)])
     from reportlab.platypus import CondPageBreak
     from . import vistas
@@ -290,24 +290,24 @@ def a_pdf(inf: dict) -> bytes:
     # Orden del documento (pirámide invertida): veredicto y KPI con color, luego gráficos por sección y, al final, el anexo con todas las tablas.
     v2 = vistas.informe_v2(inf)
     ver = v2["veredicto"]
-    fila_v = Table([[P(("Veredicto: " + ver["t"]), "h2"), P(ver["n"], "n")]], colWidths=[ancho * .78, ancho * .22])
+    from reportlab.platypus import Image as RImage
+    baldosa = Path(__file__).parent / "estaticos" / "img" / f"baldosa-{ver['ico']}.png"
+    textos = [P(ver["t"], "h1"), P(ver["n"], "p") if ver["n"] else Spacer(1, 1)]
+    fila_v = Table([[RImage(str(baldosa), width=30 * mm, height=22.5 * mm) if baldosa.exists() else "", textos]], colWidths=[36 * mm, ancho - 36 * mm])
     fila_v.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, -1), FON[ver["e"]]), ("LINEBEFORE", (0, 0), (0, -1), 3, BAR[ver["e"]]), ("BOX", (0, 0), (-1, -1), .4, ln),
-                                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"), ("TOPPADDING", (0, 0), (-1, -1), 4), ("BOTTOMPADDING", (0, 0), (-1, -1), 5), ("LEFTPADDING", (0, 0), (-1, -1), 8)]))
-    h = [Spacer(1, 1), PageBreak(), P("Resumen", "h1"), fila_v, Spacer(1, 6),
-         Tarjetas([(c["l"], str(c["v"]), (c["u"] or ""), c["e"]) for c in v2["cards"]], cols=3), Spacer(1, 6), Modos(ej), Spacer(1, 4)]
+                                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"), ("TOPPADDING", (0, 0), (-1, -1), 5), ("BOTTOMPADDING", (0, 0), (-1, -1), 5), ("LEFTPADDING", (0, 0), (-1, -1), 8)]))
+    h = [fila_v, Spacer(1, 8), Tarjetas([(c["l"], str(c["v"]), (c["u"] or ""), c["e"]) for c in v2["cards"]], cols=3), Spacer(1, 8), Modos(ej)]
+    # una página por pestaña: sus indicadores y su gráfico principal
     for s_ in secs:
-        if s_["id"] != "resumen" and not s_["kpis"] and not s_["graficos"]:
+        if s_["id"] == "resumen" or (not s_["kpis"] and not s_["graficos"]):
             continue
-        h.append(CondPageBreak(60 * mm))
-        if s_["id"] != "resumen":
-            h.append(P(s_["titulo"], "h1"))
-            if s_["kpis"]:
-                h.append(Tarjetas([(k["etiqueta"], k["v"], k["u"], k["e"] if k["e"] in COL and k["e"] != "na" else ("na" if k["e"] == "na" else "neutro")) for k in s_["kpis"]], cols=3))
+        h += [PageBreak(), P(s_["titulo"], "h1")]
+        if s_["kpis"]:
+            h.append(Tarjetas([(k["etiqueta"], k["v"], k["u"], k["e"] if k["e"] in COL and k["e"] != "na" else ("na" if k["e"] == "na" else "neutro")) for k in s_["kpis"]], cols=3))
         for g in s_["graficos"]:
-            h += [Spacer(1, 5), Barras(g)]
+            h += [Spacer(1, 8), Barras(g)]
         for n in s_["notas"]:
-            h += [Spacer(1, 2), P("Nota: " + n, "n")]
-        h.append(Spacer(1, 8))
+            h += [Spacer(1, 4), P("Nota: " + n, "n")]
     h += [PageBreak(), P("Anexo: tablas", "h1")]
     if ej["dias"]:
         n = -(-len(ej["dias"]) // 3)

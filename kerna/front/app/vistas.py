@@ -520,6 +520,8 @@ def informe(inf_: dict) -> list[dict]:
             g2 = {**g, "items": [(a, round(b / 1000, 1) if ms else b) for a, b in g["items"]], "titulo": g["titulo"].replace("(ms)", "(segundos)") if ms else g["titulo"]}
             if not any(v for _, v in g2["items"]):
                 continue
+            if g.get("fmt") == "ratio" and g.get("meta") is not None:  # la meta se muestra como 80 %, no como 0,8
+                g2["titulo"] = _re.sub(r"\(meta [\d,.]+\)", f"(meta {f.dec_corto(100 * g['meta'], 0)} %)", g2["titulo"])
             gr.append({"titulo": g2["titulo"], "barras": _barras(g2), "meta": g.get("meta"), "meta_pos": _meta_pos(g2)})
         tb = []
         for t in s.get("tablas", []):
@@ -644,7 +646,7 @@ def informe_vis(inf_: dict, kp: dict) -> dict:
         for r in rl["filas"]:
             v = r[4]
             e = "ok" if v >= (r[7] or META_RECALL) else ("warn" if v >= (r[7] or META_RECALL) - RECALL_ALERTA else "bad")
-            li.append(f'<li class="ly s-{e}" title="{_e(inf.nombre_ley(r[0]))}">{_o.ley_icono(inf.nombre_ley(r[0]), 32)}{_o.anillo(100 * v, e, 100 * meta, 64, f.dec_corto(100 * v, 1) + "%")}<span>{_e(inf.ley_corta(r[0]))}</span></li>')
+            li.append(f'<li class="ly s-{e}" title="{_e(inf.nombre_ley(r[0]))}">{_o.ley_icono(inf.nombre_ley(r[0]), 32) or _M(chr(60)+"span class=lx style=--s:32px aria-hidden=true>"+chr(60)+"/span>")}{_o.anillo(100 * v, e, 100 * meta, 64, f.dec_corto(100 * v, 1) + "%")}<span>{_e(inf.ley_corta(r[0]))}</span></li>')
         out["calidad"] = _M(f'<p class="mk">Acierto por ley<span class="mk-r">marca = meta de {f.dec_corto(100 * meta, 0)} %</span></p><ul class="ly-l">{"".join(li)}</ul>')
     else:
         out["calidad"] = sin("Sin medición de calidad")

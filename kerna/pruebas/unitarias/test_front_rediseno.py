@@ -367,3 +367,15 @@ def test_cascada_con_altura_minima_y_conectores():
     assert all(h >= piso * 0.99 for h in altura), altura          # Impuesto (0) y Utilidad (−0,34) siguen visibles
     assert c["vals"][-2] == "0,00" and c["vals"][-1] == "−0,34"
     assert all("\n" not in x for x in c["labels"])               # el valor va como etiqueta sobre la barra, no en el eje
+
+
+def test_pdf_primera_pagina_con_veredicto_y_una_pagina_por_pestana(inf):
+    import io
+    from app import exportar
+    from pypdf import PdfReader
+    r = PdfReader(io.BytesIO(exportar.a_pdf(inf)))
+    p1 = r.pages[0].extract_text()
+    assert "metas cumplidas" in p1 and "Acierto" in p1 and "Informe de gestión" in p1      # cabecera, veredicto y KPI en la página 1
+    assert "meta 0,8" not in "".join(p.extract_text() for p in r.pages)
+    assert len(r.pages) >= 3 and "Calidad" in r.pages[1].extract_text()
+    assert (EST / "img" / "baldosa-lista.png").exists()
