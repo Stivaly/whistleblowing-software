@@ -171,7 +171,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [x] (descartado por la usuaria 2026-11-12: al denunciante no le importa) ¿aviso en la portada de que el anonimato es de contenido y no de red (no denunciar desde la
       red o el equipo del trabajo)?
 - [ ] Retirar `etl_incremental.py` cuando ya no se necesite (mover a `.papelera/`, no borrar) y rotar su credencial.
-- [ ] Decidir si se eliminan los recursos Docker de prueba (`pendientes/recursos-de-prueba.md`).
+- [x] Recursos Docker de prueba: contenedores y red ya no existían; caché de build eliminada (7,17 GB liberados, 2026-11-12). Queda en uso `veridy-pgtest:latest`, `kerna-mongo44-test` y volúmenes (`pendientes/recursos-de-prueba.md`).
 
 ## 6. Evaluación del modelo (bloquea uso con denuncias reales)
 

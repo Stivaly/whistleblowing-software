@@ -59,3 +59,24 @@ Para eliminarlo (cuando la usuaria lo decida):
 docker rm $(docker ps -aq --filter name=veridy-test-1012) kerna-mongo-test
 docker rmi mongo:8.0
 ```
+
+# Limpieza del 2026-11-12
+
+Con aprobación de la usuaria, según la regla de Docker del proyecto (solo detenidos y caché; nunca volúmenes ni
+contenedores en ejecución).
+
+- Contenedores de las listas anteriores (`veridy-pgtest*`, `veridy-test-1012-*`, `kerna-mongo-test`): ya no existían
+  (`docker ps -a` solo muestra contenedores en ejecución). Nada que eliminar.
+- Red `veridy-pgtest-net`, imagen `cypress/included:15.4.0` e imagen `mongo:8.0`: ya no existían.
+- Caché de build: eliminada (`docker builder prune -f`), 7,17 GB liberados; el disco pasó de 70 GB a 65 GB usados.
+- Sin imágenes huérfanas (dangling) que podar.
+
+No se tocó (pendiente / en uso):
+
+- `veridy-pgtest:latest` (3,34 GB): la usa el contenedor en ejecución `kerna-probar-veridy`.
+- `mongo:4.4` y `kerna-mongo44-test`: contenedor en ejecución (MongoDB de pruebas del pipeline).
+- `kerna-probar-e2e-v1.64.0-202611111502` y su imagen Playwright: en ejecución.
+- Volúmenes (18, 738,9 MB recuperables): nunca se eliminan por regla; la usuaria decide.
+- `kerna/pipeline_bcn/.venv-test`: no es Docker; sigue en disco (si se quiere quitar, va a `.papelera/`).
+- Imágenes `acrkernadevg6mzy.azurecr.io/*` antiguas (unos 16 GB recuperables): no están en esta lista; `infra/limpiar_docker.sh`
+  borra solo las etiquetas históricas que nombra.
