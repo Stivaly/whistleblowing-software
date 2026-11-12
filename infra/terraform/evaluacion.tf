@@ -242,3 +242,27 @@ resource "azurerm_role_assignment" "pipeline_evaluaciones" {
   role_definition_name = "Storage Table Data Contributor"
   principal_id         = azurerm_user_assigned_identity.pipeline.principal_id
 }
+
+# ------------------------------------------------------- datos de negocio del front
+# `clientes` (plan, tarifa, estado) y `uso_diario` (denuncias, adopción y tokens por modelo, por cliente y día).
+# Sin textos de denuncias. Las siembra kerna/front/sembrar_negocio.py; el front las lee con rol Table Data Reader.
+resource "azapi_resource" "tabla_clientes" {
+  type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2023-05-01"
+  name      = "clientes"
+  parent_id = "${azurerm_storage_account.nucleo.id}/tableServices/default"
+  body      = { properties = {} }
+}
+
+resource "azapi_resource" "tabla_uso_diario" {
+  type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2023-05-01"
+  name      = "usodiario"
+  parent_id = "${azurerm_storage_account.nucleo.id}/tableServices/default"
+  body      = { properties = {} }
+}
+
+resource "azurerm_role_assignment" "front_negocio" {
+  for_each             = var.crear_front ? { clientes = azapi_resource.tabla_clientes.name, usodiario = azapi_resource.tabla_uso_diario.name } : {}
+  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${each.value}"
+  role_definition_name = "Storage Table Data Reader"
+  principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
+}

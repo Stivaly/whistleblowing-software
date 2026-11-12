@@ -46,3 +46,9 @@ Plan F1 sin costo. Las consultas a Log Analytics no tienen cargo para este volum
 ## Pendiente
 - Reconstruir y desplegar la imagen del núcleo para que emita `articulo_sugerido` (hasta entonces "artículos por ley" sale vacío).
 - Activar Entra ID cuando exista un registro de aplicación (ver arriba).
+
+## Negocio (clientes, uso y margen)
+
+`/panel/negocio` y `/api/negocio` leen las tablas `clientes` y `usodiario` del núcleo (Azure Table Storage, rol Table Data Reader de la identidad de la app; URL en `NEGOCIO_TABLA_URL`). Los costos de IA se calculan con los tokens por modelo y los precios de Anthropic (nano = Claude Haiku 5.5, 0,10/0,50 USD por millón; mini = Claude Sonnet 5.5, 2/10).
+
+`sembrar_negocio.py` (idempotente) llena las tablas: Veridy (`veridy-dev`) se calcula desde las tablas reales de solicitudes, valoraciones y clasificaciones; los otros cuatro clientes son datos de demostración (90 días de uso con estacionalidad de días hábiles, uno en riesgo por falta de uso y uno sobre su plan) y las tarifas son de referencia, no contractuales. Re-ejecutarlo actualiza el uso de Veridy.

@@ -2,7 +2,7 @@
 {% block cuerpo %}
 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
 <h1 style="font-size:22px">Panel de resultados</h1>
-<div class="rangos"><a class="btn{% if dias==7 %} act{% endif %}" href="/panel?dias=7">7 días</a><a class="btn{% if dias==30 %} act{% endif %}" href="/panel?dias=30">30 días</a></div></div>
+<div class="rangos"><a class="btn" href="/panel/negocio">Negocio</a><a class="btn{% if dias==7 %} act{% endif %}" href="/panel?dias=7">7 días</a><a class="btn{% if dias==30 %} act{% endif %}" href="/panel?dias=30">30 días</a></div></div>
 <p class="eti">Solo cifras agregadas. Sin texto de denuncias ni identificadores.</p>
 {% if error %}<div class="error" role="alert"><b>No se pudo consultar Log Analytics</b> ({{ error }}). Revisa la identidad de la app y su rol Log Analytics Reader.</div>
 {% else %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}{% block titulo %}Negocio · Kerna AI{% endblock %}{% block nav %}<a class="btn sec" href="/panel">Panel</a><a class="btn sec" href="/panel/informe">Informe</a>{% endblock %}
+{% macro usd(v, d=2) %}US$ {{ ('%.' ~ d ~ 'f') % v }}{% endmacro %}
+{% block cuerpo %}
+<h1 style="font-size:22px">Negocio</h1>
+<p class="eti">Clientes, uso del plan, costo de IA y margen. Fuente: tablas de clientes y uso diario; sin textos de denuncias.</p>
+{% if error %}<div class="error" role="alert"><b>No se pudieron leer las tablas de negocio</b> ({{ error }}). Revisa el rol Table Data Reader de la app.</div>
+{% elif not n %}<p class="vacio">Sin clientes registrados. Ejecuta kerna/front/sembrar_negocio.py.</p>
+{% else %}
+{% set t = n.totales %}{% set a = n.adopcion %}
+<div class="kpis sec">
+<div class="hoja kpi"><b>{{ t.clientes_activos }}</b><span>clientes activos</span></div>
+<div class="hoja kpi"><b>{{ t.denuncias }}</b><span>denuncias en {{ n.dias }} días</span></div>
+<div class="hoja kpi"><b>{{ usd(t.ingreso) }}</b><span>ingreso (tarifa x denuncias)</span></div>
+<div class="hoja kpi"><b>{{ usd(t.costo_ia, 3) }}</b><span>costo de IA (precios de Anthropic)</span></div>
+<div class="hoja kpi"><b>{{ t.margen_pct }} %</b><span>margen ({{ usd(t.margen) }})</span></div>
+<div class="hoja kpi"><b>{{ a.con_sugerencia_pct }} %</b><span>con sugerencia</span></div>
+<div class="hoja kpi"><b>{{ a.valoradas_pct }} %</b><span>valoradas ({{ a.valoradas }})</span></div>
+<div class="hoja kpi"><b>{{ a.utiles_pct }} %</b><span>útiles, sobre las valoradas</span></div></div>
+<div class="sec hoja"><span class="eti">Denuncias por día (todos los clientes)</span>{{ barras_v(n.dias_serie|zip(n.serie_total)|list) }}</div>
+<div class="sec hoja"><span class="eti">Clientes</span>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
+<tr style="text-align:left"><th>Cliente</th><th>Plan/mes</th><th>Tarifa</th><th>Denuncias</th><th>Uso del plan</th><th>Ingreso</th><th>Costo IA</th><th>Margen</th><th>Último uso</th></tr>
+{% for c in n.clientes %}<tr style="border-top:1px solid var(--linea)">
+<td><b>{{ c.nombre }}</b><br><span class="eti">{{ c.rubro }}</span></td><td>{{ c.plan }}</td><td>{{ usd(c.tarifa) }}</td><td>{{ c.tot }}</td>
+<td>{{ c.uso_plan }} %{% if c.uso_plan > 100 %} (sobre el plan){% endif %}</td><td>{{ usd(c.ingreso) }}</td><td>{{ usd(c.costo_ia, 3) }}</td><td>{{ c.margen_pct }} %</td>
+<td>{% if c.ultimo_uso %}{{ c.ultimo_uso }} (hace {{ c.dias_sin_uso }} d){% else %}sin uso{% endif %}{% if c.riesgo == 'bad' %} <b>en riesgo</b>{% endif %}</td></tr>{% endfor %}
+</table></div></div>
+<div class="sec hoja"><span class="eti">Proyección a 6 meses ({{ n.proyeccion.crecimiento_pct }} % mensual, costo fijo {{ usd(n.proyeccion.costo_fijo_mes, 0) }}/mes)</span>
+{{ barras_v(n.proyeccion.meses|map(attribute='mes')|map('string')|zip(n.proyeccion.meses|map(attribute='ingreso'))|list) }}</div>
+<p class="eti">Costos de IA: nano a Claude Haiku 5.5 (0,10/0,50 USD por millón), mini a Claude Sonnet 5.5 (2/10).</p>
+{% endif %}{% endblock %}

@@ -12,7 +12,7 @@ from datetime import datetime
 
 from fastapi.responses import Response
 
-from . import consultas, exportar, graficos, informe as inf_mod, seguridad
+from . import consultas, exportar, graficos, informe as inf_mod, negocio, seguridad
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
@@ -119,3 +119,25 @@ def descargar_informe(ext: str, request: Request, dias: int = 30, desde: str = "
     f, tipo = _FORMATOS[ext]
     nombre = "informe-kerna-%s.%s" % (inf["meta"]["periodo"].replace(" a ", "_"), ext)
     return Response(f(inf), media_type=tipo, headers={"Content-Disposition": f'attachment; filename="{nombre}"'})
+
+
+@app.get("/api/negocio")
+def api_negocio(request: Request, dias: int = 30, crec: float = 15.0):
+    if not _permitido(request):
+        return JSONResponse({"detalle": "no autorizado"}, status_code=401)
+    try:
+        d = negocio.cargar(crec=min(max(crec, 0), 30), dias=30 if dias not in (7, 30, 90) else dias)
+    except Exception as e:
+        return JSONResponse({"detalle": "consulta fallida", "tipo": type(e).__name__}, status_code=502)
+    return d if d is not None else JSONResponse({"detalle": "sin datos de clientes"}, status_code=404)
+
+
+@app.get("/panel/negocio", response_class=HTMLResponse)
+def panel_negocio(request: Request, dias: int = 30, crec: float = 15.0):
+    if not _permitido(request):
+        return RedirectResponse("/acceso", status_code=303)
+    try:
+        n, error = negocio.cargar(crec=min(max(crec, 0), 30), dias=30 if dias not in (7, 30, 90) else dias), None
+    except Exception as e:
+        n, error = None, type(e).__name__
+    return plantillas.TemplateResponse(request, "negocio.html", {"n": n, "error": error, "dias": dias, "crec": crec})
