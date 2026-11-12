@@ -85,129 +85,430 @@ k-tip k-ic{width:17px;height:17px}
 .text-xs{font-size:12.5px!important;line-height:1.45!important}
 .btn.\!min-h-\[38px\]{min-height:44px!important}
 @media(max-width:639px){.estado-ic{width:44px!important;height:44px!important}.estado-t{font-size:18px!important}}
+
+/* =====================================================================
+   v3 · Sistema de movimiento y contenedores derivados del logo
+   ===================================================================== */
+@property --bc{syntax:'<color>';inherits:true;initial-value:#AAB5D6}
+:root{--line-strong:#AAB5D6;--lime-soft:#EAFBC0;--ease:cubic-bezier(.2,.7,.2,1);--cut:20px;--guil:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%231C2A6B' stroke-opacity='0.2' stroke-width='0.6' stroke-dasharray='.1 1.5' stroke-linecap='round'%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%280 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2815 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2830 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2845 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2860 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2875 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2890 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28105 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28120 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28135 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28150 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28165 32 32%29'/%3E%3C/g%3E%3C/svg%3E");--guil-l:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23CFFF5E' stroke-opacity='0.17' stroke-width='0.6' stroke-dasharray='.1 1.5' stroke-linecap='round'%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%280 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2815 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2830 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2845 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2860 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2875 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%2890 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28105 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28120 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28135 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28150 32 32%29'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' transform='rotate%28165 32 32%29'/%3E%3C/g%3E%3C/svg%3E")}
+html{scroll-behavior:smooth}
+body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
+#como,#proteccion,#leyes,#inc{scroll-margin-top:110px}
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes bt{50%{transform:scale(1.12)}}
+@keyframes rvIn{from{opacity:.25;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes tour{to{offset-distance:100%}}
+@keyframes grow{from{width:0}}
+@keyframes halo{50%{transform:scale(1.14);opacity:.7}}
+@keyframes ping{from{opacity:.8;transform:scale(1)}to{opacity:0;transform:scale(7)}}
+@keyframes hl{to{background-size:100% 100%}}
+@keyframes trav{from{left:36px}to{left:calc(100% - 52px)}}
+@keyframes pop{from{transform:scale(0)}}
+@keyframes rgp{from{stroke-dasharray:0 100}}
+@keyframes rgs{from{rotate:0deg}}
+@keyframes shine{0%,70%{transform:translateX(-120%) skewX(-20deg)}100%{transform:translateX(320%) skewX(-20deg)}}
+@keyframes pulse{50%{transform:scale(1.25);opacity:.35}}
+
+/* ---------- logo vivo (se dibuja con JS en cada svg[data-logo]) ---------- */
+.kl{display:block;overflow:visible;flex:none}
+.kl g{transform-origin:32px 32px}
+.kl .roseta{animation:rot 70s linear infinite}
+.kl .camino{animation:rot 14s linear infinite reverse}
+.kl .latido{animation:bt 3.5s ease-in-out infinite}
+.kl.rapido .roseta{animation-duration:20s}.kl.rapido .camino{animation-duration:5s}
+.kl .xr1{animation:rot 120s linear infinite reverse}.kl .xr2{animation:rot 200s linear infinite}
+.kl .orb{fill:none;stroke:#1C2A6B;stroke-linecap:round}
+.kl .ros{stroke-width:.6;stroke-dasharray:.1 2.1}
+.kl .rc{stroke-width:1.4;opacity:.7}
+.kl .anillo{stroke-width:.9;stroke-dasharray:.1 2.4;opacity:.6}
+.kl .guia{stroke-width:1.6}
+.kl .nuc{fill:#1C2A6B}.kl .nuc-l{fill:#CFFF5E}
+.kl .sat{fill:#CFFF5E;stroke:#1C2A6B;stroke-width:1.6}
+.kl .sat-s{fill:#CFFF5E;stroke:#1C2A6B;stroke-width:.9}
+.kl .ping{fill:none;stroke:#1C2A6B;stroke-width:.8;opacity:0}
+.kl .ping.go{animation:ping .9s ease-out}
+.kl .lg-a{transition:scale .6s var(--ease)}
+.brand-lk{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--brand)}
+.brand-lk .kl{transition:scale .4s var(--ease),rotate .6s var(--ease)}
+.brand-lk:hover .kl{scale:1.14;rotate:18deg}
+.brand-t{font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--brand)}
+.brand-t small{font-family:Inter;font-size:11px;margin-left:5px;vertical-align:top;color:var(--lime-ink);letter-spacing:.1em}
+.hero-logo{position:relative;width:min(80vw,480px);aspect-ratio:1;justify-self:center;display:grid;place-items:center}
+.hero-logo::before{content:"";position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,rgba(207,255,94,.6),rgba(207,255,94,0) 66%);animation:halo 3.5s ease-in-out infinite}
+.hero-logo svg{position:relative;width:100%;height:100%;cursor:pointer}
+.hero-logo:hover .lg-a{scale:1.05}
+
+/* ---------- fondo vivo ---------- */
+.bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;transition:opacity .8s}
+.bgfx svg{position:absolute;left:50%;top:50%;width:max(100vw,100vh);height:max(100vw,100vh);transform:translate(-50%,-50%)}
+.bgfx.bg-p{opacity:.8}.bgfx.bg-a{opacity:.22}
+.bgfx .b-rot{transform-origin:600px 600px;will-change:transform}
+.b1{animation:rot 170s linear infinite}.b2{animation:rot 120s linear infinite reverse}.b3{animation:rot 280s linear infinite}
+.bo{fill:none;stroke:#1C2A6B;stroke-opacity:.4;stroke-width:3;stroke-dasharray:.1 15;stroke-linecap:round}
+.bs{fill:#CFFF5E;stroke:#1C2A6B;stroke-width:4}
+.bro{fill:none;stroke:#1C2A6B;stroke-opacity:.3;stroke-width:2.4;stroke-dasharray:.1 13;stroke-linecap:round}
+
+/* ---------- aparición al hacer scroll (siempre visible en reposo) ---------- */
+[data-rv].rv-go{animation:rvIn .8s var(--ease) backwards}
+[data-rvs].rv-go>*{animation:rvIn .8s var(--ease) backwards;animation-delay:calc(var(--i,0)*90ms)}
+.hero-in>*{animation:rvIn .9s var(--ease) backwards;animation-delay:calc(var(--i,0)*110ms)}
+.hero-logo{animation:rvIn 1.1s var(--ease) backwards}
+.hl{background:linear-gradient(transparent 62%,var(--lime) 62%) no-repeat 0 0/0% 100%;animation:hl 1s .7s var(--ease) forwards}
+
+/* ---------- tipografía ---------- */
+.text-sm{font-size:15.5px!important;line-height:1.55!important}
+.text-xs{font-size:13.5px!important;line-height:1.45!important}
+.chip{font-size:13.5px;padding:4px 11px 4px 8px}
+.h-hero{font-weight:700;font-size:clamp(36px,4.9vw,72px);line-height:1.03;letter-spacing:-.03em;color:var(--brand);margin:0}
+.h-sec{font-weight:700;font-size:clamp(28px,3.4vw,44px);line-height:1.1;letter-spacing:-.025em;color:var(--brand);margin:12px 0 0}
+.lead{font-size:clamp(18px,1.5vw,21px);line-height:1.6;color:var(--muted);margin:22px 0 30px;max-width:34em}
+.lead2{font-size:19px;line-height:1.6;margin:18px 0 0;max-width:30em}
+.eyebrow{display:flex;align-items:center;gap:12px;margin:0;font-size:13.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--brand-2)}
+.eyebrow::before{content:"";width:46px;height:9px;flex:none;background:radial-gradient(circle at calc(100% - 4.5px) 50%,var(--lime) 0 3px,var(--brand) 3px 4.5px,transparent 5px) 0 0/100% 100% no-repeat,radial-gradient(circle,var(--brand-2) 1.2px,transparent 1.6px) 0 50%/8px 9px repeat-x}
+.ph-t{font-size:clamp(30px,3.4vw,44px);line-height:1.08;font-weight:700;letter-spacing:-.025em}
+.ph-t::after{content:"";display:block;margin-top:14px;width:170px;height:10px;background:radial-gradient(circle at calc(100% - 5px) 50%,var(--lime) 0 3.6px,var(--brand) 3.6px 5px,transparent 5.4px) 0 0/100% 100% no-repeat,radial-gradient(circle,var(--brand-2) 1.3px,transparent 1.7px) 0 50%/10px 10px repeat-x}
+.kv{font-family:Unbounded,Inter,sans-serif;font-weight:700;font-size:clamp(36px,3.1vw,46px);line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.kv-s{font-family:Unbounded,Inter,sans-serif;font-weight:700;font-size:30px;line-height:1.1;letter-spacing:-.03em}
+
+/* ---------- barra superior ---------- */
+.hdr{background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:2px dotted var(--line-strong)}
+.lnk{position:relative;display:inline-block;padding:8px 2px 12px;font-size:17px;font-weight:600;color:var(--ink);text-decoration:none}
+.lnk::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:8px;background:radial-gradient(circle,var(--brand-2) 1.4px,transparent 1.8px) 0 50%/9px 8px repeat-x;clip-path:inset(0 100% 0 0);transition:clip-path .45s var(--ease)}
+.lnk::before{content:"";position:absolute;left:0;bottom:2px;width:9px;height:9px;border-radius:50%;background:var(--lime);border:2px solid var(--brand);opacity:0;transition:left .45s var(--ease),opacity .2s;z-index:1}
+.lnk:hover::after,.lnk:focus-visible::after{clip-path:inset(0 0 0 0)}
+.lnk:hover::before,.lnk:focus-visible::before{left:calc(100% - 9px);opacity:1}
+.btn-go{background:var(--lime);color:var(--brand);border:2px solid var(--brand)!important;box-shadow:4px 4px 0 var(--brand);font-weight:700;min-height:54px;padding:0 26px;font-size:16.5px}
+.btn-go:hover{background:#D8FF7E;box-shadow:7px 7px 0 var(--brand)!important}
+
+/* ---------- botones ---------- */
+.btn{border-radius:4px;min-height:52px;padding:0 24px;font-size:15.5px;position:relative;transition:transform .2s var(--ease),box-shadow .2s var(--ease),background .2s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--brand)}
+.btn:active{transform:translate(1px,1px);box-shadow:none}
+.btn-dark:hover{box-shadow:4px 4px 0 var(--lime),4px 4px 0 1px var(--brand)}
+.btn-sec:hover{box-shadow:4px 4px 0 var(--lime)}
+.btn k-ic{transition:transform .25s var(--ease)}
+.btn:hover k-ic[n="arrow-right"]{transform:translateX(5px)}
+.btn:hover k-ic[n="arrow-left"]{transform:translateX(-5px)}
+.btn:hover k-ic[n="download"],.btn:hover k-ic[n="file-down"]{transform:translateY(3px)}
+.btn[disabled]:hover{transform:none;box-shadow:none}
+.btn.\!min-h-\[38px\]{min-height:46px!important}
+
+/* ---------- contenedores de la marca ---------- */
+.card{position:relative;background:var(--surface);border:1px solid var(--bc);border-radius:0;box-shadow:none;--bc:var(--line-strong);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));transition:transform .3s var(--ease),--bc .25s}
+.card:is(.p-3,.p-4,.p-5,.md\:p-5,.md\:p-6,.md\:p-8){padding:20px 20px 22px}
+@media(min-width:768px){.card:is(.p-3,.p-4,.p-5,.md\:p-5,.md\:p-6,.md\:p-8){padding:26px 28px 28px}}
+.card::after{content:"";position:absolute;top:-1px;right:-1px;width:calc(var(--cut) + 1px);height:calc(var(--cut) + 1px);pointer-events:none;
+  background:radial-gradient(circle at calc(var(--cut)*.3) calc(var(--cut)*.72),var(--lime) 0 3px,var(--brand) 3.4px 5px,transparent 5.4px),linear-gradient(to top right,transparent calc(50% - .5px),var(--bc) calc(50% - .5px),var(--bc) calc(50% + .5px),transparent calc(50% + .5px))}
+.card::before{content:"";position:absolute;left:-1px;bottom:-1px;width:calc(var(--cut) + 1px);height:calc(var(--cut) + 1px);pointer-events:none;
+  background:linear-gradient(to top right,transparent calc(50% - .5px),var(--bc) calc(50% - .5px),var(--bc) calc(50% + .5px),transparent calc(50% + .5px))}
+.card:hover{--bc:var(--brand-2)}
+/* ficha destacada: borde doble de órbita y satélite que recorre el borde */
+.card.card-hi{clip-path:none;border:2px solid var(--brand);--bc:var(--brand);outline:2px dotted var(--brand-2);outline-offset:5px;overflow:hidden}
+.card.card-hi::before{content:"";position:absolute;right:-90px;top:-100px;left:auto;bottom:auto;width:280px;height:280px;background:var(--guil) center/contain no-repeat;animation:rot 140s linear infinite;pointer-events:none}
+.card.card-hi::after{content:"";position:absolute;left:0;top:0;right:auto;width:14px;height:14px;border-radius:50%;background:var(--lime);border:2.5px solid var(--brand);offset-path:inset(7px round 0);offset-rotate:0deg;animation:tour 11s linear infinite}
+.card.card-hi>*{position:relative;z-index:1}
+/* ficha de indicador: un solo corte grande, trama guilloché y satélite al pasar el cursor */
+.card.card-k{--cut:30px;clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,0 100%);background:var(--guil) right -50px top -60px/190px no-repeat,#fff}
+.card.card-k::before{content:"";position:absolute;left:0;top:0;right:auto;bottom:auto;width:12px;height:12px;border-radius:50%;background:var(--lime);border:2.5px solid var(--brand);offset-path:inset(8px round 0);offset-rotate:0deg;opacity:0;transition:opacity .2s;animation:tour 5s linear infinite}
+.card.card-k:hover{transform:translateY(-5px)}
+.card.card-k:hover::before,.card.card-k:focus-within::before{opacity:1}
+.hd{position:relative;padding-bottom:16px;margin-bottom:16px!important}
+.hd::after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;background:radial-gradient(circle,var(--line-strong) 1.4px,transparent 1.8px) 0 50%/10px 8px repeat-x}
+.hd::before{content:"";position:absolute;left:0;bottom:-1px;width:10px;height:10px;border-radius:50%;background:var(--lime);border:2px solid var(--brand);z-index:1;transition:left 1s var(--ease)}
+.card:hover .hd::before{left:calc(100% - 10px)}
+.card h2.text-base{font-size:20px;letter-spacing:-.01em}
+body .rounded-xl,body .rounded-2xl{border-radius:3px}
+.card .rounded-xl.border.bg-white{transition:transform .25s var(--ease),box-shadow .25s,background .2s}
+.card .rounded-xl.border.bg-white:hover{background:#F6F8FF!important;box-shadow:inset 0 0 0 1px var(--brand-2);transform:translateX(4px)}
+.card.card-hi .rounded-xl.border.bg-white:hover{transform:translateX(4px)}
+.orb-ic{border-radius:50%!important;position:relative}
+.orb-ic::before{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px dotted currentColor;opacity:.55;animation:rot 26s linear infinite}
+.band{position:relative;background:var(--brand);color:#fff;clip-path:polygon(0 0,calc(100% - 48px) 0,100% 48px,100% 100%,48px 100%,0 calc(100% - 48px));overflow:hidden}
+.band::before{content:"";position:absolute;right:-180px;bottom:-220px;width:640px;height:640px;background:var(--guil-l) center/contain no-repeat;animation:rot 160s linear infinite;pointer-events:none}
+.band>*{position:relative}
+.band-li{background:rgba(255,255,255,.1);border-left:4px solid var(--lime);transition:transform .25s var(--ease),background .2s}
+.band-li:hover{background:rgba(255,255,255,.18);transform:translateX(6px)}
+.osep{display:flex;align-items:center;gap:20px;max-width:1280px;margin:0 auto;padding:6px 16px}
+@media(min-width:768px){.osep{padding:6px 32px}}
+.osep::before,.osep::after{content:"";flex:1;height:8px;background:radial-gradient(circle,var(--line-strong) 1.5px,transparent 1.9px) 0 50%/10px 8px repeat-x}
+.osep-f{border-top:2px dotted var(--line-strong)}
+.ley-n{display:inline-block;font-weight:700;font-size:26px;padding:6px 16px;background:var(--lime);color:var(--brand);letter-spacing:-.03em;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
+.ley{transition:transform .3s var(--ease),--bc .25s}.ley:hover{transform:translateY(-6px)}
+/* pasos como estaciones de una órbita */
+.orb-steps{position:relative;display:grid;gap:30px;grid-template-columns:repeat(4,minmax(0,1fr));margin:44px 0 0;padding:0;list-style:none}
+.orb-steps::before{content:"";position:absolute;left:36px;right:36px;top:32px;height:8px;background:radial-gradient(circle,var(--brand-2) 1.5px,transparent 1.9px) 0 50%/10px 8px repeat-x}
+.orb-steps::after{content:"";position:absolute;top:30px;left:36px;width:16px;height:16px;border-radius:50%;background:var(--lime);border:3px solid var(--brand);animation:trav 7s var(--ease) infinite alternate}
+.ostep{position:relative;display:grid;gap:18px;align-content:start}
+.node{position:relative;z-index:1;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:#fff;border:2px solid var(--brand);color:var(--brand);transition:transform .35s var(--ease),background .25s}
+.node k-ic{width:30px;height:30px}
+.node::before{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px dotted var(--brand-2);animation:rot 30s linear infinite}
+.node.lima{background:var(--lime)}
+.ostep:hover .node{transform:scale(1.12) rotate(-6deg);background:var(--lime)}
+.pn{font-size:13.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand-2)}
+@media(max-width:1023px){.orb-steps{grid-template-columns:1fr}.orb-steps::after{display:none}
+ .orb-steps::before{left:35px;right:auto;top:40px;bottom:40px;width:8px;height:auto;background:radial-gradient(circle,var(--brand-2) 1.5px,transparent 1.9px) 50% 0/8px 10px repeat-y}
+ .ostep{grid-template-columns:72px 1fr;align-items:center;gap:22px}}
+
+/* ---------- menú ---------- */
+.nav a{padding:15px 16px;font-size:17px;gap:14px;border-radius:3px;transition:transform .25s var(--ease),background .2s,color .2s}
+.nav a k-ic{width:22px;height:22px;transition:transform .3s var(--ease)}
+.nav a:hover{transform:translateX(5px)}
+.nav a:hover k-ic{transform:rotate(-10deg) scale(1.15)}
+.nav a.on{box-shadow:inset 4px 0 0 var(--brand)}
+.nav a.on::before{display:none}
+.nav a.on::after{content:"";position:absolute;left:5px;top:50%;width:42px;height:42px;margin-top:-21px;border-radius:50%;border:2px dotted var(--brand-2);background:radial-gradient(circle at 50% 0,var(--lime) 0 4.5px,var(--brand) 4.8px 6.5px,transparent 7px);animation:rot 5s linear infinite;pointer-events:none}
+.nav a.on{padding-left:20px}
+.nav-h{margin:14px 0 0;padding:0 16px;font-size:12.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.nav a.gen{position:relative;overflow:hidden;min-height:68px;font-size:18px;font-weight:700;padding:12px 18px;border:2px solid var(--brand);box-shadow:5px 5px 0 var(--brand);background:var(--lime)}
+.nav a.gen:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--brand);background:#D8FF7E}
+.nav a.gen::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);animation:shine 5s ease-in-out infinite;pointer-events:none}
+.nav a.gen .kl{transition:rotate .5s var(--ease)}.nav a.gen:hover .kl{rotate:90deg}
+.tabbar a{transition:background .2s}.tabbar a:hover{background:var(--brand-soft)}
+
+/* ---------- hovers de elementos interactivos ---------- */
+.chip{transition:transform .2s var(--ease),box-shadow .2s}
+button.chip:hover{transform:translateY(-2px);box-shadow:0 3px 0 var(--brand)}
+.seg{border-radius:4px}.seg button{transition:background .2s,color .2s,transform .2s}
+.seg button:hover{background:rgba(255,255,255,.85);color:var(--brand);transform:translateY(-1px)}
+.stepdot{transition:transform .25s var(--ease)}button:hover>.stepdot{transform:scale(1.15)}
+.card button.border-2,.card div.border-2{transition:transform .25s var(--ease),box-shadow .25s}
+.card button.border-2:hover,.card div.border-2:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--lime),5px 5px 0 1px var(--brand)}
+.field{transition:box-shadow .2s}.field:hover:not(:disabled){box-shadow:0 0 0 3px var(--brand-soft)}
+label.cursor-pointer:hover{color:var(--brand)}
+k-tip button{width:26px;height:26px;transition:transform .25s var(--ease),background .2s}
+k-tip button:hover{transform:rotate(15deg) scale(1.15);box-shadow:0 0 0 2px var(--brand-soft)}
+k-tip k-ic{width:20px;height:20px}
+#tt{font-size:14px}
+.tabbar a.on k-ic,.tabbar a.gen k-ic{width:48px}
+
+/* ---------- barras, anillos ---------- */
+.f-ok,.f-warn,.f-bad,.f-na{position:relative}
+.f-ok::after,.f-warn::after,.f-bad::after,.f-na::after{content:"";position:absolute;right:-5px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--lime);border:2.5px solid var(--brand)}
+.nosat .f-ok::after,.nosat .f-warn::after,.nosat .f-bad::after,.nosat .f-na::after{display:none}
+.rv-go .f-ok,.rv-go .f-warn,.rv-go .f-bad,.rv-go .f-na{animation:grow 1.2s .15s var(--ease) backwards}
+.orbring{position:relative;width:78px;height:78px;flex:none}
+.orbring svg{width:100%;height:100%;overflow:visible}
+.rg-r{transform-origin:32px 32px;transform:rotate(-90deg)}
+.rg-t{fill:none;stroke:var(--line-strong);stroke-width:2.6;stroke-dasharray:.1 5.1;stroke-linecap:round}
+.rg-p{fill:none;stroke:var(--c,var(--brand-2));stroke-width:5;stroke-linecap:round;stroke-dasharray:var(--v) 100;transition:stroke-dasharray .8s var(--ease)}
+.rg-s{transform-origin:32px 32px;rotate:calc(var(--v)*3.6deg);transition:rotate .8s var(--ease)}
+.rg-s circle{fill:var(--lime);stroke:var(--brand);stroke-width:2}
+.rg-n{position:absolute;inset:0;display:grid;place-items:center;font:700 16px Unbounded,Inter,sans-serif;color:var(--ink)}
+.rg-ok{--c:var(--ok-bar)}.rg-warn{--c:var(--warn-bar)}.rg-bad{--c:var(--bad-bar)}.rg-na{--c:var(--na-bar)}
+.rv-go .rg-p{animation:rgp 1.4s .2s var(--ease) backwards}
+.rv-go .rg-s{animation:rgs 1.4s .2s var(--ease) backwards}
+
+/* ---------- carga del informe y cabeceras de vista ---------- */
+.kl-load{width:64px;height:64px}
+
+/* ---------- Ajustes: módulos orbitales ---------- */
+.mod{display:grid;grid-template-columns:minmax(0,1fr);--cut:36px;padding:0!important}
+@media(min-width:1024px){.mod{grid-template-columns:minmax(0,340px) minmax(0,1fr)}}
+.mod-art{justify-content:center;position:relative;background:var(--brand);color:#fff;padding:26px 22px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;overflow:hidden}
+.mod-art::before{content:"";position:absolute;left:-140px;top:-140px;width:420px;height:420px;background:var(--guil-l) center/contain no-repeat;animation:rot 200s linear infinite;pointer-events:none}
+.mod-art>*{position:relative}
+.orb-svg{width:min(100%,300px);aspect-ratio:1;overflow:visible}
+.orb-svg *{transform-box:view-box}
+.orb-svg g.sn{transform-origin:150px 150px;transition:transform .7s var(--ease),opacity .4s}
+.orb-svg g.sn.off{opacity:0}
+.orb-svg .spin{transform-origin:150px 150px;animation:rot 26s linear infinite}
+.orb-svg .spin2{transform-origin:150px 150px;animation:rot 18s linear infinite reverse}
+.orb-svg .spin3{transform-origin:150px 150px;animation:rot 40s linear infinite}
+.orb-svg .spin.off,.orb-svg .spin2.off,.orb-svg .spin3.off{opacity:0}
+.orb-svg .spin,.orb-svg .spin2,.orb-svg .spin3{transition:opacity .4s}
+.ao{fill:none;stroke:rgba(255,255,255,.7);stroke-width:2.2;stroke-dasharray:.1 9;stroke-linecap:round;transition:stroke .4s,stroke-width .4s,stroke-dasharray .4s,opacity .4s}
+.ao.solid{stroke:#fff;stroke-width:3;stroke-dasharray:none}
+.ao.dim{opacity:.35}
+.as{fill:var(--lime);stroke:#fff;stroke-width:3}
+.as2{fill:#fff;stroke:var(--lime);stroke-width:2.5}
+.cd{fill:#fff}
+.acore{fill:#fff}.acore-l{fill:var(--lime)}
+.orb-svg .core{transform-origin:150px 150px;animation:bt 3.5s ease-in-out infinite}
+.pulse-ring{fill:none;stroke:var(--lime);stroke-width:3;transform-origin:150px 150px;opacity:0;transition:opacity .4s}
+.pulse-ring.on{opacity:1;animation:pulse 2.4s ease-in-out infinite}
+.team{fill:transparent;stroke:rgba(255,255,255,.6);stroke-width:2;stroke-dasharray:2 5;transition:fill .4s,stroke .4s}
+.team.on{fill:var(--lime);stroke:#fff;stroke-dasharray:none}
+.team-t{font:700 12px Unbounded,Inter,sans-serif;fill:rgba(255,255,255,.75);text-anchor:middle}
+.team-t.on{fill:var(--brand)}
+.alink{stroke:rgba(255,255,255,.6);stroke-width:2;stroke-dasharray:.1 7;stroke-linecap:round;transition:opacity .4s}
+.alink.off{opacity:0}
+.arc{fill:none;stroke:var(--lime);stroke-width:8;stroke-linecap:round;transition:stroke-dasharray .6s var(--ease)}
+.arc2{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;opacity:.8;transition:stroke-dasharray .6s var(--ease)}
+.bigtxt{font:700 40px Unbounded,Inter,sans-serif;fill:#fff;text-anchor:middle}
+.subtxt{font:500 14px Inter,sans-serif;fill:#DCE2FA;text-anchor:middle}
+.live{display:flex;gap:10px;align-items:flex-start;margin:0;font-size:15.5px;line-height:1.5;color:#fff;max-width:300px}
+.live-dot{flex:none;width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 0 rgba(207,255,94,.7);animation:livep 2.4s infinite}
+@keyframes livep{70%{box-shadow:0 0 0 10px rgba(207,255,94,0)}100%{box-shadow:0 0 0 0 rgba(207,255,94,0)}}
+.live-k{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--lime);font-weight:700;margin:0;align-self:flex-start}
+.mod-body{padding:24px 20px 10px}
+@media(min-width:768px){.mod-body{padding:30px 34px 14px}}
+.mod-h{font-size:22px;font-weight:700;margin:0;letter-spacing:-.015em}
+.ctl{padding:22px 0;border-top:2px dotted var(--line-strong);display:grid;gap:10px;transition:background .25s}
+.ctl:hover{background:linear-gradient(90deg,rgba(232,236,250,.7),transparent 85%)}
+/* deslizador: pista orbital punteada y pulgar-satélite */
+.range{height:36px}
+.range::-webkit-slider-runnable-track{height:14px;border-radius:0;background:linear-gradient(90deg,var(--brand) var(--p),transparent var(--p)) 0 50%/100% 3px no-repeat,radial-gradient(circle,#7F8CC4 1.7px,transparent 2.1px) 0 50%/10px 14px repeat-x}
+.range::-moz-range-track{height:14px;border-radius:0;background:linear-gradient(90deg,var(--brand) var(--p),transparent var(--p)) 0 50%/100% 3px no-repeat,radial-gradient(circle,#7F8CC4 1.7px,transparent 2.1px) 0 50%/10px 14px repeat-x}
+.range::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--lime);border:4px solid var(--brand);margin-top:-8px;box-shadow:0 0 0 0 rgba(28,42,107,.25);transition:box-shadow .2s,transform .2s}
+.range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--lime);border:4px solid var(--brand);transition:box-shadow .2s}
+.range:hover::-webkit-slider-thumb{box-shadow:0 0 0 7px rgba(28,42,107,.18);transform:scale(1.08)}
+.range:hover::-moz-range-thumb{box-shadow:0 0 0 7px rgba(28,42,107,.18)}
+.range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 7px rgba(59,79,180,.4)}
+/* interruptor con forma de núcleo */
+.sw{width:68px;height:36px;border-radius:999px;background:#fff;border:2px dotted #6C79A8;transition:background .25s,border-color .25s,box-shadow .2s}
+.sw::after{top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#6C79A8;box-shadow:inset 0 0 0 7px #6C79A8,inset 0 0 0 20px #DDE2EF;transition:transform .35s var(--ease),background .25s,box-shadow .3s}
+.sw[aria-checked=true]{background:var(--brand-soft);border:2px solid var(--brand)}
+.sw[aria-checked=true]::after{transform:translateX(32px);background:var(--brand);box-shadow:inset 0 0 0 8px var(--brand),inset 0 0 0 20px var(--lime),0 0 0 5px rgba(207,255,94,.7);animation:swp 2.4s ease-in-out infinite}
+@keyframes swp{50%{box-shadow:inset 0 0 0 8px var(--brand),inset 0 0 0 20px var(--lime),0 0 0 9px rgba(207,255,94,.2)}}
+.sw:hover{box-shadow:0 0 0 4px var(--brand-soft)}
+.swt{font-size:14px;font-weight:700;min-width:84px;text-align:right}
+.cn-row{position:relative;display:flex;align-items:center;gap:14px;padding:14px;background:#fff;border:1px solid var(--line-strong);border-left:4px solid var(--brand);transition:transform .25s var(--ease),box-shadow .25s,opacity .3s}
+.cn-row:hover{transform:translateX(5px);box-shadow:inset 0 0 0 1px var(--brand-2)}
+.cn-n{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--lime);border:3px solid var(--brand);font:700 13px Unbounded,Inter,sans-serif;color:var(--brand);position:relative}
+.cn-row+.cn-row::before{content:"";position:absolute;left:30px;top:-12px;height:10px;width:4px;background:radial-gradient(circle,var(--brand-2) 1.4px,transparent 1.8px) 50% 0/4px 6px repeat-y}
+
+@media (prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ *,*::before,*::after{animation:none!important;transition:none!important}
+ .hl{background-size:100% 100%}
+ .card.card-hi::after,.card.card-k::before,.orb-steps::after{display:none}
+ .bgfx .b-rot{will-change:auto}
+}
+@media(max-width:767px){
+ .brand-t{font-size:21px}.hdr .kl{width:46px;height:46px}
+ .btn-go{padding:0 16px;font-size:15px;min-height:48px;box-shadow:3px 3px 0 var(--brand)}
+ .card.card-hi{outline-offset:4px}
+}
+.rg-m{transform-origin:32px 32px}.rg-m line{stroke:var(--ink);stroke-width:2.4;stroke-linecap:round}
+.rg-n.sm{font:700 10.5px/1.15 Inter,sans-serif;text-align:center;padding:0 14px;color:var(--muted)}
+.mod>*,.ctl,.ctl>*{min-width:0}.ctl>.flex{flex-wrap:wrap}
+@media(max-width:767px){.kv-s{font-size:24px}}
 </style>
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <script>tailwind.config={theme:{extend:{colors:{brand:'var(--brand)',ink:'var(--ink)',line:'var(--line)',surface:'var(--surface)',mut:'var(--muted)'}}}}</script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-<symbol id="kmark" viewBox="-1 -1 66 66"><g class="orbit" fill="none" stroke="#1C2A6B" stroke-linecap="round"><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.4" opacity=".7" transform="rotate(30 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.4" opacity=".7" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.4" opacity=".7" transform="rotate(90 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.4" opacity=".7" transform="rotate(120 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.4" opacity=".7" transform="rotate(150 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="8" stroke-width="1.6"/><circle cx="59" cy="32" r="3.8" fill="#CFFF5E" stroke-width="1.6"/></g><circle cx="32" cy="32" r="5.4" fill="#1C2A6B"/><circle cx="32" cy="32" r="2" fill="#CFFF5E"/></symbol>
-</defs></svg>
 
 <div id="tt" role="tooltip"></div>
 <a class="skip" href="#main">Saltar al contenido</a>
 
 <div x-data="app()" x-init="init()" x-cloak class="min-h-screen">
+<div class="bgfx" :class="view==='portada'?'bg-p':'bg-a'" aria-hidden="true"><svg viewBox="0 0 1200 1200" fill="none"><g class="b-rot b1"><circle class="bo" cx="600" cy="600" r="560"/><circle class="bs" cx="1160" cy="600" r="12"/><circle class="bo" cx="600" cy="600" r="430"/></g><g class="b-rot b2"><ellipse class="bo" cx="600" cy="600" rx="480" ry="170" transform="rotate(25 600 600)"/><circle class="bs" cx="1080" cy="600" r="10" transform="rotate(25 600 600)"/></g><g class="b-rot b3"><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(0 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(15 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(30 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(45 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(60 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(75 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(90 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(105 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(120 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(135 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(150 600 600)"/><ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate(165 600 600)"/></g></svg></div>
 
 <!-- ================= PORTADA PUBLICA ================= -->
 <div x-show="view==='portada'">
-  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b" style="border-color:var(--line)">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
-      <a href="#/portada" class="flex items-center gap-2.5 no-underline" style="color:var(--brand)"><svg width="34" height="34"><use href="#kmark"/></svg><span class="disp font-bold tracking-wider">KERNA<span class="text-[10px] ml-1 align-top" style="color:var(--lime-ink)">AI</span></span></a>
-      <nav aria-label="Portada" class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a href="#como" class="hover:underline" style="color:var(--ink)">Cómo funciona</a><a href="#proteccion" class="hover:underline" style="color:var(--ink)">Protección</a><a href="#leyes" class="hover:underline" style="color:var(--ink)">Leyes</a>
+  <header class="hdr sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 h-[76px] md:h-[88px] flex items-center justify-between gap-3">
+      <a href="#portada" class="brand-lk" aria-label="Kerna AI, inicio"><svg class="kl" width="56" height="56" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><span class="brand-t disp">KERNA<small>AI</small></span></a>
+      <nav aria-label="Portada" class="hidden md:flex items-center gap-10">
+        <a href="#como" class="lnk">Cómo funciona</a><a href="#proteccion" class="lnk">Protección</a><a href="#leyes" class="lnk">Leyes</a>
       </nav>
-      <a href="#/resumen" class="btn btn-dark">Entrar al panel <k-ic n="arrow-right"></k-ic></a>
+      <a href="#resumen" class="btn btn-go">Entrar al panel <k-ic n="arrow-right"></k-ic></a>
     </div>
   </header>
 
-  <section class="max-w-6xl mx-auto px-4 pt-10 pb-12 md:pt-16 grid md:grid-cols-2 gap-10 items-center">
-    <div>
-      <span class="chip brand mb-4"><k-ic n="shield-check"></k-ic> Para el canal de denuncias Veridy</span>
-      <h1 class="disp text-[32px] md:text-[46px] leading-[1.1] font-bold m-0" style="color:var(--brand)">De los hechos a la norma, en <span style="background:linear-gradient(transparent 62%,var(--lime) 62%)">segundos</span>.</h1>
-      <p class="text-lg mt-4 mb-6 muted max-w-[34em]">Kerna lee cada denuncia dentro de Veridy y sugiere qué leyes y artículos chilenos podrían aplicar, con la cita exacta que los respalda. Una persona decide siempre.</p>
-      <div class="flex flex-wrap gap-3"><a href="#/resumen" class="btn btn-pri">Ver el panel <k-ic n="layout-dashboard"></k-ic></a><a href="#como" class="btn btn-sec">Cómo funciona</a></div>
-      <ul class="flex flex-wrap gap-x-5 gap-y-2 mt-6 p-0 list-none text-sm muted"><li class="flex items-center gap-1.5"><k-ic n="eye-off"></k-ic> Sin datos personales</li><li class="flex items-center gap-1.5"><k-ic n="lock"></k-ic> Cifrado de punta a punta</li><li class="flex items-center gap-1.5"><k-ic n="quote"></k-ic> Siempre con cita</li></ul>
+  <section class="hero max-w-7xl mx-auto px-4 md:px-8 pt-4 md:pt-10 pb-12 md:pb-20 grid lg:grid-cols-[1.05fr_1fr] gap-4 lg:gap-10 items-center">
+    <div class="hero-logo order-first lg:order-last"><svg class="kl hero-svg" viewBox="-14 -14 92 92" data-logo="hero" role="img" aria-label="Símbolo de Kerna AI: una roseta de órbitas con un satélite que viaja por la órbita elegida"></svg></div>
+    <div class="hero-in relative">
+      <span class="chip brand mb-5" style="--i:0"><k-ic n="shield-check"></k-ic> Para el canal de denuncias Veridy</span>
+      <h1 class="disp h-hero" style="--i:1">De los hechos a la norma, en <span class="hl">segundos</span>.</h1>
+      <p class="lead" style="--i:2">Kerna lee cada denuncia dentro de Veridy y sugiere qué leyes y artículos chilenos podrían aplicar, con la cita exacta que los respalda. Una persona decide siempre.</p>
+      <div class="flex flex-wrap gap-4" style="--i:3"><a href="#resumen" class="btn btn-pri">Ver el panel <k-ic n="layout-dashboard"></k-ic></a><a href="#como" class="btn btn-sec">Cómo funciona</a></div>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 mt-7 p-0 list-none muted text-[16px]" style="--i:4"><li class="flex items-center gap-2"><k-ic n="eye-off"></k-ic> Sin datos personales</li><li class="flex items-center gap-2"><k-ic n="lock"></k-ic> Cifrado de punta a punta</li><li class="flex items-center gap-2"><k-ic n="quote"></k-ic> Siempre con cita</li></ul>
     </div>
-    <div class="relative">
-      <div class="card p-5 md:p-6 relative overflow-hidden">
-        <div class="absolute -right-16 -bottom-16 opacity-[.09] pointer-events-none" aria-hidden="true"><svg width="220" height="220"><use href="#kmark"/></svg></div>
-        <div class="flex items-center justify-between mb-3 relative"><span class="chip brand"><k-ic n="sparkles"></k-ic> Sugerencia de Kerna</span><span class="text-xs muted">Ejemplo ilustrativo</span></div>
-        <p class="text-sm muted m-0 mb-3 relative">Caso 1042 · «Un jefe me grita y me humilla frente al equipo desde hace meses…»</p>
+  </section>
+
+  <div class="osep" aria-hidden="true"><svg class="kl" width="46" height="46" viewBox="-1 -1 66 66" data-logo="mini"></svg></div>
+
+  <section class="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16" data-rv>
+    <div class="grid lg:grid-cols-[.85fr_1.15fr] gap-8 lg:gap-14 items-center">
+      <div><p class="eyebrow">Una sugerencia real</p><h2 class="disp h-sec">Cada sugerencia llega con su cita</h2><p class="lead2 muted">Kerna muestra la ley, el artículo y el texto exacto que lo respalda, para que quien analiza el caso lo verifique.</p></div>
+      <div class="card card-hi p-5 md:p-7">
+        <div class="flex items-center justify-between mb-3 relative"><span class="chip brand"><k-ic n="sparkles"></k-ic> Sugerencia de Kerna</span></div>
+        <p class="text-sm muted m-0 mb-4 relative">Caso 1042 · «Un jefe me grita y me humilla frente al equipo desde hace meses…»</p>
         <div class="rounded-xl border p-4 mb-3 relative bg-white" style="border-color:var(--line)">
-          <div class="flex items-center justify-between gap-2 mb-1"><b class="text-sm">Ley 21.643 (Ley Karin) · art. 2</b><span class="chip ok"><k-ic n="circle-check"></k-ic> Alta coincidencia</span></div>
+          <div class="flex items-center justify-between gap-2 mb-1 flex-wrap"><b class="text-base">Ley 21.643 (Ley Karin) · art. 2</b><span class="chip ok"><k-ic n="circle-check"></k-ic> Alta coincidencia</span></div>
           <p class="text-sm m-0" style="color:var(--ink)">«…el acoso laboral es toda conducta que constituya agresión u hostigamiento ejercida por el empleador o por uno o más trabajadores…»</p>
         </div>
         <div class="rounded-xl border p-4 relative bg-white" style="border-color:var(--line)">
-          <div class="flex items-center justify-between gap-2 mb-1"><b class="text-sm">Código del Trabajo · art. 160</b><span class="chip warn"><k-ic n="triangle-alert"></k-ic> Revisar</span></div>
+          <div class="flex items-center justify-between gap-2 mb-1 flex-wrap"><b class="text-base">Código del Trabajo · art. 160</b><span class="chip warn"><k-ic n="triangle-alert"></k-ic> Revisar</span></div>
           <p class="text-sm m-0 muted">Posible causal de término del contrato por conducta indebida.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="como" class="max-w-6xl mx-auto px-4 py-10">
-    <p class="text-xs font-semibold tracking-widest uppercase m-0 muted">Cómo funciona</p>
-    <h2 class="disp text-2xl font-bold mt-1 mb-6" style="color:var(--brand)">Cuatro pasos, ninguno expone a nadie</h2>
-    <ol class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 p-0 list-none m-0">
-      <template x-for="(p,i) in pasos" :key="i"><li class="card p-5">
-        <div class="flex items-center justify-between mb-3"><span class="grid place-items-center w-11 h-11 rounded-xl" :style="i===3?'background:var(--lime);color:var(--brand)':'background:var(--brand-soft);color:var(--brand)'"><k-ic :n="p.i" style="width:22px;height:22px"></k-ic></span><span class="text-xs font-bold muted" x-text="'Paso '+(i+1)"></span></div>
-        <b class="block mb-1" x-text="p.t"></b><p class="m-0 text-sm muted" x-text="p.d"></p></li></template>
+  <div class="osep" aria-hidden="true"><svg class="kl" width="46" height="46" viewBox="-1 -1 66 66" data-logo="mini"></svg></div>
+
+  <section id="como" class="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16" data-rv>
+    <p class="eyebrow">Cómo funciona</p>
+    <h2 class="disp h-sec">Cuatro pasos, ninguno expone a nadie</h2>
+    <ol class="orb-steps" data-rvs>
+      <template x-for="(p,i) in pasos" :key="i"><li class="ostep">
+        <span class="node" :class="i===3?'lima':''"><k-ic :n="p.i"></k-ic></span>
+        <div><span class="pn" x-text="'Paso '+(i+1)"></span><b class="block text-[19px] mt-0.5" x-text="p.t"></b><p class="m-0 mt-1 text-[16px] muted" x-text="p.d"></p></div></li></template>
     </ol>
   </section>
 
-  <section id="proteccion" class="max-w-6xl mx-auto px-4 py-10">
-    <div class="rounded-3xl p-6 md:p-10 grid md:grid-cols-2 gap-8" style="background:var(--brand);color:#fff">
-      <div><p class="text-xs font-semibold tracking-widest uppercase m-0" style="color:var(--lime)">Protección</p><h2 class="disp text-2xl font-bold mt-1 mb-3">Primero se anonimiza, siempre</h2><p class="m-0" style="color:#DCE2FA">Ningún modelo de IA ve nombres, RUT, correos ni teléfonos: se reemplazan antes de enviar el texto. Lo que Kerna produce queda cifrado con la clave del caso en Veridy.</p></div>
-      <ul class="list-none p-0 m-0 grid gap-3">
-        <li class="flex gap-3 items-start rounded-xl p-4" style="background:rgba(255,255,255,.1)"><k-ic n="eye-off" style="width:24px;height:24px;color:var(--lime)"></k-ic><div><b>Anonimizador previo</b><p class="m-0 text-sm" style="color:#DCE2FA">Datos personales fuera antes de cualquier modelo.</p></div></li>
-        <li class="flex gap-3 items-start rounded-xl p-4" style="background:rgba(255,255,255,.1)"><k-ic n="lock" style="width:24px;height:24px;color:var(--lime)"></k-ic><div><b>Cifrado de Veridy</b><p class="m-0 text-sm" style="color:#DCE2FA">La denuncia solo existe en claro en memoria.</p></div></li>
+  <section id="proteccion" class="max-w-7xl mx-auto px-4 md:px-8 py-10" data-rv>
+    <div class="band p-7 md:p-14 grid md:grid-cols-2 gap-8 md:gap-12">
+      <div><p class="eyebrow" style="color:var(--lime)">Protección</p><h2 class="disp h-sec" style="color:#fff">Primero se anonimiza, siempre</h2><p class="m-0 mt-4 text-[17px]" style="color:#DCE2FA">Ningún modelo de IA ve nombres, RUT, correos ni teléfonos: se reemplazan antes de enviar el texto. Lo que Kerna produce queda cifrado con la clave del caso en Veridy.</p></div>
+      <ul class="list-none p-0 m-0 grid gap-4 content-center">
+        <li class="band-li flex gap-4 items-start p-5"><k-ic n="eye-off" style="width:30px;height:30px;color:var(--lime)"></k-ic><div><b class="text-[18px]">Anonimizador previo</b><p class="m-0 text-[16px]" style="color:#DCE2FA">Datos personales fuera antes de cualquier modelo.</p></div></li>
+        <li class="band-li flex gap-4 items-start p-5"><k-ic n="lock" style="width:30px;height:30px;color:var(--lime)"></k-ic><div><b class="text-[18px]">Cifrado de Veridy</b><p class="m-0 text-[16px]" style="color:#DCE2FA">La denuncia solo existe en claro en memoria.</p></div></li>
       </ul>
     </div>
   </section>
 
-  <section id="leyes" class="max-w-6xl mx-auto px-4 py-10">
-    <p class="text-xs font-semibold tracking-widest uppercase m-0 muted">Leyes cubiertas</p>
-    <h2 class="disp text-2xl font-bold mt-1 mb-6" style="color:var(--brand)">Normativa chilena vigente</h2>
-    <div class="grid md:grid-cols-3 gap-4">
-      <template x-for="l in leyes" :key="l.n"><div class="card p-5"><span class="inline-block disp font-bold text-sm px-2.5 py-1 rounded-lg mb-3" style="background:var(--lime);color:var(--brand)" x-text="l.n"></span><b class="block" x-text="l.t"></b><p class="m-0 mt-1 text-sm muted" x-text="l.d"></p></div></template>
+  <section id="leyes" class="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16" data-rv>
+    <p class="eyebrow">Leyes cubiertas</p>
+    <h2 class="disp h-sec">Normativa chilena vigente</h2>
+    <div class="grid md:grid-cols-3 gap-5 mt-8" data-rvs>
+      <template x-for="l in leyes" :key="l.n"><div class="card p-6 ley"><span class="ley-n disp" x-text="l.n"></span><b class="block text-[19px] mt-4" x-text="l.t"></b><p class="m-0 mt-1.5 text-[16px] muted" x-text="l.d"></p></div></template>
     </div>
-    <div class="card p-5 mt-6 flex gap-4 items-start bd-warn"><k-ic n="triangle-alert" style="width:24px;height:24px;color:var(--warn)"></k-ic><div><b>Es una sugerencia, no un dictamen</b><p class="m-0 text-sm muted">Kerna orienta a quien analiza el caso; no reemplaza el criterio ni la asesoría jurídica. La decisión siempre es de una persona.</p></div></div>
+    <div class="card p-6 mt-6 flex gap-4 items-start bd-warn"><k-ic n="triangle-alert" style="width:28px;height:28px;color:var(--warn)"></k-ic><div><b class="text-[18px]">Es una sugerencia, no un dictamen</b><p class="m-0 text-[16px] muted">Kerna orienta a quien analiza el caso; no reemplaza el criterio ni la asesoría jurídica. La decisión siempre es de una persona.</p></div></div>
   </section>
-  <footer class="max-w-6xl mx-auto px-4 pb-10 pt-4 text-sm muted">Kerna AI · parte de Veridy · normativa según la Biblioteca del Congreso Nacional de Chile</footer>
+  <footer class="osep-f max-w-7xl mx-auto px-4 md:px-8 pb-12 pt-6 text-[15px] muted">Kerna AI · parte de Veridy · normativa según la Biblioteca del Congreso Nacional de Chile</footer>
 </div>
 
 <!-- ================= APP ================= -->
 <div x-show="view!=='portada'" class="lg:flex">
-  <aside class="hidden lg:flex flex-col w-64 shrink-0 h-screen sticky top-0 bg-white border-r p-5 gap-6" style="border-color:var(--line)" aria-label="Menú lateral">
-    <a href="#/portada" class="flex items-center gap-2.5 no-underline" style="color:var(--brand)" aria-label="Kerna AI, ir a la portada"><svg width="38" height="38"><use href="#kmark"/></svg><span class="disp font-bold tracking-wider text-lg">KERNA<span class="text-[10px] ml-1 align-top" style="color:var(--lime-ink)">AI</span></span></a>
-    <nav class="nav grid gap-1.5 ml-3" aria-label="Principal">
-      <a href="#/informe" class="gen" :aria-current="view==='informe'?'page':null" :class="view==='informe'?'ring-2 ring-[#1C2A6B]':''"><k-ic n="file-down"></k-ic> Generar informe</a>
-      <p class="m-0 mt-3 px-3 text-[11px] font-bold tracking-widest uppercase muted">Operación</p>
-      <a href="#/resumen" :class="view==='resumen'?'on':''" :aria-current="view==='resumen'?'page':null"><k-ic n="layout-dashboard"></k-ic> Resumen</a>
-      <a href="#/ajustes" :class="view==='ajustes'?'on':''" :aria-current="view==='ajustes'?'page':null"><k-ic n="sliders-horizontal"></k-ic> Ajustes<span x-show="cambios.length" class="chip warn ml-auto" x-text="cambios.length"></span></a>
-      <p class="m-0 mt-3 px-3 text-[11px] font-bold tracking-widest uppercase muted">Negocio</p>
-      <a href="#/negocio" :class="view==='negocio'?'on':''" :aria-current="view==='negocio'?'page':null"><k-ic n="briefcase-business"></k-ic> Clientes y márgenes</a>
+  <aside class="hidden lg:flex flex-col w-72 shrink-0 h-screen sticky top-0 bg-white border-r p-6 gap-7 overflow-y-auto" style="border-color:var(--line)" aria-label="Menú lateral">
+    <a href="#portada" class="brand-lk" aria-label="Kerna AI, ir a la portada"><svg class="kl" width="64" height="64" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><span class="brand-t disp" style="font-size:24px">KERNA<small>AI</small></span></a>
+    <nav class="nav grid gap-2" aria-label="Principal">
+      <a href="#informe" class="gen" :aria-current="view==='informe'?'page':null" :class="view==='informe'?'ring-2 ring-[#1C2A6B]':''"><svg class="kl" width="36" height="36" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><span>Generar informe</span></a>
+      <p class="nav-h">Operación</p>
+      <a href="#resumen" :class="view==='resumen'?'on':''" :aria-current="view==='resumen'?'page':null"><k-ic n="layout-dashboard"></k-ic> Resumen</a>
+      <a href="#ajustes" :class="view==='ajustes'?'on':''" :aria-current="view==='ajustes'?'page':null"><k-ic n="sliders-horizontal"></k-ic> Ajustes<span x-show="cambios.length" class="chip warn ml-auto" x-text="cambios.length"></span></a>
+      <p class="nav-h">Negocio</p>
+      <a href="#negocio" :class="view==='negocio'?'on':''" :aria-current="view==='negocio'?'page':null"><k-ic n="briefcase-business"></k-ic> Clientes y márgenes</a>
     </nav>
     <div class="mt-auto grid gap-3">
-      <div class="rounded-xl p-3 text-xs" style="background:var(--warn-bg);color:var(--warn)"><b class="flex items-center gap-1.5"><k-ic n="flask-conical"></k-ic> Datos de ejemplo</b><span class="block mt-1">Esta maqueta no está conectada a datos reales.</span></div>
-      <a href="#/portada" class="flex items-center gap-2 text-sm font-medium no-underline" style="color:var(--muted)"><k-ic n="globe"></k-ic> Ver portada pública</a>
+      <a href="#portada" class="flex items-center gap-2 text-[15px] font-medium no-underline lnk" style="color:var(--muted)"><k-ic n="globe"></k-ic> Ver portada pública</a>
     </div>
   </aside>
 
   <div class="flex-1 min-w-0 pb-24 lg:pb-10">
-    <header class="lg:hidden sticky top-0 z-30 bg-white border-b h-14 px-4 flex items-center justify-between" style="border-color:var(--line)">
-      <a href="#/portada" class="flex items-center gap-2 no-underline" style="color:var(--brand)" aria-label="Kerna AI, portada"><svg width="30" height="30"><use href="#kmark"/></svg><span class="disp font-bold tracking-wider">KERNA</span></a>
-      <span class="chip warn"><k-ic n="flask-conical"></k-ic> Ejemplo</span>
-    </header>
+    <header class="hdr lg:hidden sticky top-0 z-30 h-[72px] px-4 flex items-center justify-between"><a href="#portada" class="brand-lk" aria-label="Kerna AI, portada"><svg class="kl" width="46" height="46" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><span class="brand-t disp">KERNA</span></a></header>
 
-    <main id="main" class="max-w-6xl mx-auto px-4 lg:px-8 pt-6 lg:pt-8">
+    <main id="main" class="max-w-[1320px] mx-auto px-4 lg:px-8 pt-6 lg:pt-10">
 
 <!-- ========== RESUMEN ========== -->
 <div x-show="view==='resumen'" class="grid gap-5">
   <div class="flex flex-wrap items-start justify-between gap-4">
-    <div><h1 class="disp text-2xl font-bold m-0" style="color:var(--brand)">Resumen</h1><p class="m-0 mt-1 muted text-sm">Cómo está funcionando Kerna · actualizado hoy 12 nov, 10:42</p></div>
+    <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Resumen</h1><p class="m-0 mt-1 muted text-sm">Cómo está funcionando Kerna · actualizado hoy 12 nov, 10:42</p></div>
     <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
       <div class="seg" role="group" aria-label="Período"><template x-for="p in [7,30]"><button type="button" :aria-pressed="per===p" @click="setPer(p)" x-text="'Últimos '+p+' días'"></button></template></div>
-      <a href="#/informe" class="btn btn-pri w-full sm:w-auto"><k-ic n="file-down"></k-ic> Generar informe de gestión</a>
+      <a href="#informe" class="btn btn-pri w-full sm:w-auto"><k-ic n="file-down"></k-ic> Generar informe de gestión</a>
     </div>
   </div>
 
   <!-- estado general -->
-  <section aria-labelledby="eg" class="card p-5 md:p-6 bd-warn">
+  <section aria-labelledby="eg" class="card card-hi p-5 md:p-6 bd-warn">
     <div class="flex flex-wrap items-start gap-4">
-      <span class="estado-ic grid place-items-center w-14 h-14 rounded-2xl shrink-0" style="background:var(--warn-bg);color:var(--warn)"><k-ic n="triangle-alert" style="width:30px;height:30px"></k-ic></span>
+      <span class="estado-ic grid place-items-center w-14 h-14 orb-ic rounded-2xl shrink-0" style="background:var(--warn-bg);color:var(--warn)"><k-ic n="triangle-alert" style="width:30px;height:30px"></k-ic></span>
       <div class="flex-1 min-w-[220px]">
         <div class="flex flex-wrap items-center gap-2"><h2 id="eg" class="estado-t disp text-xl font-bold m-0">Estado general: atención</h2><k-tip g="estado"></k-tip></div>
         <p class="m-0 mt-1 text-[15px]"><b>Kerna está funcionando</b>, pero hay 2 cosas por mejorar: las sugerencias aciertan menos de lo esperado y las respuestas son lentas. <a href="#inc" @click.prevent="document.getElementById('inc').scrollIntoView({behavior:'smooth',block:'center'})" class="font-semibold underline" style="color:var(--brand)">Ver qué hacer</a></p>
@@ -224,17 +525,18 @@ k-tip k-ic{width:17px;height:17px}
 
   <!-- KPIs -->
   <section aria-label="Indicadores clave" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-    <template x-for="k in kpis" :key="k.k"><article class="card p-4 flex flex-col" :class="'bd-'+k.e">
-      <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 text-sm font-semibold muted"><k-ic :n="k.i"></k-ic><span x-text="k.l"></span></span><k-tip :g="k.k"></k-tip></div>
-      <div class="flex items-end justify-between gap-2 mt-2">
-        <div><span class="text-[32px] leading-none font-bold tabular-nums" x-text="k.v"></span><span class="text-sm font-semibold muted ml-1" x-text="k.u"></span></div>
-        <svg viewBox="0 0 100 30" class="w-[88px] h-[30px] shrink-0" aria-hidden="true"><path :d="spark(k.s)" fill="none" :stroke="'var(--'+(k.e==='na'?'na':k.e)+'-bar)'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <template x-for="k in kpis" :key="k.k"><article class="card card-k p-4 flex flex-col" :class="'bd-'+k.e">
+      <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 text-[15px] font-semibold muted"><k-ic :n="k.i"></k-ic><span x-text="k.l"></span></span><k-tip :g="k.k"></k-tip></div>
+      <div class="flex items-center justify-between gap-3 mt-4">
+        <div class="min-w-0"><span class="kv" x-count="k.v"></span><span class="text-[15px] font-semibold muted ml-1.5" x-text="k.u"></span></div>
+        <template x-if="k.ring!==undefined"><div class="orbring" :class="'rg-'+k.e" :style="'--v:'+k.ring"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="rg-r"><circle class="rg-t" cx="32" cy="32" r="26"/><circle class="rg-p" cx="32" cy="32" r="26" pathLength="100"/><g class="rg-m" x-show="k.meta" :style="'transform:rotate('+(k.meta*3.6)+'deg)'"><line x1="55" y1="32" x2="63" y2="32"/></g><g class="rg-s"><circle cx="58" cy="32" r="4.6"/></g></g></svg><span class="rg-n sm" x-show="k.rc" x-text="k.rc"></span></div></template>
       </div>
+      <template x-if="k.ring===undefined"><svg viewBox="0 0 100 30" preserveAspectRatio="none" class="w-full h-[34px] mt-3" aria-hidden="true"><path :d="spark(k.s)" fill="none" :stroke="'var(--'+(k.e==='na'?'na':k.e)+'-bar)'" stroke-width="2.2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg></template>
       <div class="flex flex-wrap items-center gap-2 mt-3">
         <span class="chip" :class="k.e"><k-ic :n="ico[k.e]"></k-ic><span x-text="k.et"></span></span>
         <span class="chip" :class="k.de" x-show="k.dt"><k-ic :n="k.da"></k-ic><span x-text="k.dt"></span></span>
       </div>
-      <p class="m-0 mt-3 text-[13px] leading-snug" x-text="k.f"></p>
+      <p class="m-0 mt-3 text-[14.5px] leading-snug" x-text="k.f"></p>
       <p class="m-0 mt-auto pt-2 text-xs muted" x-text="k.m"></p>
     </article></template>
   </section>
@@ -242,14 +544,14 @@ k-tip k-ic{width:17px;height:17px}
   <!-- casos por dia + modos -->
   <section class="grid lg:grid-cols-3 gap-4">
     <div class="card p-4 lg:col-span-2">
-      <div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por día y cómo se resolvieron</h2><k-tip g="casos_dia"></k-tip></div>
+      <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por día y cómo se resolvieron</h2><k-tip g="casos_dia"></k-tip></div>
       <p class="m-0 mb-2 text-sm muted">Cada barra es un día. Verde: resuelto por el modelo principal; ámbar: con respaldo; rojo: pasó a revisión manual.</p>
       <div id="ch-casos" class="w-full" style="height:290px" role="img" aria-label="Gráfico de barras apiladas de denuncias por día y modo de resolución"></div>
     </div>
     <div class="card p-4">
-      <div class="flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">¿Cómo se resolvieron?</h2><k-tip g="modos"></k-tip></div>
-      <div class="flex h-4 rounded-full overflow-hidden mb-4" role="img" :aria-label="'Principal '+modos.o+', respaldo '+modos.r+', manual '+modos.m"><div class="f-ok" :style="'width:'+pct(modos.o,tot)+'%'"></div><div class="f-warn" :style="'width:'+pct(modos.r,tot)+'%'"></div><div class="f-bad" :style="'width:'+pct(modos.m,tot)+'%'"></div></div>
-      <p class="m-0 mb-3 text-sm"><b x-text="sugPct+' de cada 100'"></b> denuncias recibieron sugerencia (principal + respaldo).</p>
+      <div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">¿Cómo se resolvieron?</h2><k-tip g="modos"></k-tip></div>
+      <div class="nosat flex h-4 rounded-full overflow-hidden mb-4" role="img" :aria-label="'Principal '+modos.o+', respaldo '+modos.r+', manual '+modos.m"><div class="f-ok" :style="'width:'+pct(modos.o,tot)+'%'"></div><div class="f-warn" :style="'width:'+pct(modos.r,tot)+'%'"></div><div class="f-bad" :style="'width:'+pct(modos.m,tot)+'%'"></div></div>
+      <div class="flex items-center gap-4 mb-4"><div class="orbring" :class="'rg-'+(sugPct>=90?'ok':'warn')" :style="'--v:'+sugPct"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="rg-r"><circle class="rg-t" cx="32" cy="32" r="26"/><circle class="rg-p" cx="32" cy="32" r="26" pathLength="100"/><g class="rg-s"><circle cx="58" cy="32" r="4.6"/></g></g></svg><span class="rg-n" x-text="sugPct+'%'"></span></div><p class="m-0 text-sm"><b x-text="sugPct+' de cada 100'"></b> denuncias recibieron sugerencia (principal + respaldo).</p></div>
       <ul class="list-none p-0 m-0 grid gap-3">
         <li class="flex items-start gap-3"><span class="chip ok mt-0.5"><k-ic n="circle-check"></k-ic> Bien</span><div class="flex-1"><b>Modelo principal</b><div class="text-sm muted">Resolvió <b class="text-ink" style="color:var(--ink)" x-text="modos.o"></b> de <span x-text="tot"></span> (<span x-text="pct(modos.o,tot)"></span> %)</div></div></li>
         <li class="flex items-start gap-3"><span class="chip warn mt-0.5"><k-ic n="triangle-alert"></k-ic> Atención</span><div class="flex-1"><b>Modelo de respaldo</b><div class="text-sm muted"><b style="color:var(--ink)" x-text="modos.r"></b> casos (<span x-text="pct(modos.r,tot)"></span> %). Entra cuando el principal falla.</div></div></li>
@@ -261,7 +563,7 @@ k-tip k-ic{width:17px;height:17px}
   <!-- calidad + latencia -->
   <section class="grid lg:grid-cols-2 gap-4">
     <div class="card p-4">
-      <div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Qué tan buenas son las sugerencias?</h2><k-tip g="calidad"></k-tip></div>
+      <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Qué tan buenas son las sugerencias?</h2><k-tip g="calidad"></k-tip></div>
       <div class="grid sm:grid-cols-2 gap-2 items-center">
         <div id="ch-gauge" style="height:210px" role="img" aria-label="Medidor de acierto: 74 por ciento, meta 80 por ciento"></div>
         <div>
@@ -282,7 +584,7 @@ k-tip k-ic{width:17px;height:17px}
     </div>
 
     <div class="card p-4">
-      <div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Qué tan rápido responde?</h2><k-tip g="latencia"></k-tip></div>
+      <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Qué tan rápido responde?</h2><k-tip g="latencia"></k-tip></div>
       <p class="m-0 mb-2 text-sm">La mitad de los casos recibe sugerencia en <b x-text="p50+' s'"></b>; la meta es 15 s.</p>
       <div id="ch-lat" style="height:250px" role="img" aria-label="Gráfico de área del tiempo de respuesta por día frente a la meta de 15 segundos"></div>
       <div class="grid grid-cols-2 gap-3 mt-3">
@@ -297,12 +599,12 @@ k-tip k-ic{width:17px;height:17px}
 
   <!-- incidentes -->
   <section class="card p-4 md:p-5" aria-labelledby="inc">
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-3"><div class="flex items-center gap-1.5"><h2 id="inc" class="text-base font-bold m-0">¿Qué falló y qué hacer?</h2><k-tip g="incidentes"></k-tip></div>
-      <a href="#/ajustes" class="btn btn-sec !min-h-[38px]"><k-ic n="sliders-horizontal"></k-ic> Ir a Ajustes</a></div>
+    <div class="hd flex flex-wrap items-center justify-between gap-3 mb-3"><div class="flex items-center gap-1.5"><h2 id="inc" class="text-base font-bold m-0">¿Qué falló y qué hacer?</h2><k-tip g="incidentes"></k-tip></div>
+      <a href="#ajustes" class="btn btn-sec !min-h-[38px]"><k-ic n="sliders-horizontal"></k-ic> Ir a Ajustes</a></div>
     <div class="grid gap-3">
       <template x-for="i in incidentes" :key="i.c"><div class="rounded-xl border p-3 md:p-4 grid md:grid-cols-[1.1fr_100px_2fr] gap-2 md:gap-4 items-start bg-white" :class="'bd-'+i.e" style="border-color:var(--line)">
         <div><span class="chip" :class="i.e"><k-ic :n="ico[i.e]"></k-ic><span x-text="est[i.e]"></span></span><b class="block mt-1.5" x-text="i.c"></b></div>
-        <div><span class="text-2xl font-bold tabular-nums" x-text="i.n"></span><span class="text-xs muted block">casos</span></div>
+        <div><span class="kv-s tabular-nums" x-count="i.n"></span><span class="text-xs muted block">casos</span></div>
         <div class="text-sm flex gap-2"><k-ic n="lightbulb" style="color:var(--brand-2);margin-top:2px"></k-ic><span><b>Qué hacer:</b> <span x-text="i.a"></span></span></div>
       </div></template>
     </div>
@@ -316,33 +618,32 @@ k-tip k-ic{width:17px;height:17px}
   <!-- heatmap + costo -->
   <section class="grid lg:grid-cols-2 gap-4">
     <div class="card p-4">
-      <div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Cuándo llegan las denuncias?</h2><k-tip g="mapa"></k-tip></div>
+      <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Cuándo llegan las denuncias?</h2><k-tip g="mapa"></k-tip></div>
       <p class="m-0 mb-2 text-sm muted">Más oscuro = más denuncias. Sirve para saber cuándo conviene tener a alguien atento.</p>
       <div id="ch-heat" style="height:270px" role="img" aria-label="Mapa de calor de denuncias por día de la semana y franja horaria; más denuncias entre lunes y viernes de 9 a 18 horas"></div>
     </div>
     <div class="card p-4">
-      <div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Cuánto costaría con Claude?</h2><k-tip g="costo"></k-tip></div>
-      <p class="m-0 mb-3 text-sm">Con Claude Haiku 5.5, <b>cada 1.000 denuncias costarían unos <span x-text="usd(costo[0].m1000)"></span></b>. El gasto del período sería de <b x-text="usd(costo[0].tot)"></b>.</p>
-      <ul class="list-none p-0 m-0 grid gap-3">
+      <div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Costo del período</h2><k-tip g="costo"></k-tip></div>
+      <p class="m-0 mb-4 text-sm">El costo de los últimos <span x-text="per"></span> días es <b x-text="usd(costoTot)"></b>, unos <b x-text="usd(costoCaso,4)"></b> por denuncia.</p>
+      <ul class="list-none p-0 m-0 grid gap-4">
         <template x-for="(c,i) in costo" :key="c.n"><li>
-          <div class="flex items-center justify-between gap-2 text-sm"><span class="flex items-center gap-2"><b x-text="c.n"></b><span x-show="i===0" class="chip brand">Escenario principal</span></span><b class="tabular-nums" x-text="usd(c.tot)"></b></div>
-          <div class="h-3 rounded-full mt-1.5" style="background:#E3E7F2"><div class="h-3 rounded-full" :style="'width:'+Math.max(3,c.tot/costo[2].tot*100)+'%;background:'+(i===0?'var(--brand-2)':'#8E9AD0')"></div></div>
-          <div class="text-xs muted mt-1" x-text="'1.000 denuncias al mes: '+usd(c.m1000)+' · por denuncia: '+usd(c.caso,4)"></div>
+          <div class="flex items-center justify-between gap-2 text-sm"><span class="flex items-center gap-2 flex-wrap"><b x-text="c.n"></b><span class="chip" :class="i===0?'brand':'na'" x-text="i===0?'Principal':'Respaldo'"></span></span><b class="tabular-nums" x-text="usd(c.tot)"></b></div>
+          <div class="h-3 rounded-full mt-1.5" style="background:#E3E7F2"><div class="h-3 rounded-full" :style="'width:'+Math.max(3,c.tot/costoTot*100)+'%;background:'+(i===0?'var(--brand-2)':'#8E9AD0')"></div></div>
+          <div class="text-xs muted mt-1" x-text="c.casos+' denuncias · '+usd(c.caso,4)+' por denuncia'"></div>
         </li></template>
       </ul>
-      <div class="mt-4 flex flex-wrap gap-2 items-center"><span class="chip na"><k-ic n="circle-minus"></k-ic> Sin presupuesto definido</span><span class="text-xs muted">Precios de la API de Anthropic al 3 nov 2026. Estimación sobre el uso medido.</span></div>
     </div>
   </section>
 
   <!-- leyes -->
-  <section class="card p-4"><div class="flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">¿Qué leyes aparecen más?</h2><k-tip g="leyes"></k-tip></div>
+  <section class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">¿Qué leyes aparecen más?</h2><k-tip g="leyes"></k-tip></div>
     <div class="rounded-xl p-5 flex gap-4 items-center" style="background:var(--na-bg)"><k-ic n="chart-no-axes-column" style="width:32px;height:32px;color:var(--na)"></k-ic><div class="text-sm"><span class="chip na mb-1"><k-ic n="circle-minus"></k-ic> Sin datos</span><p class="m-0 muted">Todavía no se registran los artículos sugeridos. Se activará al actualizar el núcleo de Kerna; después verás aquí el ranking de leyes y artículos.</p></div></div>
   </section>
 </div>
 
 <!-- ========== INFORME (asistente) ========== -->
 <div x-show="view==='informe'" class="grid gap-5">
-  <div><h1 class="disp text-2xl font-bold m-0" style="color:var(--brand)">Generar informe de gestión</h1><p class="m-0 mt-1 muted text-sm">Tres pasos: elige el período, revisa la vista previa y descarga.</p></div>
+  <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Generar informe de gestión</h1><p class="m-0 mt-1 muted text-sm">Tres pasos: elige el período, revisa la vista previa y descarga.</p></div>
 
   <ol class="card p-3 md:p-4 flex gap-2 md:gap-6 list-none m-0 overflow-x-auto" aria-label="Pasos">
     <template x-for="(s,i) in ['Período','Vista previa','Descargar']" :key="i"><li class="flex items-center gap-2.5 flex-1 min-w-0">
@@ -378,7 +679,7 @@ k-tip k-ic{width:17px;height:17px}
 
     <article class="card doc p-5 md:p-8 grid gap-7" aria-label="Vista previa del informe">
       <header class="flex flex-wrap items-center gap-4 pb-5 border-b" style="border-color:var(--line)">
-        <svg width="54" height="54"><use href="#kmark"/></svg>
+        <svg class="kl" width="72" height="72" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg>
         <div class="flex-1 min-w-[200px]"><p class="m-0 text-xs font-semibold tracking-widest uppercase muted">Informe de gestión · Kerna AI</p><h2 class="disp text-xl font-bold m-0" style="color:var(--brand)" x-text="rangoTxt"></h2></div>
         <span class="chip warn !text-sm !px-3 !py-1.5"><k-ic n="triangle-alert"></k-ic> Estado general: atención</span>
       </header>
@@ -408,9 +709,9 @@ k-tip k-ic{width:17px;height:17px}
       </section>
 
       <section>
-        <h3 class="mb-2">4. Costo con precios de Anthropic</h3>
-        <p class="conc">Operar con Claude Haiku 5.5 costaría <span x-text="usd(costo[0].tot*inf.f)"></span> en el período, unos <span x-text="usd(costo[0].m1000)"></span> por cada 1.000 denuncias.</p>
-        <div class="grid gap-2"><template x-for="(c,i) in costo" :key="c.n"><div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1.4fr_1fr_1fr] gap-x-4 gap-y-0.5 items-center rounded-xl border p-3 bg-white text-sm" style="border-color:var(--line)"><b x-text="c.n"></b><span class="text-right sm:text-left"><b class="tabular-nums" x-text="usd(c.tot*inf.f)"></b> <span class="muted">período</span></span><span class="col-span-2 sm:col-span-1 muted"><b class="tabular-nums" style="color:var(--ink)" x-text="usd(c.m1000)"></b> por 1.000 denuncias/mes</span></div></template></div>
+        <h3 class="mb-2">4. Costo</h3>
+        <p class="conc">El costo del período fue <span x-text="usd(costoTot*inf.f)"></span>, unos <span x-text="usd(costoCaso,4)"></span> por denuncia.</p>
+        <div class="grid gap-2"><template x-for="c in costo" :key="c.n"><div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1.4fr_1fr_1fr] gap-x-4 gap-y-0.5 items-center rounded-xl border p-3 bg-white text-sm" style="border-color:var(--line)"><b x-text="c.n"></b><span class="text-right sm:text-left"><b class="tabular-nums" x-text="usd(c.tot*inf.f)"></b> <span class="muted">en el período</span></span><span class="col-span-2 sm:col-span-1 muted"><b class="tabular-nums" style="color:var(--ink)" x-text="Math.round(c.casos*inf.f)"></b> denuncias</span></div></template></div>
       </section>
 
       <section>
@@ -426,11 +727,11 @@ k-tip k-ic{width:17px;height:17px}
       </section>
       <section x-show="conNegocio">
         <h3 class="mb-2">7. Negocio (opcional)</h3>
-        <p class="conc">Hay <span x-text="neg.activos"></span> clientes activos de <span x-text="clientes.length"></span>; con una tarifa de ejemplo de <span x-text="usd(tarifa)"></span> por denuncia, el margen es de <span x-text="neg.margenPct"></span> %, y un cliente lleva <span x-text="clientes[2].dias"></span> días sin usar Kerna.</p>
+        <p class="conc">Hay <span x-text="neg.activos"></span> clientes activos de <span x-text="clientes.length"></span>; con una tarifa de referencia de <span x-text="usd(tarifa)"></span> por denuncia, el margen es de <span x-text="neg.margenPct"></span> %, y un cliente lleva <span x-text="clientes[2].dias"></span> días sin usar Kerna.</p>
         <div class="grid gap-2"><template x-for="c in clientes" :key="c.n"><div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1.4fr_1fr_1fr_1fr] gap-x-4 gap-y-1 items-center rounded-xl border p-3 bg-white text-sm" :class="'bd-'+c.ue" style="border-color:var(--line)"><b x-text="c.n"></b><span><b class="tabular-nums" x-text="c.tot"></b> <span class="muted">denuncias</span></span><span><span class="chip" :class="c.ue"><k-ic :n="ico[c.ue]"></k-ic><span x-text="c.uso+' % del plan'"></span></span></span><span class="chip" :class="c.re"><k-ic :n="ico[c.re]"></k-ic><span x-text="c.ult"></span></span></div></template></div>
-        <p class="text-xs muted mt-2">Tarifa de ejemplo, no contractual. Costos de IA a precios de Anthropic.</p>
+        <p class="text-xs muted mt-2">Tarifa de referencia.</p>
       </section>
-      <footer class="text-xs muted pt-3 border-t" style="border-color:var(--line)">Datos de ejemplo · Fuentes: registros del núcleo, conjunto público de pruebas y precios de la API de Anthropic al 3 nov 2026.</footer>
+      <footer class="text-xs muted pt-3 border-t" style="border-color:var(--line)">Fuentes: registros del núcleo y conjunto público de pruebas.</footer>
     </article>
   </section>
 
@@ -441,7 +742,7 @@ k-tip k-ic{width:17px;height:17px}
       <p class="m-0 mb-4 text-sm muted">Informe de <b x-text="rangoTxt"></b>. Los tres tienen la misma información.</p>
       <div class="grid md:grid-cols-3 gap-4">
         <template x-for="f in formatos" :key="f.k"><div class="rounded-2xl border-2 p-4 flex flex-col gap-3 bg-white" style="border-color:var(--line)">
-          <div class="flex items-center justify-between"><span class="grid place-items-center w-12 h-12 rounded-xl" style="background:var(--brand-soft);color:var(--brand)"><k-ic :n="f.i" style="width:26px;height:26px"></k-ic></span><k-tip :g="'fmt_'+f.k"></k-tip></div>
+          <div class="flex items-center justify-between"><span class="grid place-items-center w-12 h-12 orb-ic rounded-xl" style="background:var(--brand-soft);color:var(--brand)"><k-ic :n="f.i" style="width:26px;height:26px"></k-ic></span><k-tip :g="'fmt_'+f.k"></k-tip></div>
           <div><b class="block text-base" x-text="f.n"></b><span class="text-sm muted" x-text="f.d"></span></div>
           <button type="button" class="btn mt-auto" :class="f.k==='pdf'?'btn-pri':'btn-dark'" :disabled="gen.estado==='cargando'" @click="generar(f)">
             <k-ic x-show="!(gen.estado==='cargando'&&gen.k===f.k)" n="download"></k-ic><k-ic x-show="gen.estado==='cargando'&&gen.k===f.k" n="loader-circle" class="spin"></k-ic>
@@ -449,8 +750,8 @@ k-tip k-ic{width:17px;height:17px}
         </div></template>
       </div>
     </div>
-    <div x-show="gen.estado==='cargando'" role="status" class="card p-4 flex items-center gap-3 bd-na"><k-ic n="loader-circle" class="spin" style="width:24px;height:24px;color:var(--brand)"></k-ic><div class="flex-1"><b>Preparando tu informe…</b><div class="h-2 rounded-full mt-2" style="background:var(--na-bg)"><div class="h-2 rounded-full" :style="'width:'+gen.p+'%;background:var(--brand-2);transition:width 1.7s linear'"></div></div></div></div>
-    <div x-show="gen.estado==='listo'" role="status" class="card p-4 flex flex-wrap items-center gap-3 bd-ok"><k-ic n="circle-check" style="width:28px;height:28px;color:var(--ok)"></k-ic><div class="flex-1 min-w-[200px]"><b class="t-ok">Informe listo</b><div class="text-sm">Se descargó <code class="text-[13px]" x-text="gen.archivo"></code> (maqueta: no se creó ningún archivo real).</div></div><button class="btn btn-sec" @click="gen={estado:'',k:'',p:0,archivo:''}">Generar otro</button></div>
+    <div x-show="gen.estado==='cargando'" role="status" class="card p-4 flex items-center gap-3 bd-na"><svg class="kl kl-load rapido" viewBox="-1 -1 66 66" data-logo="mini" aria-hidden="true"></svg><div class="flex-1"><b>Preparando tu informe…</b><div class="h-2 rounded-full mt-2" style="background:var(--na-bg)"><div class="h-2 rounded-full" :style="'width:'+gen.p+'%;background:var(--brand-2);transition:width 1.7s linear'"></div></div></div></div>
+    <div x-show="gen.estado==='listo'" role="status" class="card p-4 flex flex-wrap items-center gap-3 bd-ok"><k-ic n="circle-check" style="width:28px;height:28px;color:var(--ok)"></k-ic><div class="flex-1 min-w-[200px]"><b class="t-ok">Informe listo</b><div class="text-sm">Se descargó <code class="text-[13px]" x-text="gen.archivo"></code>..</div></div><button class="btn btn-sec" @click="gen={estado:'',k:'',p:0,archivo:''}">Generar otro</button></div>
     <div><button class="btn btn-sec" @click="paso=2"><k-ic n="arrow-left"></k-ic> Volver a la vista previa</button></div>
   </section>
 </div>
@@ -458,25 +759,25 @@ k-tip k-ic{width:17px;height:17px}
 <!-- ========== NEGOCIO ========== -->
 <div x-show="view==='negocio'" class="grid gap-5">
   <div class="flex flex-wrap items-start justify-between gap-4">
-    <div><h1 class="disp text-2xl font-bold m-0" style="color:var(--brand)">Negocio</h1><p class="m-0 mt-1 muted text-sm max-w-xl">Kerna como servicio: quién lo usa, cuánto cuesta atenderlo y cuánto deja. Últimos 30 días · fuente: almacén de solicitudes (sin textos de denuncias).</p></div>
-    <a href="#/informe" class="btn btn-pri w-full sm:w-auto"><k-ic n="file-down"></k-ic> Generar informe de gestión</a>
+    <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Negocio</h1><p class="m-0 mt-1 muted text-sm max-w-xl">Kerna como servicio: quién lo usa, cuánto cuesta atenderlo y cuánto deja. Últimos 30 días · fuente: almacén de solicitudes (sin textos de denuncias).</p></div>
+    <a href="#informe" class="btn btn-pri w-full sm:w-auto"><k-ic n="file-down"></k-ic> Generar informe de gestión</a>
   </div>
-  <div class="rounded-xl p-3 flex gap-3 items-start text-sm" style="background:var(--warn-bg);color:var(--warn)"><k-ic n="flask-conical" style="margin-top:2px"></k-ic><span><b>Datos y tarifa de ejemplo.</b> Solo Veridy existe hoy; los otros dos clientes y las tarifas son ficticios para mostrar cómo se vería con varios clientes.</span></div>
 
-  <section class="card p-5 bd-ok"><div class="flex flex-wrap items-start gap-4">
-    <span class="grid place-items-center w-14 h-14 rounded-2xl shrink-0" style="background:var(--ok-bg);color:var(--ok)"><k-ic n="trending-up" style="width:30px;height:30px"></k-ic></span>
+  <section class="card card-hi p-5 bd-ok"><div class="flex flex-wrap items-start gap-4">
+    <span class="grid place-items-center w-14 h-14 orb-ic rounded-2xl shrink-0" style="background:var(--ok-bg);color:var(--ok)"><k-ic n="trending-up" style="width:30px;height:30px"></k-ic></span>
     <div class="flex-1 min-w-[220px]"><div class="flex items-center gap-2 flex-wrap"><h2 class="disp text-xl font-bold m-0">Negocio saludable, con un cliente en riesgo</h2><k-tip g="neg_estado"></k-tip></div>
-    <p class="m-0 mt-1 text-[15px]"><b>Cada denuncia deja margen</b> porque la IA cuesta centavos. Los puntos a vigilar: <b>el Cliente C dejó de usar Kerna</b> y casi nadie valora las sugerencias.</p></div></div></section>
+    <p class="m-0 mt-1 text-[15px]"><b>Cada denuncia deja margen</b> porque la IA cuesta centavos. Los puntos a vigilar: <b>Constructora Los Maitenes dejó de usar Kerna</b> y casi nadie valora las sugerencias.</p></div></div></section>
 
   <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" aria-label="Indicadores de negocio">
-    <template x-for="k in negKpis" :key="k.k"><article class="card p-4 flex flex-col" :class="'bd-'+k.e">
-      <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 text-sm font-semibold muted"><k-ic :n="k.i"></k-ic><span x-text="k.l"></span></span><k-tip :g="k.k"></k-tip></div>
-      <div class="mt-2"><span class="text-[32px] leading-none font-bold tabular-nums" x-text="k.v"></span><span class="text-sm font-semibold muted ml-1" x-text="k.u"></span></div>
+    <template x-for="k in negKpis" :key="k.k"><article class="card card-k p-4 flex flex-col" :class="'bd-'+k.e">
+      <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 text-[15px] font-semibold muted"><k-ic :n="k.i"></k-ic><span x-text="k.l"></span></span><k-tip :g="k.k"></k-tip></div>
+      <div class="flex items-center justify-between gap-3 mt-4"><div class="min-w-0"><span class="kv" x-count="k.v"></span><span class="text-[15px] font-semibold muted ml-1.5" x-text="k.u"></span></div>
+        <template x-if="k.ring!==undefined"><div class="orbring" :class="'rg-'+k.e" :style="'--v:'+k.ring"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="rg-r"><circle class="rg-t" cx="32" cy="32" r="26"/><circle class="rg-p" cx="32" cy="32" r="26" pathLength="100"/><g class="rg-m" x-show="k.meta" :style="'transform:rotate('+(k.meta*3.6)+'deg)'"><line x1="55" y1="32" x2="63" y2="32"/></g><g class="rg-s"><circle cx="58" cy="32" r="4.6"/></g></g></svg><span class="rg-n sm" x-show="k.rc" x-text="k.rc"></span></div></template></div>
       <div class="flex flex-wrap items-center gap-2 mt-3"><span class="chip" :class="k.e"><k-ic :n="ico[k.e]"></k-ic><span x-text="k.et"></span></span><span class="chip" :class="k.de" x-show="k.dt"><k-ic :n="k.da"></k-ic><span x-text="k.dt"></span></span></div>
-      <p class="m-0 mt-3 text-[13px] leading-snug" x-text="k.f"></p><p class="m-0 mt-auto pt-2 text-xs muted" x-text="k.m"></p></article></template>
+      <p class="m-0 mt-3 text-[14.5px] leading-snug" x-text="k.f"></p><p class="m-0 mt-auto pt-2 text-xs muted" x-text="k.m"></p></article></template>
   </section>
 
-  <section class="card p-4 md:p-5"><div class="flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Clientes: uso, costo y actividad</h2><k-tip g="neg_clientes"></k-tip></div>
+  <section class="card p-4 md:p-5"><div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Clientes: uso, costo y actividad</h2><k-tip g="neg_clientes"></k-tip></div>
     <div class="grid gap-3">
       <template x-for="c in clientes" :key="c.n"><div class="rounded-xl border p-3 md:p-4 bg-white grid lg:grid-cols-[1.2fr_1.6fr_1fr_1fr] gap-3 lg:gap-5 items-center" :class="'bd-'+c.re" style="border-color:var(--line)">
         <div class="flex items-center justify-between lg:block gap-2"><b class="block" x-text="c.n"></b><span class="text-xs muted" x-text="c.plan+' denuncias/mes contratadas'"></span>
@@ -489,46 +790,52 @@ k-tip k-ic{width:17px;height:17px}
     </div></section>
 
   <section class="grid lg:grid-cols-3 gap-4">
-    <div class="card p-4 lg:col-span-2"><div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por cliente</h2><k-tip g="neg_denuncias"></k-tip></div><p class="m-0 mb-2 text-sm">Veridy aporta <b x-text="pct(clientes[0].tot,neg.tot)+' %'"></b> del volumen. Con un solo cliente grande, perderlo sería un riesgo alto.</p>
+    <div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por cliente</h2><k-tip g="neg_denuncias"></k-tip></div><p class="m-0 mb-2 text-sm">Veridy aporta <b x-text="pct(clientes[0].tot,neg.tot)+' %'"></b> del volumen. Con un solo cliente grande, perderlo sería un riesgo alto.</p>
       <div id="ch-cli" style="height:260px" role="img" aria-label="Gráfico de área apilada de denuncias por cliente en 30 días"></div></div>
-    <div class="card p-4"><div class="flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Adopción</h2><k-tip g="neg_adopcion"></k-tip></div>
+    <div class="card p-4"><div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Adopción</h2><k-tip g="neg_adopcion"></k-tip></div>
       <p class="m-0 mb-3 text-sm"><b>De cada 100 denuncias, <span x-text="sugPct"></span> recibieron sugerencia pero solo 16 fueron valoradas</b> por auditores.</p>
       <ul class="list-none p-0 m-0 grid gap-3"><template x-for="a in embudo" :key="a.n"><li><div class="flex justify-between text-sm gap-2"><span x-text="a.n"></span><span class="chip" :class="a.e"><k-ic :n="ico[a.e]"></k-ic><span x-text="a.v+' %'"></span></span></div><div class="h-3 rounded-full mt-1.5" style="background:#E3E7F2"><div class="h-3 rounded-full" :class="'f-'+a.e" :style="'width:'+a.v+'%'"></div></div></li></template></ul>
-      <p class="m-0 mt-3 text-xs muted">Útiles se calcula sobre las valoradas (11 de 14 en el ejemplo).</p></div>
+      <p class="m-0 mt-3 text-xs muted">Útiles se calcula sobre las valoradas (11 de 14).</p></div>
   </section>
 
   <section class="grid lg:grid-cols-3 gap-4">
-    <div class="card p-4"><div class="flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Supuestos editables</h2></div>
-      <span class="chip warn mb-3"><k-ic n="pencil"></k-ic> Tarifa de ejemplo, no contractual</span>
+    <div class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Supuestos editables</h2></div>
+      <span class="chip warn mb-3"><k-ic n="pencil"></k-ic> Tarifa de referencia</span>
       <div class="mb-4"><div class="flex justify-between items-center"><label for="tf" class="font-semibold text-sm flex items-center gap-1.5">Tarifa por denuncia <k-tip g="tarifa"></k-tip></label><b class="text-lg" style="color:var(--brand)" x-text="usd(tarifa)"></b></div>
         <input id="tf" type="range" class="range" min="0.1" max="2" step="0.05" x-model.number="tarifa" :style="'--p:'+((tarifa-0.1)/1.9*100)+'%'" aria-valuetext="tarifa por denuncia"><div class="flex justify-between text-xs muted"><span>US$ 0,10</span><span>US$ 2,00</span></div></div>
       <div><div class="flex justify-between items-center"><label for="cr" class="font-semibold text-sm flex items-center gap-1.5">Crecimiento mensual <k-tip g="crecimiento"></k-tip></label><b class="text-lg" style="color:var(--brand)" x-text="crec+' %'"></b></div>
         <input id="cr" type="range" class="range" min="0" max="30" step="1" x-model.number="crec" :style="'--p:'+(crec/30*100)+'%'" @input="$nextTick(()=>charts())"><div class="flex justify-between text-xs muted"><span>0 %</span><span>30 %</span></div></div>
       <button type="button" class="btn btn-sec mt-4 w-full" @click="tarifa=0.5;crec=15;$nextTick(()=>charts())"><k-ic n="rotate-ccw"></k-ic> Volver a lo recomendado</button></div>
-    <div class="card p-4 lg:col-span-2"><div class="flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Proyección de ingresos y costo</h2><k-tip g="proyeccion"></k-tip></div>
+    <div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Proyección de ingresos y costo</h2><k-tip g="proyeccion"></k-tip></div>
       <p class="m-0 mb-2 text-sm">Con <b x-text="crec+' %'"></b> de crecimiento mensual, en 6 meses Kerna ingresaría <b x-text="usd(proy[5].ing,0)"></b> al mes con un margen de <b x-text="proy[5].mp+' %'"></b>.</p>
       <div id="ch-proy" style="height:240px" role="img" aria-label="Proyección a 6 meses de ingresos, costo total y margen"></div>
-      <p class="m-0 mt-2 text-xs muted">Costo = IA a precios de Anthropic + costos fijos de ejemplo (US$ 40/mes de infraestructura). Supuesto, no dato.</p></div>
+      <p class="m-0 mt-2 text-xs muted">Costo = IA + costos fijos (US$ 40/mes de infraestructura).</p></div>
   </section>
 </div>
 
 <!-- ========== AJUSTES ========== -->
 <div x-show="view==='ajustes'" class="grid gap-5 pb-24">
   <div class="flex flex-wrap items-start justify-between gap-3">
-    <div><h1 class="disp text-2xl font-bold m-0" style="color:var(--brand)">Ajustes</h1><p class="m-0 mt-1 muted text-sm max-w-xl">Cambia cómo trabaja Kerna. Cada ajuste tiene un «?» que explica qué es y qué pasa si lo cambias. Los valores recomendados están marcados.</p></div>
+    <div><h1 class="disp ph-t m-0" style="color:var(--brand)">Ajustes</h1><p class="m-0 mt-1 muted text-sm max-w-xl">Cambia cómo trabaja Kerna. Cada ajuste tiene un «?» que explica qué es y qué pasa si lo cambias. Los valores recomendados están marcados.</p></div>
     <button type="button" class="btn btn-sec" @click="restaurar()"><k-ic n="rotate-ccw"></k-ic> Volver a lo recomendado</button>
   </div>
 
-  <template x-for="g in grupos" :key="g.id"><section class="card p-4 md:p-5" :aria-labelledby="'g-'+g.id">
-    <div class="flex items-center gap-3 mb-4"><span class="grid place-items-center w-10 h-10 rounded-xl" style="background:var(--brand-soft);color:var(--brand)"><k-ic :n="g.i"></k-ic></span><div><h2 :id="'g-'+g.id" class="text-base font-bold m-0" x-text="g.t"></h2><p class="m-0 text-sm muted" x-text="g.d"></p></div></div>
+  <template x-for="g in grupos" :key="g.id"><section class="card mod" :aria-labelledby="'g-'+g.id">
+    <div class="mod-art">
+      <p class="live-k">Así queda en vivo</p>
+      <template x-if="g.id==='proc'"><svg viewBox="0 0 300 300" class="orb-svg" role="img" :aria-label="vivo('proc')"><circle class="ao" cx="150" cy="150" r="120"/><g class="spin"><g class="sn" :class="(0>=s.envios)?'off':''" :style="'transform:rotate('+(0*360/Math.max(1,s.envios))+'deg)'"><circle class="as" cx="270" cy="150" r="10"/></g><g class="sn" :class="(1>=s.envios)?'off':''" :style="'transform:rotate('+(1*360/Math.max(1,s.envios))+'deg)'"><circle class="as" cx="270" cy="150" r="10"/></g><g class="sn" :class="(2>=s.envios)?'off':''" :style="'transform:rotate('+(2*360/Math.max(1,s.envios))+'deg)'"><circle class="as" cx="270" cy="150" r="10"/></g><g class="sn" :class="(3>=s.envios)?'off':''" :style="'transform:rotate('+(3*360/Math.max(1,s.envios))+'deg)'"><circle class="as" cx="270" cy="150" r="10"/></g><g class="sn" :class="(4>=s.envios)?'off':''" :style="'transform:rotate('+(4*360/Math.max(1,s.envios))+'deg)'"><circle class="as" cx="270" cy="150" r="10"/></g><g class="sn" :class="(5>=s.envios)?'off':''" :style="'transform:rotate('+(5*360/Math.max(1,s.envios))+'deg)'"><circle class="as" cx="270" cy="150" r="10"/></g><g class="sn" :class="(6>=s.envios)?'off':''" :style="'transform:rotate('+(6*360/Math.max(1,s.envios))+'deg)'"><circle class="as" cx="270" cy="150" r="10"/></g><g class="sn" :class="(7>=s.envios)?'off':''" :style="'transform:rotate('+(7*360/Math.max(1,s.envios))+'deg)'"><circle class="as" cx="270" cy="150" r="10"/></g><g class="sn" :class="(8>=s.envios)?'off':''" :style="'transform:rotate('+(8*360/Math.max(1,s.envios))+'deg)'"><circle class="as" cx="270" cy="150" r="10"/></g><g class="sn" :class="(9>=s.envios)?'off':''" :style="'transform:rotate('+(9*360/Math.max(1,s.envios))+'deg)'"><circle class="as" cx="270" cy="150" r="10"/></g></g><circle class="ao" cx="150" cy="150" r="72"/><g class="spin2"><g class="sn" :class="(0>=s.reintentos)?'off':''" :style="'transform:rotate('+(0*360/Math.max(1,s.reintentos))+'deg)'"><circle class="as2" cx="222" cy="150" r="6"/></g><g class="sn" :class="(1>=s.reintentos)?'off':''" :style="'transform:rotate('+(1*360/Math.max(1,s.reintentos))+'deg)'"><circle class="as2" cx="222" cy="150" r="6"/></g><g class="sn" :class="(2>=s.reintentos)?'off':''" :style="'transform:rotate('+(2*360/Math.max(1,s.reintentos))+'deg)'"><circle class="as2" cx="222" cy="150" r="6"/></g><g class="sn" :class="(3>=s.reintentos)?'off':''" :style="'transform:rotate('+(3*360/Math.max(1,s.reintentos))+'deg)'"><circle class="as2" cx="222" cy="150" r="6"/></g><g class="sn" :class="(4>=s.reintentos)?'off':''" :style="'transform:rotate('+(4*360/Math.max(1,s.reintentos))+'deg)'"><circle class="as2" cx="222" cy="150" r="6"/></g></g><circle class="pulse-ring" :class="s.reprocesar?'on':''" cx="150" cy="150" r="44"/><g class="core"><circle class="acore" cx="150" cy="150" r="26"/><circle class="acore-l" cx="150" cy="150" r="9"/></g></svg></template><template x-if="g.id==='ia'"><svg viewBox="0 0 300 300" class="orb-svg" role="img" :aria-label="vivo('ia')"><circle class="ao" :class="s.evaluador?'solid':'dim'" cx="150" cy="150" r="132"/><g class="sn" :class="(!s.evaluador||0>=s.candidatos)?'off':''" :style="'transform:rotate('+(0*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||1>=s.candidatos)?'off':''" :style="'transform:rotate('+(1*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||2>=s.candidatos)?'off':''" :style="'transform:rotate('+(2*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||3>=s.candidatos)?'off':''" :style="'transform:rotate('+(3*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||4>=s.candidatos)?'off':''" :style="'transform:rotate('+(4*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||5>=s.candidatos)?'off':''" :style="'transform:rotate('+(5*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||6>=s.candidatos)?'off':''" :style="'transform:rotate('+(6*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||7>=s.candidatos)?'off':''" :style="'transform:rotate('+(7*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||8>=s.candidatos)?'off':''" :style="'transform:rotate('+(8*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||9>=s.candidatos)?'off':''" :style="'transform:rotate('+(9*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||10>=s.candidatos)?'off':''" :style="'transform:rotate('+(10*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||11>=s.candidatos)?'off':''" :style="'transform:rotate('+(11*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||12>=s.candidatos)?'off':''" :style="'transform:rotate('+(12*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||13>=s.candidatos)?'off':''" :style="'transform:rotate('+(13*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||14>=s.candidatos)?'off':''" :style="'transform:rotate('+(14*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||15>=s.candidatos)?'off':''" :style="'transform:rotate('+(15*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||16>=s.candidatos)?'off':''" :style="'transform:rotate('+(16*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||17>=s.candidatos)?'off':''" :style="'transform:rotate('+(17*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||18>=s.candidatos)?'off':''" :style="'transform:rotate('+(18*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="sn" :class="(!s.evaluador||19>=s.candidatos)?'off':''" :style="'transform:rotate('+(19*360/Math.max(3,s.candidatos)+9)+'deg)'"><circle class="cd" cx="282" cy="150" r="4"/></g><g class="spin3" :class="s.evaluador?'':'off'"><circle class="as" cx="282" cy="150" r="9"/></g><circle class="ao" :class="(s.cadena[0]&&s.cadena[0].on)?'solid':'dim'" cx="150" cy="150" r="62"/><g class="spin2" :class="(s.cadena[0]&&s.cadena[0].on)?'':'off'"><circle class="as" cx="212" cy="150" r="11"/></g><circle class="ao" :class="(s.cadena[1]&&s.cadena[1].on)?'solid':'dim'" cx="150" cy="150" r="96"/><g class="spin" :class="(s.cadena[1]&&s.cadena[1].on)?'':'off'"><circle class="as" cx="246" cy="150" r="8"/></g><g class="core"><circle class="acore" cx="150" cy="150" r="20"/><circle class="acore-l" cx="150" cy="150" r="7"/></g></svg></template><template x-if="g.id==='comp'"><svg viewBox="0 0 300 300" class="orb-svg" role="img" :aria-label="vivo('comp')"><circle class="ao" cx="150" cy="150" r="100"/><line class="alink" :class="s.compartir.includes('analista')?'':'off'" x1="150" y1="150" x2="79.3" y2="79.3"/><circle class="team" :class="s.compartir.includes('analista')?'on':''" cx="79.3" cy="79.3" r="22"/><text class="team-t" :class="s.compartir.includes('analista')?'on':''" x="79.3" y="83.3">AN</text><line class="alink" :class="s.compartir.includes('comite')?'':'off'" x1="150" y1="150" x2="220.7" y2="79.3"/><circle class="team" :class="s.compartir.includes('comite')?'on':''" cx="220.7" cy="79.3" r="22"/><text class="team-t" :class="s.compartir.includes('comite')?'on':''" x="220.7" y="83.3">CE</text><line class="alink" :class="s.compartir.includes('auditoria')?'':'off'" x1="150" y1="150" x2="79.3" y2="220.7"/><circle class="team" :class="s.compartir.includes('auditoria')?'on':''" cx="79.3" cy="220.7" r="22"/><text class="team-t" :class="s.compartir.includes('auditoria')?'on':''" x="79.3" y="224.7">AU</text><line class="alink" :class="s.compartir.includes('legal')?'':'off'" x1="150" y1="150" x2="220.7" y2="220.7"/><circle class="team" :class="s.compartir.includes('legal')?'on':''" cx="220.7" cy="220.7" r="22"/><text class="team-t" :class="s.compartir.includes('legal')?'on':''" x="220.7" y="224.7">FL</text><g class="spin3"><circle class="as" cx="250" cy="150" r="7"/></g><g class="core"><circle class="acore" cx="150" cy="150" r="22"/><circle class="acore-l" cx="150" cy="150" r="8"/></g></svg></template><template x-if="g.id==='plazos'"><svg viewBox="0 0 300 300" class="orb-svg" role="img" :aria-label="vivo('plazos')"><circle class="ao" cx="150" cy="150" r="115"/><circle class="arc" cx="150" cy="150" r="115" pathLength="100" transform="rotate(-90 150 150)" :style="'stroke-dasharray:'+(s.maxresp/60*100)+' 100'"/><g class="sn" :style="'transform:rotate('+(s.maxresp/60*360-90)+'deg)'"><circle class="as" cx="265" cy="150" r="11"/></g><circle class="ao" cx="150" cy="150" r="88" style="opacity:.5"/><circle class="arc2" cx="150" cy="150" r="88" pathLength="100" transform="rotate(-90 150 150)" :style="'stroke-dasharray:'+(s.alerta/24*100)+' 100'"/><text class="bigtxt" x="150" y="152"><tspan x-text="s.maxresp"></tspan><tspan font-size="20" dx="4">s</tspan></text><text class="subtxt" x="150" y="182">para responder</text></svg></template>
+      <p class="live" aria-live="polite"><span class="live-dot" aria-hidden="true"></span><span x-text="vivo(g.id)"></span></p>
+    </div>
+    <div class="mod-body">
+    <div class="flex items-center gap-4 mb-3"><span class="orb-ic grid place-items-center w-12 h-12 shrink-0" style="background:var(--brand-soft);color:var(--brand)"><k-ic :n="g.i" style="width:24px;height:24px"></k-ic></span><div><h2 :id="'g-'+g.id" class="mod-h" x-text="g.t"></h2><p class="m-0 text-sm muted" x-text="g.d"></p></div></div>
     <div class="grid">
-      <template x-for="it in g.items" :key="it.k"><div class="py-4 border-t grid gap-2" style="border-color:var(--line)" :class="(it.dep&&!s[it.dep])?'opacity-60':''">
+      <template x-for="it in g.items" :key="it.k"><div class="ctl" :class="(it.dep&&!s[it.dep])?'opacity-60':''">
         <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0"><div class="flex items-center gap-1.5 flex-wrap"><span :id="'l-'+it.k" class="font-semibold text-[15px]" x-text="it.l"></span><k-tip :g="it.k"></k-tip>
+          <div class="min-w-0"><div class="flex items-center gap-1.5 flex-wrap"><span :id="'l-'+it.k" class="font-semibold text-[17px]" x-text="it.l"></span><k-tip :g="it.k"></k-tip>
             <span x-show="esRec(it.k)" class="chip ok"><k-ic n="check"></k-ic> Recomendado</span><span x-show="!esRec(it.k)" class="chip warn"><k-ic n="pencil"></k-ic> Cambiado</span></div>
             <p class="m-0 mt-0.5 text-sm muted" x-text="it.d"></p></div>
-          <template x-if="it.t==='sw'"><button type="button" role="switch" class="sw" :aria-checked="s[it.k]" :aria-labelledby="'l-'+it.k" @click="s[it.k]=!s[it.k]"></button></template>
-          <template x-if="it.t==='rg'"><span class="font-bold text-lg tabular-nums whitespace-nowrap" style="color:var(--brand)" x-text="it.f(s[it.k])"></span></template>
+          <template x-if="it.t==='sw'"><div class="flex items-center gap-3 shrink-0"><span class="swt" x-text="s[it.k]?'Encendido':'Apagado'"></span><button type="button" role="switch" class="sw" :aria-checked="s[it.k]" :aria-labelledby="'l-'+it.k" @click="s[it.k]=!s[it.k]"></button></div></template>
+          <template x-if="it.t==='rg'"><span class="kv-s whitespace-nowrap" style="color:var(--brand)" x-text="it.f(s[it.k])"></span></template>
         </div>
         <template x-if="it.t==='rg'"><div>
           <input type="range" class="range" :min="it.min" :max="it.max" :step="it.step||1" x-model.number="s[it.k]" :aria-labelledby="'l-'+it.k" :aria-valuetext="it.f(s[it.k])" :disabled="!!(it.dep&&!s[it.dep])" :style="'--p:'+((s[it.k]-it.min)/(it.max-it.min)*100)+'%'">
@@ -537,18 +844,19 @@ k-tip k-ic{width:17px;height:17px}
         </div></template>
         <template x-if="it.t==='sg'"><div class="seg self-start" role="group" :aria-labelledby="'l-'+it.k"><template x-for="o in it.o" :key="o.v"><button type="button" :aria-pressed="s[it.k]===o.v" @click="s[it.k]=o.v" x-text="o.t+(o.v===rec[it.k]?' ★':'')"></button></template></div></template>
         <template x-if="it.t==='ch'"><div class="flex flex-wrap gap-2" role="group" :aria-labelledby="'l-'+it.k"><template x-for="o in it.o" :key="o.v"><button type="button" class="chip !text-sm !py-2 !px-3 cursor-pointer border" :class="s[it.k].includes(o.v)?'brand':'na'" :style="s[it.k].includes(o.v)?'border-color:var(--brand)':'border-color:transparent'" :aria-pressed="s[it.k].includes(o.v)" @click="toggleCh(it.k,o.v)"><k-ic :n="s[it.k].includes(o.v)?'user-check':'user'"></k-ic><span x-text="o.t"></span></button></template></div></template>
-        <template x-if="it.t==='cd'"><div class="grid gap-2">
-          <template x-for="(m,ix) in s.cadena" :key="m.v"><div class="flex items-center gap-3 rounded-xl border p-3 bg-white" style="border-color:var(--line)" :style="m.on?'':'opacity:.6'">
-            <span class="grid place-items-center w-7 h-7 rounded-full text-xs font-bold shrink-0" style="background:var(--brand);color:#fff" x-text="ix+1"></span>
-            <div class="flex-1 min-w-0"><b class="block text-sm" x-text="nombreModelo(m.v).t"></b><span class="text-xs muted" x-text="nombreModelo(m.v).d"></span></div>
-            <div class="flex items-center gap-1"><button type="button" class="btn btn-sec !min-h-[44px] !w-11 !px-0" :disabled="ix===0" @click="mover(ix,-1)" :aria-label="'Subir '+nombreModelo(m.v).t"><k-ic n="arrow-up"></k-ic></button><button type="button" class="btn btn-sec !min-h-[44px] !w-11 !px-0" :disabled="ix===s.cadena.length-1" @click="mover(ix,1)" :aria-label="'Bajar '+nombreModelo(m.v).t"><k-ic n="arrow-down"></k-ic></button>
+        <template x-if="it.t==='cd'"><div class="grid gap-3">
+          <template x-for="(m,ix) in s.cadena" :key="m.v"><div class="cn-row" :style="m.on?'':'opacity:.65'">
+            <span class="cn-n" x-text="ix+1"></span>
+            <div class="flex-1 min-w-0"><b class="block text-[15.5px]" x-text="nombreModelo(m.v).t"></b><span class="text-xs muted" x-text="nombreModelo(m.v).d"></span></div>
+            <div class="flex items-center gap-1.5"><button type="button" class="btn btn-sec !min-h-[44px] !w-11 !px-0" :disabled="ix===0" @click="mover(ix,-1)" :aria-label="'Acercar al centro: '+nombreModelo(m.v).t"><k-ic n="arrow-up"></k-ic></button><button type="button" class="btn btn-sec !min-h-[44px] !w-11 !px-0" :disabled="ix===s.cadena.length-1" @click="mover(ix,1)" :aria-label="'Alejar del centro: '+nombreModelo(m.v).t"><k-ic n="arrow-down"></k-ic></button>
             <button type="button" role="switch" class="sw ml-1" :aria-checked="m.on" :aria-label="'Usar '+nombreModelo(m.v).t" @click="m.on=!m.on"></button></div></div></template>
-          <p class="m-0 text-xs muted">Se prueban en este orden. Si uno falla, pasa al siguiente. Si fallan todos, el caso queda en revisión manual.</p></div></template>
+          <p class="m-0 text-xs muted">Cada modelo es una órbita: el primero está más cerca del centro y se prueba antes. Si uno falla, pasa al siguiente. Si fallan todos, el caso queda en revisión manual.</p></div></template>
       </div></template>
+    </div>
     </div>
   </section></template>
 
-  <div class="fixed bottom-[62px] lg:bottom-0 left-0 right-0 lg:left-64 z-40 p-3" x-show="cambios.length" x-transition>
+  <div class="fixed bottom-[62px] lg:bottom-0 left-0 right-0 lg:left-72 z-40 p-3" x-show="cambios.length" x-transition>
     <div class="max-w-3xl mx-auto rounded-2xl p-3 pl-4 flex flex-wrap items-center gap-3 justify-between" style="background:var(--brand);color:#fff;box-shadow:0 8px 30px rgba(15,23,54,.35)">
       <span class="font-semibold text-sm flex items-center gap-2"><k-ic n="pencil-line"></k-ic><span x-text="cambios.length+(cambios.length===1?' cambio sin guardar':' cambios sin guardar')"></span></span>
       <span class="flex gap-2"><button type="button" class="btn !min-h-[40px]" style="background:rgba(255,255,255,.15);color:#fff" @click="descartar()">Descartar</button><button type="button" class="btn btn-pri !min-h-[40px]" @click="resumenAbierto=true">Revisar y guardar</button></span>
@@ -574,10 +882,10 @@ k-tip k-ic{width:17px;height:17px}
   </div>
 
   <nav class="tabbar lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t flex" style="border-color:var(--line)" aria-label="Principal">
-    <a href="#/resumen" :class="view==='resumen'?'on':''" :aria-current="view==='resumen'?'page':null"><k-ic n="layout-dashboard"></k-ic>Resumen</a>
-    <a href="#/informe" class="gen" :aria-current="view==='informe'?'page':null"><k-ic n="file-down"></k-ic>Informe</a>
-    <a href="#/negocio" :class="view==='negocio'?'on':''" :aria-current="view==='negocio'?'page':null"><k-ic n="briefcase-business"></k-ic>Negocio</a>
-    <a href="#/ajustes" :class="view==='ajustes'?'on':''" :aria-current="view==='ajustes'?'page':null"><k-ic n="sliders-horizontal"></k-ic>Ajustes</a>
+    <a href="#resumen" :class="view==='resumen'?'on':''" :aria-current="view==='resumen'?'page':null"><k-ic n="layout-dashboard"></k-ic>Resumen</a>
+    <a href="#informe" class="gen" :aria-current="view==='informe'?'page':null"><k-ic n="file-down"></k-ic>Informe</a>
+    <a href="#negocio" :class="view==='negocio'?'on':''" :aria-current="view==='negocio'?'page':null"><k-ic n="briefcase-business"></k-ic>Negocio</a>
+    <a href="#ajustes" :class="view==='ajustes'?'on':''" :aria-current="view==='ajustes'?'page':null"><k-ic n="sliders-horizontal"></k-ic>Ajustes</a>
   </nav>
 </div>
 
@@ -605,7 +913,7 @@ salud_busqueda:{t:'Búsqueda de leyes',q:'Encuentra en la base de leyes los art�
 casos:{t:'Denuncias analizadas',q:'Cuántas denuncias de Veridy procesó Kerna en el período.',c:'Sirve para dimensionar la carga. Un salto brusco puede ser una carga masiva o un problema.',l:'Cómo leerlo'},
 sugerencia:{t:'Con sugerencia',q:'De cada 100 denuncias, cuántas terminaron con una sugerencia de leyes lista para la persona que las revisa.',c:'Si baja, más casos requieren revisión manual: mira «¿Qué falló y qué hacer?».',l:'Cómo leerlo'},
 tiempo:{t:'Tiempo de respuesta',q:'Cuánto tarda Kerna en entregar la sugerencia. «Caso típico» significa que la mitad de los casos tarda menos que eso.',c:'La meta es 15 segundos. Más lento no rompe nada, pero la persona espera más.',l:'Cómo leerlo'},
-costo_k:{t:'Costo estimado',q:'Lo que costaría el uso medido si se pagara a los precios de la API de Anthropic (Claude Haiku 5.5).',c:'Es una estimación: hoy el modelo real puede ser otro. Sube con más denuncias o textos más largos.',l:'Cómo leerlo'},
+costo_k:{t:'Costo del período',q:'Lo que cuesta atender las denuncias del período: los tokens (trozos de texto) que lee y escribe cada modelo usado, por su precio.',c:'Precios de la API de Anthropic, 3 nov 2026. Sube con más denuncias o textos más largos.',l:'Cómo leerlo'},
 casos_dia:{t:'Denuncias por día',q:'Cada barra es un día, dividida según cómo se resolvió el caso. Las líneas punteadas marcan incidentes.',c:'Muchas barras rojas o ámbar indican que el modelo principal está fallando.',l:'Cómo leerlo'},
 modos:{t:'Cómo se resolvieron',q:'Reparte las denuncias entre modelo principal, de respaldo y revisión manual.',c:'Lo ideal es que casi todo sea verde.',l:'Cómo leerlo'},
 calidad:{t:'Calidad de las sugerencias',q:'Se prueba a Kerna con casos cuya respuesta correcta ya se conoce. El acierto indica con qué frecuencia el artículo correcto aparece entre sus 5 primeras sugerencias.',c:'Bajo 80 % es ámbar; bajo 70 % es rojo. Se mide sobre un conjunto público de pruebas, no sobre denuncias reales.',l:'Cómo leerlo'},
@@ -615,7 +923,7 @@ latencia:{t:'Rapidez por día',q:'Línea azul: la mitad de los casos del día. L
 incidentes:{t:'Incidentes',q:'Motivos por los que un caso no recibió sugerencia automática y qué conviene hacer.',c:'Los casos afectados no se pierden: pasan a revisión manual y pueden reintentarse.',l:'Cómo leerlo'},
 pendientes:{t:'Casos esperando reintento',q:'Casos que fallaron y se volverán a intentar solos, con la frecuencia y el máximo que definas en Ajustes.',c:'Al agotar los intentos quedan en revisión manual definitiva.',l:'Cómo leerlo'},
 mapa:{t:'Mapa de horarios',q:'Muestra en qué días y horas llegan más denuncias.',c:'Útil para planificar turnos y para elegir una hora de bajo uso al actualizar el sistema.',l:'Cómo leerlo'},
-costo:{t:'Costo con Claude',q:'Convierte los tokens consumidos (trozos de texto que lee y escribe el modelo) en dólares, según la tabla de precios de Anthropic.',c:'Haiku es el escenario principal; Sonnet y Opus son comparaciones por si se quiere más calidad.',l:'Cómo leerlo'},
+costo:{t:'Costo',q:'Se calcula sobre los tokens de cada modelo usado: Claude Haiku 5.5 resuelve primero y Claude Sonnet 5.5 respalda cuando el primero falla.',c:'Precios de la API de Anthropic, 3 nov 2026: Haiku 5.5, US$ 0,10 de entrada y 0,50 de salida por millón de tokens; Sonnet 5.5, US$ 2 y 10.',l:'Cómo leerlo'},
 leyes:{t:'Leyes más frecuentes',q:'Ranking de las leyes que Kerna más sugiere.',c:'Ayuda a ver qué tipo de denuncias predominan.',l:'Cómo leerlo'},
 periodo:{t:'Período del informe',q:'Rango de fechas que cubrirá el informe. Se compara con el período anterior de igual largo.',c:'Períodos más largos suavizan altibajos; más cortos muestran lo reciente.',l:'Qué pasa si cambia'},
 fmt_pdf:{t:'PDF',q:'Documento listo para leer, imprimir o adjuntar a un correo, con gráficos y conclusiones.',c:'Ideal para comités y auditorías. No se edita fácilmente.',l:'Cuándo usarlo'},
@@ -634,14 +942,14 @@ maxresp:{t:'Tiempo objetivo de respuesta',q:'Tiempo que Kerna se da para entrega
 neg_estado:{t:'Estado del negocio',q:'Resume si Kerna como servicio va bien: clientes que lo usan, margen y riesgos.',c:'Rojo si un cliente grande se va o el margen es bajo; ámbar si hay algo por vigilar.',l:'Cómo leerlo'},
 neg_clientes_k:{t:'Clientes activos',q:'Clientes que enviaron al menos una denuncia en los últimos 30 días.',c:'Un cliente sin uso reciente es candidato a abandonar el servicio.',l:'Cómo leerlo'},
 neg_denuncias_k:{t:'Denuncias procesadas',q:'Total de denuncias analizadas entre todos los clientes en 30 días.',c:'Es la base de tus ingresos: más denuncias, más ingreso y más costo de IA.',l:'Cómo leerlo'},
-neg_margen:{t:'Margen',q:'Lo que queda de los ingresos después de pagar la IA y los costos fijos. Se calcula con la tarifa de ejemplo.',c:'Verde sobre 60 %, ámbar entre 30 y 60 %, rojo bajo 30 %. Si subes la tarifa, sube el margen.',l:'Cómo leerlo'},
+neg_margen:{t:'Margen',q:'Lo que queda de los ingresos después de pagar la IA y los costos fijos. Se calcula con la tarifa de referencia.',c:'Verde sobre 60 %, ámbar entre 30 y 60 %, rojo bajo 30 %. Si subes la tarifa, sube el margen.',l:'Cómo leerlo'},
 neg_adopcion_k:{t:'Valoración por auditores',q:'Qué parte de las sugerencias fue marcada por una persona como útil o no útil.',c:'Si casi nadie valora, no sabemos si las sugerencias sirven. Conviene pedirlo más.',l:'Cómo leerlo'},
 neg_clientes:{t:'Clientes',q:'Cada fila es un cliente: cuánto usa de lo contratado, cuánto ingresa y cuesta, y cuándo fue su último uso.',c:'Uso muy bajo o muy alto del plan, o días sin actividad, son señales para contactar al cliente.',l:'Cómo leerlo'},
 neg_denuncias:{t:'Denuncias por cliente',q:'Evolución diaria del volumen de cada cliente, apilado.',c:'Una franja que desaparece significa que ese cliente dejó de usar Kerna.',l:'Cómo leerlo'},
 neg_adopcion:{t:'Adopción',q:'Embudo: de las denuncias recibidas, cuántas recibieron sugerencia, cuántas fueron valoradas y cuántas valoradas resultaron útiles.',c:'Barras cortas en valoración indican poca participación de los auditores.',l:'Cómo leerlo'},
-tarifa:{t:'Tarifa por denuncia',q:'Supuesto de cuánto se le cobraría al cliente por cada denuncia analizada. No es un precio real.',c:'Sube o baja ingresos y margen en toda la página y en la proyección.',l:'Si lo cambias'},
+tarifa:{t:'Tarifa por denuncia',q:'Supuesto editable de cuánto se cobra al cliente por cada denuncia analizada.',c:'Sube o baja ingresos y margen en toda la página y en la proyección.',l:'Si lo cambias'},
 crecimiento:{t:'Crecimiento mensual',q:'Cuánto crece el volumen de denuncias cada mes en la proyección.',c:'Más crecimiento: más ingresos y más costo. No es una predicción, es un escenario.',l:'Si lo cambias'},
-proyeccion:{t:'Proyección',q:'Escenario a 6 meses con la tarifa y el crecimiento que elijas. Barras: ingresos y costo; línea: margen.',c:'Sirve para decidir precios o planes, no para comprometer cifras.',l:'Cómo leerlo'},
+proyeccion:{t:'Proyección',q:'Proyección a 6 meses con la tarifa y el crecimiento que elijas. Barras: ingresos y costo.',c:'Sirve para decidir precios o planes, no para comprometer cifras.',l:'Cómo leerlo'},
 inf_negocio:{t:'Sección de negocio',q:'Agrega al informe una sección con clientes, uso del plan, costos y margen.',c:'Déjala apagada si el informe es para auditoría o para un cliente.',l:'Si la activas'},
 alerta:{t:'Avisar si un caso sigue sin sugerencia',q:'Pasado este tiempo sin sugerencia, el caso aparece destacado en el panel.',c:'Plazos cortos avisan antes pero pueden generar falsas alarmas.',l:'Si lo cambias'}
 };
@@ -669,7 +977,7 @@ const INC_IDX=26; const MES=['ene','feb','mar','abr','may','jun','jul','ago','se
 const fecha=i=>{const d=new Date(2026,10,12-(29-i));return d.getDate()+' '+MES[d.getMonth()]};
 const DIA=CASOS.map((c,i)=>{let m=Math.round(c*.1),r=Math.round(c*.14);if(i===INC_IDX){m=Math.round(c*.7);r=Math.round(c*.2)}return{f:fecha(i),c,m,r,o:c-m-r}});
 const P50=CASOS.map((c,i)=>22+((i*7)%9)+(i===INC_IDX?9:0)), P95=P50.map((p,i)=>p+9+((i*5)%11)+(i===INC_IDX?18:0));
-const PREC={'Claude Haiku 5.5':[.10,.50],'Claude Sonnet 5.5':[2,10],'Claude Opus 5.5':[4,20]};
+const PREC={haiku:[.10,.50],sonnet:[2,10]};
 const TOK_IN=1165,TOK_OUT=114;
 
 function app(){return{
@@ -685,12 +993,12 @@ function app(){return{
  cobertura:[{n:'Ley 21.643 · Karin',a:96},{n:'Ley 19.628 · Datos personales',a:231},{n:'Ley 20.393 · Responsabilidad penal',a:85}],
  formatos:[{k:'pdf',n:'PDF',i:'file-text',d:'Para leer, imprimir o enviar por correo.'},{k:'xlsx',n:'Excel',i:'file-spreadsheet',d:'Para filtrar y hacer tus propios gráficos.'},{k:'csv',n:'CSV',i:'table',d:'Para cargar los datos en otro programa.'}],
  /* ajustes */
- rec:{envios:5,reintentos:3,espera:24,revision:30,reprocesar:false,evaluador:true,candidatos:10,cadena:[{v:'nano',on:true},{v:'haiku',on:true}],compartir:['analista','comite'],maxresp:15,alerta:6},
+ rec:{envios:5,reintentos:3,espera:24,revision:30,reprocesar:false,evaluador:true,candidatos:10,cadena:[{v:'haiku',on:true},{v:'sonnet',on:true}],compartir:['analista','comite'],maxresp:15,alerta:6},
  s:{},
- modelos:{nano:{t:'GPT-5 nano · Azure OpenAI',d:'Rápido y económico. Modelo principal actual.'},haiku:{t:'Claude Haiku 5.5',d:'Más preciso; algo más caro. Respaldo.'},sonnet:{t:'Claude Sonnet 5.5',d:'Muy preciso; más lento y caro.'}},
+ modelos:{haiku:{t:'Claude Haiku 5.5 (rápido y económico)',c:'Haiku 5.5',d:'Resuelve primero cada caso.'},sonnet:{t:'Claude Sonnet 5.5 (más preciso)',c:'Sonnet 5.5',d:'Entra cuando el primero falla.'}},
  grupos:[],
  init(){
-  this.s=JSON.parse(JSON.stringify(this.rec));this.s.cadena=[{v:'nano',on:true},{v:'haiku',on:true},{v:'sonnet',on:false}];this.rec.cadena=JSON.parse(JSON.stringify(this.s.cadena));
+  this.s=JSON.parse(JSON.stringify(this.rec));this.s.cadena=[{v:'haiku',on:true},{v:'sonnet',on:true}];this.rec.cadena=JSON.parse(JSON.stringify(this.s.cadena));
   const sg=(arr,u)=>arr.map(v=>({v,t:v>=3600?v/3600+' h':v>=60?v/60+' min':v+' s'}));
   this.grupos=[
    {id:'proc',t:'Cómo se procesan los casos',d:'Ritmo del conector entre Veridy y Kerna',i:'workflow',items:[
@@ -708,9 +1016,14 @@ function app(){return{
    {id:'plazos',t:'Plazos',d:'Cuándo algo se considera lento o atrasado',i:'timer',items:[
     {k:'maxresp',t:'rg',l:'Tiempo objetivo de respuesta',d:'Más allá de esto, un caso se marca como lento.',min:5,max:60,step:5,f:v=>v+' segundos'},
     {k:'alerta',t:'sg',l:'Avisar si un caso sigue sin sugerencia después de',d:'Se destaca en el panel.',o:[1,6,24].map(v=>({v,t:v+' h'}))}]}];
-  const nav=()=>{const h=(location.hash||'#/portada').replace('#/','');this.view=['portada','resumen','informe','ajustes','negocio'].includes(h)?h:(['como','proteccion','leyes'].includes(h)?this.view:'portada');
-   if(['como','proteccion','leyes'].includes(h)){this.view='portada';setTimeout(()=>document.getElementById(h)&&document.getElementById(h).scrollIntoView(),30)}else window.scrollTo(0,0);this.$nextTick(()=>this.charts())};
+  const RUTAS=['portada','resumen','informe','ajustes','negocio'];
+  const nav=()=>{const id=(location.hash||'#portada').slice(1);const v=RUTAS.includes(id)?id:this.view;
+   if(v!==this.view){this.view=v;scrollTo({top:0,behavior:'instant'})}
+   this.$nextTick(()=>{this.charts();window.kernaRv&&kernaRv()})};
   addEventListener('hashchange',nav);nav();
+  document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey||e.shiftKey)return;const id=a.getAttribute('href').slice(1);if(!id)return;
+   if(RUTAS.includes(id)){if(id===this.view){e.preventDefault();scrollTo({top:0,behavior:'smooth'});if(location.hash!=='#'+id)history.replaceState(null,'','#'+id)}return}
+   const t=document.getElementById(id);if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}});
   addEventListener('resize',()=>['ch-casos','ch-lat','ch-heat','ch-gauge'].forEach(i=>{const c=echarts.getInstanceByDom(document.getElementById(i));c&&c.resize()}));
  },
  /* derivados */
@@ -721,16 +1034,18 @@ function app(){return{
  get sugPct(){return this.pct(this.modos.o+this.modos.r,this.tot)},
  get p50(){const a=P50.slice(30-this.per);return Math.round(a.reduce((x,y)=>x+y,0)/a.length)},
  get p95(){const a=P95.slice(30-this.per);return Math.round(a.reduce((x,y)=>x+y,0)/a.length)},
- get costo(){return Object.entries(PREC).map(([n,[pi,po]])=>{const caso=(TOK_IN*pi+TOK_OUT*po)/1e6;return{n,caso,tot:caso*this.tot,m1000:caso*1000}})},
+ get costo(){const mk=(n,casos,[pi,po])=>{const caso=(TOK_IN*pi+TOK_OUT*po)/1e6;return{n,casos,caso,tot:caso*casos}};return[mk('Claude Haiku 5.5',this.tot,PREC.haiku),mk('Claude Sonnet 5.5',this.modos.r,PREC.sonnet)]},
+ get costoTot(){return this.costo.reduce((a,c)=>a+c.tot,0)},
+ get costoCaso(){return this.tot?this.costoTot/this.tot:0},
  usd(v,d){d=d||2;if(v<0.005&&!(d>2))return 'US$ '+v.toLocaleString('es-CL',{minimumFractionDigits:3,maximumFractionDigits:3});return 'US$ '+v.toLocaleString('es-CL',{minimumFractionDigits:d,maximumFractionDigits:d})},
  spark(a){const mx=Math.max(...a),mn=Math.min(...a),r=(mx-mn)||1;return a.map((v,i)=>(i?'L':'M')+(i/(a.length-1)*100).toFixed(1)+' '+(27-(v-mn)/r*24).toFixed(1)).join(' ')},
  get kpis(){const w=this.per===7,prev=w?.93:.88,tot=this.tot,sl=this.sl;
   const dc=Math.round((tot/(tot*prev)-1)*100);
   return[
   {k:'casos',i:'inbox',l:'Denuncias analizadas',v:tot,u:'denuncias',e:'ok',et:'Sin problemas',de:'na',da:'arrow-up-right',dt:'+'+dc+' % vs período anterior',f:'Llegaron '+tot+' denuncias en '+this.per+' días; algo más que en el período anterior.',m:'Período anterior: '+Math.round(tot*prev),s:sl.map(d=>d.c)},
-  {k:'calidad',i:'target',l:'Acierto de las sugerencias',v:74,u:'%',e:'warn',et:'Bajo la meta',de:'bad',da:'arrow-down-right',dt:'6 puntos bajo la meta',f:'Cuando existe un artículo correcto, Kerna lo incluye entre sus 5 primeras sugerencias el 74 % de las veces.',m:'Meta: 80 % o más · prueba con casos conocidos',s:[78,77,76,77,75,76,74,75,74,74]},
+  {k:'calidad',i:'target',l:'Acierto de las sugerencias',v:74,ring:74,meta:80,rc:'meta 80',u:'%',e:'warn',et:'Bajo la meta',de:'bad',da:'arrow-down-right',dt:'6 puntos bajo la meta',f:'Cuando existe un artículo correcto, Kerna lo incluye entre sus 5 primeras sugerencias el 74 % de las veces.',m:'Meta: 80 % o más · prueba con casos conocidos',s:[78,77,76,77,75,76,74,75,74,74]},
   {k:'tiempo',i:'timer',l:'Tiempo de respuesta típico',v:this.p50,u:'segundos',e:'warn',et:'Sobre la meta',de:'bad',da:'arrow-up-right',dt:'4 s más lento',f:'La mitad de los casos recibe su sugerencia en '+this.p50+' s; la meta es 15 s.',m:'Meta: 15 s o menos',s:P50.slice(30-this.per)},
-  {k:'costo_k',i:'coins',l:'Costo estimado con Claude',v:this.usd(this.costo[0].tot).replace('US$ ',''),u:'US$',e:'na',et:'Sin presupuesto',de:'na',da:'minus',dt:'',f:'Unos '+this.usd(this.costo[0].m1000)+' cada 1.000 denuncias con Claude Haiku 5.5.',m:'Precios Anthropic, 3 nov 2026',s:sl.map(d=>d.c)}]},
+  {k:'costo_k',i:'coins',l:'Costo del período',v:this.usd(this.costoTot).replace('US$ ',''),u:'US$',e:'ok',et:'Sin alertas',de:'na',da:'minus',dt:'',f:'Costo por denuncia: '+this.usd(this.costoCaso,4)+'.',m:'Haiku '+this.usd(this.costo[0].tot)+' · Sonnet '+this.usd(this.costo[1].tot),s:sl.map(d=>d.c)}]},
  get incidentes(){const m=this.modos.m,a=Math.round(m*.5),b=Math.round(m*.3);return[
   {c:'Modelo de IA no disponible',n:a,e:'bad',a:'Revisa que el modelo principal esté activo. Si se repite, deja el de respaldo en primer lugar en Ajustes.'},
   {c:'Citas que no respaldan el artículo',n:b,e:'warn',a:'Mantén encendido el revisor automático y revisa estos casos a mano.'},
@@ -739,18 +1054,18 @@ function app(){return{
 
  get clientes(){const base=[
   {n:'Veridy',plan:500,s:CASOS,ult:'hace 4 minutos',dias:0,rt:'Uso diario',sug:86},
-  {n:'Cliente B (ejemplo)',plan:300,s:CASOS.map((c,i)=>Math.round(c*.5+((i*3)%3))),ult:'hace 2 horas',dias:0,rt:'Uso diario',sug:91},
-  {n:'Cliente C (ejemplo)',plan:100,s:CASOS.map((c,i)=>i<12?Math.round(c*.45):0),ult:'hace 19 días',dias:19,rt:'Sin actividad: contactar',sug:78}];
+  {n:'Andes Retail S.A.',plan:300,s:CASOS.map((c,i)=>Math.round(c*.5+((i*3)%3))),ult:'hace 2 horas',dias:0,rt:'Uso diario',sug:91},
+  {n:'Constructora Los Maitenes',plan:100,s:CASOS.map((c,i)=>i<12?Math.round(c*.45):0),ult:'hace 19 días',dias:19,rt:'Sin actividad: contactar',sug:78}];
   return base.map(c=>{const tot=c.s.reduce((a,b)=>a+b,0),uso=Math.round(tot/c.plan*100),caso=(TOK_IN*.1+TOK_OUT*.5)/1e6;
    return{...c,tot,uso,ue:c.dias>14?'warn':uso>100?'bad':uso>=80?'warn':uso<20?'warn':'ok',nota:c.dias>14?'Usó el plan al comienzo y luego se detuvo':uso>100?'Superó el plan: ofrecer un plan mayor':uso>=80?'Cerca del límite del plan':uso<20?'Usa muy poco de lo contratado':'Uso sano del plan',
    re:c.dias>14?'bad':c.dias>3?'warn':'ok',ing:tot*this.tarifa,cos:tot*caso}})},
  get neg(){const c=this.clientes,tot=c.reduce((a,x)=>a+x.tot,0),ing=c.reduce((a,x)=>a+x.ing,0),cos=c.reduce((a,x)=>a+x.cos,0),fijo=40,mg=ing-cos-fijo;
   return{tot,ing,cos,fijo,mg,margenPct:Math.round(mg/ing*100),activos:c.filter(x=>x.dias<=14).length}},
  get negKpis(){const n=this.neg,mp=n.margenPct;return[
-  {k:'neg_clientes_k',i:'building-2',l:'Clientes activos',v:n.activos,u:'de '+this.clientes.length,e:'warn',et:'1 en riesgo',de:'na',da:'minus',dt:'',f:n.activos+' de '+this.clientes.length+' clientes usaron Kerna en las últimas 2 semanas.',m:'Hoy solo Veridy es real'},
+  {k:'neg_clientes_k',i:'building-2',l:'Clientes activos',v:n.activos,u:'de '+this.clientes.length,e:'warn',et:'1 en riesgo',de:'na',da:'minus',dt:'',f:n.activos+' de '+this.clientes.length+' clientes usaron Kerna en las últimas 2 semanas.',m:'Clientes con denuncias en 30 días'},
   {k:'neg_denuncias_k',i:'inbox',l:'Denuncias procesadas',v:n.tot,u:'en 30 días',e:'ok',et:'Creciendo',de:'ok',da:'arrow-up-right',dt:'+14 % vs 30 días previos',f:'Se procesaron '+n.tot+' denuncias entre todos los clientes; 14 % más que el mes anterior.',m:'Mes anterior: '+Math.round(n.tot/1.14)},
-  {k:'neg_margen',i:'piggy-bank',l:'Margen mensual',v:mp,u:'%',e:mp>=60?'ok':mp>=30?'warn':'bad',et:mp>=60?'Alto':mp>=30?'Medio':'Bajo',de:'na',da:'minus',dt:'',f:'De '+this.usd(n.ing)+' de ingresos de ejemplo, quedan '+this.usd(n.mg)+' tras pagar IA ('+this.usd(n.cos,2)+') y costos fijos.',m:'Con tarifa de ejemplo de '+this.usd(this.tarifa)+' por denuncia'},
-  {k:'neg_adopcion_k',i:'thumbs-up',l:'Sugerencias valoradas',v:16,u:'%',e:'bad',et:'Muy pocas',de:'na',da:'minus',dt:'',f:'Solo 16 de cada 100 sugerencias fueron valoradas; de esas, 8 de cada 10 resultaron útiles.',m:'Esperado: 50 % o más · hoy Veridy: sin valoraciones'}]},
+  {k:'neg_margen',i:'piggy-bank',l:'Margen mensual',v:mp,ring:Math.max(0,Math.min(100,mp)),u:'%',e:mp>=60?'ok':mp>=30?'warn':'bad',et:mp>=60?'Alto':mp>=30?'Medio':'Bajo',de:'na',da:'minus',dt:'',f:'De '+this.usd(n.ing)+' de ingresos, quedan '+this.usd(n.mg)+' tras pagar IA ('+this.usd(n.cos,2)+') y costos fijos.',m:'Con tarifa de referencia de '+this.usd(this.tarifa)+' por denuncia'},
+  {k:'neg_adopcion_k',i:'thumbs-up',l:'Sugerencias valoradas',v:16,ring:16,u:'%',e:'bad',et:'Muy pocas',de:'na',da:'minus',dt:'',f:'Solo 16 de cada 100 sugerencias fueron valoradas; de esas, 8 de cada 10 resultaron útiles.',m:'Esperado: 50 % o más · hoy Veridy: sin valoraciones'}]},
  get embudo(){return[{n:'Con sugerencia',v:this.sugPct,e:'ok'},{n:'Valoradas por auditores',v:16,e:'bad'},{n:'Valoradas como útiles',v:79,e:'ok'}]},
  get proy(){const out=[];let v=this.neg.tot*(1+0);for(let m=1;m<=6;m++){v=this.neg.tot*Math.pow(1+this.crec/100,m);const ing=v*this.tarifa,cos=v*((TOK_IN*.1+TOK_OUT*.5)/1e6)+40;out.push({m:'Mes +'+m,ing,cos,mp:Math.round((ing-cos)/ing*100)})}return out},
  get ipDias(){if(this.custom){const d=(new Date(this.hasta)-new Date(this.desde))/864e5+1;return Math.max(1,Math.round(d)||1)}return this.ip},
@@ -768,12 +1083,17 @@ function app(){return{
  mover(i,d){const a=[...this.s.cadena],j=i+d;[a[i],a[j]]=[a[j],a[i]];this.s.cadena=a},
  fmtVal(it,v){if(it.t==='sw')return v?'Encendido':'Apagado';if(it.t==='rg')return it.f(v);if(it.t==='sg')return it.o.find(o=>o.v===v).t;
   if(it.t==='ch')return v.length?v.map(x=>it.o.find(o=>o.v===x).t).join(', '):'Nadie';
-  if(it.t==='cd')return v.filter(m=>m.on).map(m=>this.modelos[m.v].t.split(' · ')[0]).join(' → ')||'Ninguno'},
+  if(it.t==='cd')return v.filter(m=>m.on).map(m=>this.modelos[m.v].c).join(' → ')||'Ninguno'},
  notaCambio(it,v){const n={envios:'Más casos juntos acelera la fila pero aumenta el riesgo de fallos por límites del proveedor.',reintentos:'Cambia cuántos casos fallidos se rescatan solos.',espera:'Modifica cuánto tarda en repetirse un intento.',revision:'Cambia la rapidez con que Kerna ve denuncias nuevas.',reprocesar:'Los casos en revisión manual volverán a la fila una vez.',evaluador:v?'Se revisarán las citas de cada sugerencia.':'Será más rápido y barato, con menos control de citas.',candidatos:'Cambia el cuidado y el costo del revisor.',cadena:'Cambia qué modelo responde primero y cuál respalda.',compartir:'Solo afecta a los casos nuevos.',maxresp:'Cambia desde cuándo un caso se marca como lento.',alerta:'Cambia cuándo se destaca un caso sin sugerencia.'};return n[it.k]},
  get cambios(){const out=[];for(const g of this.grupos)for(const it of g.items){if(!this.esRec(it.k)&&this.s[it.k]!==undefined)out.push({k:it.k,l:it.l,de:this.fmtVal(it,this.rec[it.k]),a:this.fmtVal(it,this.s[it.k]),n:this.notaCambio(it,this.s[it.k])})}return out},
  restaurar(){this.s=JSON.parse(JSON.stringify(this.rec));this.say('Volviste a los valores recomendados')},
  descartar(){this.s=JSON.parse(JSON.stringify(this.base||this.rec))},
- guardar(){this.base=JSON.parse(JSON.stringify(this.s));this.rec2=1;this.resumenAbierto=false;this.say('Ajustes guardados (maqueta: no se guardó nada real)')},
+ guardar(){this.base=JSON.parse(JSON.stringify(this.s));this.rec2=1;this.resumenAbierto=false;this.say('Ajustes guardados')},
+ vivo(id){const s=this.s,N={analista:'Analistas',comite:'Comité de ética',auditoria:'Auditoría interna',legal:'Fiscalía legal'},f=v=>v>=3600?v/3600+' h':v>=60?v/60+' min':v+' s';
+  if(id==='proc')return 'Cada ronda envía '+s.envios+(s.envios===1?' caso':' casos')+' a Kerna. '+(s.reintentos===0?'Los casos que fallen no se reintentan.':'Un caso que falla se reintenta hasta '+s.reintentos+(s.reintentos===1?' vez':' veces')+', cada '+s.espera+' h.')+' Veridy se revisa cada '+f(s.revision)+'.'+(s.reprocesar?' Al guardar, los casos en revisión manual vuelven a la fila.':'');
+  if(id==='ia')return (s.evaluador?'El revisor está encendido y compara '+s.candidatos+' artículos por caso.':'El revisor está apagado: más rápido y barato, con menos control de citas.')+' Orden de modelos: '+(s.cadena.filter(m=>m.on).map(m=>this.modelos[m.v].c).join(' → ')||'ninguno')+'.';
+  if(id==='comp')return s.compartir.length?'Cada sugerencia llega a: '+s.compartir.map(v=>N[v]).join(', ')+'.':'Por ahora no se comparte con nadie.';
+  return 'Un caso se marca lento después de '+s.maxresp+' segundos y se destaca si pasa '+s.alerta+(s.alerta===1?' hora':' horas')+' sin sugerencia.'},
  say(t){this.toast=t;clearTimeout(this._t);this._t=setTimeout(()=>this.toast='',3200)},
  /* graficos */
  charts(){
@@ -781,7 +1101,7 @@ function app(){return{
   if(this.view==='negocio'){const mu=css('--muted'),ink=css('--ink'),ok=css('--ok-bar'),cs=['#1C2A6B','#6E7FD0','#B7C0E8'];
    mkc('ch-cli',{textStyle:{fontFamily:'Inter'},aria:{enabled:true},grid:{left:34,right:8,top:30,bottom:28},tooltip:{trigger:'axis'},legend:{top:0,left:0,textStyle:{color:ink,fontSize:12},itemWidth:12,itemHeight:12},
     xAxis:{type:'category',boundaryGap:false,data:DIA.map(d=>d.f),axisLabel:{color:mu,fontSize:11,interval:4},axisTick:{show:false},axisLine:{lineStyle:{color:'#DDE2EF'}}},yAxis:{type:'value',axisLabel:{color:mu,fontSize:11},splitLine:{lineStyle:{color:'#EEF1F8'}}},
-    series:this.clientes.map((c,i)=>({name:c.n.replace(' (ejemplo)',''),type:'line',stack:'t',smooth:true,symbol:'none',data:c.s,itemStyle:{color:cs[i]},lineStyle:{width:1.5,color:cs[i]},areaStyle:{color:cs[i],opacity:.9}}))});
+    series:this.clientes.map((c,i)=>({name:c.n,type:'line',stack:'t',smooth:true,symbol:'none',data:c.s,itemStyle:{color:cs[i]},lineStyle:{width:1.5,color:cs[i]},areaStyle:{color:cs[i],opacity:.9}}))});
    const P=this.proy;mkc('ch-proy',{textStyle:{fontFamily:'Inter'},aria:{enabled:true},grid:{left:62,right:12,top:34,bottom:26},tooltip:{trigger:'axis'},legend:{top:0,left:0,textStyle:{color:ink,fontSize:12},itemWidth:12,itemHeight:12},
     xAxis:{type:'category',data:P.map(p=>p.m),axisLabel:{color:mu,fontSize:11},axisTick:{show:false}},yAxis:[{type:'value',axisLabel:{color:mu,fontSize:11,formatter:v=>'US$ '+v},splitLine:{lineStyle:{color:'#EEF1F8'}}}],
     series:[{name:'Ingresos',type:'bar',data:P.map(p=>Math.round(p.ing)),itemStyle:{color:'#3B4FB4',borderRadius:[4,4,0,0]},barMaxWidth:26},{name:'Costo total',type:'bar',data:P.map(p=>Math.round(p.cos)),itemStyle:{color:'#A8B1CC',borderRadius:[4,4,0,0]},barMaxWidth:26}]})}
@@ -817,5 +1137,87 @@ function app(){return{
   }
  }
 }}
+</script>
+<script>
+/* ===== v3: logo vivo, aparición por scroll, contadores y logo interactivo ===== */
+(function(){
+  const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const NS='http://www.w3.org/2000/svg';
+  const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+  function buildLogo(svg){
+    const hero=svg.dataset.logo==='hero';
+    if(hero){
+      const x1=el('g',{class:'xr1'},svg);
+      el('circle',{class:'orb anillo',cx:32,cy:32,r:42},x1);el('circle',{class:'sat-s',cx:74,cy:32,r:2.4},x1);
+      const x2=el('g',{class:'xr2'},svg);
+      el('circle',{class:'orb anillo',cx:32,cy:32,r:37},x2);el('circle',{class:'nuc',cx:69,cy:32,r:1.3},x2);
+    }
+    el('circle',{class:'orb anillo',cx:32,cy:32,r:30.5},svg);
+    const a=el('g',{class:'lg-a'},svg),ros=el('g',{class:'roseta'},a);
+    if(hero){for(let j=1;j<12;j++)el('ellipse',{class:'orb ros',cx:32,cy:32,rx:27,ry:8,transform:'rotate('+(j*180/12)+' 32 32)'},ros)}
+    else{for(let j=1;j<6;j++)el('ellipse',{class:'orb rc',cx:32,cy:32,rx:27,ry:8,transform:'rotate('+(j*30)+' 32 32)'},ros)}
+    const b=el('g',{class:'lg-b'},svg),aim=el('g',{class:'lg-aim'},b),cam=el('g',{class:'camino'},aim);
+    el('ellipse',{class:'orb guia',cx:32,cy:32,rx:27,ry:8},cam);el('circle',{class:'sat',cx:59,cy:32,r:3.8},cam);
+    const c=el('g',{class:'lg-c'},svg),n=el('g',{class:'latido'},c);
+    el('circle',{class:'nuc',cx:32,cy:32,r:5.4},n);el('circle',{class:'nuc-l',cx:32,cy:32,r:2},n);
+    if(hero)el('circle',{class:'ping',cx:32,cy:32,r:6},svg);
+    svg.classList.add('kl');
+    if(svg.dataset.logo==='mini'&&/rapido/.test(svg.getAttribute('class')||'')){}
+  }
+  window.kernaLogos=()=>document.querySelectorAll('svg[data-logo]:not([data-ok])').forEach(s=>{s.setAttribute('data-ok','1');buildLogo(s)});
+  kernaLogos();
+
+  /* logo de la portada: la órbita apunta al cursor, las capas se desplazan con profundidad y la roseta gira con el scroll */
+  const hs=document.querySelector('svg[data-logo=hero]');
+  if(hs&&!RM){
+    const wrap=hs.parentElement,A=hs.querySelector('.lg-a .roseta').parentElement,B=hs.querySelector('.lg-b'),Aim=hs.querySelector('.lg-aim'),C=hs.querySelector('.lg-c'),ping=hs.querySelector('.ping');
+    let tx=0,ty=0,cx=0,cy=0,ta=0,ca=0,ts=0,cs=0,vis=true,raf=0;
+    new IntersectionObserver(e=>{vis=e[0].isIntersecting;if(vis)kick()}).observe(wrap);
+    function tick(){
+      cx+=(tx-cx)*.09;cy+=(ty-cy)*.09;cs+=(ts-cs)*.1;
+      const d=((ta-ca+540)%360)-180;ca+=d*.07;
+      A.style.translate=(-cx*2)+'px '+(-cy*2)+'px';A.style.rotate=cs+'deg';
+      B.style.translate=(cx*3.5)+'px '+(cy*3.5)+'px';Aim.style.rotate=ca+'deg';
+      C.style.translate=(cx*6)+'px '+(cy*6)+'px';
+      raf=(Math.abs(tx-cx)+Math.abs(ty-cy)+Math.abs(d)+Math.abs(ts-cs)>.02&&vis)?requestAnimationFrame(tick):0;
+    }
+    function kick(){if(!raf&&vis)raf=requestAnimationFrame(tick)}
+    addEventListener('pointermove',e=>{if(!vis)return;const r=wrap.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2);
+      tx=Math.max(-1,Math.min(1,x/(innerWidth/2)));ty=Math.max(-1,Math.min(1,y/(innerHeight/2)));ta=Math.atan2(y,x)*180/Math.PI;kick()},{passive:true});
+    addEventListener('scroll',()=>{ts=scrollY*.18;kick()},{passive:true});
+    wrap.addEventListener('click',()=>{ping.classList.remove('go');void ping.getBoundingClientRect();ping.classList.add('go')});
+  }
+
+  /* aparición al entrar en pantalla: nunca parte de opacidad 0 */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting)return;const t=e.target;io.unobserve(t);
+    if(t.hasAttribute('data-rvs')){let i=0;for(const c of t.children){if(c.tagName==='TEMPLATE')continue;c.style.setProperty('--i',i++)}}
+    t.classList.add('rv-go')}),{rootMargin:'0px 0px -6% 0px',threshold:.04});
+  window.kernaRv=()=>{
+    document.querySelectorAll('main>div>*').forEach(t=>{
+      if(t.tagName==='TEMPLATE'||t.classList.contains('fixed'))return;
+      if(t.classList.contains('grid')&&[...t.children].some(c=>c.classList&&c.classList.contains('card')))t.setAttribute('data-rvs','');else if(!t.hasAttribute('data-rvs'))t.setAttribute('data-rv','')});
+    kernaLogos();
+    document.querySelectorAll('[data-rv],[data-rvs]').forEach(t=>{t.classList.remove('rv-go');io.unobserve(t);if(!RM)io.observe(t)});
+  };
+
+  /* contadores: x-count="valor" */
+  document.addEventListener('alpine:init',()=>{
+    Alpine.directive('count',(el,{expression},{evaluateLater,effect})=>{
+      const get=evaluateLater(expression);let cur=null,final='',shown=false,raf=0,wasHidden=true;
+      const parse=v=>{if(typeof v==='number')return{n:v,d:Number.isInteger(v)?0:2,raw:true};const s=String(v);if(!/^[\d.,]+$/.test(s))return null;return{n:parseFloat(s.replace(/\./g,'').replace(',','.')),d:(s.split(',')[1]||'').length,raw:false}};
+      const fmt=(n,p)=>p.d===0&&p.raw?String(Math.round(n)):n.toLocaleString('es-CL',{minimumFractionDigits:p.d,maximumFractionDigits:p.d});
+      function run(from,p){cancelAnimationFrame(raf);if(RM){el.textContent=fmt(p.n,p);return}
+        const t0=performance.now(),dur=1100;const st=t=>{const k=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-k,3);el.textContent=fmt(from+(p.n-from)*e,p);if(k<1)raf=requestAnimationFrame(st)};raf=requestAnimationFrame(st)}
+      effect(()=>get(v=>{const p=parse(v);if(!p){el.textContent=v;cur=null;return}
+        final=fmt(p.n,p);const prev=cur;cur=p;
+        if(!shown){el.textContent=final;return}
+        run(prev?prev.n:0,p)}));
+      new IntersectionObserver(es=>es.forEach(e=>{
+        if(e.isIntersecting){if(wasHidden&&cur){wasHidden=false;shown=true;run(0,cur)}else shown=true}
+        else if(e.boundingClientRect.width===0){wasHidden=true;shown=false}})).observe(el);
+    });
+  });
+})();
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>

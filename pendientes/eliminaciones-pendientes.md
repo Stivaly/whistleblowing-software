@@ -34,3 +34,5 @@ Revisa cada fila y, si apruebas, bórralo tú manualmente (`rm -r .papelera/...`
 | 2026-11-11 | kerna/front/generar_datos_informe.py | .papelera/2026-11-11/kerna/front/generar_datos_informe.py | Generaba evaluacion.json en cada despliegue; reemplazado por kerna/evaluacion/tabla_evaluaciones.py |
 
 - 2026-11-12 · copia previa `kerna/front/diseno-v2/maqueta.html` -> `.papelera/2026-11-12/kerna/front/diseno-v2/maqueta.html` (versión anterior a la revisión de diseño; el original se editó en su lugar). Capturas intermedias `capturas/ant-*.png` -> `.papelera/2026-11-12/kerna/front/diseno-v2/capturas/` (estado previo a la revisión).
+
+- 2026-11-12 · copia previa `kerna/front/diseno-v2/maqueta.html` -> `.papelera/2026-11-12/kerna/front/diseno-v2/maqueta-previa-v3.html` (versión anterior al rediseño v3; el original se reemplaza en su lugar).
