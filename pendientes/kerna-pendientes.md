@@ -247,3 +247,6 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
   mantiene voyage-4-large; las variantes de `texto_embedding` están propuestas en
   `kerna/evaluacion/analisis-recall-articulo.md`.
 - Reproceso de casos en `revision_manual`: el contrato no lo define (arriba).
+
+## Front de Kerna (recordatorio de la usuaria, 2026-11-12)
+- [ ] **Arreglar el informe de gestión** (`/panel/informe` y sus descargas PDF/XLSX/CSV): llevarlo al diseño y criterios de la maqueta v2/v3 (colores semánticos, conclusiones, información útil). Solo recordatorio: no lanzar agente hasta que la usuaria lo pida.
