@@ -757,4 +757,5 @@ k-st[data-e="valorada"]{--fondo:#CFFF5E;--acc:#0B1020;--pi:#0B1020;--pf:#CFFF5E;
 @media(prefers-reduced-motion:reduce){.sk{animation:none}}
 .mod-1{display:block!important}#app .mod-1{grid-template-columns:none}
 .mod-1 .mod-body{padding:14px 18px 6px}
-@media(min-width:1024px){.lg\:block{display:block}}
+@media(min-width:1024px){aside.lg\:block{display:block}}
+@media(max-width:639px){.vd2 b{font-size:14px}.vd2-n{display:none}}

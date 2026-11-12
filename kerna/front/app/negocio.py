@@ -134,7 +134,7 @@ def construir(clientes: list[dict], uso: list[dict], hoy: date | None = None, di
                     "impuesto": _uf(imp), "utilidad": _uf(util), "margen_neto_pct": _pct(util, g["ing"]),
                     "margen": _uf(util), "margen_pct": _pct(util, g["ing"]),
                     "clientes_activos": len(filas), "en_riesgo": [f["nombre"] for f in filas if f["riesgo"] == "bad"]},
-        "adopcion": {"con_sugerencia_pct": _pct(g["sug"], g["tot"]), "valoradas_pct": _pct(g["val"], g["tot"]),
+        "adopcion": {"con_sugerencia_pct": round(100 * g["sug"] / g["tot"], 1) if g["tot"] else 0, "valoradas_pct": _pct(g["val"], g["tot"]),
                      "utiles_pct": _pct(g["uti"], g["val"]), "valoradas": g["val"], "utiles": g["uti"]},
         "proyeccion": proy,
     }

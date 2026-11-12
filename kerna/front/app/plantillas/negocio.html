@@ -26,7 +26,7 @@
 <div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por cliente</h2>{{ tip('neg_denuncias') }}</div>
 <div id="ch-cli" class="chh" role="img" aria-label="Gráfico de área apilada de denuncias por cliente"></div></div>
 <div class="card p-4"><div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Adopción</h2>{{ tip('neg_adopcion') }}</div>
-<ul class="list-none p-0 m-0 grid gap-3">{% for a in V.embudo %}<li class="mr s-{{ a.e }}"><div class="mr-h"><span>{{ a.n }}</span><b>{{ ic(ICONO[a.e]) }}<span>{{ dec_corto(a.v, 0) }} %</span></b></div><div class="mb"><i style="width:{{ a.v }}%"></i></div></li>{% endfor %}</ul></div>
+<ul class="list-none p-0 m-0 grid gap-3">{% for a in V.embudo %}<li class="mr s-{{ a.e }}"><div class="mr-h"><span>{{ a.n }}</span><b>{{ ic(ICONO[a.e]) }}<span>{{ dec_corto(a.v, 1 if a.n == 'Con sugerencia' else 0) }} %</span></b></div><div class="mb"><i style="width:{{ a.v }}%"></i></div></li>{% endfor %}</ul></div>
 </section>
 
 <section class="grid lg:grid-cols-3 gap-3 md:gap-4">

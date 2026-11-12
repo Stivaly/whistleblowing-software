@@ -375,3 +375,10 @@ Pendiente:
 - Pendiente: medir INP con interacción real (cambio de pestaña) en un navegador con GPU; en headless solo se midió carga, reposo y desplazamiento.
 - Prefetch de vistas al pasar por el menú no se hizo: las páginas llevan `Cache-Control: no-store` (son autenticadas), así que el navegador no reutilizaría la respuesta; el servidor ya responde en 50 ms con su caché.
 - `echarts.min.js` (1,0 MB) movido a `.papelera/2026-11-12/`, registrado en `pendientes/eliminaciones-pendientes.md`.
+
+## Decisión (2026-11-12): Negocio con una sola fuente de uso real
+- Antes, Negocio mostraba uso de las tablas `usodiario` sembradas (1.325 denuncias, 69 % con sugerencia, 14 % valoradas) que contradecía el Resumen y el informe (303, 10,6 %, sin valoraciones).
+- Ahora `negocio.cargar` toma las denuncias, sugerencias y valoraciones de Veridy (`veridy-dev`, único cliente real) de Log Analytics, con la misma consulta del Resumen (`front_casos_por_dia`, `front_valoraciones`). Los tokens y el costo de IA de Veridy siguen saliendo de su fila de `usodiario`.
+- Los clientes sembrados aportan solo plan, tarifa e ingreso; su uso se muestra «—» y quedan «sin datos de uso» (no cuentan como en riesgo). Si Log Analytics no responde, nadie muestra cifras de uso.
+- Cuando haya clientes reales adicionales: agregar su id a `negocio.REALES` y asegurar que el núcleo etiquete sus solicitudes por cliente (hoy la telemetría no distingue clientes).
+- Pendiente de datos: los clientes sembrados siguen en la tabla `clientes` para los planes y tarifas de la proyección; retirarlos cuando haya clientes reales.

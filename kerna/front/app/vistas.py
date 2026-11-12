@@ -191,6 +191,8 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
         mp.s[f"k.{key}"] = x["e"]
         mp.ico[f"k.{key}"] = ICONO[x["e"]]
         mp.x[f"k.{key}"] = x["x"]
+        if x["form"] == "spark" and len(x["s"]) < 4:  # con menos de 4 días una línea no dice nada: se oculta
+            x["form"] = "none"
         if x["form"] == "spark":
             x["d_l"], x["d_a"] = graficos.spark(x["s"]), graficos.spark_area(x["s"])
             mp.d[f"k.{key}.l"], mp.d[f"k.{key}.a"] = x["d_l"], x["d_a"]
@@ -320,7 +322,7 @@ def negocio(n: dict) -> dict:
     sub = {"ok": "Cada denuncia deja margen y los clientes usan el plan.", "warn": f"Hay {nv} {'punto' if nv == 1 else 'puntos'} a vigilar.", "bad": "La utilidad del período es negativa."}[e_gen]
     ico = ICONO
     k = [
-        {"k": "neg_clientes_k", "i": "building-2", "l": "Clientes activos", "form": "dots", "e": "ok" if not riesgo else "warn", "v": str(len(activos)), "u": f"de {len(cls)}",
+        {"k": "neg_clientes_k", "i": "building-2", "l": "Clientes activos", "form": "dots", "e": "warn" if riesgo else ("na" if sin_dato else "ok"), "v": str(len(activos)), "u": f"de {len(cls)}",
          "dots": [{"e": c["riesgo"], "n": f"{c['nombre']}: " + ("sin datos de uso" if c["riesgo"] == "na" else (f"hace {c['dias_sin_uso']} días" if c["dias_sin_uso"] is not None else "sin uso"))} for c in cls],
          "et": f"{len(riesgo)} en riesgo" if riesgo else (f"{len(sin_dato)} sin datos de uso" if sin_dato else "Todos usan Kerna"),
          "x": f"{len(activos)} de {len(cls)} clientes usaron Kerna en los últimos {neg_mod.DIAS_RIESGO} días. Solo se mide el uso de Veridy; de los demás clientes se conocen el plan y la tarifa. Cada círculo es un cliente."},
@@ -339,12 +341,14 @@ def negocio(n: dict) -> dict:
          "z": [{"a": 0, "b": 30, "e": "bad"}, {"a": 30, "b": 50, "e": "warn"}, {"a": 50, "b": 100, "e": "ok"}], "mx_txt": "100 %", "pos": min(100, a["valoradas_pct"]), "pos_meta": 50,
          "et": "Bien" if e_val == "ok" else ("Pocas" if e_val == "warn" else "Muy pocas"),
          "x": f"{f.miles(a['valoradas'])} sugerencias fueron valoradas por una persona; {f.dec_corto(a['utiles_pct'], 0)} % de ellas resultaron útiles. Esperado: 50 % o más."},
-        {"k": "neg_sug", "i": "sparkles", "l": "Con sugerencia", "form": "none", "e": "ok" if a["con_sugerencia_pct"] >= SUG_OK else ("warn" if a["con_sugerencia_pct"] >= SUG_WARN else "bad"), "v": f.dec_corto(a["con_sugerencia_pct"], 0), "u": "%",
+        {"k": "neg_sug", "i": "sparkles", "l": "Con sugerencia", "form": "none", "e": "ok" if a["con_sugerencia_pct"] >= SUG_OK else ("warn" if a["con_sugerencia_pct"] >= SUG_WARN else "bad"), "v": f.dec_corto(a["con_sugerencia_pct"], 1), "u": "%",
          "et": "Dentro de lo esperado" if a["con_sugerencia_pct"] >= SUG_OK else "Bajo lo esperado", "x": "De cada 100 denuncias, cuántas terminaron con una sugerencia lista."},
     ]
     for x in k:
-        if x["form"] == "spark":
+        if x["form"] == "spark" and len(x["s"]) >= 4:
             x["d_l"], x["d_a"] = graficos.spark(x["s"]), graficos.spark_area(x["s"])
+        elif x["form"] == "spark":
+            x["form"] = "none"
         x.setdefault("p", "")
         x.setdefault("tr", "")
     clientes = []
@@ -576,8 +580,8 @@ def informe_v2(inf_: dict) -> dict:
     for c in ej["tarjetas"]:
         serie, menos, pts, meta = extra[c["k"]]
         tr = _tendencia(serie, menos, pts=pts) if serie else {"tr": "", "te": "na", "ta": "minus"}
-        d = {"d_l": graficos.spark(serie), "d_a": graficos.spark_area(serie)} if len(serie) > 1 else {}
-        cards.append({"k": c["k"], "i": c["i"], "l": nombres[c["k"]], "v": c["v"], "u": c["u"], "p": c["p"], "e": c["e"], "et": "" if c["k"] == "costo_k" else c["et"], "meta": meta, "x": c["x"], **tr, **d})
+        d = {"d_l": graficos.spark(serie), "d_a": graficos.spark_area(serie)} if len(serie) >= 4 else {}
+        cards.append({"k": c["k"], "i": c["i"], "l": nombres[c["k"]], "v": c["v"], "u": c["u"], "p": c["p"], "e": "na" if c["k"] == "costo_k" else c["e"], "et": "" if c["k"] == "costo_k" else c["et"], "meta": meta, "x": c["x"], **tr, **d})
     mal = [c["l"] for c in cards if c["e"] == "bad"]
     atencion = [c["l"] for c in cards if c["e"] == "warn"]
     if mal:
@@ -618,7 +622,7 @@ def informe_charts(inf_: dict) -> dict:
     ej = informe_ejecutivo(inf_)
     if ej["n_modos"]:
         col = {"oficial": "pro", "respaldo": "warn", "local": "na", "manual": "bad"}
-        out["resumen"].append({"id": "g-modos", "t": "Cómo se resolvieron", "g": "modos", "kind": "donut", "unit": "", "items": [{"n": m["t"], "v": m["n"], "c": col[m["k"]]} for m in ej["modos"] if m["n"]]})
+        out["resumen"].append({"id": "g-modos", "t": "Cómo se resolvieron", "g": "modos", "kind": "donut", "unit": "", "cn": "casos", "items": [{"n": m["t"], "v": m["n"], "c": col[m["k"]]} for m in ej["modos"] if m["n"]]})
     rl = T("recall_ley")
     if rl and rl["filas"]:
         out["calidad"].append({"id": "g-recall", "t": "Acierto por ley", "g": "acierto_ley", "kind": "bar", "h": True, "unit": " %", "meta": {"v": round(100 * (rl["filas"][0][7] or META_RECALL)), "t": "Meta"},
@@ -643,7 +647,7 @@ def informe_charts(inf_: dict) -> dict:
                                  "series": [{"n": "9 de cada 10 casos", "d": [round(r[3] / 1000, 1) for r in le["filas"]], "c": "pro"}]})
     tm = T("tokens_modo")
     if tm and tm["filas"]:
-        out["costo"].append({"id": "g-tokmodo", "t": "Tokens por modo", "g": "inf_tokens", "kind": "donut", "unit": "", "items": [{"n": str(r[0]).capitalize(), "v": r[2] + r[3], "c": {"oficial": "pro", "respaldo": "warn", "local": "na", "manual": "bad"}.get(str(r[0]), "na")} for r in tm["filas"]]})
+        out["costo"].append({"id": "g-tokmodo", "t": "Tokens por modo", "g": "inf_tokens", "kind": "donut", "unit": "", "cn": "tokens", "items": [{"n": str(r[0]).capitalize(), "v": r[2] + r[3], "c": {"oficial": "pro", "respaldo": "warn", "local": "na", "manual": "bad"}.get(str(r[0]), "na")} for r in tm["filas"]]})
     tl = T("tokens_modelo")
     if tl and tl["filas"]:
         out["costo"].append({"id": "g-tokmod", "t": "Tokens por modelo", "g": "inf_tokens", "kind": "bar", "h": True, "stack": True, "unit": "", "cats": [str(r[0]) for r in tl["filas"]],

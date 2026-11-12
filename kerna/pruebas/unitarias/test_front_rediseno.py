@@ -196,7 +196,7 @@ def test_negocio_usa_log_analytics_para_veridy_y_no_inventa_el_resto():
     n = negocio.construir(c2, u2, hoy=hoy)
     o, v = n["clientes"]
     assert v["tot"] == 303 and v["con_sugerencia"] == 32 and o["tot"] is None and o["sin_uso"] and o["riesgo"] == "na" and o["uso_plan"] is None
-    assert n["totales"]["denuncias"] == 303 and n["adopcion"]["con_sugerencia_pct"] == round(100 * 32 / 303) and n["adopcion"]["valoradas"] == 0
+    assert n["totales"]["denuncias"] == 303 and n["adopcion"]["con_sugerencia_pct"] == round(100 * 32 / 303, 1) == 10.6 and n["adopcion"]["valoradas"] == 0
     assert v["ingreso"] > 0 and o["ingreso"] > 0  # el plan y la tarifa de los clientes sembrados se conservan
     V = vistas.negocio(n)
     assert next(c for c in V["clientes"] if c["sin_uso"])["ult"] == "sin datos" and len(V["graficos"]["clientes"]["series"]) == 1
@@ -209,3 +209,16 @@ def test_rapidez_con_pocos_dias_usa_barras(inf):
     v = vistas.informe_charts(inf)
     lat = next((c for c in v["desempeno"] if c["id"] == "g-lat"), None)
     assert lat is None or (lat["kind"] == ("line" if len(lat["cats"]) >= 4 else "bar"))
+
+
+def test_sin_lineas_con_menos_de_4_dias_y_costo_sin_estado(inf):
+    v = vistas.informe_v2(inf)
+    for c in v["cards"]:
+        assert "d_l" not in c or len(c["d_l"]) > 0
+    costo = next(c for c in v["cards"] if c["k"] == "costo_k")
+    assert costo["e"] == "na" and costo["et"] == ""
+    assert "en meta" in v["veredicto"]["n"]
+    from test_front_vistas import EV, M
+    r = vistas.resumen(M, EV, None, None, None, None, None, 7)
+    for k in r["kpis"]:
+        assert k["form"] != "spark" or len(k["s"]) >= 4
