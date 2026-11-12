@@ -112,11 +112,8 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 /* ---------- logo vivo (se dibuja con JS en cada svg[data-logo]) ---------- */
 .kl{display:block;overflow:visible;flex:none}
 .kl g{transform-origin:32px 32px}
-.kl .roseta{animation:rot 70s linear infinite}
-.kl .camino{animation:rot 14s linear infinite reverse}
-.kl .latido{animation:bt 3.5s ease-in-out infinite}
-.kl.rapido .roseta{animation-duration:20s}.kl.rapido .camino{animation-duration:5s}
-.kl .xr1{animation:rot 120s linear infinite reverse}.kl .xr2{animation:rot 200s linear infinite}
+/* logos quietos en reposo: girar grupos dentro de un SVG obliga a redibujarlo en cada cuadro */
+.kl.rapido .roseta{animation:rot 20s linear infinite}.kl.rapido .camino{animation:rot 5s linear infinite reverse}
 .kl .orb{fill:none;stroke:#1C2A6B;stroke-linecap:round}
 .kl .ros{stroke-width:.6;stroke-dasharray:.1 2.1}
 .kl .rc{stroke-width:1.4;opacity:.7}
@@ -212,7 +209,8 @@ body{font-size:16.5px;line-height:1.55;overflow-x:hidden}
 .card.card-hi>*{position:relative;z-index:1}
 /* ficha de indicador: un solo corte grande, trama guilloché y satélite al pasar el cursor */
 .card.card-k{--cut:30px;clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,0 100%);background:var(--guil) right -50px top -60px/190px no-repeat,#fff}
-.card.card-k::before{content:"";position:absolute;left:0;top:0;right:auto;bottom:auto;width:12px;height:12px;border-radius:50%;background:var(--lime);border:2.5px solid var(--brand);offset-path:inset(8px round 0);offset-rotate:0deg;opacity:0;transition:opacity .2s;animation:tour 5s linear infinite}
+.card.card-k::before{content:"";position:absolute;left:0;top:0;right:auto;bottom:auto;width:12px;height:12px;border-radius:50%;background:var(--lime);border:2.5px solid var(--brand);offset-path:inset(8px round 0);offset-rotate:0deg;opacity:0;transition:opacity .2s}
+.card.card-k:hover::before{animation:tour 5s linear infinite}
 .card.card-k:hover{transform:translateY(-5px)}
 .card.card-k:hover::before,.card.card-k:focus-within::before{opacity:1}
 .hd{position:relative;padding-bottom:16px;margin-bottom:16px!important}
@@ -315,9 +313,7 @@ k-tip k-ic{width:20px;height:20px}
 .orb-svg *{transform-box:view-box}
 .orb-svg g.sn{transform-origin:150px 150px;transition:transform .7s var(--ease),opacity .4s}
 .orb-svg g.sn.off{opacity:0}
-.orb-svg .spin{transform-origin:150px 150px;animation:rot 26s linear infinite}
-.orb-svg .spin2{transform-origin:150px 150px;animation:rot 18s linear infinite reverse}
-.orb-svg .spin3{transform-origin:150px 150px;animation:rot 40s linear infinite}
+.orb-svg .spin,.orb-svg .spin2,.orb-svg .spin3{transform-origin:150px 150px;animation:none}
 .orb-svg .spin.off,.orb-svg .spin2.off,.orb-svg .spin3.off{opacity:0}
 .orb-svg .spin,.orb-svg .spin2,.orb-svg .spin3{transition:opacity .4s}
 .ao{fill:none;stroke:rgba(255,255,255,.7);stroke-width:2.2;stroke-dasharray:.1 9;stroke-linecap:round;transition:stroke .4s,stroke-width .4s,stroke-dasharray .4s,opacity .4s}
@@ -327,9 +323,9 @@ k-tip k-ic{width:20px;height:20px}
 .as2{fill:#fff;stroke:var(--lime);stroke-width:2.5}
 .cd{fill:#fff}
 .acore{fill:#fff}.acore-l{fill:var(--lime)}
-.orb-svg .core{transform-origin:150px 150px;animation:bt 3.5s ease-in-out infinite}
+.orb-svg .core{transform-origin:150px 150px}
 .pulse-ring{fill:none;stroke:var(--lime);stroke-width:3;transform-origin:150px 150px;opacity:0;transition:opacity .4s}
-.pulse-ring.on{opacity:1;animation:pulse 2.4s ease-in-out infinite}
+.pulse-ring.on{opacity:1}
 .team{fill:transparent;stroke:rgba(255,255,255,.6);stroke-width:2;stroke-dasharray:2 5;transition:fill .4s,stroke .4s}
 .team.on{fill:var(--lime);stroke:#fff;stroke-dasharray:none}
 .team-t{font:700 12px Unbounded,Inter,sans-serif;fill:rgba(255,255,255,.75);text-anchor:middle}
