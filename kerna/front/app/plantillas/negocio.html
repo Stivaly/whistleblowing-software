@@ -15,18 +15,19 @@
 
 <section class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Clientes</h2>{{ tip('neg_clientes') }}</div>
 <div class="cl-head" aria-hidden="true"><span>Cliente</span><span>Uso del plan ({{ dias }} días)</span><span>Ingreso · costo de servir</span><span>Último uso</span></div>
-<div>{% for c in V.clientes %}<div class="cl s-{{ c.riesgo }}">
+<div>{% for c in V.con_uso %}<div class="cl s-{{ c.riesgo }}">
 <div class="cl-n"><b>{{ c.nombre }}</b><span class="muted">{{ c.plan_tipo }} · {{ miles(c.plan) }} casos al mes · {{ uf(c.tarifa_uf_anual, 0) }} UF al año</span>{% if not c.sin_uso %}<svg viewBox="0 0 100 30" class="cl-sp" aria-hidden="true" preserveAspectRatio="none"><path d="{{ c.spark }}" fill="none" stroke="var(--brand-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>{% endif %}</div>
-{% if c.sin_uso %}<div class="cl-u s-na"><div class="mr-h"><span><b>—</b> denuncias</span><b class="vv"><span>—</span></b></div><div class="mb"><i style="width:0"></i></div></div>
-{% else %}<div class="cl-u s-{{ c.e_uso }}"><div class="mr-h"><span><b>{{ miles(c.tot) }}</b> denuncias</span><b class="vv">{{ ic(ICONO[c.e_uso]) }}<span>{{ c.uso_plan }} %</span></b></div><div class="mb"><i style="width:{{ c.w_uso }}%"></i><u style="left:100%;opacity:.5"></u></div></div>{% endif %}
+<div class="cl-u s-{{ c.e_uso }}"><div class="mr-h"><span><b>{{ miles(c.tot) }}</b> denuncias</span><b class="vv">{{ ic(ICONO[c.e_uso]) }}<span>{{ c.uso_plan }} %</span></b></div><div class="mb"><i style="width:{{ c.w_uso }}%"></i><u style="left:100%;opacity:.5"></u></div></div>
 <div class="cl-m"><b>{{ uf(c.ingreso) }} UF</b> · {{ uf(c.costo_servir) }} UF</div>
-<div class="cl-l"><span class="chip {{ c.riesgo }}">{{ ic(ICONO[c.riesgo]) }}<span>{{ c.ult }}</span></span>{{ tip('neg_clientes', c.nota) }}</div></div>{% endfor %}</div></section>
+<div class="cl-l"><span class="chip {{ c.riesgo }}">{{ ic(ICONO[c.riesgo]) }}<span>{{ c.ult }}</span></span>{{ tip('neg_clientes', c.nota) }}</div></div>{% endfor %}</div>
+{% if V.sin_uso %}<details class="sin-uso"><summary>Clientes sin uso registrado ({{ V.sin_uso|length }})</summary><ul>{% for c in V.sin_uso %}<li><b>{{ c.nombre }}</b><span>{{ c.plan_tipo }} · {{ miles(c.plan) }} casos al mes · {{ uf(c.tarifa_uf_anual, 0) }} UF al año</span></li>{% endfor %}</ul></details>{% endif %}
+</section>
 
-<section class="grid lg:grid-cols-3 gap-3 md:gap-4">
-<div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Denuncias por cliente</h2>{{ tip('neg_denuncias') }}</div>
-<div id="ch-cli" class="chh" role="img" aria-label="Gráfico de área apilada de denuncias por cliente"></div></div>
-<div class="card p-4"><div class="hd flex items-center gap-1.5 mb-3"><h2 class="text-base font-bold m-0">Adopción</h2>{{ tip('neg_adopcion') }}</div>
-<ul class="list-none p-0 m-0 grid gap-3">{% for a in V.embudo %}<li class="mr s-{{ a.e }}"><div class="mr-h"><span>{{ a.n }}</span><b>{{ ic(ICONO[a.e]) }}<span>{{ dec_corto(a.v, 1 if a.n == 'Con sugerencia' else 0) }} %</span></b></div><div class="mb"><i style="width:{{ a.v }}%"></i></div></li>{% endfor %}</ul></div>
+<section class="grid lg:grid-cols-3 gap-3 md:gap-4 items-start">
+<div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">{{ 'Denuncias por cliente' if V.n_uso > 1 else 'Denuncias por día' }}</h2>{{ tip('neg_denuncias') }}</div>
+<div id="ch-cli" class="chh2" role="img" aria-label="Denuncias por día"></div></div>
+<div class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Adopción</h2>{{ tip('neg_adopcion') }}</div>
+<ul class="list-none p-0 m-0 grid gap-2">{% for a in V.embudo %}<li class="mr s-{{ a.e }}"><div class="mr-h"><span>{{ a.n }}</span><b>{{ ic(ICONO[a.e]) }}<span>{{ dec_corto(a.v, 1 if a.n == 'Con sugerencia' else 0) }} %</span></b></div><div class="mb"><i style="width:{{ a.v }}%"></i></div></li>{% endfor %}</ul></div>
 </section>
 
 <section class="grid lg:grid-cols-3 gap-3 md:gap-4">
@@ -35,11 +36,11 @@
 <div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">Proyección a 5 años</h2>{{ tip('proyeccion') }}<span class="chip brand ml-auto">{{ ic('landmark') }} Capítulo 25 del informe</span></div>
 {% set p = n.proyeccion %}
 <div class="stats"><div class="s-ok"><span>Valor actual neto</span><b>{{ uf(p.van, 0) }} UF</b></div><div class="s-ok"><span>Retorno anual</span><b>{{ dec_corto(p.tir_pct, 1) }} %</b></div><div class="s-ok"><span>Índice de rentabilidad</span><b>{{ dec(p.indice_rentabilidad, 2) }}</b></div><div class="s-ok"><span>Se recupera en el año</span><b>{{ p.recuperacion_anio }}</b></div></div>
-<div id="ch-proy" class="chh2" role="img" aria-label="Proyección a 5 años de ingresos, costos y utilidad en UF"></div></div>
+<div id="ch-proy" class="chh2" role="img" aria-label="Proyección a 5 años de ingresos, costos y utilidad en UF"></div>
+<details class="anio-d"><summary>Ver tabla año por año</summary><div class="tabla"><table><thead><tr><th>Año</th><th class="n">Clientes</th><th class="n">Ingresos (UF) {{ tip('ingresos_uf') }}</th><th class="n">Costo de servir</th><th class="n">Parte de Veridy</th><th class="n">Costos fijos</th><th class="n">Margen operativo</th><th class="n">Utilidad después de impuestos</th><th class="n">Caja del año</th></tr></thead><tbody>
+{% for a in V.anios %}<tr><td><b>{{ a.label }}</b></td><td class="n">{{ a.clientes }}</td><td class="n">{{ uf(a.ventas, 0) }}</td><td class="n">{{ uf(a.costo_ventas, 0) }}</td><td class="n">{{ uf(a.participacion_veridy, 0) }}</td><td class="n">{{ uf(a.costos_fijos, 0) }}</td><td class="n">{{ uf(a.margen_operativo, 0) }} ({{ dec_corto(a.margen_operativo_pct, 0) }} %)</td><td class="n">{{ uf(a.utilidad, 0) }}</td><td class="n">{{ uf(a.flujo, 0) }}</td></tr>{% endfor %}</tbody></table></div></details></div>
 </section>
 
-<section class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Año por año</h2>{{ tip('proyeccion') }}</div>
-<div class="tabla"><table><thead><tr><th>Año</th><th class="n">Clientes</th><th class="n">Ingresos (UF) {{ tip('ingresos_uf') }}</th><th class="n">Costo de servir</th><th class="n">Parte de Veridy</th><th class="n">Costos fijos</th><th class="n">Margen operativo</th><th class="n">Utilidad después de impuestos</th><th class="n">Caja del año</th></tr></thead><tbody>
-{% for a in V.anios %}<tr><td><b>{{ a.label }}</b></td><td class="n">{{ a.clientes }}</td><td class="n">{{ uf(a.ventas, 0) }}</td><td class="n">{{ uf(a.costo_ventas, 0) }}</td><td class="n">{{ uf(a.participacion_veridy, 0) }}</td><td class="n">{{ uf(a.costos_fijos, 0) }}</td><td class="n">{{ uf(a.margen_operativo, 0) }} ({{ dec_corto(a.margen_operativo_pct, 0) }} %)</td><td class="n">{{ uf(a.utilidad, 0) }}</td><td class="n">{{ uf(a.flujo, 0) }}</td></tr>{% endfor %}</tbody></table></div>
+
 {% endif %}
 {% endblock %}

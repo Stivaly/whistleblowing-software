@@ -54,15 +54,7 @@
 <ul class="list-none p-0 m-0 grid gap-1.5">{% for e in V.etapas %}<li class="et s-{{ e.e }}" data-s="et.{{ e.id }}"><span>{{ e.n }}</span><div class="mb"><i style="width:{{ e.ancho }}%" data-w="et.{{ e.id }}"></i></div><b data-t="et.{{ e.id }}">{{ e.s }} s</b></li>{% endfor %}</ul>{% endif %}</div>
 </section>
 
-<section class="grid lg:grid-cols-3 gap-3 md:gap-4">
-<div class="card p-4 lg:col-span-2"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Cuándo llegan las denuncias?</h2>{{ tip('mapa') }}</div>
-<div id="ch-heat" class="chh3" role="img" aria-label="Mapa de calor de denuncias por día de la semana y franja horaria"></div></div>
-<div class="grid gap-3 md:gap-4 content-start"><div class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Costo</h2>{{ tip('costo', 'Precio de referencia: ' ~ V.costo.ref if V.costo else None) }}</div>
-{% if V.costo %}<div class="big"><span class="kt-u">US$</span><span class="kv" style="color:var(--brand)" data-count data-t="costo.total">{{ V.costo.total }}</span></div>
-<p class="m-0 text-xs muted">US$ <span data-t="costo.caso">{{ V.costo.por_caso }}</span> por denuncia</p>
-<div class="mb mt-2" style="display:flex;gap:2px">{% for c in V.costo.modelos %}<i style="width:{{ c.w }}%;background:{{ '#3B4FB4' if loop.first else '#8E9AD0' }}" data-w="costo.m{{ loop.index0 }}"></i>{% endfor %}</div>
-<ul class="list-none p-0 m-0 mt-1">{% for c in V.costo.modelos %}<li class="rw rw3"><i class="dt" style="background:{{ '#3B4FB4' if loop.first else '#8E9AD0' }}"></i><span>{{ c.n }}</span><b>US$ <span data-t="costo.m{{ loop.index0 }}">{{ c.usd }}</span></b></li>{% endfor %}</ul>
-{% else %}<div class="pe pe-na">{{ ic('coins') }}<span class="flex-1 text-xs">Sin datos</span></div>{% endif %}</div></div>
-</section>
+<section class="card p-4"><div class="hd flex items-center gap-1.5 mb-1"><h2 class="text-base font-bold m-0">¿Cuándo llegan las denuncias?</h2>{{ tip('mapa') }}</div>
+<div id="ch-heat" class="chh3" role="img" aria-label="Mapa de calor de denuncias por día de la semana y franja horaria"></div></section>
 {% endif %}
 {% endblock %}

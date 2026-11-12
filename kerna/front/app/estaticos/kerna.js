@@ -212,12 +212,13 @@
       }, h ? '' : 'Sin denuncias en el período');
     }
     if (g.clientes) {
-      const cs = ['#1C2A6B', '#6E7FD0', '#B7C0E8', '#3B4FB4', '#8E9AD0', '#DCE1F5'], c = g.clientes, hay = c.series.some((s) => s.d.some((v) => v));
+      const cs = ['#1C2A6B', '#6E7FD0', '#B7C0E8', '#3B4FB4', '#8E9AD0', '#DCE1F5'], c = g.clientes, hay = c.series.some((s) => s.d.some((v) => v)), uno = c.series.length === 1;
+      const ejeX = { type: 'category', boundaryGap: uno, data: c.labels, axisLabel: { color: mu, fontSize: 10.5, interval: Math.ceil(c.labels.length / 7) - 1 }, axisTick: { show: false }, axisLine: { lineStyle: { color: ln } } };
       mk('ch-cli', {
-        ...base(), grid: { left: 28, right: 6, top: 40, bottom: 22 }, tooltip: { trigger: 'axis' }, legend: { top: 0, left: 0, textStyle: { color: ink, fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
-        xAxis: { type: 'category', boundaryGap: false, data: c.labels, axisLabel: { color: mu, fontSize: 10.5, interval: Math.ceil(c.labels.length / 7) - 1 }, axisTick: { show: false }, axisLine: { lineStyle: { color: ln } } },
-        yAxis: { type: 'value', minInterval: 1, axisLabel: { color: mu, fontSize: 10.5 }, splitLine: { lineStyle: { color: '#EEF1F8' } } },
-        series: c.series.map((s, i) => ({ name: s.n, type: 'line', stack: 't', smooth: true, symbol: 'none', data: s.d, itemStyle: { color: cs[i % cs.length] }, lineStyle: { width: 1.5, color: cs[i % cs.length] }, areaStyle: { color: cs[i % cs.length], opacity: .9 } })),
+        ...base(), grid: { left: 28, right: 6, top: uno ? 10 : 40, bottom: 22 }, tooltip: { trigger: 'axis', axisPointer: { type: uno ? 'shadow' : 'line' } }, legend: { show: !uno, top: 0, left: 0, textStyle: { color: ink, fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
+        xAxis: ejeX, yAxis: { type: 'value', minInterval: 1, axisLabel: { color: mu, fontSize: 10.5 }, splitLine: { lineStyle: { color: '#EEF1F8' } } },
+        series: uno ? [{ name: 'Denuncias', type: 'bar', data: c.series[0].d, barMaxWidth: 14, itemStyle: { color: css('--pro-bar'), borderRadius: [3, 3, 0, 0] } }]
+          : c.series.map((s, i) => ({ name: s.n, type: 'line', stack: 't', smooth: true, symbol: 'none', data: s.d, itemStyle: { color: cs[i % cs.length] }, lineStyle: { width: 1.5, color: cs[i % cs.length] }, areaStyle: { color: cs[i % cs.length], opacity: .9 } })),
       }, hay ? '' : 'Sin denuncias en el período');
     }
     if (g.proy) {

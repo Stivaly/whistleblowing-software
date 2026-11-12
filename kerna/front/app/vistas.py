@@ -176,8 +176,9 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     # --- Costo
     if costo:
         refs = sorted({x["ref"] for x in costo["modelos"]})
-        k.append({"k": "costo_k", "i": "coins", "l": "Costo", "form": "spark", "e": "na", "p": "US$", "u": "", "num": round(costo["total"], 2), "v": f.usd(costo["total"]),
-                  "et": "", "tr": "", "te": "na", "ta": "minus", "s": serie,  # sin meta de costo en la configuración: sin estado
+        k.append({"k": "costo_k", "i": "coins", "l": "Costo", "form": "costo", "e": "na", "p": "US$", "u": "", "num": round(costo["total"], 2), "v": f.usd(costo["total"]),
+                  "et": "", "tr": "", "te": "na", "ta": "minus", "s": serie, "por_caso": f.usd(costo["por_caso"], 3),
+                  "stack": [{"n": x["modelo"], "usd": f.usd(x["usd"]), "w": round(100 * x["usd"] / costo["total"], 1) if costo["total"] else 0} for x in costo["modelos"][:4]],  # sin meta de costo en la configuración: sin estado
                   "x": f"Costo por denuncia: US$ {f.usd(costo['por_caso'], 4)}. " + " · ".join(f"{x['modelo']} US$ {f.usd(x['usd'])}" for x in costo["modelos"]) + ". Precio de referencia: " + ", ".join(refs) + "."})
     else:
         k.append({"k": "costo_k", "i": "coins", "l": "Costo", "form": "spark", "e": "na", "p": "", "u": "", "num": None, "v": "—", "et": "Sin datos", "tr": "", "te": "na",
@@ -322,14 +323,14 @@ def negocio(n: dict) -> dict:
     sub = {"ok": "Cada denuncia deja margen y los clientes usan el plan.", "warn": f"Hay {nv} {'punto' if nv == 1 else 'puntos'} a vigilar.", "bad": "La utilidad del período es negativa."}[e_gen]
     ico = ICONO
     k = [
-        {"k": "neg_clientes_k", "i": "building-2", "l": "Clientes activos", "form": "dots", "e": "warn" if riesgo else ("na" if sin_dato else "ok"), "v": str(len(activos)), "u": f"de {len(cls)}",
+        {"k": "neg_clientes_k", "i": "building-2", "l": "Clientes activos", "form": "none", "e": "warn" if riesgo else ("na" if sin_dato else "ok"), "v": str(len(activos)), "u": f"de {len(cls)}",
          "dots": [{"e": c["riesgo"], "n": f"{c['nombre']}: " + ("sin datos de uso" if c["riesgo"] == "na" else (f"hace {c['dias_sin_uso']} días" if c["dias_sin_uso"] is not None else "sin uso"))} for c in cls],
          "et": f"{len(riesgo)} en riesgo" if riesgo else (f"{len(sin_dato)} sin datos de uso" if sin_dato else "Todos usan Kerna"),
          "x": f"{len(activos)} de {len(cls)} clientes usaron Kerna en los últimos {neg_mod.DIAS_RIESGO} días. Solo se mide el uso de Veridy; de los demás clientes se conocen el plan y la tarifa. Cada círculo es un cliente."},
         {"k": "neg_denuncias_k", "i": "inbox", "l": "Denuncias", "form": "spark", "e": "ok" if t["denuncias"] else "na", "v": f.miles(t["denuncias"]), "u": f"en {n['dias']} días", "s": n["serie_total"],
          "et": "Con actividad" if t["denuncias"] else "Sin denuncias", "x": f"Se procesaron {f.miles(t['denuncias'])} denuncias entre todos los clientes en {n['dias']} días."},
         {"k": "neg_ingreso", "i": "wallet", "l": "Ingreso", "form": "none", "e": "ok" if t["ingreso"] > 0 else "na", "v": f.uf(t["ingreso"]), "u": "UF", "et": "Tarifa anual por los días",
-         "x": f"Ingreso del período en UF: la tarifa anual de cada cliente, proporcional a los {n['dias']} días. 1 UF = {f.miles(n['uf_clp'])} pesos."},
+         "x": f"Ingreso del período en UF: la tarifa anual de cada cliente, proporcional a los {n['dias']} días. Incluye las tarifas de los {len(cls)} clientes con contrato. 1 UF = {f.miles(n['uf_clp'])} pesos."},
         {"k": "neg_costo", "i": "coins", "l": "Costo de servir", "form": "none", "e": "ok", "v": f.uf(t["costo_servir"]), "u": "UF", "et": f"{f.uf(t['costo_ia'], 3)} UF de IA",
          "x": "Lo que cuesta atender a los clientes: inteligencia artificial (con tope por plan), infraestructura y soporte."},
         {"k": "neg_margen", "i": "piggy-bank", "l": "Margen operativo", "form": "gauge", "e": e_mar, "v": f.dec_corto(mo, 0), "u": "%", "f": max(0, min(1, mo / 100)), "zm": .6, "zl": "60",
@@ -374,7 +375,8 @@ def negocio(n: dict) -> dict:
             "proy": {"labels": [str(x["calendario"]) for x in p["anios"]], "ventas": [x["ventas"] for x in p["anios"]], "costos": [round(x["ventas"] - x["margen_operativo"], 2) for x in p["anios"]],
                      "utilidad": [x["utilidad"] for x in p["anios"]]}}
     return {"eg": {"e": e_gen, "t": {"ok": "Saludable", "warn": "Atención", "bad": "Problema"}[e_gen], "s": sub, "puntos": puntos}, "kpis": k, "clientes": clientes, "embudo": embudo,
-            "resultado": resultado, "anios": anios, "graficos": graf, "dias": n["dias"], "veridy_pct": p["participacion_veridy_pct"]}
+            "resultado": resultado, "anios": anios, "graficos": graf, "n_uso": sum(1 for c in cls if not c["sin_uso"]),
+            "con_uso": [c for c in clientes if not c["sin_uso"]], "sin_uso": [c for c in clientes if c["sin_uso"]], "dias": n["dias"], "veridy_pct": p["participacion_veridy_pct"]}
 
 
 

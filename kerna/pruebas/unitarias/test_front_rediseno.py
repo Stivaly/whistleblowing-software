@@ -222,3 +222,28 @@ def test_sin_lineas_con_menos_de_4_dias_y_costo_sin_estado(inf):
     r = vistas.resumen(M, EV, None, None, None, None, None, 7)
     for k in r["kpis"]:
         assert k["form"] != "spark" or len(k["s"]) >= 4
+
+
+def test_negocio_compacto_sin_ruido_de_clientes_sin_uso():
+    from datetime import date
+    hoy = date(2026, 11, 12)
+    cl = [{"PartitionKey": "veridy-dev", "nombre": "Veridy", "plan_denuncias_mes": 200, "plan_tipo": "plataforma", "estado": "activo"},
+          {"PartitionKey": "otro", "nombre": "Otro SpA", "plan_denuncias_mes": 100, "plan_tipo": "basico", "estado": "activo"}]
+    real = {"dias": {"2026-11-12": (5, 4)}, "valoradas": 0, "utiles": 0}
+    c2, u2 = negocio.con_uso_real(cl, [], real, 30, hoy)
+    V = vistas.negocio(negocio.construir(c2, u2, hoy=hoy))
+    assert [c["nombre"] for c in V["con_uso"]] == ["Veridy"] and [c["nombre"] for c in V["sin_uso"]] == ["Otro SpA"] and V["n_uso"] == 1
+    ing = next(k for k in V["kpis"] if k["k"] == "neg_ingreso")
+    assert "Incluye las tarifas de los 2 clientes con contrato" in ing["x"]
+    assert next(k for k in V["kpis"] if k["k"] == "neg_clientes_k")["form"] == "none"
+    assert vistas.negocio(negocio.construir(c2, u2, hoy=hoy))["graficos"]["clientes"]["series"][0]["n"] == "Veridy"
+
+
+def test_costo_en_la_tarjeta_y_sin_tarjeta_duplicada():
+    from test_front_vistas import EV, M
+    c = vistas.costo_modelos([{"modelo": "gpt-5-nano", "solicitudes": 10, "tokens_entrada_total": 1000, "tokens_salida_total": 100}])
+    v = vistas.resumen(M, EV, None, None, c, [], None, 7)
+    k = next(x for x in v["kpis"] if x["k"] == "costo_k")
+    assert k["form"] == "costo" and k["stack"][0]["n"] == "gpt-5-nano" and k["por_caso"]
+    t = TestClient(principal.app, base_url="https://t")
+    assert t.get("/panel", headers=H).status_code == 200
