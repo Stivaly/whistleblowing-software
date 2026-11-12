@@ -30,6 +30,15 @@ from .proveedores.voyage import ClienteVoyage
 from .retriever import Retriever
 
 
+_CAMPOS_REVISION = ("revision_juridica", "dictamen", "causal_veto", "condiciones", "alertas_revision",
+                    "hecho_ids_revision", "frase_ids_revision", "confianza_revisor")
+
+
+def _revision(a: dict) -> dict:
+    """Campos opcionales del revisor jurídico (KERNA_REVISOR); solo aparecen si el artículo pasó por él."""
+    return {k: a[k] for k in _CAMPOS_REVISION if k in a} if "revision_juridica" in a else {}
+
+
 class CasoEntrada(BaseModel):
     ref_opaca: uuid.UUID
     id_empresa: str = Field(max_length=100)
@@ -95,7 +104,10 @@ def crear_app(config: Config | None = None, almacen: Almacen | None = None, prov
                           max(config.top_k, config.evaluador_candidatos) if config.evaluador else config.top_k,
                           config.umbral_similitud,
                           rerank_modelo=config.rerank_modelo, rerank_candidatos=config.rerank_candidatos,
-                          reranker_local=_reranker_local(config, proveedores))
+                          reranker_local=_reranker_local(config, proveedores), hibrida=config.hibrida,
+                          hibrida_profundidad=config.hibrida_profundidad, hibrida_stemming=config.hibrida_stemming,
+                          multiquery_relato=config.multiquery_relato, peso_relato=config.multiquery_peso_relato,
+                          extras_fusion=config.hibrida_extras)
     orquestador = Orquestador(config, almacen, enrutador, retriever, reloj)
 
     app = FastAPI(title="Kerna AI núcleo", version=VERSION)
@@ -170,7 +182,7 @@ def crear_app(config: Config | None = None, almacen: Almacen | None = None, prov
             out.update(motivo_revision=sol.get("motivo_revision"), modo=sol.get("modo", "manual"),
                        recuperacion=sol.get("recuperacion", "nube"), contingencia=bool(sol.get("contingencia")),
                        version_corpus=int(sol.get("version_corpus", 0)), generado_en=sol.get("generado_en"),
-                       articulos=[{k: a.get(k) for k in campos} for a in arts])
+                       articulos=[{**{k: a.get(k) for k in campos}, **_revision(a)} for a in arts])
         return out
 
     @app.post("/v1/casos/{ref_opaca}/feedback")

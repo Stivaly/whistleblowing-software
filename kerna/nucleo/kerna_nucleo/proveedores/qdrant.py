@@ -48,3 +48,21 @@ class ClienteQdrant:
             return int((puntos[0].get("payload") or {}).get("version_corpus", 0)) if puntos else 0
         except (AttributeError, TypeError, ValueError):
             return 0
+
+    async def fragmentos_vigentes(self, coleccion: str, pagina: int = 256) -> list[dict]:
+        """Payload de todos los fragmentos vigentes (sin el punto meta), para el índice léxico BM25."""
+        out, offset = [], None
+        while True:
+            cuerpo = {"limit": pagina, "with_payload": True, "with_vector": False,
+                      "filter": {"must": [{"key": "vigente", "match": {"value": True}}],
+                                 "must_not": [{"has_id": [ID_META]}]}}
+            if offset is not None:
+                cuerpo["offset"] = offset
+            r = (await self._post(f"/collections/{coleccion}/points/scroll", cuerpo)).get("result") or {}
+            try:
+                out += [dict(p["payload"]) for p in r.get("points", [])]
+            except (KeyError, TypeError):
+                raise ErrorProveedor("qdrant", 200, True, "respuesta inválida") from None
+            offset = r.get("next_page_offset")
+            if offset is None:
+                return out

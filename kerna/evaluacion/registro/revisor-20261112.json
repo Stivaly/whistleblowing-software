@@ -1,0 +1,73 @@
+{
+  "fecha": "2026-11-12T15:22:14Z",
+  "commit": "bb475ec39",
+  "parametros": {
+    "k": 5,
+    "bootstrap": 2000,
+    "semilla": 20261112,
+    "etiqueta": "desarrollo, hibrida+mq3+evaluador 3m+revisor, gpt-5-nano, etiqueta corregida",
+    "archivo": "dev_con.json"
+  },
+  "resultado": {
+    "k": 5,
+    "casos": 50,
+    "casos_con_esperados": 42,
+    "casos_control": 8,
+    "recall_por_articulo": {
+      "antes": 0.2714,
+      "despues": 0.2714,
+      "antes_global": 0.2745,
+      "despues_global": 0.2745,
+      "diferencia": {
+        "media": 0.0,
+        "ic95": [
+          0.0,
+          0.0
+        ]
+      },
+      "caida_maxima_permitida": 0.02,
+      "no_rompe_recall": true
+    },
+    "precision": {
+      "antes": 0.2542,
+      "despues": 0.2741
+    },
+    "vetos": {
+      "total": 12,
+      "correctos": 10,
+      "incorrectos": 0,
+      "precision_del_veto": 1.0,
+      "en_controles": 2,
+      "controles_con_sugerencias": 4,
+      "controles_con_todo_vetado": 0,
+      "tasa_control_limpio": 0.0
+    },
+    "revision": {
+      "sugerencias": 144,
+      "cobertura": 1.0,
+      "condicionadas": 124,
+      "esperadas_por_dictamen": {
+        "confirma": {
+          "esperadas": 4,
+          "total": 8,
+          "proporcion": 0.5
+        },
+        "condiciona": {
+          "esperadas": 24,
+          "total": 124,
+          "proporcion": 0.1935
+        },
+        "veta": {
+          "esperadas": 0,
+          "total": 12,
+          "proporcion": 0.0
+        },
+        "sin_revision": {
+          "esperadas": 0,
+          "total": 0,
+          "proporcion": null
+        }
+      }
+    }
+  }
+}

@@ -375,7 +375,10 @@ def evaluar(casos: list[dict], tops: list[list[dict]], articulos_corpus: set[str
         if ley not in LEYES:
             raise ValueError(f"{caso['id']}: ley_principal desconocida {ley!r}")
         top1_pos.append(top1)
-        candidatos, _ = normalizar_candidatos(caso["articulos_candidatos"], articulos_corpus, mapeo)
+        if "_candidatos_ids" in caso:          # --etiqueta corregida (triage)
+            candidatos = set(caso["_candidatos_ids"]) & articulos_corpus
+        else:
+            candidatos, _ = normalizar_candidatos(caso["articulos_candidatos"], articulos_corpus, mapeo)
         top5 = top[:TOP_K]
         acierto_ley = any(t["id_norma"] in LEYES[ley] for t in top5)
         acierto_art = any(articulo_de(t["fragmento_id"]) in candidatos for t in top5) if candidatos else None
@@ -504,6 +507,29 @@ def registrar(res: dict, *, campo: str, dataset: bytes, articulos_corpus: int, c
     return entrada
 
 
+PARTICIONES = ("desarrollo", "prueba", "todas")
+
+
+ETIQUETAS = ("original", "corregida")
+
+
+def aplicar_etiqueta_corregida(casos: list[dict], triage: dict) -> list[dict]:
+    """Copia de los casos con `_candidatos_ids` = articulos_corregidos del triage (la etiqueta original no se toca)."""
+    corregidos = {e["id"]: e.get("articulos_corregidos", e.get("articulos_corpus", [])) for e in triage["casos"]}
+    return [{**c, "_candidatos_ids": corregidos.get(c["id"], [])} for c in casos]
+
+
+def filtrar_por_triage(casos: list[dict], triage: dict, particion: str = "todas") -> list[dict]:
+    """Casos del triage (kerna/evaluacion/triage-casos.md): en alcance ("si") y controles ("control"),
+    de la partición pedida. Los "no" y los casos sin decisión quedan fuera."""
+    if particion not in PARTICIONES:
+        raise ValueError(f"partición desconocida: {particion!r}")
+    decision = {e["id"]: e for e in triage["casos"]}
+    return [c for c in casos
+            if decision.get(c["id"], {}).get("en_alcance") in ("si", "control")
+            and particion in ("todas", decision[c["id"]]["particion"])]
+
+
 def _config(args) -> dict:
     """Proveedor, modelo y dimensiones del corpus y de las consultas."""
     base = next((c for c in embed_sync.cargar_colecciones(solo_activas=False)
@@ -530,6 +556,12 @@ def main(argv=None):
     ap.add_argument("--mapeo", choices=MAPEOS, default="concordancia",
                     help="candidatos de la Ley 19.628: 'concordancia' (numeración previa -> texto reformado del corpus) "
                          "o 'directo' (número citado tal cual; la definición anterior)")
+    ap.add_argument("--triage", metavar="JSON",
+                    help="triage de casos (datos/triage_casos.json): mide solo los casos en alcance y los controles")
+    ap.add_argument("--particion", choices=PARTICIONES, default="todas",
+                    help="con --triage: 'desarrollo' (jurídicos), 'prueba' (reddit) o 'todas'")
+    ap.add_argument("--etiqueta", choices=ETIQUETAS, default="original",
+                    help="con --triage: artículos esperados de la etiqueta 'original' o los 'corregida' (articulos_corregidos)")
     ap.add_argument("--solo-mapeo", action="store_true",
                     help="solo cuenta los casos con artículos mapeables (sin proveedor de embeddings)")
     args = ap.parse_args(argv)
@@ -538,11 +570,21 @@ def main(argv=None):
     inicio = time.monotonic()
     crudo = DATASET.read_bytes()
     casos = json.loads(crudo)["casos"]
+    if args.triage:
+        triage = json.loads(Path(args.triage).read_text())
+        casos = filtrar_por_triage(casos, triage, args.particion)
+        if args.etiqueta == "corregida":
+            casos = aplicar_etiqueta_corregida(casos, triage)
+        print(f"Triage {args.triage}, partición {args.particion}: {len(casos)} casos (en alcance + controles)")
+    elif args.particion != "todas" or args.etiqueta != "original":
+        ap.error("--particion y --etiqueta requieren --triage")
     articulos_corpus = articulos_vigentes(cfg["coleccion"])
     positivos = [c for c in casos if c["ley_principal"] != "ninguna"]
     mapeables = defaultdict(int)
     for c in positivos:
-        if normalizar_candidatos(c["articulos_candidatos"], articulos_corpus, args.mapeo)[0]:
+        cands = set(c["_candidatos_ids"]) & articulos_corpus if "_candidatos_ids" in c else \
+            normalizar_candidatos(c["articulos_candidatos"], articulos_corpus, args.mapeo)[0]
+        if cands:
             mapeables[c["ley_principal"]] += 1
     print(f"Corpus vigente: {len(articulos_corpus)} artículos. Casos con ley_principal: {len(positivos)}; "
           f"con artículos candidatos mapeables: {sum(mapeables.values())} ({dict(sorted(mapeables.items()))})")
@@ -587,13 +629,17 @@ def main(argv=None):
         else f"_{cfg['coleccion']}_{re.sub(r'[^A-Za-z0-9._-]', '-', cfg['modelo_consulta'])}"
     if args.mapeo != "concordancia":
         sufijo += f"_{args.mapeo}"
+    if args.triage:
+        sufijo += f"_triage_{args.particion}" + ("_corregida" if args.etiqueta == "corregida" else "")
     salida = AQUI / "datos" / f"resultado_recall_{args.campo}{sufijo}.json"
     salida.write_text(json.dumps(res, ensure_ascii=False, indent=1))
     registrar(res, campo=args.campo, dataset=crudo, articulos_corpus=len(articulos_corpus),
               casos=len(casos), duracion_s=time.monotonic() - inicio,
               parametros={"modelo": cfg["modelo"], "proveedor": cfg["proveedor"], "dims": cfg["dims"],
                           "coleccion": cfg["coleccion"], "modelo_consulta": cfg["modelo_consulta"],
-                          "mapeo": args.mapeo, "vectores_consulta": args.vectores_consulta},
+                          "mapeo": args.mapeo, "vectores_consulta": args.vectores_consulta,
+                          **({"triage": Path(args.triage).name, "particion": args.particion, "etiqueta": args.etiqueta}
+                             if args.triage else {})},
               extra={"latencia_consulta": {"p95_ms": p95, "muestras": len(lat), "origen": origen_lat},
                      "tokens_consultas": {"total": tokens, "origen": origen_tokens},
                      "costo_estimado": costo},

@@ -34,6 +34,15 @@ class Config:
     evaluador: bool = False        # KERNA_EVALUADOR: agente evaluador LLM sobre los candidatos (apagado por defecto)
     evaluador_candidatos: int = 30
     evaluador_variante: str = "1"   # 1 y 2: citas literales; 3*: por identificadores con puntaje (evaluador_ids.py)
+    hibrida: bool = False          # KERNA_HIBRIDA: BM25 + búsqueda densa fusionadas por RRF (apagado por defecto)
+    hibrida_profundidad: int = 100
+    hibrida_stemming: bool = True
+    hibrida_extras: int = 0         # KERNA_HIBRIDA_EXTRAS: ver Retriever.extras_fusion (0 = fusión pura)
+    multiquery: bool = False       # KERNA_MULTIQUERY: las conductas del perfil del evaluador por IDs (variante 3*) como consultas extra
+    multiquery_max: int = 6
+    multiquery_relato: bool = True  # conservar la consulta del relato completo junto a las conductas
+    multiquery_peso_relato: float = 1.0
+    revisor: bool = False          # KERNA_REVISOR: revisor jurídico (confirma/condiciona/veta) tras la validación de citas
     concurrencia: int = 2
     umbral_similitud: float = 0.0
     cadena: list = field(default_factory=lambda: [dict(n) for n in CADENA_POR_DEFECTO])
@@ -71,6 +80,16 @@ class Config:
         c.evaluador = e.get("KERNA_EVALUADOR", "").strip().lower() in ("1", "true", "si", "sí", "on")
         c.evaluador_candidatos = int(e.get("KERNA_EVALUADOR_CANDIDATOS", c.evaluador_candidatos))
         c.evaluador_variante = e.get("KERNA_EVALUADOR_VARIANTE", c.evaluador_variante)
+        c.revisor = e.get("KERNA_REVISOR", "").strip().lower() in ("1", "true", "si", "sí", "on")
+        _si = ("1", "true", "si", "sí", "on")
+        c.hibrida = e.get("KERNA_HIBRIDA", "").strip().lower() in _si
+        c.hibrida_profundidad = int(e.get("KERNA_HIBRIDA_PROFUNDIDAD", c.hibrida_profundidad))
+        c.hibrida_extras = int(e.get("KERNA_HIBRIDA_EXTRAS", c.hibrida_extras))
+        c.hibrida_stemming = e.get("KERNA_HIBRIDA_STEMMING", "1").strip().lower() in _si
+        c.multiquery = e.get("KERNA_MULTIQUERY", "").strip().lower() in _si
+        c.multiquery_max = int(e.get("KERNA_MULTIQUERY_MAX", c.multiquery_max))
+        c.multiquery_relato = e.get("KERNA_MULTIQUERY_RELATO", "1").strip().lower() in _si
+        c.multiquery_peso_relato = float(e.get("KERNA_MULTIQUERY_PESO_RELATO", c.multiquery_peso_relato))
         c.modelo_clasificador = e.get("KERNA_MODELO_CLASIFICADOR", c.modelo_clasificador)
         c.plazo_global_s = float(e.get("KERNA_PLAZO_GLOBAL_S", c.plazo_global_s))
         c.corte_llamada_s = float(e.get("KERNA_CORTE_LLAMADA_S", c.corte_llamada_s))

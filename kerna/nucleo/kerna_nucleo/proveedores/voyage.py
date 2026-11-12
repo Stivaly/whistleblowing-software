@@ -33,6 +33,25 @@ class ClienteVoyage:
         except (ValueError, KeyError, IndexError, TypeError):
             raise ErrorProveedor("voyage", 200, True, "respuesta inválida") from None
 
+    async def embed_consultas(self, textos: list[str]) -> tuple[list[list[float]], int]:
+        """Vectores de varias consultas en una sola petición (input_type "query") y tokens usados."""
+        try:
+            r = await self._http.post(self._url, headers={"Authorization": f"Bearer {self._key}"},
+                                      json={"model": self.modelo, "input": list(textos), "input_type": "query",
+                                            "output_dimension": self.dims})
+        except httpx.HTTPError as e:
+            raise ErrorProveedor("voyage", None, True, type(e).__name__) from None
+        if r.status_code != 200:
+            raise error_http("voyage", r.status_code)
+        try:
+            d = r.json()
+            filas = sorted(d["data"], key=lambda x: x.get("index", 0))
+            if len(filas) != len(textos):
+                raise ValueError
+            return [x["embedding"] for x in filas], int((d.get("usage") or {}).get("total_tokens", 0))
+        except (ValueError, KeyError, IndexError, TypeError):
+            raise ErrorProveedor("voyage", 200, True, "respuesta inválida") from None
+
     async def rerank(self, consulta: str, documentos: list[str], modelo: str, top_k: int,
                      url: str = URL_RERANK) -> tuple[list[tuple[int, float]], int]:
         """Reordena `documentos` por relevancia a la consulta: [(índice, puntaje)] de mayor a menor y tokens usados."""

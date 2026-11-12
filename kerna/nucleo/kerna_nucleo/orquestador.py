@@ -6,17 +6,20 @@ import asyncio
 import logging
 import uuid
 from datetime import datetime, timezone
+from types import SimpleNamespace
 
 from kerna_comun import anonimizador, telemetria
 
 from . import prompts
 from .evaluador import Evaluador
 from .evaluador_ids import EvaluadorIds
+from .revisor import Revisor
 from .enrutador import CadenaAgotada, Enrutador, PlazoAgotado
 from .retriever import RecuperacionFallida, Retriever
 from .validador import validar
 
 _log = logging.getLogger("kerna.nucleo")
+_SIN_REVISION = SimpleNamespace(dictamenes={}, alertas=[])  # revisor activo sin dictámenes: todo «sin_revision»
 
 
 def iso(ts: float) -> str:
@@ -110,9 +113,12 @@ class Orquestador:
             except (CadenaAgotada,):
                 a["motivo"] = "cadena_agotada"
         reg["materia"], reg["riesgo"] = clasif["materia"], clasif["riesgo"]
-        # 3. recuperación
+        # 3. recuperación (KERNA_MULTIQUERY: antes se extrae el perfil, que el evaluador reutiliza)
+        perfil = await self._perfil_previo(limpio, inicio, reg, base)
+        consultas = (perfil.conductas[: self.config.multiquery_max] if perfil else [])
         with telemetria.etapa("recuperacion", **base) as a:
-            rec = await self.retriever.recuperar(limpio)
+            rec = await (self.retriever.recuperar(limpio, consultas=consultas) if consultas
+                         else self.retriever.recuperar(limpio))
             a.update(recuperacion=rec.recuperacion, embedding=rec.embedding, coleccion=rec.coleccion,
                      version_corpus=rec.version_corpus, fragmentos=len(rec.fragmentos), tokens_entrada=rec.tokens_embedding)
         reg.update(recuperacion=rec.recuperacion, embedding=rec.embedding, coleccion=rec.coleccion,
@@ -125,7 +131,7 @@ class Orquestador:
         # 4. generación
         fragmentos = rec.fragmentos[: self.config.top_k]
         if getattr(self.config, "evaluador", False) and len(rec.fragmentos) > 1:
-            fragmentos = await self._evaluar(limpio, rec.fragmentos, inicio, reg, base)
+            fragmentos = await self._evaluar(limpio, rec.fragmentos, inicio, reg, base, perfil)
         with telemetria.etapa("generacion", **base) as a:
             gen = await self.enrutador.generar(prompts.SISTEMA_GENERADOR,
                                                prompts.usuario_generador(limpio, fragmentos, clasif["materia"], clasif["riesgo"]),
@@ -143,6 +149,8 @@ class Orquestador:
         reg["motivos_rechazo"] = sorted({r["motivo"] for r in rechazados})
         if not aceptados:
             return {"estado": "revision_manual", "motivo_revision": "validacion_fallida", "articulos": [], **parcial}
+        # 5b. revisión jurídica (KERNA_REVISOR): anota cada artículo ya validado; nunca elimina ni bloquea
+        rev = await self._revisar(limpio, aceptados, inicio, reg, base, perfil) if getattr(self.config, "revisor", False) else None
         # 6. registro por artículo
         articulos = []
         for ac in aceptados:
@@ -150,22 +158,83 @@ class Orquestador:
             articulos.append({"id_sugerencia": str(uuid.uuid4()), "id_articulo": f["fragmento_id"], "norma": _norma(f),
                               "articulo": _articulo(f), "explicacion": ac["explicacion"], "cita": ac["cita"],
                               "enlace_fuente": str(f.get("url_fuente") or ""), "confianza": ac["confianza"]})
+            if rev is not None:
+                articulos[-1].update(self._anotacion(rev, f["fragmento_id"]))
         return {"estado": "completada", "motivo_revision": None, "articulos": articulos, **parcial}
 
-    async def _evaluar(self, limpio: str, candidatos: list, inicio: float, reg: dict, base: dict) -> list:
+    def _evaluador(self):
+        clase = EvaluadorIds if str(self.config.evaluador_variante).startswith("3") else Evaluador
+        return clase(self.enrutador.generar, variante=self.config.evaluador_variante, salida=self.config.top_k)
+
+    async def _perfil_previo(self, limpio: str, inicio: float, reg: dict, base: dict):
+        """Con KERNA_MULTIQUERY (y evaluador por IDs con perfil), extrae el perfil de la denuncia antes de recuperar.
+        El evaluador lo reutiliza: la extracción se paga una sola vez. Una falla deja la recuperación sin consultas extra."""
+        c = self.config
+        if not (getattr(c, "multiquery", False) and getattr(c, "evaluador", False)
+                and str(c.evaluador_variante).startswith("3")):
+            return None
+        ev = self._evaluador()
+        if not getattr(ev, "usa_perfil", False):
+            return None
+        with telemetria.etapa("perfil", **base) as a:
+            p = await ev.extraer_perfil(limpio, inicio)
+            a.update(ok=p.ok, conductas=len(p.conductas), tokens_entrada=p.tokens_entrada, tokens_salida=p.tokens_salida)
+        reg["tokens_entrada"] += p.tokens_entrada
+        reg["tokens_salida"] += p.tokens_salida
+        return p
+
+    async def _evaluar(self, limpio: str, candidatos: list, inicio: float, reg: dict, base: dict, perfil=None) -> list:
         """Agente evaluador (KERNA_EVALUADOR): reordena los candidatos y entrega los top_k al agente final.
         Cualquier falla conserva el orden del retriever; solo el plazo global se propaga."""
         n = max(self.config.evaluador_candidatos, self.config.top_k)
-        clase = EvaluadorIds if str(self.config.evaluador_variante).startswith("3") else Evaluador
-        ev = clase(self.enrutador.generar, variante=self.config.evaluador_variante, salida=self.config.top_k)
+        ev = self._evaluador()
         with telemetria.etapa("evaluacion", **base) as a:
-            r = await ev.evaluar(limpio, candidatos[:n], inicio)
+            r = await (ev.evaluar(limpio, candidatos[:n], inicio, perfil=perfil) if perfil is not None
+                       else ev.evaluar(limpio, candidatos[:n], inicio))
             a.update(usado=r.usado, motivo=r.motivo, aplican=r.aplican, descartados_id=r.descartados_id,
                      descartados_cita=r.descartados_cita, tokens_entrada=r.tokens_entrada,
                      tokens_salida=r.tokens_salida)
         reg["tokens_entrada"] += r.tokens_entrada
         reg["tokens_salida"] += r.tokens_salida
         return r.fragmentos
+
+    async def _revisar(self, limpio: str, aceptados: list, inicio: float, reg: dict, base: dict, perfil=None):
+        """Agente revisor (KERNA_REVISOR), después de la validación: ve solo los artículos ya validados (con su texto
+        íntegro, que la validación ya comprobó) y las leyes de esos artículos. Falla segura: ante cualquier falla, o si
+        se agota el plazo, las sugerencias salen sin cambios, marcadas «sin_revision»."""
+        items = [{"fragmento": ac["fragmento"], "confianza": ac["confianza"]} for ac in aceptados]
+        with telemetria.etapa("revision", **base) as a:
+            try:
+                r = await Revisor(self.enrutador.generar).revisar(limpio, items, inicio,
+                                                                 perfil=getattr(perfil, "texto", "") or "")
+            except PlazoAgotado:
+                r = None
+                a["motivo"] = "plazo_agotado"
+            except Exception as e:  # defecto inesperado: nunca se registra el contenido
+                _log.error("error inesperado en el revisor: %s", type(e).__name__)
+                r = None
+                a["motivo"] = "revisor_fallido"
+            if r is not None:
+                a.update(usado=r.usado, motivo=r.motivo, familias=r.familias, confirmados=r.confirmados,
+                         condicionados=r.condicionados, vetados=r.vetados, vetos_degradados=r.vetos_degradados,
+                         descartados_id=r.descartados_id, alertas=len(r.alertas), tokens_entrada=r.tokens_entrada,
+                         tokens_salida=r.tokens_salida)
+                reg["tokens_entrada"] += r.tokens_entrada
+                reg["tokens_salida"] += r.tokens_salida
+        usado = bool(r is not None and r.usado)
+        reg["revision_juridica"] = "revisado" if usado else "sin_revision"
+        reg["alertas_revision"] = list(r.alertas) if usado else []
+        return r if usado else _SIN_REVISION
+
+    @staticmethod
+    def _anotacion(rev, fragmento_id: str) -> dict:
+        """Campos del artículo según el dictamen; sin dictamen (falla o artículo omitido) queda «sin_revision»."""
+        d = rev.dictamenes.get(fragmento_id)
+        if d is None:
+            return {"revision_juridica": "sin_revision"}
+        return {"revision_juridica": "revisado", "dictamen": d["dictamen"], "causal_veto": d["causal_veto"],
+                "condiciones": d["condiciones"], "alertas_revision": rev.alertas, "hecho_ids_revision": d["hecho_ids"],
+                "frase_ids_revision": d["frase_ids"], "confianza_revisor": d["confianza_ajustada"]}
 
     @staticmethod
     def _sumar(reg: dict, r) -> None:

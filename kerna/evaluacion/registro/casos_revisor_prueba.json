@@ -1,0 +1,1463 @@
+[
+ {
+  "id": "DEN-0001",
+  "control": false,
+  "ley": "21.643",
+  "esperados": [
+   "207436-karin-art-2",
+   "207436-karin-art-211-a",
+   "207436-karin-art-211-b",
+   "207436-karin-art-211-c"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [
+   "requiere_ponderacion"
+  ],
+  "tokens_entrada": 60020,
+  "tokens_salida": 5615,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-211-c",
+    "confianza": 0.84,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "vigencia"
+    ],
+    "confianza_revisor": 0.65,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-a",
+    "confianza": 0.82,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "vigencia"
+    ],
+    "confianza_revisor": 0.62,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "1008668-art-4",
+    "confianza": 0.74,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "vigencia"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0002",
+  "control": true,
+  "ley": "21.643",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 42818,
+  "tokens_salida": 6112,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-211-a",
+    "confianza": 0.85,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable"
+    ],
+    "confianza_revisor": 0.7,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b-bis",
+    "confianza": 0.84,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "naturaleza_conducta"
+    ],
+    "confianza_revisor": 0.7,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b",
+    "confianza": 0.82,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "naturaleza_conducta"
+    ],
+    "confianza_revisor": 0.7,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-e",
+    "confianza": 0.79,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "naturaleza_conducta"
+    ],
+    "confianza_revisor": 0.7,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0003",
+  "control": false,
+  "ley": "21.643",
+  "esperados": [
+   "207436-karin-art-2",
+   "207436-karin-art-211-a",
+   "207436-karin-art-211-b",
+   "207436-karin-art-211-b-bis",
+   "207436-karin-art-211-c",
+   "207436-karin-art-211-e"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [
+   "requiere_ponderacion"
+  ],
+  "tokens_entrada": 42473,
+  "tokens_salida": 4797,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-211-a",
+    "confianza": 0.78,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-c",
+    "confianza": 0.75,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "1200096-art-6",
+    "confianza": 0.6,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0004",
+  "control": false,
+  "ley": "21.643",
+  "esperados": [
+   "207436-karin-art-2",
+   "207436-karin-art-211-a",
+   "207436-karin-art-211-b",
+   "207436-karin-art-211-c"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [
+   "requiere_ponderacion"
+  ],
+  "tokens_entrada": 53336,
+  "tokens_salida": 6098,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-211-a",
+    "confianza": 0.88,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.65,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-c",
+    "confianza": 0.85,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "vigencia",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.65,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b",
+    "confianza": 0.84,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-2",
+    "confianza": 0.82,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.65,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "1200096-art-6",
+    "confianza": 0.8,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "vigencia",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0005",
+  "control": false,
+  "ley": "21.643",
+  "esperados": [
+   "207436-karin-art-2",
+   "207436-karin-art-211-a",
+   "207436-karin-art-211-c"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [
+   "requiere_ponderacion"
+  ],
+  "tokens_entrada": 43340,
+  "tokens_salida": 3795,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-2",
+    "confianza": 0.85,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-154",
+    "confianza": 0.78,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b-bis",
+    "confianza": 0.75,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0006",
+  "control": false,
+  "ley": "21.643",
+  "esperados": [
+   "207436-karin-art-2"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 46308,
+  "tokens_salida": 5440,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-2",
+    "confianza": 0.88,
+    "dictamen": "confirma",
+    "causal_veto": null,
+    "condiciones": [],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-a",
+    "confianza": 0.86,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "procedimiento_aplicable",
+     "ambito_regimen"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b-bis",
+    "confianza": 0.84,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-c",
+    "confianza": 0.82,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-154-bis",
+    "confianza": 0.79,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0007",
+  "control": true,
+  "ley": "21.643",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 45628,
+  "tokens_salida": 5526,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-2",
+    "confianza": 0.86,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable"
+    ],
+    "confianza_revisor": 0.65,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b-bis",
+    "confianza": 0.84,
+    "dictamen": "confirma",
+    "causal_veto": null,
+    "condiciones": [],
+    "confianza_revisor": 0.84,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-a",
+    "confianza": 0.82,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable"
+    ],
+    "confianza_revisor": 0.78,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0055",
+  "control": false,
+  "ley": "19.628-21.719",
+  "esperados": [
+   "141599-2026-12-01-art-17",
+   "141599-2026-12-01-art-18"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [
+   "fuera_de_corpus:penal"
+  ],
+  "tokens_entrada": 48475,
+  "tokens_salida": 4186,
+  "sugerencias": [
+   {
+    "id_articulo": "141599-2026-12-01-art-17",
+    "confianza": 0.72,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-19",
+    "confianza": 0.7,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-42",
+    "confianza": 0.66,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-35",
+    "confianza": 0.65,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0057",
+  "control": false,
+  "ley": "19.628-21.719",
+  "esperados": [
+   "141599-2026-12-01-art-11",
+   "141599-2026-12-01-art-4",
+   "141599-2026-12-01-art-5",
+   "141599-2026-12-01-art-6",
+   "141599-2026-12-01-art-7"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 45457,
+  "tokens_salida": 5749,
+  "sugerencias": [
+   {
+    "id_articulo": "141599-2026-12-01-art-14-ter",
+    "confianza": 0.8,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes",
+     "territorialidad",
+     "vigencia"
+    ],
+    "confianza_revisor": 0.65,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-14-quinquies",
+    "confianza": 0.8,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes",
+     "territorialidad",
+     "procedimiento_aplicable"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-3",
+    "confianza": 0.75,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes",
+     "territorialidad",
+     "procedimiento_aplicable"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0060",
+  "control": false,
+  "ley": "19.628-21.719",
+  "esperados": [
+   "141599-2026-12-01-art-4",
+   "141599-2026-12-01-art-5",
+   "141599-2026-12-01-art-6",
+   "141599-2026-12-01-art-7",
+   "141599-2026-12-01-art-8"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [
+   "hechos_insuficientes"
+  ],
+  "tokens_entrada": 43175,
+  "tokens_salida": 6718,
+  "sugerencias": [
+   {
+    "id_articulo": "141599-2026-12-01-art-8-ter",
+    "confianza": 0.75,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "sujeto",
+     "procedimiento_aplicable",
+     "vigencia"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0061",
+  "control": false,
+  "ley": "19.628-21.719",
+  "esperados": [
+   "141599-2026-12-01-art-12",
+   "141599-2026-12-01-art-13",
+   "141599-2026-12-01-art-3"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [
+   "hechos_insuficientes"
+  ],
+  "tokens_entrada": 46348,
+  "tokens_salida": 5182,
+  "sugerencias": [
+   {
+    "id_articulo": "141599-2026-12-01-art-15-bis",
+    "confianza": 0.78,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "sujeto",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-24",
+    "confianza": 0.52,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-28",
+    "confianza": 0.45,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.45,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-42",
+    "confianza": 0.42,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.42,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-53",
+    "confianza": 0.38,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.38,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0062",
+  "control": false,
+  "ley": "19.628-21.719",
+  "esperados": [
+   "141599-2026-12-01-art-3"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 42877,
+  "tokens_salida": 5071,
+  "sugerencias": [
+   {
+    "id_articulo": "141599-2026-12-01-art-14-bis",
+    "confianza": 0.83,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-34-ter",
+    "confianza": 0.78,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-14-sexies",
+    "confianza": 0.77,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0064",
+  "control": false,
+  "ley": "19.628-21.719",
+  "esperados": [
+   "141599-2026-12-01-art-8"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 44278,
+  "tokens_salida": 5361,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-211-a",
+    "confianza": 0.88,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b-bis",
+    "confianza": 0.85,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "1200096-art-6",
+    "confianza": 0.83,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "191865-karin-art-14",
+    "confianza": 0.77,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0065",
+  "control": false,
+  "ley": "19.628-21.719",
+  "esperados": [
+   "207436-karin-art-154-ter"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 43569,
+  "tokens_salida": 5773,
+  "sugerencias": [
+   {
+    "id_articulo": "141599-2026-12-01-art-14-sexies",
+    "confianza": 0.84,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "vigencia",
+     "territorialidad",
+     "posicion_afectado"
+    ],
+    "confianza_revisor": 0.75,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-14-bis",
+    "confianza": 0.82,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "vigencia",
+     "territorialidad",
+     "posicion_afectado",
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.75,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0066",
+  "control": false,
+  "ley": "19.628-21.719",
+  "esperados": [
+   "207436-karin-art-154-ter"
+  ],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 44394,
+  "tokens_salida": 6475,
+  "sugerencias": [
+   {
+    "id_articulo": "141599-2026-12-01-art-14-quinquies",
+    "confianza": 0.92,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-14",
+    "confianza": 0.9,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable",
+     "territorialidad",
+     "sujeto"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-34-ter",
+    "confianza": 0.88,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable",
+     "territorialidad",
+     "sujeto"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-5",
+    "confianza": 0.86,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "sujeto",
+     "procedimiento_aplicable",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-10",
+    "confianza": 0.85,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "sujeto",
+     "procedimiento_aplicable",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0092",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "revision_manual",
+  "motivo_revision": "validacion_fallida",
+  "revision_juridica": null,
+  "alertas_revision": null,
+  "tokens_entrada": 40718,
+  "tokens_salida": 4794,
+  "sugerencias": []
+ },
+ {
+  "id": "DEN-0093",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [
+   "posible_otra_via"
+  ],
+  "tokens_entrada": 48644,
+  "tokens_salida": 5627,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-211-b-bis",
+    "confianza": 0.8,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "naturaleza_conducta"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0094",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 44813,
+  "tokens_salida": 4570,
+  "sugerencias": [
+   {
+    "id_articulo": "141599-2026-12-01-art-14-bis",
+    "confianza": 0.72,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "141599-2026-12-01-art-38",
+    "confianza": 0.65,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.3,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0095",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 43660,
+  "tokens_salida": 6548,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-211-b-bis",
+    "confianza": 0.6,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-e",
+    "confianza": 0.58,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.58,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-c",
+    "confianza": 0.56,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.56,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "30256-karin-art-120",
+    "confianza": 0.4,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.4,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0096",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "revision_manual",
+  "motivo_revision": "validacion_fallida",
+  "revision_juridica": null,
+  "alertas_revision": null,
+  "tokens_entrada": 36452,
+  "tokens_salida": 2280,
+  "sugerencias": []
+ },
+ {
+  "id": "DEN-0097",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "revision_manual",
+  "motivo_revision": "validacion_fallida",
+  "revision_juridica": null,
+  "alertas_revision": null,
+  "tokens_entrada": 40665,
+  "tokens_salida": 3035,
+  "sugerencias": []
+ },
+ {
+  "id": "DEN-0098",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 46017,
+  "tokens_salida": 6358,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-2",
+    "confianza": 0.86,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "territorialidad"
+    ],
+    "confianza_revisor": 0.65,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "191865-karin-art-14",
+    "confianza": 0.78,
+    "dictamen": "veta",
+    "causal_veto": "naturaleza_distinta",
+    "condiciones": [],
+    "confianza_revisor": 0.1,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0099",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [
+   "posible_otra_via"
+  ],
+  "tokens_entrada": 42319,
+  "tokens_salida": 5363,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-211-a",
+    "confianza": 0.82,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-c",
+    "confianza": 0.8,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b-bis",
+    "confianza": 0.78,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b",
+    "confianza": 0.74,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "1200096-art-6",
+    "confianza": 0.7,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0100",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 44394,
+  "tokens_salida": 3741,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-2",
+    "confianza": 0.65,
+    "dictamen": "veta",
+    "causal_veto": "naturaleza_distinta",
+    "condiciones": [],
+    "confianza_revisor": 0.1,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0101",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "revision_manual",
+  "motivo_revision": "validacion_fallida",
+  "revision_juridica": null,
+  "alertas_revision": null,
+  "tokens_entrada": 31945,
+  "tokens_salida": 3010,
+  "sugerencias": []
+ },
+ {
+  "id": "DEN-0102",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 46394,
+  "tokens_salida": 4254,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-154",
+    "confianza": 0.72,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta",
+     "procedimiento_aplicable"
+    ],
+    "confianza_revisor": 0.72,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-e",
+    "confianza": 0.61,
+    "dictamen": "veta",
+    "causal_veto": "naturaleza_distinta",
+    "condiciones": [],
+    "confianza_revisor": 0.2,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0103",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "revision_manual",
+  "motivo_revision": "validacion_fallida",
+  "revision_juridica": null,
+  "alertas_revision": null,
+  "tokens_entrada": 36600,
+  "tokens_salida": 4452,
+  "sugerencias": []
+ },
+ {
+  "id": "DEN-0104",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [],
+  "tokens_entrada": 43394,
+  "tokens_salida": 5075,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-211-a",
+    "confianza": 0.78,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "naturaleza_conducta"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-154-bis",
+    "confianza": 0.74,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "naturaleza_conducta"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b-bis",
+    "confianza": 0.7,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "hechos_insuficientes"
+    ],
+    "confianza_revisor": 0.55,
+    "revision_juridica": "revisado"
+   }
+  ]
+ },
+ {
+  "id": "DEN-0105",
+  "control": true,
+  "ley": "ninguna",
+  "esperados": [],
+  "estado": "completada",
+  "motivo_revision": null,
+  "revision_juridica": "revisado",
+  "alertas_revision": [
+   "requiere_ponderacion"
+  ],
+  "tokens_entrada": 45192,
+  "tokens_salida": 5401,
+  "sugerencias": [
+   {
+    "id_articulo": "207436-karin-art-2",
+    "confianza": 0.88,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "sujeto",
+     "naturaleza_conducta"
+    ],
+    "confianza_revisor": 0.6,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-154-bis",
+    "confianza": 0.82,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "ambito_regimen",
+     "procedimiento_aplicable",
+     "vigencia"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-154",
+    "confianza": 0.78,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "procedimiento_aplicable",
+     "naturaleza_conducta"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-a",
+    "confianza": 0.75,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "procedimiento_aplicable",
+     "naturaleza_conducta",
+     "ambito_regimen"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   },
+   {
+    "id_articulo": "207436-karin-art-211-b-bis",
+    "confianza": 0.74,
+    "dictamen": "condiciona",
+    "causal_veto": null,
+    "condiciones": [
+     "procedimiento_aplicable",
+     "naturaleza_conducta",
+     "ambito_regimen"
+    ],
+    "confianza_revisor": 0.5,
+    "revision_juridica": "revisado"
+   }
+  ]
+ }
+]

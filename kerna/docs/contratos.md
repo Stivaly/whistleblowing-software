@@ -101,6 +101,27 @@ Objeto de resultado: `id_solicitud`, `estado` (`pendiente` \| `completada` \| `r
 pendiente: `motivo_revision`, `modo`, `recuperacion`, `contingencia`, `version_corpus`, `generado_en`, `articulos`
 (con los campos de `kerna_sugerencia.articulos[]`). El conector arma la nota con estos campos tal cual.
 
+Con `KERNA_REVISOR` encendido, la respuesta agrega campos opcionales (ausentes con el revisor apagado). Los modelos de
+`kerna_comun.notas` ignoran campos extra: la nota `kerna_sugerencia` de Veridy todavía no los lleva. No contienen
+texto de la denuncia: son identificadores y códigos de listas cerradas.
+
+Por artículo de `articulos[]`:
+
+| Campo | Tipo | Nota |
+|---|---|---|
+| `revision_juridica` | `"revisado"` \| `"sin_revision"` | `sin_revision`: el revisor falló, se agotó el plazo o no emitió dictamen para ese artículo |
+| `dictamen` | `"confirma"` \| `"condiciona"` \| `"veta"` | Solo si `revisado`. Un artículo vetado se conserva y se anota; no se elimina |
+| `causal_veto` | str \| null | Solo con `veta`: `regimen_excluye_norma`, `falta_sujeto_exigido`, `hechos_anteriores_a_vigencia`, `naturaleza_distinta` o `hechos_fuera_de_chile` |
+| `condiciones` | list[str] | Qué debe verificar el auditor: `ambito_regimen`, `sujeto`, `vigencia`, `naturaleza_conducta`, `territorialidad`, `posicion_afectado`, `procedimiento_aplicable`, `hechos_insuficientes`, `requiere_ponderacion` |
+| `alertas_revision` | list[str] | Alertas del caso (se repiten en cada artículo; ver abajo) |
+| `hecho_ids_revision` | list[str] | Hechos `H<n>` de la denuncia que sustentan el dictamen (numerados al segmentarla) |
+| `frase_ids_revision` | list[str] | Frases `A<k>.<j>` del artículo que contienen la regla |
+| `confianza_revisor` | float 0–1 | Nunca mayor que `confianza`; con `veta`, 0,2 como máximo |
+
+Por solicitud (guardados en la solicitud, no en el objeto de resultado): `revision_juridica` (`revisado` \|
+`sin_revision`) y `alertas_revision`, de la lista cerrada `fuera_de_corpus:penal`, `fuera_de_corpus:administrativo`,
+`fuera_de_corpus:laboral`, `requiere_ponderacion`, `hechos_insuficientes`, `posible_otra_via`.
+
 Resultado derivado de la clasificación: **aceptada** si los artículos aplicados son exactamente los sugeridos;
 **rechazada** si no se aplicó ninguno de los sugeridos; **corregida** en los demás casos.
 
@@ -124,6 +145,13 @@ Orden fijo, ejecutado en segundo plano tras aceptar la solicitud:
 5. **Validación de citas**: se descarta todo artículo cuyo `fragmento_id` no esté entre los recuperados, no esté
    vigente o cuya `cita` no sea un fragmento literal del texto del artículo (comparación tras normalizar espacios,
    comillas y mayúsculas). Si no queda ninguno: `revision_manual` con motivo `validacion_fallida`.
+   **5b. Revisión jurídica** (solo con `KERNA_REVISOR`, apagado por defecto): un tercer agente recibe los hechos de la
+   denuncia segmentados (`H1..Hn`), los artículos ya validados en frases (`A1.1...`) y los criterios de las leyes de
+   esos artículos (`kerna_nucleo/revisor/criterios/`, más los transversales); con `KERNA_MULTIQUERY` recibe también el
+   perfil de la denuncia. Responde solo con identificadores y códigos de listas cerradas, con JSON schema estricto.
+   Guardias en código: identificadores válidos; un veto sin causal de la lista o sin hecho válido pasa a
+   `condiciona`; la confianza solo baja. Anota, no elimina. Si falla o se agota el plazo, las sugerencias salen sin
+   cambios con `revision_juridica = "sin_revision"`.
 6. **Registro** por solicitud: modo, proveedor, modelo, embedding, colección, versión del índice, tokens de entrada
    y salida, duración por etapa, citas rechazadas; y un registro por artículo sugerido.
 
@@ -168,7 +196,7 @@ observación en claro más allá de lo necesario: el texto anonimizado se descar
 `KERNA_CLIENTES` (JSON `{client_id: {"secreto_sha256": str, "cliente": str}}`), `KERNA_JWT_SECRETO`,
 `GEMINI_API_KEY`, `VOYAGE_API_KEY`, `QDRANT_URL`, `QDRANT_API_KEY`, `KERNA_COLECCION` (`normativa_cl`),
 `KERNA_EMBEDDING` (`voyage-4-large`), `KERNA_DIMS` (1024), `KERNA_LOCAL_URL`, `KERNA_LOCAL_TOKEN`, `KERNA_TOP_K`, `KERNA_CONCURRENCIA` (2),
-`KERNA_UMBRAL_SIMILITUD`, `KERNA_CADENA` (JSON opcional), `KERNA_ALMACEN` (`memoria` \| `tablas`),
+`KERNA_UMBRAL_SIMILITUD`, `KERNA_REVISOR` (`1` enciende la revisión jurídica; apagado por defecto), `KERNA_HIBRIDA` (`1` suma BM25 a la búsqueda densa por RRF; apagado por defecto; ajustes `KERNA_HIBRIDA_PROFUNDIDAD`, `KERNA_HIBRIDA_STEMMING`, `KERNA_HIBRIDA_EXTRAS`), `KERNA_MULTIQUERY` (`1` usa las conductas del perfil del evaluador por IDs, variante `3*` con perfil, como consultas adicionales; apagado por defecto; ajustes `KERNA_MULTIQUERY_MAX`, `KERNA_MULTIQUERY_RELATO`, `KERNA_MULTIQUERY_PESO_RELATO`), `KERNA_CADENA` (JSON opcional), `KERNA_ALMACEN` (`memoria` \| `tablas`),
 `KERNA_TABLAS_URL` o `KERNA_TABLAS_CONEXION`, `APPLICATIONINSIGHTS_CONNECTION_STRING`.
 
 ## Anonimizador (`kerna_comun.anonimizador`)

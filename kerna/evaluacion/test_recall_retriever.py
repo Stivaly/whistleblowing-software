@@ -200,3 +200,32 @@ def test_metricas_caso_a_8_y_10_y_cobertura():
     m = r.metricas_caso(top, cand)
     assert (m["hit5"], m["hit8"], m["hit10"]) == (0.0, 1.0, 1.0)
     assert (m["cobertura5"], m["cobertura8"], m["cobertura10"]) == (0.0, 0.5, 1.0)
+
+
+def test_filtrar_por_triage_deja_si_y_control_por_particion():
+    casos = [{"id": f"DEN-{i}"} for i in range(1, 7)]
+    triage = {"casos": [
+        {"id": "DEN-1", "en_alcance": "si", "particion": "desarrollo"},
+        {"id": "DEN-2", "en_alcance": "no", "particion": "desarrollo"},
+        {"id": "DEN-3", "en_alcance": "control", "particion": "desarrollo"},
+        {"id": "DEN-4", "en_alcance": "si", "particion": "prueba"},
+        {"id": "DEN-5", "en_alcance": "control", "particion": "prueba"},
+    ]}                                                    # DEN-6 sin decisión
+    ids = lambda p: [c["id"] for c in r.filtrar_por_triage(casos, triage, p)]
+    assert ids("desarrollo") == ["DEN-1", "DEN-3"]
+    assert ids("prueba") == ["DEN-4", "DEN-5"]
+    assert ids("todas") == ["DEN-1", "DEN-3", "DEN-4", "DEN-5"]
+    with pytest.raises(ValueError):
+        ids("otra")
+
+
+def test_etiqueta_corregida_reemplaza_candidatos_sin_tocar_la_original():
+    casos = [{"id": "DEN-1", "ley_principal": "21.643", "articulos_candidatos": "CT 211-B (medidas de resguardo)"}]
+    triage = {"casos": [{"id": "DEN-1", "articulos_corpus": ["207436-karin-art-211-b"],
+                         "articulos_corregidos": ["207436-karin-art-211-b-bis"]}]}
+    corr = r.aplicar_etiqueta_corregida(casos, triage)
+    assert casos[0].get("_candidatos_ids") is None and corr[0]["articulos_candidatos"] == casos[0]["articulos_candidatos"]
+    corpus = {"207436-karin-art-211-b", "207436-karin-art-211-b-bis"}
+    tops = [[{"fragmento_id": "207436-karin-art-211-b-bis-p1", "id_norma": 207436, "score": 0.5}]]
+    assert r.evaluar(corr, tops, corpus)["detalle"][0]["acierto_articulo"] is True
+    assert r.evaluar(casos, tops, corpus)["detalle"][0]["acierto_articulo"] is False
