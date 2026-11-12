@@ -8,7 +8,7 @@ import os
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-from . import consultas, evaluaciones, finanzas
+from . import cache, consultas, evaluaciones, finanzas
 
 DATOS = Path(__file__).parent / "datos"
 RANGOS = (7, 30, 90)
@@ -146,16 +146,21 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
     """`ejecutar(texto, ini, fin)` y los datos de evaluación se inyectan en las pruebas."""
     ejecutar = ejecutar or _filas_rango
     crudo, fallos = {}, {}
-    if evaluacion is None:  # calidad en vivo desde la tabla `evaluaciones`
-        try:
-            evaluacion = evaluaciones.cargar()
-        except Exception as e:
-            evaluacion, fallos["evaluaciones"] = None, type(e).__name__
+    tareas = {n: (lambda n=n: ejecutar(kql_rango(n, ini), ini, fin)) for n in CONSULTAS_INFORME}
+    if evaluacion is None:  # calidad en vivo desde la tabla `evaluaciones`, a la vez que las consultas
+        tareas["_evaluacion"] = evaluaciones.cargar
+    res = cache.paralelo(tareas)  # las consultas son independientes: se lanzan juntas
+    if evaluacion is None:
+        r = res.pop("_evaluacion")
+        evaluacion, fallos["evaluaciones"] = (None, type(r).__name__) if isinstance(r, Exception) else (r, None)
+        if fallos["evaluaciones"] is None:
+            del fallos["evaluaciones"]
     for n in CONSULTAS_INFORME:
-        try:
-            crudo[n] = ejecutar(kql_rango(n, ini), ini, fin)
-        except Exception as e:  # sin identidad, rol o consulta: se declara, no se oculta ni se filtra detalle
-            crudo[n], fallos[n] = [], type(e).__name__
+        r = res[n]
+        if isinstance(r, Exception):  # sin identidad, rol o consulta: se declara, no se oculta ni se filtra detalle
+            crudo[n], fallos[n] = [], type(r).__name__
+        else:
+            crudo[n] = r
     corte = fin.strftime("%Y-%m-%d %H:%M UTC")
     per = f"{ini:%Y-%m-%d} a {(fin - timedelta(seconds=1)):%Y-%m-%d}"
     sin = lambda n, tema: f"Sin datos de {tema}: la consulta a Log Analytics falló ({fallos[n]})." if n in fallos else None  # noqa: E731

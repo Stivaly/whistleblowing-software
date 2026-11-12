@@ -6,6 +6,7 @@ from pathlib import Path
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.gzip import GZipMiddleware
 from fastapi.templating import Jinja2Templates
 
 from datetime import datetime
@@ -15,10 +16,11 @@ from fastapi.responses import Response
 import json
 import time
 
-from . import ajustes as aj, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
+from . import ajustes as aj, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
+app.add_middleware(GZipMiddleware, minimum_size=500, compresslevel=6)
 app.mount("/estaticos", StaticFiles(directory=BASE / "estaticos"), name="estaticos")
 plantillas = Jinja2Templates(directory=BASE / "plantillas")
 plantillas.env.globals.update(graficos.FUNCIONES)
@@ -40,8 +42,11 @@ async def cabeceras_seguras(request: Request, call_next):
     r = await call_next(request)
     for k, v in CABECERAS.items():
         r.headers.setdefault(k, v)
-    if request.url.path.startswith(("/panel", "/api", "/acceso")):
+    ruta = request.url.path
+    if ruta.startswith(("/panel", "/api", "/acceso")):
         r.headers["Cache-Control"] = "no-store"
+    elif ruta.startswith("/estaticos/"):  # con ?v=<versión> el nombre cambia al cambiar el contenido: inmutable un año
+        r.headers["Cache-Control"] = "public, max-age=31536000, immutable" if "v=" in request.url.query else "public, max-age=604800"
     return r
 
 
@@ -82,25 +87,33 @@ _extra_cache: dict = {}
 
 
 def _extra(nombre: str, dias: int, ttl: float = consultas.TTL_S) -> list[dict]:
-    """Consulta auxiliar del Resumen (costo, etapas, horarios) con caché corta; si falla, no hay datos (nunca rompe el panel)."""
-    hit = _extra_cache.get((nombre, dias))
-    if hit and time.time() - hit[0] < ttl:
-        return hit[1]
-    try:
-        filas = consultas.filas(reintentos._kql(nombre + ".kql").replace("ago(7d)", f"ago({int(dias)}d)"), dias)
-    except Exception:
-        filas = []
-    _extra_cache[(nombre, dias)] = (time.time(), filas)
-    return filas
+    """Consulta auxiliar del Resumen (costo, etapas, horarios) con caché compartida; si falla, no hay datos (nunca rompe el panel)."""
+    def calcular():
+        try:
+            return consultas.filas(reintentos._kql(nombre + ".kql").replace("ago(7d)", f"ago({int(dias)}d)"), dias)
+        except Exception:
+            return []
+    return cache.obtener(("extra", nombre, dias), calcular, ttl)
 
 
 def _vista_resumen(m: dict, dias: int, prov, rei) -> dict:
-    try:
-        ev = evaluaciones.cargar()
-    except Exception:
-        ev = None
-    return vistas.resumen(m, ev, prov, rei, vistas.costo_modelos(_extra("front_tokens_por_modelo", dias)),
-                          vistas.etapas_lista(_extra("latencia_por_etapa", dias)), vistas.heat(_extra("front_horarios", dias)), dias)
+    def ev():
+        try:
+            return evaluaciones.cargar()
+        except Exception:
+            return None
+    r = cache.paralelo({"ev": ev, **{k: (lambda k=k: _extra(k, dias)) for k in ("front_tokens_por_modelo", "latencia_por_etapa", "front_horarios")}})
+    g = lambda k: [] if isinstance(r[k], Exception) else r[k]  # noqa: E731
+    return vistas.resumen(m, None if isinstance(r["ev"], Exception) else r["ev"], prov, rei, vistas.costo_modelos(g("front_tokens_por_modelo")),
+                          vistas.etapas_lista(g("latencia_por_etapa")), vistas.heat(g("front_horarios")), dias)
+
+
+def _metricas(dias: int) -> dict:
+    return cache.obtener(("metricas", dias), lambda: consultas.metricas(dias), consultas.TTL_S)
+
+
+def _prov():
+    return cache.obtener(("prov",), proveedores.estado_proveedores, 60)
 
 
 @app.get("/panel", response_class=HTMLResponse)
@@ -108,15 +121,10 @@ def panel(request: Request, dias: int = 7):
     if not _permitido(request):
         return RedirectResponse("/acceso", status_code=303)
     dias = dias if dias in consultas.RANGOS else 7
-    try:
-        m, error = consultas.metricas(dias), None
-    except Exception as e:  # sin identidad, sin rol o Log Analytics caído: no se filtra el detalle
-        m, error = None, type(e).__name__
-    try:
-        prov = proveedores.estado_proveedores()
-    except Exception:  # la página de estado nunca debe romper el panel
-        prov = None
-    rei = _reintentos_ctx()
+    r = cache.paralelo({"m": lambda: _metricas(dias), "prov": _prov, "rei": _reintentos_ctx})
+    m, error = (None, type(r["m"]).__name__) if isinstance(r["m"], Exception) else (r["m"], None)  # sin identidad, sin rol o Log Analytics caído: no se filtra el detalle
+    prov = None if isinstance(r["prov"], Exception) else r["prov"]  # la página de estado nunca debe romper el panel
+    rei = None if isinstance(r["rei"], Exception) else r["rei"]
     V = _vista_resumen(m, dias, prov, rei) if m else None
     return plantillas.TemplateResponse(request, "panel.html", {"m": m, "V": V, "error": error, "prov": prov, "rei": rei, "csrf": seguridad.token_csrf(request.cookies),
                                                                "aviso": request.query_params.get("reintento"), "dias": dias})
@@ -124,7 +132,7 @@ def panel(request: Request, dias: int = 7):
 
 def _reintentos_ctx():
     try:
-        return {"r": reintentos.resumen(), "s": reintentos.estado_solicitud()}
+        return {"r": cache.obtener(("rei",), reintentos.resumen, 60), "s": reintentos.estado_solicitud()}
     except Exception:  # sin telemetría o sin tabla: el bloque se oculta, el panel sigue
         return None
 
@@ -165,11 +173,11 @@ def api_metricas(request: Request, dias: int = 7):
     if not _permitido(request):
         return JSONResponse({"detalle": "no autorizado"}, status_code=401)
     try:
-        m = consultas.metricas(dias)
+        m = _metricas(dias if dias in consultas.RANGOS else 7)
     except Exception as e:
         return JSONResponse({"detalle": "consulta fallida", "tipo": type(e).__name__}, status_code=502)
     try:
-        prov = proveedores.estado_proveedores()
+        prov = _prov()
     except Exception:
         prov = None
     # La vista (estados, textos y series ya calculados) lleva lo que el Resumen necesita para refrescarse sin recargar.
@@ -177,12 +185,34 @@ def api_metricas(request: Request, dias: int = 7):
 
 
 def _informe(dias, desde, hasta):
-    ini, fin = inf_mod.periodo(dias, desde, hasta)
+    def calcular():
+        ini, fin = inf_mod.periodo(dias, desde, hasta)
+        try:
+            n = negocio.cargar(dias=(fin - ini).days or 30)
+        except Exception:
+            n = None  # la sección de rentabilidad declara que no hay datos
+        return inf_mod.construir(ini, fin, negocio=n)
+    return cache.obtener(("informe", dias, desde, hasta), calcular, 120)
+
+
+def precalentar():
+    """Al arrancar: deja listos Resumen, informe y Negocio para que la primera visita no espere a Log Analytics."""
+    cache.precalentar([(("metricas", 7), lambda: consultas.metricas(7), 60), (("prov",), proveedores.estado_proveedores, 60),
+                       (("informe", 30, None, None), lambda: _informe_directo(30), 120)])
+
+
+def _informe_directo(dias):
+    ini, fin = inf_mod.periodo(dias, None, None)
     try:
         n = negocio.cargar(dias=(fin - ini).days or 30)
     except Exception:
-        n = None  # la sección de rentabilidad declara que no hay datos
+        n = None
     return inf_mod.construir(ini, fin, negocio=n)
+
+
+@app.on_event("startup")
+def _arranque():
+    precalentar()
 
 
 @app.get("/panel/informe", response_class=HTMLResponse)
@@ -226,7 +256,7 @@ def panel_negocio(request: Request, dias: int = 30):
     if not _permitido(request):
         return RedirectResponse("/acceso", status_code=303)
     try:
-        n, error = negocio.cargar(dias=30 if dias not in (7, 30, 90) else dias), None
+        n, error = cache.obtener(("negocio", 30 if dias not in (7, 30, 90) else dias), lambda: negocio.cargar(dias=30 if dias not in (7, 30, 90) else dias), 120), None
     except Exception as e:
         n, error = None, type(e).__name__
     dias = 30 if dias not in (7, 30, 90) else dias

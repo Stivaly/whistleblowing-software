@@ -10,6 +10,8 @@ import time
 from datetime import timedelta
 from pathlib import Path
 
+from . import cache
+
 DIR_KQL = Path(__file__).parent / "kql"
 RANGOS = (7, 30)
 CONSULTAS = {
@@ -68,7 +70,11 @@ def metricas(dias: int, ejecutar=None) -> dict:
     hit = _cache.get(dias)
     if real and hit and time.time() - hit[0] < TTL_S:
         return hit[1]
-    crudo = {n: ejecutar(kql(n, dias), dias) for n in CONSULTAS}
+    res = cache.paralelo({n: (lambda n=n: ejecutar(kql(n, dias), dias)) for n in CONSULTAS})
+    for r in res.values():
+        if isinstance(r, Exception):
+            raise r
+    crudo = res
 
     casos = [{"dia": str(f["dia"])[:10], "casos": int(f["casos"]), "con_sugerencia": int(f["con_sugerencia"])} for f in crudo["casos"]]
     modos: dict[str, int] = {"oficial": 0, "respaldo": 0, "local": 0, "manual": 0}
