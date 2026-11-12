@@ -62,7 +62,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
       acceso de la otra (la otra falla y se reintenta una vez). Propuesta: registro de uso en Mongo
       (`accesos_atlas`) y quitar la entrada solo si no queda otro uso activo. Pendiente de decisión.
 - [ ] Atlas: eliminar o rotar el usuario anterior con `atlasAdmin` (su clave quedó expuesta en un error).
-- [ ] Respaldo de MongoDB (M0 no tiene backups): `mongodump` semanal programado.
+- [x] Respaldo de MongoDB: descartado por la usuaria (2026-11-12).
 
 ## 2. Código pendiente
 
@@ -168,7 +168,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [ ] Más adelante: script que limpie los registros de red de Veridy y de las máquinas (access.log y logs del
       contenedor, logs del host, diagnósticos de Azure si se activan), para no conservar IPs de quienes entran por
       navegador normal. Pedido por la usuaria el 2026-10-12. Tor se mantiene (quitarlo no reduce la imagen).
-- [ ] Pregunta abierta: ¿aviso en la portada de que el anonimato es de contenido y no de red (no denunciar desde la
+- [x] (descartado por la usuaria 2026-11-12: al denunciante no le importa) ¿aviso en la portada de que el anonimato es de contenido y no de red (no denunciar desde la
       red o el equipo del trabajo)?
 - [ ] Retirar `etl_incremental.py` cuando ya no se necesite (mover a `.papelera/`, no borrar) y rotar su credencial.
 - [ ] Decidir si se eliminan los recursos Docker de prueba (`pendientes/recursos-de-prueba.md`).
@@ -190,7 +190,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 
 ## 7. Preguntas abiertas para la usuaria
 
-- [ ] ¿Se agregan los estatutos públicos modificados por la Ley Karin (Leyes 18.575, 18.834, 18.883, 18.695)?
+- [~] Sí (usuaria, 2026-11-12), en ejecución: ¿Se agregan los estatutos públicos modificados por la Ley Karin (Leyes 18.575, 18.834, 18.883, 18.695)?
       (comentario abierto en el doc).
 - [x] `docker/globaleaks.tar` (172 MB) sacado del índice y agregado a `.gitignore` (2026-10-12). Sigue en disco.
 
@@ -252,3 +252,10 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [ ] **Arreglar el informe de gestión** (`/panel/informe` y sus descargas PDF/XLSX/CSV): llevarlo al diseño y criterios de la maqueta v2/v3 (colores semánticos, conclusiones, información útil). Solo recordatorio: no lanzar agente hasta que la usuaria lo pida.
 - [ ] **Ingresos en UF, no en dólares**: las tarifas por cliente (tabla `clientes`, campo `tarifa_usd_denuncia`), los ingresos, el margen y la proyección de Negocio deben expresarse en UF. El costo de IA sigue en USD (precios de Anthropic) y debe convertirse a UF para calcular el margen. Afecta `kerna/front/app/negocio.py`, `sembrar_negocio.py`, la plantilla `negocio.html` y la maqueta v2. Solo recordatorio.
 - [ ] **Seguir mejorando el recall@5 por artículo hacia 0,80** (hoy 0,475 con el evaluador por IDs y nano; techo con 70 candidatos 0,902). Próximas vías: revisión jurídica de los casos dudosos del set (respuestas propuestas por un agente; 33 de 61 con un solo artículo aceptado), mejorar la búsqueda inicial para subir el artículo correcto dentro de los 70, y volver a medir mini si cambia el diseño del evaluador.
+
+## Decisiones de la usuaria (2026-11-12)
+- Mini o nano en el evaluador y mejoras de calidad del modelo: no hacer nada por ahora.
+- Números de causa en el anonimizador: los lleva otro agente; no tocarlos.
+- Cuenta `kerna-e2e`: sigue pendiente, la crea la usuaria más adelante.
+- «Probar Kerna» en el front: publicar el front no requiere credencial; lo que falta es que el front pueda iniciar sesión en Veridy para enviar la denuncia. Opciones: secreto `front-demo` en Key Vault o reutilizar la credencial del conector. Pendiente de decisión.
+- `etl_incremental.py`: la usuaria preguntó por qué retirarlo. Motivo: copia la base SQLite local antigua de Veridy a Supabase (y tiene la contraseña escrita en el archivo); Veridy ya corre sobre PostgreSQL de Azure. Sin acción hasta que decida.
