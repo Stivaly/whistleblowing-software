@@ -27,3 +27,4 @@ Revisa cada fila y, si apruebas, bórralo tú manualmente (`rm -r .papelera/...`
   "Título/Relato" y marca de prueba. Ids en `kerna/evaluacion/datos/denuncias_veridy.json` y
   `denuncias_veridy_texto_completo.json`. Respaldo previo completo: `~/backups/veridy-azure-2026-11-11.dump`
   (restaurar con `pg_restore --clean`). Quedan 38: las cargadas solo con el relato y las 10, 25 y 26 (origen sin registro).
+- 2026-11-11: versión clara de `client/app/css/components/kerna.css` guardada en `.papelera/2026-11-11-claro/client/app/css/components/kerna.css`; la usuaria prefirió volver al fondo oscuro. Pendiente de decisión.
