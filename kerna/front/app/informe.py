@@ -2,6 +2,8 @@
 que consumen la página HTML y las exportaciones XLSX, CSV y PDF. Donde falta un dato se declara, no se inventa."""
 from __future__ import annotations
 
+import copy
+import re as _re
 import json
 import math
 import os
@@ -204,7 +206,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
 
     # ---- 2. Calidad -------------------------------------------------------------------------------------------
     cal = {"id": "calidad", "titulo": "Calidad", "kpis": [], "tablas": [], "graficos": [], "notas": [],
-           "justificacion": "Dice si las sugerencias son correctas: recall@5 por artículo frente a la meta de 0,80, anonimización por tipo de dato y valoración de auditores. Es la evidencia central del KPI del proyecto."}
+           "justificacion": "Dice si las sugerencias son correctas: recall@5 por artículo frente a la meta de 80 %, anonimización por tipo de dato y valoración de auditores. Es la evidencia central del KPI del proyecto."}
     cal["kpis"].append({"etiqueta": "Valoraciones: útil", "valor": val["util"], "unidad": "valoraciones", "fuente": LF_LA})
     cal["kpis"].append({"etiqueta": "Valoraciones: no útil", "valor": val["no_util"], "unidad": "valoraciones", "fuente": LF_LA})
     cal["kpis"].append({"etiqueta": "Valoraciones: ninguno aplica", "valor": val["ninguno_aplica"], "unidad": "valoraciones", "fuente": LF_LA})
@@ -405,6 +407,45 @@ def _rentabilidad(n: dict | None) -> dict:
                      f"Proyección con los supuestos del plan de negocio: clientes de 5 a 17, reajuste de {p['inflacion_pct']} % anual, parte de Veridy de {p['participacion_veridy_pct']} %, crédito de 36 cuotas, impuesto según la Ley 21.850 y descuento de {p['tasa_descuento_pct']} %; el año 1 es {p['inicio_operacion'][:4]}.",
                      "Los costos fijos, la depreciación y el interés se prorratean por los días del período."]
     return sec
+
+
+# ---- Porcentajes visibles: el informe guarda el recall como razón (0 a 1); lo que ve la usuaria va en % ----------
+COLS_PCT = {"Recall por ley", "Recall@5 artículo", "IC95 inf.", "IC95 sup.", "Meta", "Recall@5", "Recall por caso"}
+
+
+def es_kpi_pct(etiqueta: str) -> bool:
+    e = etiqueta.lower()
+    return e.startswith(("recall", "meta de recall"))
+
+
+def _a_pct(v):
+    if v is None or isinstance(v, bool) or not isinstance(v, (int, float)):
+        return None
+    r = round(100 * v, 1)
+    return int(r) if r == int(r) else r
+
+
+def para_mostrar(inf: dict) -> dict:
+    """Copia del informe con todo porcentaje en % (49,2 y no 0,492): KPI, tablas y gráficos. Lo usan el PDF, el Excel y el CSV."""
+    out = copy.deepcopy(inf)
+    for s in out["secciones"]:
+        for k in s["kpis"]:
+            if k["unidad"] == "ratio" and es_kpi_pct(k["etiqueta"]):
+                k["valor"], k["unidad"] = _a_pct(k["valor"]), "%"
+        for t in s["tablas"]:
+            idx = [i for i, c in enumerate(t["cols"]) if c in COLS_PCT]
+            for f in t["filas"]:
+                for i in idx:
+                    f[i] = _a_pct(f[i])
+            t["cols"] = [c + " (%)" if c in COLS_PCT else c for c in t["cols"]]
+        for g in s["graficos"]:
+            if g.get("fmt") == "ratio":
+                g["items"] = [(a, _a_pct(b)) for a, b in g["items"]]
+                if g.get("meta") is not None:
+                    g["meta"] = _a_pct(g["meta"])
+                g["fmt"] = "pct"
+                g["titulo"] = _re.sub(r"\(meta [\d,.]+\)", f"(meta {g['meta']:g}".replace(".", ",") + " %)", g["titulo"]) if g.get("meta") is not None else g["titulo"]
+    return out
 
 
 def filas_largas(inf: dict) -> list[list]:

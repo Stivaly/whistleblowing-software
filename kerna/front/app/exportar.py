@@ -24,6 +24,7 @@ def _fmt(v):
 
 # ---- CSV: un único archivo largo (seccion, metrica, valor, unidad, fuente, fecha_corte) ---------------------------
 def a_csv(inf: dict) -> bytes:
+    inf = informe.para_mostrar(inf)
     s = io.StringIO()
     w = csv.writer(s, delimiter=";", lineterminator="\r\n")  # ';' y BOM: Excel en español lo abre sin asistente
     w.writerow(ENCABEZADO_CSV)
@@ -34,6 +35,7 @@ def a_csv(inf: dict) -> bytes:
 
 # ---- XLSX ---------------------------------------------------------------------------------------------------------
 def a_xlsx(inf: dict) -> bytes:
+    inf = informe.para_mostrar(inf)
     from openpyxl import Workbook
     from openpyxl.drawing.image import Image as XImage
     from openpyxl.styles import Alignment, Border, Font, PatternFill, Side

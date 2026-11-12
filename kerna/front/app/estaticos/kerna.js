@@ -235,13 +235,15 @@
   function cascada(c) {
     if (!c) return;
     const col = (k) => (k === 'ok' ? css('--c-verde') : k === 'coral' ? css('--c-coral') : css('--bad-bar')), ink = css('--ink'), mu = css('--muted'), vacio = { color: 'transparent' };
-    const seg = (d) => d.map((x, i) => ({ value: x, itemStyle: { color: col(c.cols[i]), borderRadius: 2 } }));
+    const seg = (d, pos) => d.map((x, i) => ({ value: x, itemStyle: { color: col(c.cols[i]), borderRadius: 2 }, label: { show: pos ? x > 0 : x < 0 && !(c.sp[i] > 0), position: pos ? 'top' : 'bottom', formatter: c.vals[i], color: ink, fontSize: 11, fontWeight: 600 } }));
+    const ancho = innerWidth < 600 ? 44 : 56;
     mk('ch-casc', {
-      ...base(), grid: { left: 4, right: 4, top: 8, bottom: innerWidth < 600 ? 62 : 36 }, tooltip: { trigger: 'item', formatter: (p) => (p.seriesIndex % 2 ? c.labels[p.dataIndex].replace('\n', ': ') + ' UF' : ''), confine: true },
+      ...base(), grid: { left: 4, right: 4, top: 22, bottom: innerWidth < 600 ? 40 : 26 }, tooltip: { trigger: 'item', formatter: (p) => (p.seriesType === 'bar' && p.seriesIndex % 2 ? c.labels[p.dataIndex] + ': ' + c.vals[p.dataIndex] + ' UF' : ''), confine: true },
       xAxis: { type: 'category', data: c.labels, axisLabel: { color: ink, fontSize: innerWidth < 600 ? 9.5 : 10.5, interval: 0, lineHeight: 13, margin: 8, ...(innerWidth < 600 ? { width: 44, overflow: 'break' } : {}) }, axisTick: { show: false }, axisLine: { lineStyle: { color: '#B9C1DA' } } },
       yAxis: { type: 'value', show: false },
-      series: [{ type: 'bar', stack: 'p', data: c.bp, itemStyle: vacio, silent: true, barMaxWidth: 44 }, { type: 'bar', stack: 'p', data: seg(c.sp), barMaxWidth: 44 },
-        { type: 'bar', stack: 'n', data: c.bn, itemStyle: vacio, silent: true, barMaxWidth: 44 }, { type: 'bar', stack: 'n', data: seg(c.sn), barMaxWidth: 44 }],
+      series: [{ type: 'bar', stack: 'p', data: c.bp, itemStyle: vacio, silent: true, barWidth: ancho }, { type: 'bar', stack: 'p', data: seg(c.sp, true), barWidth: ancho },
+        { type: 'bar', stack: 'p', data: c.bn, itemStyle: vacio, silent: true, barWidth: ancho }, { type: 'bar', stack: 'p', data: seg(c.sn, false), barWidth: ancho },
+        ...c.niv.slice(0, -1).map((y, i) => ({ type: 'line', z: 1, silent: true, symbol: 'none', tooltip: { show: false }, data: c.niv.map((_, k) => (k === i || k === i + 1 ? y : null)), lineStyle: { color: '#8D98BC', width: 1, type: 'dashed' } }))],
     });
   }
   cascada(DATOS.cascada);

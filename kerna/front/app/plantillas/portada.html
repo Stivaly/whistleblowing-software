@@ -4,11 +4,11 @@
 <section class="hero max-w-7xl mx-auto px-4 md:px-8 pt-4 md:pt-10 pb-12 md:pb-20 grid lg:grid-cols-[1.05fr_1fr] gap-4 lg:gap-10 items-center">
 <div class="hero-logo order-first lg:order-last"><svg class="kl hero-svg" viewBox="-14 -14 92 92" data-logo="hero" role="img" aria-label="Símbolo de Kerna AI: una roseta de órbitas con un satélite que viaja por la órbita elegida"></svg></div>
 <div class="hero-in relative">
-<span class="chip brand mb-5" style="--i:0">{{ ic('shield-check') }} Para el canal de denuncias Veridy</span>
+<span class="chip brand mb-5" style="--i:0">{{ ic('shield-check', px=18) }} Para el canal de denuncias Veridy</span>
 <h1 class="disp h-hero" style="--i:1">De los hechos a la norma, en <span class="hl">segundos</span>.</h1>
 <p class="lead" style="--i:2">Kerna lee cada denuncia dentro de Veridy y sugiere qué leyes y artículos chilenos podrían aplicar, con la cita exacta que los respalda. Una persona decide siempre.</p>
 <div class="flex flex-wrap gap-4" style="--i:3"><a href="/panel" class="btn btn-pri">Ver el panel {{ ic('layout-dashboard') }}</a><a href="#como" class="btn btn-sec">Cómo funciona</a></div>
-<ul class="flex flex-wrap gap-x-6 gap-y-2 mt-7 p-0 list-none muted text-[16px]" style="--i:4"><li class="flex items-center gap-2">{{ ic('eye-off') }} Sin datos personales</li><li class="flex items-center gap-2">{{ ic('lock') }} Cifrado de punta a punta</li><li class="flex items-center gap-2">{{ ic('quote') }} Siempre con cita</li></ul>
+<ul class="flex flex-wrap gap-x-6 gap-y-2 mt-7 p-0 list-none muted text-[16px]" style="--i:4"><li class="flex items-center gap-2">{{ ic('eye-off', px=20) }} Sin datos personales</li><li class="flex items-center gap-2">{{ ic('lock', px=20) }} Cifrado de punta a punta</li><li class="flex items-center gap-2">{{ ic('quote', px=20) }} Siempre con cita</li></ul>
 </div></section>
 
 <div class="osep" aria-hidden="true"><img class="kl" src="/estaticos/img/simbolo.webp?v={{ ver }}" width="46" height="46" alt="" decoding="async"></div>
@@ -40,8 +40,8 @@
 <div class="band p-7 md:p-14 grid md:grid-cols-2 gap-8 md:gap-12">
 <div><p class="eyebrow" style="color:var(--lime)">Protección</p><h2 class="disp h-sec" style="color:#fff">Primero se anonimiza, siempre</h2><p class="m-0 mt-4 text-[17px]" style="color:#DCE2FA">Ningún modelo de IA ve nombres, RUT, correos ni teléfonos: se reemplazan antes de enviar el texto. Lo que Kerna produce queda cifrado con la clave del caso en Veridy.</p></div>
 <ul class="list-none p-0 m-0 grid gap-4 content-center">
-<li class="band-li flex gap-4 items-start p-5"><span style="width:30px;height:30px;color:var(--lime);display:inline-flex;flex:none">{{ ic('eye-off') }}</span><div><b class="text-[18px]">Anonimizador previo</b><p class="m-0 text-[16px]" style="color:#DCE2FA">Datos personales fuera antes de cualquier modelo.</p></div></li>
-<li class="band-li flex gap-4 items-start p-5"><span style="width:30px;height:30px;color:var(--lime);display:inline-flex;flex:none">{{ ic('lock') }}</span><div><b class="text-[18px]">Cifrado de Veridy</b><p class="m-0 text-[16px]" style="color:#DCE2FA">La denuncia solo existe en claro en memoria.</p></div></li>
+<li class="band-li flex gap-4 items-start p-5"><span style="width:30px;height:30px;color:var(--lime);display:inline-flex;flex:none">{{ ic('eye-off', px=30) }}</span><div><b class="text-[18px]">Anonimizador previo</b><p class="m-0 text-[16px]" style="color:#DCE2FA">Datos personales fuera antes de cualquier modelo.</p></div></li>
+<li class="band-li flex gap-4 items-start p-5"><span style="width:30px;height:30px;color:var(--lime);display:inline-flex;flex:none">{{ ic('lock', px=30) }}</span><div><b class="text-[18px]">Cifrado de Veridy</b><p class="m-0 text-[16px]" style="color:#DCE2FA">La denuncia solo existe en claro en memoria.</p></div></li>
 </ul></div></section>
 
 <section id="leyes" class="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16" data-rv>

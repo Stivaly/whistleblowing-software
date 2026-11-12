@@ -44,19 +44,33 @@ def _p(x: float) -> str:
     return f"{x:.1f}"
 
 
-def _arco(cx: float, cy: float, r: float, frac: float) -> str:
-    """Arco desde las 12 en punto, en sentido horario, de `frac` (0 a 1) de la circunferencia."""
+def _punto(cx: float, cy: float, r: float, t: float) -> tuple[float, float]:
+    """Punto de la circunferencia a `t` radianes de las 12 en punto, en sentido horario."""
+    return cx + r * math.sin(t), cy - r * math.cos(t)
+
+
+def _arco(cx: float, cy: float, r: float, frac: float, fin: float = 0.0) -> str:
+    """Arco de `frac` (0 a 1) de la circunferencia que termina a `fin` radianes de las 12 en punto (sentido horario)."""
     if frac <= 0:
         return ""
     if frac >= .999:
-        return f"M{_p(cx)},{_p(cy - r)} A{_p(r)},{_p(r)} 0 1 1 {_p(cx)},{_p(cy + r)} A{_p(r)},{_p(r)} 0 1 1 {_p(cx)},{_p(cy - r)}"
-    a = -math.pi / 2 + frac * 2 * math.pi
-    return f"M{_p(cx)},{_p(cy - r)} A{_p(r)},{_p(r)} 0 {1 if frac > .5 else 0} 1 {_p(cx + r * math.cos(a))},{_p(cy + r * math.sin(a))}"
+        x0, y0 = _punto(cx, cy, r, fin)
+        x1, y1 = _punto(cx, cy, r, fin + math.pi)
+        return f"M{_p(x0)},{_p(y0)} A{_p(r)},{_p(r)} 0 1 1 {_p(x1)},{_p(y1)} A{_p(r)},{_p(r)} 0 1 1 {_p(x0)},{_p(y0)}"
+    x0, y0 = _punto(cx, cy, r, fin - frac * 2 * math.pi)
+    x1, y1 = _punto(cx, cy, r, fin)
+    return f"M{_p(x0)},{_p(y0)} A{_p(r)},{_p(r)} 0 {1 if frac > .5 else 0} 1 {_p(x1)},{_p(y1)}"
+
+
+def angulos_satelites(n: int) -> list[float]:
+    """Ángulo (radianes desde las 12, sentido horario) donde termina el arco de cada anillo: repartidos en la vuelta para que los satélites no se amontonen."""
+    return [math.radians(50 + i * 360 / max(n, 1)) for i in range(n)]
 
 
 def diagrama_orbital(anillos: list[dict], total: str, unidad: str, etiqueta_total: str = "") -> Markup:
     """anillos: [{n: texto corto, v: valor, txt: cifra del satélite, c: color de categoría}] (el primero es el anillo exterior).
-    El arco de cada anillo es su parte del total de los valores."""
+    El arco de cada anillo es su parte del total de los valores y termina en un satélite con la cifra; los satélites
+    quedan repartidos a lo largo de sus anillos. Los nombres van en una leyenda directa al lado, sin tocar el dibujo."""
     anillos = [a for a in anillos if a["v"] > 0] or anillos[:1]
     tot = sum(a["v"] for a in anillos) or 1
     cx, cy, w, h = 130.0, 118.0, 260, 236
@@ -65,22 +79,21 @@ def diagrama_orbital(anillos: list[dict], total: str, unidad: str, etiqueta_tota
     rs = [r0 - i * paso for i in range(len(anillos))]
     nuc = max(rs[-1] - 21, 24)
     o = [f'<svg class="orb" viewBox="0 0 {w} {h}" role="img" aria-label="{escape(etiqueta_total or unidad)}: {escape(total)}">']
-    for a, r in zip(anillos, rs):
+    lg = []
+    for a, r, fin in zip(anillos, rs, angulos_satelites(len(anillos))):
         c = a["c"]
         o.append(f'<circle cx="{cx}" cy="{cy}" r="{_p(r)}" class="orb-b"/>')
         frac = max(a["v"] / tot, .012)
-        d = _arco(cx, cy, r, frac)
-        o.append(f'<path d="{d}" class="orb-a" style="stroke:var(--c-{c})"/>')
-        ang = -math.pi / 2 + frac * 2 * math.pi
-        sx, sy = cx + r * math.cos(ang), cy + r * math.sin(ang)
+        o.append(f'<path d="{_arco(cx, cy, r, frac, fin)}" class="orb-a" style="stroke:var(--c-{c})"/>')
+        sx, sy = _punto(cx, cy, r, fin)
         o.append(f'<circle cx="{_p(sx)}" cy="{_p(sy)}" r="12" class="orb-s" style="fill:var(--c-{c}-bg);stroke:var(--c-{c})"/>'
                  f'<text x="{_p(sx)}" y="{_p(sy + 3.4)}" class="orb-n" text-anchor="middle">{escape(a["txt"])}</text>')
-        o.append(f'<text x="{cx - 5}" y="{_p(cy - r - 4)}" class="orb-l" text-anchor="end">{escape(a["n"])}</text>')
+        lg.append(f'<li style="--c:var(--c-{c});--cb:var(--c-{c}-bg)"><i aria-hidden="true">{escape(a["txt"])}</i><span>{escape(a["n"])}</span></li>')
     o.append(f'<circle cx="{cx}" cy="{cy}" r="{_p(nuc)}" class="orb-c"/>')
     grande = len(str(total)) <= 4 and nuc > 34
     o.append(f'<text x="{cx}" y="{_p(cy + (3 if grande else 2))}" class="orb-t" style="font-size:{26 if grande else 17}px" text-anchor="middle">{escape(total)}</text>'
              f'<text x="{cx}" y="{_p(cy + (17 if grande else 14))}" class="orb-u" text-anchor="middle">{escape(unidad)}</text></svg>')
-    return Markup("".join(o))
+    return Markup(f'<div class="orb-w">{"".join(o)}<ul class="orb-lg">{"".join(lg)}</ul></div>')
 
 
 def camino(items: list[dict], maximo: float | None = None) -> Markup:

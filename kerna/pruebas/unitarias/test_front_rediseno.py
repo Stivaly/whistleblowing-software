@@ -218,7 +218,7 @@ def test_sin_lineas_con_menos_de_4_dias_y_costo_sin_estado(inf):
         assert "d_l" not in c or len(c["d_l"]) > 0
     costo = next(c for c in v["cards"] if c["k"] == "costo_k")
     assert costo["e"] == "na" and costo["et"] == ""
-    assert "en meta" in v["veredicto"]["n"]
+    assert "metas cumplidas" in v["veredicto"]["t"]
     from test_front_vistas import EV, M
     r = vistas.resumen(M, EV, None, None, None, None, None, 7)
     for k in r["kpis"]:
@@ -282,3 +282,88 @@ def test_portada_sin_use_roto():
     ids = _ids("identidad.svg") | _ids("iconos.svg")
     internos = set(re.findall(r'<use[^>]*href="#([^"]+)"', t)) - set(re.findall(r'\sid="([^"]+)"', t))
     assert not (internos - ids), internos - ids
+
+
+# ---- porcentajes: nada de razones (0,492) junto a «%» ---------------------------------------------------------------
+def test_acierto_y_metas_en_porcentaje_en_el_informe(inf):
+    v = vistas.informe_v2(inf)
+    ac = next(c for c in v["cards"] if c["k"] == "calidad")
+    assert ac["u"] == "%" and "," in ac["v"] or ac["v"].isdigit()
+    assert float(ac["v"].replace(",", ".")) > 1                       # 49,2 y no 0,492
+    assert "meta 80 %" in ac["meta"] and "0,8" not in ac["meta"]
+    kb = next(k for k in v["kb"] if k["k"] == "calidad")
+    assert kb["bar"]["t"] == "meta 80 %"
+    veri = v["veredicto"]
+    assert re.fullmatch(r"\d+ de \d+ metas cumplidas|Sin datos en el período", veri["t"]) and ":" not in veri["t"]
+    for s in vistas.informe(inf):
+        for k in s["kpis"]:
+            if k["etiqueta"].lower().startswith(("recall", "meta de recall")):
+                assert k["u"] == "%" and float(k["v"].replace(",", ".")) > 1, k
+        for t in s["tablas"]:
+            for fila in t["filas"]:
+                for c in fila:
+                    assert not re.search(r"\b0,\d+ %", c["t"]), c
+
+
+def test_exportaciones_visibles_en_porcentaje(inf):
+    p = informe.para_mostrar(inf)
+    cal = next(s for s in p["secciones"] if s["id"] == "calidad")
+    rec = next(k for k in cal["kpis"] if k["etiqueta"].startswith("Meta de recall"))
+    assert rec["valor"] == 80.0 and rec["unidad"] == "%"
+    assert all(k["valor"] is None or k["valor"] > 1 for k in cal["kpis"] if k["etiqueta"].lower().startswith("recall"))
+    g = next(g for g in cal["graficos"] if g["titulo"].startswith("Recall@5"))
+    assert "meta 80 %" in g["titulo"] and g["meta"] == 80.0
+    orig = next(s for s in inf["secciones"] if s["id"] == "calidad")
+    assert next(k for k in orig["kpis"] if k["etiqueta"].startswith("Meta de recall"))["valor"] == 0.8   # el original no se toca
+    import csv, io
+    from app import exportar
+    filas = list(csv.reader(io.StringIO(exportar.a_csv(inf).decode("utf-8-sig")), delimiter=";"))
+    meta = next(f for f in filas if f[1].startswith("Meta de recall"))
+    assert meta[2] == "80" and meta[3] == "%"
+    assert exportar.a_xlsx(inf)[:2] == b"PK" and exportar.a_pdf(inf)[:4] == b"%PDF"
+
+
+# ---- diagrama orbital: satélites y leyenda sin superposición --------------------------------------------------------------
+def _satelites(html):
+    return [(float(x), float(y)) for x, y in re.findall(r'<circle cx="([\d.]+)" cy="([\d.]+)" r="12" class="orb-s"', html)]
+
+
+@pytest.mark.parametrize("n", [1, 2, 3, 4])
+def test_satelites_del_diagrama_no_se_cruzan(n):
+    from app import orbital
+    datos = [{"n": f"Modo {i}", "v": v, "txt": str(v), "c": c} for i, (v, c) in enumerate(zip((17, 15, 271, 5), ("verde", "amarillo", "coral", "cian")))][:n]
+    html = str(orbital.diagrama_orbital(datos, "303", "denuncias"))
+    pos = _satelites(html)
+    assert len(pos) == n
+    for i in range(n):
+        for j in range(i + 1, n):
+            d = ((pos[i][0] - pos[j][0]) ** 2 + (pos[i][1] - pos[j][1]) ** 2) ** .5
+            assert d >= 26, (pos, d)                 # radio 12 + 12 + margen
+    for x, y in pos:
+        assert 12 <= x <= 248 and 12 <= y <= 224     # dentro del lienzo
+    assert 'class="orb-l"' not in html and html.count("<li ") == n   # los nombres van en la leyenda, no encima de los anillos
+
+
+def test_satelites_repartidos_en_la_vuelta():
+    from app import orbital
+    ang = [a % 6.2832 for a in orbital.angulos_satelites(3)]
+    ang.sort()
+    assert min(b - a for a, b in zip(ang, ang[1:] + [ang[0] + 6.2832])) > 1.5   # ≥ 85° entre satélites vecinos
+
+
+def test_sprite_tiene_candado_oculto_y_cita():
+    s = (EST / "identidad.svg").read_text()
+    for n in ("candado", "oculto", "cita"):
+        assert f'id="n-{n}"' in s
+    assert 'r="28"' in re.search(r'<symbol id="m-sin-info".*?</symbol>', s, re.S).group(0)   # el mini «sin información» no es un punto suelto
+
+
+def test_cascada_con_altura_minima_y_conectores():
+    t = {"ingreso": 31.87, "costo_servir": 4.78, "participacion_veridy": 8.13, "costos_fijos": 8.87, "depreciacion": 5.0, "interes": 5.44, "impuesto": 0.0, "utilidad": -0.34}
+    c = vistas.cascada_negocio(t)
+    assert len(c["labels"]) == len(c["vals"]) == len(c["sp"]) == len(c["niv"]) + 1
+    altura = [abs(a) + abs(b) for a, b in zip(c["sp"], c["sn"])]
+    piso = max(c["sp"]) * 0.015
+    assert all(h >= piso * 0.99 for h in altura), altura          # Impuesto (0) y Utilidad (−0,34) siguen visibles
+    assert c["vals"][-2] == "0,00" and c["vals"][-1] == "−0,34"
+    assert all("\n" not in x for x in c["labels"])               # el valor va como etiqueta sobre la barra, no en el eje

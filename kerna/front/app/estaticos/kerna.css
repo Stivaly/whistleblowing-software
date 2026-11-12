@@ -347,14 +347,14 @@ k-tip k-ic{width:20px;height:20px}
 .pulse-ring{fill:none;stroke:var(--lime);stroke-width:3}
 .team{fill:transparent;stroke:rgba(255,255,255,.6);stroke-width:2;stroke-dasharray:2 5;transition:fill .4s,stroke .4s}
 .team.on{fill:var(--lime);stroke:#fff;stroke-dasharray:none}
-.team-t{font:700 12px Unbounded,Inter,sans-serif;fill:rgba(255,255,255,.75);text-anchor:middle}
+.team-t{font:700 30px Unbounded,Inter,sans-serif;fill:rgba(255,255,255,.75);text-anchor:middle}
 .team-t.on{fill:var(--brand)}
 .alink{stroke:rgba(255,255,255,.6);stroke-width:2;stroke-dasharray:.1 7;stroke-linecap:round;transition:opacity .4s}
 .alink.off{opacity:0}
 .arc{fill:none;stroke:var(--lime);stroke-width:8;stroke-linecap:round;transition:stroke-dasharray .6s var(--ease)}
 .arc2{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;opacity:.8;transition:stroke-dasharray .6s var(--ease)}
-.bigtxt{font:700 40px Unbounded,Inter,sans-serif;fill:#fff;text-anchor:middle}
-.subtxt{font:500 14px Inter,sans-serif;fill:#DCE2FA;text-anchor:middle}
+.bigtxt{font:700 44px Unbounded,Inter,sans-serif;fill:#fff;text-anchor:middle}
+.subtxt{font:500 28px Inter,sans-serif;fill:#DCE2FA;text-anchor:middle}
 .live{display:flex;gap:10px;align-items:flex-start;margin:0;font-size:15.5px;line-height:1.5;color:#fff;max-width:300px}
 .live-dot{flex:none;width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--lime);position:relative}
 .live-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:rgba(207,255,94,.7);animation:livep 2.4s infinite;will-change:transform,opacity}
@@ -827,7 +827,9 @@ k-n svg,k-lx svg{display:block;width:100%;height:100%;overflow:visible}
 .vac{display:flex;align-items:center;gap:8px;margin:0;padding:6px 0;font-size:13px;color:var(--muted)}.vac.bad{color:var(--bad)}
 /* protagonista */
 .pr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 36px;align-items:center}
-.pr-d{width:260px;max-width:100%}.pr-d svg{display:block;width:100%;height:auto;overflow:visible}
+.pr-d{max-width:100%}.orb-w{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.orb-w svg{display:block;width:260px;max-width:100%;height:auto;overflow:visible;flex:none}
+.orb-lg{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}.orb-lg li{display:flex;align-items:center;gap:8px;font:500 11px/1.2 "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.orb-lg i{display:inline-grid;place-items:center;min-width:24px;height:24px;border-radius:12px;padding:0 4px;box-sizing:border-box;background:var(--cb);border:2px solid var(--c);font:700 9.5px "JetBrains Mono",monospace;font-style:normal;color:#0B1020}
 .pr-t1{align-self:center}.pr-g{min-width:0}
 @media(max-width:899px){.pr{grid-template-columns:minmax(0,1fr)}}
 .orb-b{fill:none;stroke:var(--line-strong);stroke-width:1.6;stroke-dasharray:.1 5;stroke-linecap:round}
@@ -912,14 +914,14 @@ k-n svg,k-lx svg{display:block;width:100%;height:100%;overflow:visible}
 .as{background:#fff;border:1px solid var(--line-strong);clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%)}
 .as-s{display:grid;grid-template-columns:280px minmax(0,1fr);border-top:1px solid var(--line-strong)}.as-s:first-child{border-top:0}
 .ap{position:relative;background:var(--brand);display:grid;place-items:center;padding:12px;overflow:hidden;min-height:136px}
-.ap::before{content:"";position:absolute;left:-110px;top:-110px;width:340px;height:340px;background:url(img/guil-l.webp) center/contain no-repeat;pointer-events:none}
+.ap::before{content:"";position:absolute;left:50%;top:50%;width:300px;height:300px;margin:-150px 0 0 -150px;background:url(img/guil-l.webp) center/contain no-repeat;pointer-events:none}
 .ap-svg{position:relative;width:132px;height:132px;overflow:visible}
 .as-r{padding:8px 18px 10px;min-width:0;display:grid;align-content:center}
 .as-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 2px;font:700 14px Unbounded,Inter,sans-serif;color:var(--brand)}
 #app .as-ch.ctl{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin-left:auto;min-height:0;padding:0;border:0;font:500 13px Inter,sans-serif;color:var(--ink);background:none}
 #app .as-ch .ct-n{font-weight:600;font-size:13px}
 .gi{display:grid;grid-template-columns:minmax(0,1fr)}@media(min-width:1100px){.gi{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:28px}}
-#app .ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 12px;min-height:46px;padding:4px 0;border-top:1px dotted var(--line-strong);background:none!important}
+#app .ctl{display:grid;grid-template-columns:minmax(124px,1fr) auto;align-items:center;gap:2px 12px;min-height:46px;padding:4px 0;border-top:1px dotted var(--line-strong);background:none!important}
 #app .ctl:first-child{border-top:0}
 @media(min-width:1100px){#app .gi>.ctl:nth-child(2){border-top:0}}
 .ctl-w{grid-column:1/-1}
@@ -943,7 +945,7 @@ html,body{max-width:100%}
 .vw-main,.vw,.bn,.bar,.tp{max-width:100%}
 .tabla{max-width:100%;overflow-x:auto}.tabs2{max-width:100%}
 .stats,.stt{max-width:100%}
-@media(max-width:599px){.vw-main{padding:10px 14px 20px}.bar-p{display:none}.pr-d{width:230px}.kb{padding:2px 8px}.cm span{font-size:11px}.h1{font-size:20px}.stt li{flex:1 1 40%}}
+@media(max-width:599px){.vw-main{padding:10px 14px 20px}.bar-p{display:none}.orb-w svg{width:230px}.kb{padding:2px 8px}.cm span{font-size:11px}.h1{font-size:20px}.stt li{flex:1 1 40%}}
 
 /* v7 · Ajustes en móvil: la etiqueta ocupa su línea y el control (deslizador + valor) la siguiente; panel orbital más bajo */
 @media(max-width:600px){
@@ -961,3 +963,10 @@ html,body{max-width:100%}
 @media(max-width:560px){.vdh .ti{width:64px!important}}
 .pr-w{grid-template-columns:minmax(0,1fr);gap:4px}.pr-w .cch{height:150px}
 .dat,.dat-d{min-width:0;overflow-x:clip}
+
+/* íconos propios en la banda de protección (fondo oscuro) y en la lista de la portada */
+.band-li k-n{--s:30px;--pi:var(--lime);--ac2:#fff;--sat:#fff}
+
+/* Ajustes: sección de una sola fila (Compartir) ajustada a su contenido; textos de los paneles legibles */
+.as-1 .ap{min-height:0;height:88px}.as-1 .ap-svg{width:84px;height:84px}#app .as-1 .as-ch.ctl{margin-left:0;flex-basis:100%}.as-1 .as-r{align-content:start;padding-top:10px}.as-1 .gi{display:none}
+@media(max-width:599px){.subtxt{display:none}.as-1 .ap{height:88px}}

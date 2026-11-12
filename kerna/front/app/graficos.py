@@ -85,7 +85,8 @@ A_NUCLEO = {"layout-dashboard": "resumen", "briefcase-business": "negocio", "sli
             "rotate-cw": "reintentar", "rotate-ccw": "restaurar", "calendar-range": "calendario", "file-text": "informe", "file-spreadsheet": "tabla", "table": "tabla",
             "circle-help": "ayuda", "pencil": "editar", "pencil-line": "editar", "save": "guardar", "user": "persona", "users": "persona", "workflow": "flujo", "sparkles": "ia",
             "timer": "tiempo", "clock": "tiempo", "target": "acierto", "inbox": "denuncias", "coins": "costo", "wallet": "ingresos", "landmark": "utilidad", "piggy-bank": "margen",
-            "building-2": "clientes", "bot": "modelo", "cpu": "modelo", "chart-no-axes-column": "negocio", "scale": "utilidad", "gauge": "acierto"}
+            "building-2": "clientes", "bot": "modelo", "cpu": "modelo", "chart-no-axes-column": "negocio", "scale": "utilidad", "gauge": "acierto",
+            "lock": "candado", "eye-off": "oculto", "quote": "cita", "shield-check": "escudo", "key-round": "llave"}
 A_ESTADO = {"thumbs-up": "valorada", "triangle-alert": "contingencia-modelo", "plug": "conector-en-proceso", "search": "contingencia-busqueda", "message-square-off": "sin-info",
             "circle-check": "lista", "check": "lista", "octagon-alert": "cadena-agotada", "circle-minus": "sin-info", "minus": "sin-info"}
 

@@ -30,11 +30,11 @@
         + (a ? sat('as', 212, 11, 0, 1, 200) : '') + (b ? sat('as', 246, 8, 0, 1, 120) : '') + '<circle class="acore" cx="150" cy="150" r="20"/><circle class="acore-l" cx="150" cy="150" r="7"/>'; },
     comp: (v) => { const eq = [['analista', 'AN', 79.3, 79.3], ['comite', 'CE', 220.7, 79.3], ['auditoria', 'AU', 79.3, 220.7], ['legal', 'FL', 220.7, 220.7]];
       return '<circle class="ao" cx="150" cy="150" r="100"/>' + eq.map(([k, t, x, y]) => { const on = v.compartir.includes(k);
-        return '<line class="alink' + (on ? '' : ' off') + '" x1="150" y1="150" x2="' + x + '" y2="' + y + '"/><circle class="team' + (on ? ' on' : '') + '" cx="' + x + '" cy="' + y + '" r="22"/><text class="team-t' + (on ? ' on' : '') + '" x="' + x + '" y="' + (y + 4) + '">' + t + '</text>'; }).join('')
+        return '<line class="alink' + (on ? '' : ' off') + '" x1="150" y1="150" x2="' + x + '" y2="' + y + '"/><circle class="team' + (on ? ' on' : '') + '" cx="' + x + '" cy="' + y + '" r="32"/><text class="team-t' + (on ? ' on' : '') + '" x="' + x + '" y="' + (y + 10) + '">' + t + '</text>'; }).join('')
         + sat('as', 250, 7, 0, 1, 20) + '<circle class="acore" cx="150" cy="150" r="22"/><circle class="acore-l" cx="150" cy="150" r="8"/>'; },
     plazos: (v) => '<circle class="ao" cx="150" cy="150" r="115"/><circle class="arc" cx="150" cy="150" r="115" pathLength="100" transform="rotate(-90 150 150)" style="stroke-dasharray:' + (v.maxresp / 60 * 100) + ' 100"/>'
       + sat('as', 265, 11, 0, 1, v.maxresp / 60 * 360 - 90) + '<circle class="ao" cx="150" cy="150" r="88" style="opacity:.5"/><circle class="arc2" cx="150" cy="150" r="88" pathLength="100" transform="rotate(-90 150 150)" style="stroke-dasharray:' + (v.alerta / 24 * 100) + ' 100"/>'
-      + '<text class="bigtxt" x="150" y="152">' + v.maxresp + '<tspan font-size="20" dx="4">s</tspan></text><text class="subtxt" x="150" y="182">para responder</text>',
+      + '<text class="bigtxt" x="150" y="156">' + v.maxresp + '<tspan font-size="28" dx="4">s</tspan></text><text class="subtxt" x="150" y="196">objetivo</text>',
   };
   const VIVO = { proc: (v) => v.envios + ' casos por ronda, ' + v.reintentos + ' reintentos', ia: (v) => (v.evaluador ? 'Revisor encendido' : 'Revisor apagado') + ', ' + v.candidatos + ' artículos por caso', comp: (v) => 'Compartido con ' + (v.compartir.length || 'nadie') + ' equipos', plazos: (v) => v.maxresp + ' segundos para responder' };
   function orbitas() { $$('[data-orb]').forEach((n) => { const g = n.dataset.orb; n.innerHTML = ORB[g](s); n.setAttribute('aria-label', VIVO[g](s)); }); }

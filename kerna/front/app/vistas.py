@@ -397,6 +397,8 @@ def _celda(v, col: str = "") -> dict:
         return {"t": f.segundos(v), "n": True}
     if isinstance(v, bool):
         return {"t": "sí" if v else "no", "n": False}
+    if col in inf.COLS_PCT and isinstance(v, (int, float)):
+        return {"t": f.dec_corto(100 * v, 1) + " %", "n": True}
     if isinstance(v, float):
         return {"t": f.dec_corto(v, 3), "n": True}
     if isinstance(v, int):
@@ -408,7 +410,7 @@ def _celda(v, col: str = "") -> dict:
 
 
 def _fmt_g(v, fmt) -> str:
-    return f.dec_corto(v, 3) if fmt == "ratio" else (f.dec_corto(v, 4) if fmt == "usd" else f.miles(v))
+    return f.dec_corto(100 * v, 1) + " %" if fmt == "ratio" else (f.dec_corto(v, 4) if fmt == "usd" else f.miles(v))
 
 
 def _meta_pos(g: dict):
@@ -459,8 +461,8 @@ def informe_ejecutivo(inf_: dict) -> dict:
     rc = kp.get("Recall@5 por artículo (global)")
     meta_r = kp.get("Meta de recall@5") or META_RECALL
     e_r = est("Recall@5 por artículo (global)")
-    cards.append(_tarjeta("calidad", "target", "Acierto", None if rc is None else f.dec_corto(rc, 3), "", e_r, f"Cuando existe un artículo correcto, Kerna lo incluye entre sus 5 primeras sugerencias con esta frecuencia. Meta: {f.dec_corto(meta_r, 2)}.",
-                          form="gauge", f=rc or 0, zm=meta_r, zl=f.dec_corto(meta_r, 1), z=zonas([(0, meta_r - RECALL_ALERTA, "bad"), (meta_r - RECALL_ALERTA, meta_r, "warn"), (meta_r, 1, "ok")]),
+    cards.append(_tarjeta("calidad", "target", "Acierto", None if rc is None else f.dec_corto(100 * rc, 1), "%" if rc is not None else "", e_r, f"Cuando existe un artículo correcto, Kerna lo incluye entre sus 5 primeras sugerencias con esta frecuencia. Meta: {f.dec_corto(100 * meta_r, 0)} %.",
+                          form="gauge", f=rc or 0, zm=meta_r, zl=f.dec_corto(100 * meta_r, 0), z=zonas([(0, meta_r - RECALL_ALERTA, "bad"), (meta_r - RECALL_ALERTA, meta_r, "warn"), (meta_r, 1, "ok")]),
                           tick=graficos.g_tick(meta_r), et={"ok": "Cumple la meta", "warn": "Cerca de la meta", "bad": "Bajo la meta", "na": "Sin datos"}[e_r]))
     pv = kp.get("% de sugerencias valoradas útiles")
     e_v = est("% de sugerencias valoradas útiles")
@@ -496,6 +498,8 @@ def informe(inf_: dict) -> list[dict]:
                 txt = "—"
             elif u == "ms" and isinstance(v, (int, float)):
                 txt, u = f.segundos(v), "s"
+            elif isinstance(v, float) and u == "ratio" and inf.es_kpi_pct(k["etiqueta"]):
+                txt, u = f.dec_corto(100 * v, 1), "%"
             elif isinstance(v, float) and u == "ratio":
                 txt = f.dec_corto(v, 3)
             elif isinstance(v, float):
@@ -579,7 +583,7 @@ def informe_v2(inf_: dict) -> dict:
     s_rec = [100 * r[2] for r in sorted(rs["filas"], key=lambda r: str(r[0]))] if rs and rs["filas"] else []
     extra = {
         "casos": (s_casos, None, False, "Cantidad de denuncias de Veridy"), "neg_sug": (s_sug, False, True, "meta 90 % o más"),
-        "calidad": (s_rec, False, True, f"meta {f.dec_corto(META_RECALL, 2)} o más"), "valoraciones": ([], None, False, "meta 70 % o más"),
+        "calidad": (s_rec, False, True, f"meta {f.dec_corto(100 * META_RECALL, 0)} % o más"), "valoraciones": ([], None, False, "meta 70 % o más"),
         "tiempo": (s_p95, True, False, f"meta {f.dec_corto(META_P95_S, 0)} s o menos"), "costo_k": ([], None, False, "según tokens y precios"),
     }
     nombres = {"casos": "Denuncias recibidas", "neg_sug": "Con sugerencia", "calidad": "Acierto", "valoraciones": "Valoradas útiles", "tiempo": "Tiempo de respuesta", "costo_k": "Costo del período"}
@@ -595,6 +599,7 @@ def informe_v2(inf_: dict) -> dict:
     n_ok = sum(1 for c in con_meta if c["e"] == "ok")
     corto = {"neg_sug": "sugerencia", "calidad": "acierto", "valoraciones": "sugerencias útiles", "tiempo": "respuesta"}
     fuera = [corto.get(c["k"], c["l"].lower()) for c in con_meta if c["e"] != "ok"]
+    falta = ""
     if not con_meta:
         e_v, ico, frase = "na", "sin-info", "Sin datos en el período"
     elif not fuera:
@@ -603,8 +608,9 @@ def informe_v2(inf_: dict) -> dict:
         e_v = "bad" if n_ok == 0 else "warn"
         ico = "cadena-agotada" if n_ok == 0 else "contingencia-modelo"
         lista = ", ".join(fuera[:-1]) + (" y " if len(fuera) > 1 else "") + fuera[-1]
-        frase = f"{n_ok} de {len(con_meta)} metas cumplidas: {lista} " + ("bajo la meta" if n_ok == 0 or e_v == "bad" else "por mejorar")
-    veredicto = {"e": e_v, "ico": ico, "t": frase[0].upper() + frase[1:] if False else frase, "n": f"{n_ok} de {len(con_meta)} en meta"}
+        frase = f"{n_ok} de {len(con_meta)} metas cumplidas"
+        falta = ("Bajo la meta: " if n_ok == 0 or e_v == "bad" else "Por mejorar: ") + lista
+    veredicto = {"e": e_v, "ico": ico, "t": frase, "n": falta}
 
     kp = {k["etiqueta"]: k for s in vistas_informe_cache(inf_) for k in s["kpis"]}
     vis = informe_vis(inf_, kp)
@@ -827,24 +833,41 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
             "hay_leyes": bool(V["aciertos"]), "dias_con_datos": len(V["graficos"]["casos"]["labels"])}
 
 
-def presentacion_negocio(V: dict, n: dict) -> dict:
-    t, p = n["totales"], n["proyeccion"]
-    signo = lambda x: ("−" if x < 0 else "") + f.uf(abs(x))  # noqa: E731
-    e_u = "ok" if t["utilidad"] > 0 else ("bad" if t["utilidad"] < 0 else "na")
-    frase = _M(f"En {n['dias']} días: {_em('ok', signo(t['ingreso']) + ' UF')} de ingreso y {_em(e_u, signo(t['utilidad']) + ' UF')} de utilidad.")
+def cascada_negocio(t: dict, signo=None) -> dict:
+    """Cascada del ingreso a la utilidad: barras con altura mínima visible (1,5 % del recorrido), valor como etiqueta y niveles para los conectores."""
+    signo = signo or (lambda x: ("−" if x < 0 else "") + f.uf(abs(x)))
     pasos = [("Ingreso", t["ingreso"], "ing"), ("Costo de servir", -t["costo_servir"], "des"), ("Parte de Veridy", -t["participacion_veridy"], "des"), ("Costos fijos", -t["costos_fijos"], "des"),
              ("Depreciación e interés", -(t["depreciacion"] + t["interes"]), "des"), ("Impuesto", -t["impuesto"], "des")]
-    labels, bp, sp_, bn, sn, cols, run = [], [], [], [], [], [], 0.0
+    labels, vals, bp, sp_, bn, sn, cols, niv, run = [], [], [], [], [], [], [], [], 0.0
+    pisos = []  # (índice, está sobre el cero): barras demasiado bajas para verse
     for nom, v, tipo in pasos:
         a, b = (0.0, v) if tipo == "ing" else (run, run + v)
         run = b
         lo, hi = min(a, b), max(a, b)
         bp.append(round(max(lo, 0), 3)); sp_.append(round(max(hi, 0) - max(lo, 0), 3)); bn.append(round(min(hi, 0), 3)); sn.append(round(min(lo, 0) - min(hi, 0), 3))
-        cols.append("ok" if tipo == "ing" else "coral"); labels.append(f"{nom}\n{signo(v)}")
+        cols.append("ok" if tipo == "ing" else "coral"); labels.append(nom); vals.append(signo(v)); niv.append(round(run, 3))
     lo, hi = min(run, 0), max(run, 0)
     bp.append(0); sp_.append(round(hi, 3)); bn.append(0); sn.append(round(lo, 3)); cols.append("ok" if run >= 0 else "bad")
-    labels.append(f"Utilidad\n{signo(t['utilidad'])}")
-    cascada = {"labels": labels, "bp": bp, "sp": sp_, "bn": bn, "sn": sn, "cols": cols}
+    labels.append("Utilidad"); vals.append(signo(t["utilidad"]))
+    # altura mínima visible (2 px de unos 200): 1,5 % del recorrido total del gráfico
+    tope = max(bp[i] + sp_[i] for i in range(len(sp_))) if sp_ else 0
+    fondo = min(bn[i] + sn[i] for i in range(len(sn))) if sn else 0
+    piso = round(max(tope - min(fondo, 0), 0.01) * 0.015, 3)
+    for i in range(len(sp_)):
+        if abs(sp_[i]) < piso and abs(sn[i]) < piso:
+            if (bn[i] + sn[i]) < 0:
+                sn[i] = -piso
+            else:
+                sp_[i] = piso
+    return {"labels": labels, "vals": vals, "bp": bp, "sp": sp_, "bn": bn, "sn": sn, "cols": cols, "niv": niv}
+
+
+def presentacion_negocio(V: dict, n: dict) -> dict:
+    t, p = n["totales"], n["proyeccion"]
+    signo = lambda x: ("−" if x < 0 else "") + f.uf(abs(x))  # noqa: E731
+    e_u = "ok" if t["utilidad"] > 0 else ("bad" if t["utilidad"] < 0 else "na")
+    frase = _M(f"En {n['dias']} días: {_em('ok', signo(t['ingreso']) + ' UF')} de ingreso y {_em(e_u, signo(t['utilidad']) + ' UF')} de utilidad.")
+    cascada = cascada_negocio(t, signo)
     kp = {k["k"]: k for k in V["kpis"]}
     kb = [_kb(kp["neg_margen"]), _kb(kp["neg_costo"]), _kb(kp["neg_sug"]), _kb(kp["neg_adopcion_k"])]
     chips = [("Valor actual neto", f"{f.uf(p['van'], 0)} UF"), ("Retorno anual", f"{f.dec_corto(p['tir_pct'], 1)} %"), ("Índice de rentabilidad", f.dec(p["indice_rentabilidad"], 2)),

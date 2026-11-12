@@ -79,6 +79,11 @@ NUEVOS = {
     "persona": _s(c(O, 24, 16, 6), p(O, "M10,41 Q24,21 38,41"), c(F, 38, 10, 3)),
     "flujo": _s(p(K, "M14,12 H24 V24 H34 M24,24 V36 H14"), c(F, 10, 12, 4), c(F, 38, 24, 4), c(F, 10, 36, 4)),
     "ia": _s(p(K, "M24,6 V14 M24,34 V42 M6,24 H14 M34,24 H42"), c(Z, 24, 24, 12), c(C, 24, 24, 4), c(F, 33, 15, 3)),
+    "candado": _s(p(O, "M12,22 H36 V40 H12 Z"), p(K, "M17,22 V16 A7,7 0 0 1 31,16 V22"), c(C, 24, 31, 2.6), c(F, 38, 9, 3)),
+    "oculto": _s(p(O, "M6,24 Q24,8 42,24 Q24,40 6,24"), c(O, 24, 24, 5), c(C, 24, 24, 2), p(K, "M10,40 L38,8"), c(F, 9, 10, 3)),
+    "cita": _s(c(O, 15, 30, 5), p(K, "M20,30 Q20,18 12,15"), c(O, 34, 30, 5), p(K, "M39,30 Q39,18 31,15"), c(F, 41, 8, 3)),
+    "escudo": _s(p(O, "M24,5 L39,11 V24 Q39,36 24,43 Q9,36 9,24 V11 Z"), p(K, "M17,24 L22,29 L31,19"), c(F, 40, 6, 3)),
+    "llave": _s(c(O, 16, 24, 8), c(C, 16, 24, 2.4), p(K, "M24,24 H42 M36,24 V31 M42,24 V29"), c(F, 8, 38, 3)),
     "plazos": _s(c(O, 24, 26, 14), p(K, "M24,18 V26 L29,29"), p(O, "M20,6 H28"), c(F, 38, 12, 3)),
 }
 CLASES_N = {
@@ -107,7 +112,9 @@ def simbolos():
     for n in ICONOS:
         esc = escena(n)
         out.append(f'<symbol id="e-{n}" viewBox="26 6 108 108">{esc}</symbol>')
-        out.append(f'<symbol id="m-{n}" viewBox="26 6 108 108">{simplificar(esc)}</symbol>')
+        # sin-info: el anillo medio queda sólido en la versión mini; solo el núcleo se vería como un punto suelto
+        mini = re.sub(r';stroke-dasharray:4 4(?=")(?=[^>]*r="28")', "", esc) if n == "sin-info" else esc
+        out.append(f'<symbol id="m-{n}" viewBox="26 6 108 108">{simplificar(mini)}</symbol>')
         out.append(f'<symbol id="t-{n}" viewBox="0 0 160 120"><polygon points="20,1 159,1 159,100 140,119 1,119 1,20" style="fill:var(--fondo);stroke:var(--borde);stroke-width:2;stroke-linejoin:round"/>{esc}</symbol>')
     for n, g in LEY.items():
         out.append(f'<symbol id="l-{n}" viewBox="0 0 48 48">{estilizar(g)}</symbol>')

@@ -1,5 +1,5 @@
 {% from "_macros.html" import tip, kb, vacio with context %}
-<section class="bn vdh s-{{ V2.veredicto.e }}" aria-label="Veredicto">{{ baldosa(V2.veredicto.ico, 96) }}<div><p class="frase">{{ V2.veredicto.t }}</p><p class="mk" style="margin:4px 0 0">{{ V2.veredicto.n }}{{ tip('inf_veredicto') }}</p></div></section>
+<section class="bn vdh s-{{ V2.veredicto.e }}" aria-label="Veredicto">{{ baldosa(V2.veredicto.ico, 96) }}<div><p class="frase">{{ V2.veredicto.t }}{{ tip('inf_veredicto') }}</p>{% if V2.veredicto.n %}<p class="mk" style="margin:4px 0 0">{{ V2.veredicto.n }}</p>{% endif %}</div></section>
 <section class="bn kbs kbs6" aria-label="Indicadores clave">{% for k in V2.kb %}{{ kb(k) }}{% endfor %}</section>
 <div class="tabs2" role="tablist" aria-label="Secciones del informe">{% for p in V2.pestanas %}<button type="button" role="tab" id="t-{{ p.id }}" aria-controls="p-{{ p.id }}" aria-selected="{{ 'true' if loop.first else 'false' }}" tabindex="{{ 0 if loop.first else -1 }}"><span>{{ p.t }}</span></button>{% endfor %}<button type="button" role="tab" id="t-datos" aria-controls="p-datos" aria-selected="false" tabindex="-1" class="t-datos"><span>Datos</span></button></div>
 {% for p in V2.pestanas %}<section class="tp" role="tabpanel" id="p-{{ p.id }}" aria-labelledby="t-{{ p.id }}"{% if not loop.first %} hidden{% endif %}>
