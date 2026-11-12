@@ -632,7 +632,7 @@ def informe_charts(inf_: dict) -> dict:
                                  "series": [{"n": "9 de cada 10 casos", "d": [round(r[3] / 1000, 1) for r in ld["filas"]], "c": "na", "area": True}, {"n": "Caso típico", "d": [round(r[2] / 1000, 1) for r in ld["filas"]], "c": "pro", "area": True}]})
     le = T("lat_etapa")
     if le and le["filas"]:
-        out["desempeno"].append({"id": "g-etapa", "t": "¿Dónde se va el tiempo?", "g": "etapas", "kind": "bar", "h": True, "unit": " s", "cats": [str(r[0]).capitalize() for r in le["filas"]],
+        out["desempeno"].append({"id": "g-etapa", "t": "¿Dónde se va el tiempo?", "g": "etapas", "kind": "bar", "h": True, "unit": " s", "cats": [ETAPAS.get(str(r[0]), str(r[0]).capitalize()) for r in le["filas"]],
                                  "series": [{"n": "9 de cada 10 casos", "d": [round(r[3] / 1000, 1) for r in le["filas"]], "c": "pro"}]})
     tm = T("tokens_modo")
     if tm and tm["filas"]:
@@ -659,5 +659,5 @@ def informe_charts(inf_: dict) -> dict:
         for r in fl["filas"]:
             agg[str(r[1])] = agg.get(str(r[1]), 0) + int(r[4])
         it = sorted(agg.items(), key=lambda x: -x[1])
-        out["incidentes"].append({"id": "g-fallas", "t": "Fallas por proveedor", "g": "inf_incid", "kind": "bar", "h": True, "unit": "", "cats": [a.capitalize() for a, _ in it], "series": [{"n": "Eventos", "d": [b for _, b in it], "c": "warn"}]})
+        out["incidentes"].append({"id": "g-fallas", "t": "Fallas por proveedor", "g": "inf_incid", "kind": "bar", "h": True, "unit": "", "cats": [{"generacion": "Redacción", "recuperacion": "Búsqueda", "voyage": "Voyage AI", "gemini": "Gemini", "local": "Modelo local"}.get(a, a.capitalize()) for a, _ in it], "series": [{"n": "Eventos", "d": [b for _, b in it], "c": "warn"}]})
     return out

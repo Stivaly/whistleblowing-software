@@ -366,3 +366,12 @@ Pendiente:
 - [ ] Confirmar `articulo_sugerido` y `modelo` en `solicitud_terminada` con el próximo caso real.
 - [ ] El costo cuenta una solicitud en cada modelo que usó (clasificación y generación con proveedores distintos): el «por denuncia» puede salir algo bajo cuando hay respaldo.
 - [ ] Valor de la UF en 40.000 pesos: confirmar con el oficial (`KERNA_UF_CLP`).
+
+## Front v3 (2026-11-12): informe en pestañas, rendimiento, íconos Núcleo
+- Hecho: informe en pestañas (KPI + veredicto + 2 a 3 gráficos por pestaña, tablas en «Datos» plegadas), PDF con KPI arriba y anexo de tablas, caché con refresco en segundo plano, ECharts propio en canvas, decoración en WebP, sprite de estados Núcleo, Ajustes sin texto narrativo. Detalle y métricas: `kerna/front/diseno-v2/rendimiento-y-iconos.md`.
+- Pendiente: App Service F1 no tiene Always On; tras 20 min sin uso el primer pedido tarda 10 a 20 s (arranque de Python) aunque luego el precalentado deja todo listo. Opciones: ping de salud programado cada 10 min (gratis, pero consume la cuota de CPU diaria de F1) o plan B1 (unos US$ 13 al mes). Decide la usuaria.
+- Pendiente: las fuentes pesan 118 KB (4 pesos de Inter y 2 de Unbounded); se pueden subsetear a los caracteres usados.
+- Pendiente: «Ajustes» se guardan pero Kerna aún no los lee (el aviso dice «Guardado, aún no aplicado»).
+- Pendiente: medir INP con interacción real (cambio de pestaña) en un navegador con GPU; en headless solo se midió carga, reposo y desplazamiento.
+- Prefetch de vistas al pasar por el menú no se hizo: las páginas llevan `Cache-Control: no-store` (son autenticadas), así que el navegador no reutilizaría la respuesta; el servidor ya responde en 50 ms con su caché.
+- `echarts.min.js` (1,0 MB) movido a `.papelera/2026-11-12/`, registrado en `pendientes/eliminaciones-pendientes.md`.
