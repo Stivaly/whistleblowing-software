@@ -301,7 +301,7 @@
   const PROV_E = { operativo: 'ok', degradado: 'warn', caido: 'bad', sin_informacion: 'na' };
   const PROV_T = { operativo: 'Operativo', degradado: 'Degradado', caido: 'Caído', sin_informacion: 'Sin información' };
   const ICO = { ok: 'e-lista', warn: 'e-contingencia-modelo', bad: 'e-cadena-agotada', na: 'e-sin-info' };
-  const icoHref = (id) => (id.startsWith('e-') ? '/estaticos/estados.svg#s-' + id.slice(2) : '/estaticos/iconos.svg#' + id);
+  const icoHref = (id) => (id.startsWith('e-') ? '/estaticos/identidad.svg#' + id : '/estaticos/iconos.svg#' + id);
   const setIco = (u, id) => { u.setAttribute('href', icoHref(id)); const t = u.closest('k-st'); if (t) t.dataset.e = id.slice(2); };
   const setCls = (n, e) => { n.className = n.className.replace(/\bs-(ok|warn|bad|na)\b/g, '').trim() + ' s-' + e; };
   function aplicar(m) {

@@ -89,11 +89,13 @@ def token():
 
 
 def test_post_exige_sesion_csrf_y_mismo_origen(cliente):
-    assert cliente.post("/panel/reintentar", data={"csrf": token()}).status_code == 401
-    assert cliente.post("/panel/reintentar", headers=H, data={"csrf": "malo"}).status_code == 403
-    assert cliente.post("/panel/reintentar", headers=H, data={}).status_code == 403
-    assert cliente.post("/panel/reintentar", headers={**H, "Origin": "https://otro.example"}, data={"csrf": token()}).status_code == 403
-    assert cliente.post("/panel/reintentar", headers={**H, "Sec-Fetch-Site": "cross-site"}, data={"csrf": token()}).status_code == 403
+    # nunca una página JSON en blanco: sin sesión va al acceso; el resto vuelve al Resumen con un aviso
+    r = cliente.post("/panel/reintentar", data={"csrf": token()})
+    assert r.status_code == 303 and r.headers["location"] == "/acceso"
+    assert cliente.post("/panel/reintentar", headers=H, data={"csrf": "malo"}).headers["location"] == "/panel?reintento=token"
+    assert cliente.post("/panel/reintentar", headers=H, data={}).headers["location"] == "/panel?reintento=token"
+    assert cliente.post("/panel/reintentar", headers={**H, "Origin": "https://otro.example"}, data={"csrf": token()}).headers["location"] == "/panel?reintento=origen"
+    assert cliente.post("/panel/reintentar", headers={**H, "Sec-Fetch-Site": "cross-site"}, data={"csrf": token()}).headers["location"] == "/panel?reintento=origen"
     assert cliente.tabla.fila is None                     # nada se escribió
 
 
@@ -118,3 +120,18 @@ def test_panel_muestra_bloque_y_no_se_rompe_si_la_tabla_falla(cliente, monkeypat
     p = cliente.get("/panel", headers=H)
     assert p.status_code == 200 and "esperan reintento" not in p.text
     assert cliente.post("/panel/reintentar", headers=H, data={"csrf": token()}).headers["location"] == "/panel?reintento=error"
+
+
+def test_origen_https_con_base_http_detras_del_proxy(cliente):
+    """App Service entrega http a la app aunque el navegador use https: el Origin https del mismo host debe pasar."""
+    sitio = "app-kerna-dev-front-g6mzy.azurewebsites.net"
+    proxy = {**H, "Host": sitio, "Origin": f"https://{sitio}", "X-Forwarded-Proto": "https", "X-Forwarded-Host": sitio, "Sec-Fetch-Site": "same-origin"}
+    r = cliente.post("/panel/reintentar", headers=proxy, data={"csrf": token()})
+    assert r.status_code == 303 and r.headers["location"] == "/panel?reintento=solicitado" and cliente.tabla.fila is not None
+
+
+def test_el_modal_pide_json_y_recibe_el_resultado_sin_salir_de_la_pagina(cliente):
+    r = cliente.post("/panel/reintentar", headers={**H, "Accept": "application/json"}, data={"csrf": token()})
+    assert r.status_code == 200 and r.json() == {"estado": "solicitado"}
+    r = cliente.post("/panel/reintentar", headers={**H, "Accept": "application/json"}, data={"csrf": "malo"})
+    assert r.status_code == 403 and r.json() == {"estado": "token"}   # el modal lo muestra en lenguaje simple

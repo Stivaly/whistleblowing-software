@@ -680,3 +680,114 @@ def informe_charts(inf_: dict) -> dict:
         it = sorted(agg.items(), key=lambda x: -x[1])
         out["incidentes"].append({"id": "g-fallas", "t": "Fallas por proveedor", "g": "inf_incid", "kind": "bar", "h": True, "unit": "", "cats": [{"generacion": "Redacción", "recuperacion": "Búsqueda", "voyage": "Voyage AI", "gemini": "Gemini", "local": "Modelo local"}.get(a, a.capitalize()) for a, _ in it], "series": [{"n": "Eventos", "d": [b for _, b in it], "c": "warn"}]})
     return out
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------
+# Presentación v6 (dirección de diseño: kerna/front/diseno-v2/direccion-diseno.md): frases titulares, diagramas orbitales y bandas de KPI.
+# Todo se arma con reglas a partir de los datos; no interviene ningún modelo.
+# ---------------------------------------------------------------------------------------------------------------------------------
+from markupsafe import Markup as _M, escape as _e
+from . import orbital as _o
+
+MODO_CORTO = {"oficial": "Principal", "respaldo": "Respaldo", "local": "Modelo local", "manual": "Revisión manual"}
+ETAPA_CORTA = {"anonimizacion": "Anonimizar", "clasificacion": "Clasificar", "recuperacion": "Buscar en la ley", "generacion": "Redactar", "validacion": "Verificar citas"}
+ICONO_KPI = {"casos": "denuncias", "calidad": "acierto", "tiempo": "tiempo", "costo_k": "costo", "neg_sug": "e-lista", "valoraciones": "e-valorada", "valoradas": "e-valorada",
+             "neg_margen": "margen", "neg_costo": "costo", "neg_adopcion_k": "e-valorada", "neg_ingreso": "ingresos", "neg_utilidad": "utilidad"}
+
+
+def motivo_ico(texto: str, se_reintenta: bool) -> str:
+    """Ilustración de estado del motivo de un caso en espera."""
+    t = str(texto).lower()
+    if "no estaban disponibles" in t or "no disponible" in t:
+        return "e-nucleo-no-disponible"
+    if "tard" in t or "plazo" in t or "tiempo" in t:
+        return "e-revision-tiempo"
+    if "cita" in t:
+        return "e-revision-citas"
+    return "e-contingencia-modelo" if se_reintenta else "e-cadena-agotada"
+
+
+def _em(e: str, txt: str) -> _M:
+    return _M(f'<em class="s-{e}">{_e(txt)}</em>')
+
+
+def _barra(k: dict) -> dict | None:
+    """Barra bala de 120 px de un indicador: zonas por estado, posición del valor y marca de la meta."""
+    if k["form"] == "gauge" and k.get("z"):
+        return {"z": [{"w": round(100 * (z["b"] - z["a"]), 1), "e": z["e"]} for z in k["z"]], "pos": round(100 * k["f"], 1), "meta": round(100 * k["zm"], 1), "t": f"meta {k['zl']} %"}
+    if k["form"] == "bullet" and k.get("z"):
+        mx = k["max"] or 1
+        return {"z": [{"w": round(100 * (z["b"] - z["a"]) / mx, 1), "e": z["e"]} for z in k["z"]], "pos": round(k["pos"], 1), "meta": round(k["pos_meta"], 1), "t": k["metaT"]}
+    return None
+
+
+def _kb(k: dict, sub: str = "") -> dict:
+    return {"k": k["k"], "ic": ICONO_KPI.get(k["k"], k.get("i", "resumen")), "l": k["l"], "v": k["v"], "u": k.get("u", ""), "p": k.get("p", ""), "e": k["e"], "et": k.get("et", ""),
+            "bar": _barra(k), "sub": sub, "x": k.get("x", "")}
+
+
+def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
+    tot = V["total"]
+    nrei = rei["r"]["reintentables"] if rei else 0
+    prov_mal = [p for p in V["proveedores"] if p["e"] == "bad"]
+    if not tot:
+        frase = _M(f"Sin denuncias en estos {dias} días.")
+    else:
+        pa = [_M(f"{_em(V['e_sug'], str(V['sug_pct']) + ' %')} recibió sugerencia.")]
+        if nrei:
+            pa.append(_M(f"{_em('warn', f.miles(nrei))} {'caso espera' if nrei == 1 else 'casos esperan'} reintento."))
+        if prov_mal:
+            pa.append(_M(f"{_em('bad', prov_mal[0]['nombre'])} está caído."))
+        if V["eg"]["e"] == "ok":
+            pa.append(_M("Todo dentro de las metas."))
+        frase = _M(" ".join(pa))
+    colores = {"oficial": "verde", "respaldo": "amarillo", "local": "cian", "manual": "coral"}
+    anillos = [{"n": MODO_CORTO[m["k"]], "v": m["n"], "txt": f.miles(m["n"]), "c": colores[m["k"]]} for m in V["modos"] if m["n"]]
+    diag = _o.diagrama_orbital(anillos, f.miles(tot), "denuncias", f"{f.miles(tot)} denuncias por modo") if tot else None
+    kb = []
+    kp = {k["k"]: k for k in V["kpis"]}
+    for key in ("calidad", "tiempo"):
+        kb.append(_kb(kp[key]))
+    c = kp["costo_k"]
+    kb.append(_kb(c, sub=(f"US$ {V['costo']['por_caso']} por denuncia" if V.get("costo") else "")))
+    vv = {x["t"]: x for x in V["valoraciones"]}
+    n_val = V["n_val"]
+    util = vv.get("Útil", {}).get("p")
+    e_v = "na" if not n_val else ("ok" if util >= 70 else ("warn" if util >= 50 else "bad"))
+    kb.append({"k": "valoradas", "ic": "e-valorada", "l": "Sugerencias útiles", "v": "—" if not n_val else str(util), "u": "" if not n_val else "%", "p": "", "e": e_v,
+               "et": "Sin valoraciones" if not n_val else {"ok": "Bien", "warn": "Atención", "bad": "Bajo"}[e_v], "bar": None if not n_val else {"z": [{"w": 50, "e": "bad"}, {"w": 20, "e": "warn"}, {"w": 30, "e": "ok"}], "pos": util, "meta": 70, "t": "meta 70 %"},
+               "sub": f"{f.miles(n_val)} valoradas por auditores" if n_val else "", "x": "De las sugerencias valoradas por auditores, cuántas resultaron útiles. Esperado: 70 % o más."})
+    et = V["etapas"]
+    mx_ms = max((x["ms"] for x in et), default=0)
+    sat = [{"n": ETAPA_CORTA.get(x["id"], x["n"]), "v": x["ms"], "txt": (x["s"] + " s"), "c": _o.COLOR_ETAPA.get(x["id"], "azul"), "hot": x["e"] == "bad" and x["ms"] == mx_ms} for x in et]
+    camino = _o.camino(sat) if sat else None
+    r = V["rapidez"]
+    resumen_t = f"caso típico {r['p50']} s · 9 de cada 10 en menos de {r['p95']} s · meta {r['meta']} s" if r["hay"] else ""
+    return {"frase": frase, "diag": diag, "kb": kb, "camino": camino, "camino_t": resumen_t, "hay_heat": bool(V["graficos"].get("heat")) and len(V["graficos"]["casos"]["labels"]) >= 7,
+            "hay_leyes": bool(V["aciertos"]), "dias_con_datos": len(V["graficos"]["casos"]["labels"])}
+
+
+def presentacion_negocio(V: dict, n: dict) -> dict:
+    t, p = n["totales"], n["proyeccion"]
+    signo = lambda x: ("−" if x < 0 else "") + f.uf(abs(x))  # noqa: E731
+    e_u = "ok" if t["utilidad"] > 0 else ("bad" if t["utilidad"] < 0 else "na")
+    frase = _M(f"En {n['dias']} días: {_em('ok', signo(t['ingreso']) + ' UF')} de ingreso y {_em(e_u, signo(t['utilidad']) + ' UF')} de utilidad.")
+    pasos = [("Ingreso", t["ingreso"], "ing"), ("Costo de servir", -t["costo_servir"], "des"), ("Parte de Veridy", -t["participacion_veridy"], "des"), ("Costos fijos", -t["costos_fijos"], "des"),
+             ("Depreciación e interés", -(t["depreciacion"] + t["interes"]), "des"), ("Impuesto", -t["impuesto"], "des")]
+    labels, bp, sp_, bn, sn, cols, run = [], [], [], [], [], [], 0.0
+    for nom, v, tipo in pasos:
+        a, b = (0.0, v) if tipo == "ing" else (run, run + v)
+        run = b
+        lo, hi = min(a, b), max(a, b)
+        bp.append(round(max(lo, 0), 3)); sp_.append(round(max(hi, 0) - max(lo, 0), 3)); bn.append(round(min(hi, 0), 3)); sn.append(round(min(lo, 0) - min(hi, 0), 3))
+        cols.append("ok" if tipo == "ing" else "coral"); labels.append(f"{nom}\n{signo(v)}")
+    lo, hi = min(run, 0), max(run, 0)
+    bp.append(0); sp_.append(round(hi, 3)); bn.append(0); sn.append(round(lo, 3)); cols.append("ok" if run >= 0 else "bad")
+    labels.append(f"Utilidad\n{signo(t['utilidad'])}")
+    cascada = {"labels": labels, "bp": bp, "sp": sp_, "bn": bn, "sn": sn, "cols": cols}
+    kp = {k["k"]: k for k in V["kpis"]}
+    kb = [_kb(kp["neg_margen"]), _kb(kp["neg_costo"]), _kb(kp["neg_sug"]), _kb(kp["neg_adopcion_k"])]
+    chips = [("Valor actual neto", f"{f.uf(p['van'], 0)} UF"), ("Retorno anual", f"{f.dec_corto(p['tir_pct'], 1)} %"), ("Índice de rentabilidad", f.dec(p["indice_rentabilidad"], 2)),
+             ("Se recupera en el año", str(p["recuperacion_anio"]))]
+    cls = V["con_uso"]
+    return {"frase": frase, "cascada": cascada, "kb": kb, "chips": chips, "n_con": len(cls), "n_sin": len(V["sin_uso"]), "e_gen": V["eg"]["e"]}

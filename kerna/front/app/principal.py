@@ -16,7 +16,7 @@ from fastapi.responses import Response
 import json
 import time
 
-from . import ajustes as aj, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
+from . import ajustes as aj, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
@@ -25,6 +25,7 @@ app.mount("/estaticos", StaticFiles(directory=BASE / "estaticos"), name="estatic
 plantillas = Jinja2Templates(directory=BASE / "plantillas")
 plantillas.env.globals.update(graficos.FUNCIONES)
 plantillas.env.globals.update(formato.FUNCIONES)
+plantillas.env.globals.update(orbital.FUNCIONES)
 plantillas.env.filters["zip"] = lambda a, b: zip(a, b)
 _GLOS = glosario.glosario()
 plantillas.env.globals.update(
@@ -128,7 +129,8 @@ def panel(request: Request, dias: int = 7):
     prov = None if isinstance(r["prov"], Exception) else r["prov"]  # la página de estado nunca debe romper el panel
     rei = None if isinstance(r["rei"], Exception) else r["rei"]
     V = _vista_resumen(m, dias, prov, rei) if m else None
-    return plantillas.TemplateResponse(request, "panel.html", {"m": m, "V": V, "error": error, "prov": prov, "rei": rei, "csrf": seguridad.token_csrf(request.cookies),
+    P = vistas.presentacion_resumen(V, rei, dias) if V else None
+    return plantillas.TemplateResponse(request, "panel.html", {"m": m, "V": V, "P": P, "error": error, "prov": prov, "rei": rei, "csrf": seguridad.token_csrf(request.cookies),
                                                                "aviso": request.query_params.get("reintento"), "dias": dias})
 
 
@@ -147,21 +149,32 @@ def reintentar_confirmar(request: Request):
     return plantillas.TemplateResponse(request, "reintentar.html", {"ctx": _reintentos_ctx(), "csrf": seguridad.token_csrf(request.cookies)})
 
 
+def _quiere_json(request: Request) -> bool:
+    """El modal del Resumen envía el POST con fetch y pide JSON; un envío normal de formulario recibe una redirección con aviso."""
+    return "application/json" in request.headers.get("accept", "")
+
+
+def _respuesta_post(request: Request, destino: str, clave: str, estado: str, codigo_json: int = 200):
+    """Nunca una página JSON en blanco: con fetch devuelve el resultado; sin JavaScript, 303 a la vista con el aviso."""
+    if _quiere_json(request):
+        return JSONResponse({"estado": estado}, status_code=codigo_json)
+    return RedirectResponse(f"{destino}?{clave}={estado}", status_code=303)
+
+
 @app.post("/panel/reintentar")
 def reintentar(request: Request, csrf: str = Form("")):
     if not _permitido(request):
-        return JSONResponse({"detalle": "no autorizado"}, status_code=401)
-    origen = request.headers.get("origin")
-    if (origen and origen.rstrip("/") != str(request.base_url).rstrip("/")) or request.headers.get("sec-fetch-site", "same-origin") not in ("same-origin", "none"):
-        return JSONResponse({"detalle": "origen no permitido"}, status_code=403)
+        return RedirectResponse("/acceso", status_code=303) if not _quiere_json(request) else JSONResponse({"estado": "sesion"}, status_code=401)
+    if not _origen_ok(request):
+        return _respuesta_post(request, "/panel", "reintento", "origen", 403)
     if not seguridad.csrf_valido(request.cookies, csrf):
-        return JSONResponse({"detalle": "token inválido"}, status_code=403)
+        return _respuesta_post(request, "/panel", "reintento", "token", 403)
     try:
         r = reintentos.solicitar()
         cache.invalidar(("rei_s",))
     except Exception:
         r = "error"
-    return RedirectResponse(f"/panel?reintento={r}", status_code=303)
+    return _respuesta_post(request, "/panel", "reintento", r)
 
 
 @app.get("/api/proveedores")
@@ -305,12 +318,18 @@ def panel_negocio(request: Request, dias: int = 30):
         n, error = None, type(e).__name__
     dias = 30 if dias not in (7, 30, 90) else dias
     V = vistas.negocio(n) if n else None
-    return plantillas.TemplateResponse(request, "negocio.html", {"n": n, "V": V, "error": error, "dias": dias})
+    P = vistas.presentacion_negocio(V, n) if V else None
+    return plantillas.TemplateResponse(request, "negocio.html", {"n": n, "V": V, "P": P, "error": error, "dias": dias})
 
 
 def _origen_ok(request: Request) -> bool:
+    """Mismo origen. Se compara solo el host: detrás de App Service la app recibe http aunque el navegador use https."""
+    from urllib.parse import urlparse
     origen = request.headers.get("origin")
-    return not ((origen and origen.rstrip("/") != str(request.base_url).rstrip("/")) or request.headers.get("sec-fetch-site", "same-origin") not in ("same-origin", "none"))
+    host = (request.headers.get("x-forwarded-host") or request.headers.get("host") or "").split(",")[0].strip().lower()
+    if origen and origen != "null" and urlparse(origen).netloc.lower() != host:
+        return False
+    return request.headers.get("sec-fetch-site", "same-origin") in ("same-origin", "none")
 
 
 @app.get("/panel/ajustes", response_class=HTMLResponse)
@@ -330,11 +349,11 @@ def panel_ajustes(request: Request):
 @app.post("/panel/ajustes")
 def guardar_ajustes(request: Request, csrf: str = Form(""), valores: str = Form("")):
     if not _permitido(request):
-        return JSONResponse({"detalle": "no autorizado"}, status_code=401)
+        return RedirectResponse("/acceso", status_code=303)
     if not _origen_ok(request):
-        return JSONResponse({"detalle": "origen no permitido"}, status_code=403)
+        return RedirectResponse("/panel/ajustes?guardado=origen", status_code=303)
     if not seguridad.csrf_valido(request.cookies, csrf):
-        return JSONResponse({"detalle": "token inválido"}, status_code=403)
+        return RedirectResponse("/panel/ajustes?guardado=token", status_code=303)
     try:
         v = json.loads(valores)
         aj.validar(v)

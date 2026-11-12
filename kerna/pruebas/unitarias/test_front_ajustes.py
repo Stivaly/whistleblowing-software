@@ -61,9 +61,9 @@ def test_ajustes_vista_y_menu(cli):
 
 def test_ajustes_guardar_exige_sesion_origen_y_csrf(cli):
     cuerpo = '{"envios": 3}'
-    assert cli.post("/panel/ajustes", data={"valores": cuerpo, "csrf": "x"}).status_code == 401
-    assert cli.post("/panel/ajustes", data={"valores": cuerpo, "csrf": "mal"}, headers=H).status_code == 403
-    assert cli.post("/panel/ajustes", data={"valores": cuerpo, "csrf": "x"}, headers={**H, "Origin": "https://otro.example"}).status_code == 403
+    assert cli.post("/panel/ajustes", data={"valores": cuerpo, "csrf": "x"}, follow_redirects=False).headers["location"] == "/acceso"
+    assert cli.post("/panel/ajustes", data={"valores": cuerpo, "csrf": "mal"}, headers=H, follow_redirects=False).headers["location"].endswith("guardado=token")
+    assert cli.post("/panel/ajustes", data={"valores": cuerpo, "csrf": "x"}, headers={**H, "Origin": "https://otro.example"}, follow_redirects=False).headers["location"].endswith("guardado=origen")
     assert cli.tabla.fila is None
     csrf = seguridad.token_csrf({})
     import json
@@ -146,3 +146,11 @@ def test_informe_compacto_html_y_pdf(monkeypatch):
     assert next(k for k in cal["kpis"] if k["etiqueta"].startswith("Recall@5 por artículo"))["e"] == "bad"
     pdf = exportar.a_pdf(inf)
     assert pdf.startswith(b"%PDF") and len(pdf) > 5000
+
+
+def test_ajustes_guardan_con_origen_https_y_base_http_detras_del_proxy(cli):
+    import json
+    sitio = "app-kerna-dev-front-g6mzy.azurewebsites.net"
+    proxy = {**H, "Host": sitio, "Origin": f"https://{sitio}", "X-Forwarded-Proto": "https", "X-Forwarded-Host": sitio, "Sec-Fetch-Site": "same-origin"}
+    r = cli.post("/panel/ajustes", data={"valores": json.dumps({**ajustes.RECOMENDADO, "envios": 4}), "csrf": seguridad.token_csrf({})}, headers=proxy, follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"].endswith("guardado=ok")

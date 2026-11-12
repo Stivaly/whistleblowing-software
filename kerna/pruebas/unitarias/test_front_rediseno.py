@@ -77,7 +77,7 @@ def test_colores_de_estado_cumplen_contraste_AA():
 def test_icono_de_estado_usa_baldosa_y_lucide_solo_utilitario():
     c = TestClient(principal.app, base_url="https://t")
     t = c.get("/panel/ajustes", headers=H).text
-    assert '<k-st data-e="contingencia-modelo"' in t and "estados.svg#s-" in t
+    assert '<k-st data-e="contingencia-modelo"' in t and "identidad.svg#e-contingencia-modelo" in t
     for viejo in ("circle-check", "triangle-alert", "octagon-alert", "circle-minus"):
         assert viejo not in re.sub(r"<symbol.*", "", t)
 

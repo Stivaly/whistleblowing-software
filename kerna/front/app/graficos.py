@@ -79,12 +79,37 @@ def barras_v(items: list[tuple[str, float]], ancho: int = 560, alto: int = 180) 
     return Markup("".join(p))
 
 
-def icono(nombre: str, clave: str | None = None) -> Markup:
-    """Ícono de Lucide desde el sprite local (estaticos/iconos.svg), dentro de <k-ic>. `clave` lo deja actualizable en vivo (data-i)."""
+# Íconos de Lucide que el panel ya no usa: cada uno tiene su dibujo orbital propio (n-*) o una ilustración de estado (e-*) en estaticos/identidad.svg.
+# Lucide queda solo para flechas y símbolos utilitarios sin concepto propio (arrow-up, arrow-down, trending-*, chevron, external-link).
+A_NUCLEO = {"layout-dashboard": "resumen", "briefcase-business": "negocio", "sliders-horizontal": "ajustes", "globe": "portada", "file-down": "descargar", "download": "descargar",
+            "rotate-cw": "reintentar", "rotate-ccw": "restaurar", "calendar-range": "calendario", "file-text": "informe", "file-spreadsheet": "tabla", "table": "tabla",
+            "circle-help": "ayuda", "pencil": "editar", "pencil-line": "editar", "save": "guardar", "user": "persona", "users": "persona", "workflow": "flujo", "sparkles": "ia",
+            "timer": "tiempo", "clock": "tiempo", "target": "acierto", "inbox": "denuncias", "coins": "costo", "wallet": "ingresos", "landmark": "utilidad", "piggy-bank": "margen",
+            "building-2": "clientes", "bot": "modelo", "cpu": "modelo", "chart-no-axes-column": "negocio", "scale": "utilidad", "gauge": "acierto"}
+A_ESTADO = {"thumbs-up": "valorada", "triangle-alert": "contingencia-modelo", "plug": "conector-en-proceso", "search": "contingencia-busqueda", "message-square-off": "sin-info",
+            "circle-check": "lista", "check": "lista", "octagon-alert": "cadena-agotada", "circle-minus": "sin-info", "minus": "sin-info"}
+
+
+def icono(nombre: str, clave: str | None = None, px: int | None = None, mini: bool = False) -> Markup:
+    """Ícono de la identidad Núcleo (estaticos/identidad.svg). `e-<estado>`: ilustración orbital del estado (mini=True: simplificación para listas densas).
+    Nombres de Lucide con equivalente propio se dibujan con el ícono orbital correspondiente. `clave` lo deja actualizable en vivo (data-i)."""
     di = f' data-i="{escape(clave)}"' if clave else ""
-    if nombre.startswith("e-"):  # ícono de estado de la identidad Núcleo (estaticos/estados.svg), en su baldosa de color
-        return Markup(f'<k-st data-e="{escape(nombre[2:])}" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><use{di} href="/estaticos/estados.svg#s-{escape(nombre[2:])}"/></svg></k-st>')
+    nombre = ("e-" + A_ESTADO[nombre]) if nombre in A_ESTADO else nombre
+    if nombre.startswith("e-"):
+        e = escape(nombre[2:])
+        st = f' style="--s:{px}px"' if px else ""
+        return Markup(f'<k-st data-e="{e}"{st}{" class=sm" if mini else ""} aria-hidden="true"><svg aria-hidden="true" focusable="false"><use{di} href="/estaticos/identidad.svg#{"m" if mini else "e"}-{e}"/></svg></k-st>')
+    if nombre in A_NUCLEO:
+        st = f' style="--s:{px}px"' if px else ""
+        return Markup(f'<k-n{st} aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="/estaticos/identidad.svg#n-{A_NUCLEO[nombre]}"/></svg></k-n>')
     return Markup(f'<k-ic n="{escape(nombre)}" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use{di} href="/estaticos/iconos.svg#{escape(nombre)}"/></svg></k-ic>')
 
 
-FUNCIONES = {"barras_h": barras_h, "barras_v": barras_v, "ic": icono, "g_arc": g_arc, "g_tick": g_tick, "spark": spark, "spark_area": spark_area}
+def baldosa(estado: str, px: int = 96, etiqueta: str = "") -> Markup:
+    """Baldosa grande de estado con corte de esquina (símbolo t-<estado>); `etiqueta` la rotula en JetBrains Mono."""
+    e = escape(estado)
+    et = f'<span class="ti-l">{escape(etiqueta)}</span>' if etiqueta else ""
+    return Markup(f'<span class="ti-w"><span class="ti" data-e="{e}" style="width:{px}px" aria-hidden="true"><svg viewBox="0 0 160 120" focusable="false"><use href="/estaticos/identidad.svg#t-{e}"/></svg></span>{et}</span>')
+
+
+FUNCIONES = {"baldosa": baldosa, "barras_h": barras_h, "barras_v": barras_v, "ic": icono, "g_arc": g_arc, "g_tick": g_tick, "spark": spark, "spark_area": spark_area}

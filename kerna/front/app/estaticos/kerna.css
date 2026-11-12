@@ -769,3 +769,36 @@ k-st[data-e="valorada"]{--fondo:#CFFF5E;--acc:#0B1020;--pi:#0B1020;--pf:#CFFF5E;
 .sin-uso summary::before,.anio-d summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--brand);border-bottom:2px solid var(--brand);transform:rotate(-45deg);margin-right:10px;transition:transform .15s;flex:none}
 .sin-uso[open] summary::before,.anio-d[open] summary::before{transform:rotate(45deg)}
 .kt-lg .mb{flex:1.2;min-width:30px;height:8px}.kt-lg li span+.mb{margin-left:2px}
+
+/* IDENTIDAD-INICIO (generado por herramientas/construir_identidad.py; Núcleo, paleta B, fondo claro) */
+k-st[data-e="lista"],.ti[data-e="lista"]{--fondo:#EAFBF2;--borde:#329562;--acc:#349A65;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="generando"],.ti[data-e="generando"]{--fondo:#F0F4FF;--borde:#4F69B0;--acc:#526DB5;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="contingencia-modelo"],.ti[data-e="contingencia-modelo"]{--fondo:#FFF9E8;--borde:#A98425;--acc:#AE8926;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="contingencia-busqueda"],.ti[data-e="contingencia-busqueda"]{--fondo:#FFF9E8;--borde:#A98425;--acc:#AE8926;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="revision-citas"],.ti[data-e="revision-citas"]{--fondo:#F6F1FF;--borde:#7859B1;--acc:#7C5DB6;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="revision-tiempo"],.ti[data-e="revision-tiempo"]{--fondo:#FFF3EA;--borde:#AB642F;--acc:#B06831;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="cadena-agotada"],.ti[data-e="cadena-agotada"]{--fondo:#FFEDEC;--borde:#AE443D;--acc:#B3473F;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="nucleo-no-disponible"],.ti[data-e="nucleo-no-disponible"]{--fondo:#FFEEF6;--borde:#AE457C;--acc:#B34880;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="sin-info"],.ti[data-e="sin-info"]{--fondo:#F1F3F7;--borde:#596280;--acc:#5D6684;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="sin-conexion"],.ti[data-e="sin-conexion"]{--fondo:#F3F4F8;--borde:#687087;--acc:#6B748B;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="sin-normativa"],.ti[data-e="sin-normativa"]{--fondo:#EAFAFC;--borde:#31919D;--acc:#3396A2;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="conector-en-proceso"],.ti[data-e="conector-en-proceso"]{--fondo:#F9F7F1;--borde:#867E5A;--acc:#8A825D;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="conector-sin-nota"],.ti[data-e="conector-sin-nota"]{--fondo:#F9F7F1;--borde:#867E5A;--acc:#8A825D;--pi:#0B1020;--pf:#FFFFFF}
+k-st[data-e="valorada"],.ti[data-e="valorada"]{--fondo:#CFFF5E;--borde:#7C9E1F;--acc:#0B1020;--pi:#0B1020;--pf:#CFFF5E}
+/* categorías (gráficos y leyes): relleno = mezcla del color B con la tinta; tinte = color B sobre blanco */
+:root{--c-lima:#6D883F;--c-lima-bg:#F8FFE7;--c-lima-ac:#CFFF5E;--c-verde:#328960;--c-verde-bg:#E4FAEE;--c-verde-ac:#4EE08F;--c-azul:#4E65A1;--c-azul-bg:#ECF1FF;--c-azul-ac:#7FA2FF;--c-amarillo:#997B30;--c-amarillo-bg:#FFF7E2;--c-amarillo-ac:#FFC93C;--c-naranja:#99603A;--c-naranja-bg:#FFF0E4;--c-naranja-ac:#FF9A4D;--c-coral:#994544;--c-coral-bg:#FFE9E7;--c-coral-ac:#FF6B5E;--c-cian:#328494;--c-cian-bg:#E5F9FC;--c-cian-ac:#4FD8E8;--c-violeta:#6E58A1;--c-violeta-bg:#F4EEFF;--c-violeta-ac:#B58CFF;--sat:#CFFF5E;--ac2:#3B4FB4}
+.lx[data-l="karin"]{--acc:var(--c-lima);--pi:#0B1020;--pf:#fff;--fondo:var(--c-lima-bg);--borde:var(--c-lima)}
+.lx[data-l="datos"]{--acc:var(--c-azul);--pi:#0B1020;--pf:#fff;--fondo:var(--c-azul-bg);--borde:var(--c-azul)}
+.lx[data-l="penal"]{--acc:var(--c-violeta);--pi:#0B1020;--pf:#fff;--fondo:var(--c-violeta-bg);--borde:var(--c-violeta)}
+k-n,k-lx{--pi:#1C2A6B;--ac2:#3B4FB4;--sat:#CFFF5E}
+/* IDENTIDAD-FIN */
+
+/* ===== v5 · Identidad Núcleo: elementos base (los colores por estado/categoría/ley están en el bloque IDENTIDAD, generado) ===== */
+k-st{display:inline-grid;place-items:center;flex:none;width:var(--s,28px);height:var(--s,28px);border-radius:0;background:var(--fondo);vertical-align:middle;overflow:visible;
+  clip-path:polygon(18% 0,100% 0,100% 82%,82% 100%,0 100%,0 18%);box-shadow:none}
+k-st svg{display:block;width:100%;height:100%;overflow:visible}
+k-st.sm{background:none;clip-path:none;width:var(--s,20px);height:var(--s,20px)}
+k-n,k-lx{display:inline-grid;place-items:center;flex:none;width:var(--s,24px);height:var(--s,24px);vertical-align:middle}
+k-n svg,k-lx svg{display:block;width:100%;height:100%;overflow:visible}
+.lx{display:inline-grid;place-items:center;flex:none;width:var(--s,32px);height:var(--s,32px)}.lx svg{display:block;width:100%;height:100%;overflow:visible}
+.ti{display:block;line-height:0;flex:none}.ti svg{display:block;width:100%;height:auto;overflow:visible}
