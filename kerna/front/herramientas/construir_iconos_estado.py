@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Sprite de íconos de estado de la identidad Núcleo (kerna/diseno/identidad-v3/svg/B-*.svg) y sus colores.
 
-Genera app/estaticos/estados.svg (un <symbol> por ícono, sin animación) y reemplaza en app/estaticos/kerna.css el bloque
+Genera app/estaticos/estados.svg (un <g> por ícono (se recorta con viewBox="26 6 108 108" en el svg que lo usa), sin animación) y reemplaza en app/estaticos/kerna.css el bloque
 entre /* ESTADOS-INICIO */ y /* ESTADOS-FIN */ con los tonos de la paleta B. Comprueba el contraste (WCAG AA) de los colores derivados.
 Uso: python3 kerna/front/herramientas/construir_iconos_estado.py"""
 import json, re, sys
@@ -65,7 +65,7 @@ def sprite():
         cuerpo = re.sub(r'<g class="(?:late|chispa|blink|radar)"[^>]*>', "<g>", cuerpo)
         cuerpo = re.sub(r' (?:late|blink)"', '"', cuerpo)
         cuerpo = estilizar(re.sub(r"(\d+\.\d)\d+", r"\1", cuerpo).replace(" />", "/>"))
-        out.append(f'<symbol id="e-{n}" viewBox="26 6 108 108">{cuerpo}</symbol>')
+        out.append(f'<g id="e-{n}">{cuerpo}</g>')  # <g> (no <symbol>): el recorte 26 6 108 108 lo pone el viewBox del svg que lo usa
     out.append("</svg>")
     (EST / "estados.svg").write_text("\n".join(out) + "\n")
 

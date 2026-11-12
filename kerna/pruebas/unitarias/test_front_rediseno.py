@@ -59,7 +59,7 @@ def test_gzip_y_cache_inmutable_en_estaticos():
 def test_sprite_de_estados_valido_estatico_y_completo():
     s = (EST / "estados.svg").read_text()
     xml.dom.minidom.parseString(s)
-    ids = set(re.findall(r'<symbol id="(e-[a-z-]+)"', s))
+    ids = set(re.findall(r'<g id="(e-[a-z-]+)"', s))
     assert ids == {"e-" + n for n in iconos.ICONOS} and len(ids) == 14
     assert "class=" not in s and "animation" not in s and "<style" not in s and len(s) < 20000
     for v in vistas.ICONO.values():
