@@ -36,3 +36,4 @@ Revisa cada fila y, si apruebas, bórralo tú manualmente (`rm -r .papelera/...`
 - 2026-11-12 · copia previa `kerna/front/diseno-v2/maqueta.html` -> `.papelera/2026-11-12/kerna/front/diseno-v2/maqueta.html` (versión anterior a la revisión de diseño; el original se editó en su lugar). Capturas intermedias `capturas/ant-*.png` -> `.papelera/2026-11-12/kerna/front/diseno-v2/capturas/` (estado previo a la revisión).
 
 - 2026-11-12 · copia previa `kerna/front/diseno-v2/maqueta.html` -> `.papelera/2026-11-12/kerna/front/diseno-v2/maqueta-previa-v3.html` (versión anterior al rediseño v3; el original se reemplaza en su lugar).
+- 2026-11-12 · `kerna/pipeline_bcn/salida/fuentes/30210-karin.json` → `.papelera/2026-11-12/kerna/pipeline_bcn/salida/fuentes/30210-karin.json` · idNorma 30210 es el texto de 2005 de la Ley 18.834 sin cambios Karin; se usó el DFL 29 (236392).
