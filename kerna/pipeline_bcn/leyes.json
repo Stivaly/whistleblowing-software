@@ -10,6 +10,15 @@
     {"nombre": "Código del Trabajo: artículos incorporados o modificados por la Ley 21.643 (Karin)", "clave": "207436-karin", "idNorma": 207436, "fuente": "json", "solo_modificados_por": 1200096, "categoria": ["laboral", "acoso"], "prioridad": 1, "verificado": "2026-10-02", "activa": true,
      "origen": "Derivada de Ley 21.643: texto consolidado vigente de los artículos que la ley tocó (2, 154, 154 bis, 154 ter, 211-A a 211-E)."},
 
+    {"nombre": "Ley 18.575 Bases Generales de la Administración del Estado (DFL 1/2001): artículos incorporados o modificados por la Ley 21.643 (Karin)", "clave": "191865-karin", "idNorma": 191865, "fuente": "json", "solo_modificados_por": 1200096, "categoria": ["laboral", "acoso", "publico"], "prioridad": 1, "verificado": "2026-11-12", "activa": true,
+     "origen": "Aprobada por la usuaria 2026-11-12. Estatuto público de bases de la Administración. Texto consolidado vigente de los artículos que la Ley 21.643 tocó."},
+    {"nombre": "Ley 18.834 Estatuto Administrativo (DFL 29/2004): artículos incorporados o modificados por la Ley 21.643 (Karin)", "clave": "236392-karin", "idNorma": 236392, "fuente": "json", "solo_modificados_por": 1200096, "categoria": ["laboral", "acoso", "publico"], "prioridad": 1, "verificado": "2026-11-12", "activa": true,
+     "origen": "Aprobada por la usuaria 2026-11-12. Estatuto de funcionarios civiles de la Administración del Estado. Texto consolidado vigente de los artículos que la Ley 21.643 tocó."},
+    {"nombre": "Ley 18.883 Estatuto Administrativo de funcionarios municipales: artículos incorporados o modificados por la Ley 21.643 (Karin)", "clave": "30256-karin", "idNorma": 30256, "fuente": "json", "solo_modificados_por": 1200096, "categoria": ["laboral", "acoso", "publico"], "prioridad": 1, "verificado": "2026-11-12", "activa": true,
+     "origen": "Aprobada por la usuaria 2026-11-12. Estatuto de funcionarios municipales. Texto consolidado vigente de los artículos que la Ley 21.643 tocó."},
+    {"nombre": "Ley 18.695 Orgánica Constitucional de Municipalidades (DFL 1/2006): artículos incorporados o modificados por la Ley 21.643 (Karin)", "clave": "251693-karin", "idNorma": 251693, "fuente": "json", "solo_modificados_por": 1200096, "categoria": ["laboral", "acoso", "publico"], "prioridad": 1, "verificado": "2026-11-12", "activa": true,
+     "origen": "Aprobada por la usuaria 2026-11-12. Ley orgánica municipal. Texto consolidado vigente de los artículos que la Ley 21.643 tocó."},
+
     {"nombre": "Ley 19.628 Protección de los datos personales (reformada por Ley 21.719)", "clave": "141599@2026-12-01", "idNorma": 141599, "fuente": "json", "version": "2026-12-01", "vigencia": "anticipada", "categoria": ["datos"], "prioridad": 1, "verificado": "2026-10-02", "activa": true,
      "origen": "Texto consolidado que rige desde 2026-12-01. Decisión del equipo: vigente en el corpus desde ya (vigencia_anticipada=true hasta esa fecha)."},
 
