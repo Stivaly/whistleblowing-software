@@ -28,6 +28,11 @@ EVAL = {"generado": "2026-11-12T00:00:00+00:00", "corpus_articulos": 144,
 
 
 def falso(texto, ini, fin):
+    if "conector_reintento" in texto:
+        return [{"evento": "conector_reintento", "intento": "1", "motivo": "cadena_agotada", "eventos": 4, "casos": 3},
+                {"evento": "conector_reproceso", "intento": "1", "motivo": "", "eventos": 2, "casos": 2}]
+    if "by modelo" in texto:
+        return [{"modelo": "gpt-5-nano", "solicitudes": 8, "tokens_entrada_total": 160000, "tokens_salida_total": 24000}]
     if "articulo_sugerido" in texto:
         return [{"norma": "Ley 21643", "articulos": 5}]
     if "front_valoraciones" in texto or "clasificacion_auditor" in texto:
@@ -96,7 +101,7 @@ def test_pdf(inf):
 
 def test_rutas(monkeypatch):
     monkeypatch.setattr(informe, "_filas_rango", falso)
-    monkeypatch.setattr(informe, "_cargar", lambda n: EVAL)
+    monkeypatch.setattr(informe.evaluaciones, "cargar", lambda *a, **k: EVAL)
     c = TestClient(principal.app, follow_redirects=False)
     assert c.get("/panel/informe").status_code == 303 and c.get("/panel/informe/descargar.pdf").status_code == 303
     c.cookies.set(seguridad.COOKIE, seguridad.emitir_cookie())
@@ -105,3 +110,20 @@ def test_rutas(monkeypatch):
     for ext, firma in (("xlsx", b"PK"), ("csv", b"\xef\xbb\xbf"), ("pdf", b"%PDF")):
         r = c.get(f"/panel/informe/descargar.{ext}?dias=30")
         assert r.status_code == 200 and r.content.startswith(firma)
+
+
+def test_reintentos_y_consumo_por_modelo_desde_log_analytics(inf):
+    des = next(x for x in inf["secciones"] if x["id"] == "desempeno")
+    assert next(k for k in des["kpis"] if k["etiqueta"].startswith("Reintentos"))["valor"] == 4
+    assert any(t["id"] == "reintentos" and t["filas"][0][:2] == ["1", "cadena_agotada"] for t in des["tablas"])
+    costo = next(x for x in inf["secciones"] if x["id"] == "costo")
+    assert any(t["id"] == "tokens_modelo" and t["filas"][0][0] == "gpt-5-nano" for t in costo["tablas"])
+
+
+def test_tabla_evaluaciones_caida_se_declara_sin_datos(monkeypatch):
+    def roto():
+        raise RuntimeError("sin rol")
+    monkeypatch.setattr(informe.evaluaciones, "cargar", roto)
+    r = informe.construir(INI, FIN, ejecutar=falso)
+    cal = next(x for x in r["secciones"] if x["id"] == "calidad")
+    assert any("tabla `evaluaciones` no respondió" in n for n in cal["notas"])

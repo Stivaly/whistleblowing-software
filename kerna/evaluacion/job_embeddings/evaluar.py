@@ -237,6 +237,21 @@ def evaluar_modelo(nombre: str, fragmentos: list[dict], consultas: list[str], li
             "segundos": round(time.monotonic() - t0, 1)}
 
 
+def _a_tabla(r: dict) -> None:
+    """Escribe el resultado del modelo en la tabla `evaluaciones` si hay EVALUACIONES_TABLA_URL (identidad del job)."""
+    url = os.environ.get("EVALUACIONES_TABLA_URL")
+    if not url:
+        return
+    try:
+        sys.path.insert(0, str(Path(__file__).parent / "datos"))
+        import tabla_evaluaciones
+        from datetime import datetime, timezone
+        tabla_evaluaciones.subir(tabla_evaluaciones.filas_embeddings_job(
+            r, datetime.now(timezone.utc).isoformat(timespec="seconds")), tabla_evaluaciones.cliente_tabla(url))
+    except Exception as e:  # noqa: BLE001
+        log(evento="aviso", motivo=f"tabla evaluaciones: {type(e).__name__}")
+
+
 def main() -> int:
     inicio = time.monotonic()
     if os.environ.get("MODELOS", "").strip() == "bge-reranker-v2-m3":   # reranker: otro flujo (rerank.py)
@@ -265,6 +280,7 @@ def main() -> int:
             r = {"modelo": nombre, "estado": "tiempo_excedido" if isinstance(e, TiempoExcedido) else "error",
                  "motivo": f"{type(e).__name__}: {e}"[:300]}
         log(evento="resultado_modelo", **r)
+        _a_tabla(r)
         resultados.append(r)
     log(evento="fin", segundos=round(time.monotonic() - inicio, 1), resultados=resultados)
     return 0 if any(r["estado"] in ("ok", "omitido") for r in resultados) else 1

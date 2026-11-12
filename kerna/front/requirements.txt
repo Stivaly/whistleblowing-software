@@ -8,3 +8,4 @@ azure-monitor-query>=1.4
 openpyxl>=3.1
 reportlab>=4.2
 Pillow>=10
+azure-data-tables>=12.5

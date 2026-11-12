@@ -14,7 +14,7 @@ ATRIBUTOS_PERMITIDOS = frozenset({
     "id_solicitud", "ref_opaca", "cliente", "etapa", "modo", "recuperacion", "proveedor", "modelo",
     "embedding", "coleccion", "version_corpus", "estado", "motivo", "codigo", "intento", "duracion_ms",
     "tokens_entrada", "tokens_salida", "articulos", "citas_rechazadas", "json_valido", "contingencia",
-    "resultado", "casos", "fragmentos", "tipo",
+    "resultado", "casos", "fragmentos", "tipo", "valoracion",
 })
 MAX_TEXTO = 64
 
@@ -77,6 +77,10 @@ def configurar(servicio: str) -> bool:
     """Activa el envío a Application Insights si hay cadena de conexión. Devuelve si quedó activo."""
     if not os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING"):
         return False
-    from kerna_comun import telemetria_azure  # import diferido: dependencia opcional
-    telemetria_azure.activar(servicio)
+    try:
+        from kerna_comun import telemetria_azure  # import diferido: dependencia opcional
+        telemetria_azure.activar(servicio)
+    except ImportError:  # imagen sin azure-monitor-opentelemetry: el servicio sigue sin envío
+        _log.warning("telemetría de Azure no disponible: falta azure-monitor-opentelemetry")
+        return False
     return True

@@ -283,6 +283,7 @@ resource "azurerm_container_group" "veridy" {
       memory                = 0.5
       commands              = ["python", "/app/conector/entrada.py"]
       environment_variables = container.value.entorno
+      secure_environment_variables = container.value.entorno_seguro
     }
   }
 

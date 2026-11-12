@@ -11,3 +11,5 @@ cd "$AQUI/../../pipeline_bcn"
   .venv/bin/python atlas_acceso.py abrir
   .venv/bin/python "$AQUI/preparar_datos.py"
 )
+# Escritura de resultados en la tabla `evaluaciones` (la usa evaluar.py desde datos/)
+mkdir -p "$AQUI/datos" && cp "$AQUI/../tabla_evaluaciones.py" "$AQUI/datos/"

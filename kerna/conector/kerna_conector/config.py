@@ -13,6 +13,13 @@ _OBLIGATORIAS = ("VERIDY_URL", "VERIDY_USUARIO", "VERIDY_PASSWORD", "KERNA_API_U
                  "KERNA_CLIENT_ID", "KERNA_CLIENT_SECRET")
 
 
+def _entero(valor, defecto: int) -> int:
+    try:
+        return max(0, int(str(valor).strip()))
+    except (TypeError, ValueError):
+        return defecto
+
+
 @dataclass(frozen=True)
 class Config:
     veridy_url: str
@@ -29,6 +36,7 @@ class Config:
     reprocesar: bool = False
     reintentos_max: int = 3
     reintento_horas: float = 24.0
+    envios_por_pasada: int = 5
 
     @classmethod
     def desde_entorno(cls, entorno=None) -> "Config":
@@ -57,6 +65,7 @@ class Config:
             intervalo_s=intervalo,
             estado=e.get("CONECTOR_ESTADO", "sqlite:///conector.db"),
             compartir_con=e.get("VERIDY_COMPARTIR_CON", "").strip(),
+            envios_por_pasada=_entero(e.get("KERNA_ENVIOS_POR_PASADA"), 5),
             reintentos_max=maxr,
             reintento_horas=horas,
             reprocesar=e.get("KERNA_REPROCESAR_REVISION_MANUAL", "").strip() in ("1", "true", "si"),

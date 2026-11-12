@@ -109,6 +109,12 @@ def main() -> int:
         destino = pathlib.Path(a.registro)
         destino.mkdir(parents=True, exist_ok=True)
         shutil.copy(carpeta / "resumen.json", destino / f"pruebas-{carpeta.name}.json")
+        try:  # tabla `evaluaciones` (mejor esfuerzo)
+            sys.path.insert(0, str(RAIZ.parent / "evaluacion"))
+            import tabla_evaluaciones
+            tabla_evaluaciones.subir(tabla_evaluaciones.filas_pruebas(resumen))
+        except Exception:  # noqa: BLE001
+            pass
 
     for nombre, c in capas.items():
         extra = f", {c['conocidas']} conocidas" if c["conocidas"] else ""

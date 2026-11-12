@@ -51,7 +51,8 @@ class ResultadoPasada:
 class _Pasada:
     def __init__(self, veridy, nucleo, estado: est.Estado, id_empresa: str, ahora: Callable[[], float],
                  compartir_con: str = "", reprocesar: bool = False, reintentos_max: int = 3,
-                 reintento_horas: float = 24.0):
+                 reintento_horas: float = 24.0, envios_max: int = 5):
+        self.envios_max, self.envios = envios_max, 0  # tope de envíos al núcleo por pasada (casos nuevos y reintentos)
         self.reprocesar = reprocesar
         self.reintentos_max, self.reintento_horas = reintentos_max, reintento_horas
         self.v, self.n, self.e, self.ahora = veridy, nucleo, estado, ahora
@@ -89,6 +90,13 @@ class _Pasada:
                                lambda: publicador.contenido(publicador.armar_estado(nuevo, id_seguimiento)))
         if not antes:
             self.r.estados += 1
+
+    def _cupo(self) -> bool:
+        """Reserva un envío al núcleo en esta pasada; sin cupo el caso espera la siguiente (no consume intento)."""
+        if self.envios_max > 0 and self.envios >= self.envios_max:
+            return False
+        self.envios += 1
+        return True
 
     def _llamar(self, funcion, *args):
         """Llama al núcleo; si ya falló en esta pasada no insiste (se reintentará en la siguiente)."""
@@ -201,6 +209,9 @@ class _Pasada:
             self._fallo(id_caso, "sin_texto")
             self.e.actualizar(id_caso, estado=est.ERROR)
             return
+        if not self._cupo():
+            del relato
+            return
         texto = anonimizar(relato).texto[:MAX_TEXTO]
         del relato
         try:
@@ -304,6 +315,9 @@ class _Pasada:
             if not relato.strip():
                 self._fallo(id_caso, "sin_texto")
                 return
+            if not self._cupo():
+                del relato
+                return
             texto = anonimizar(relato).texto[:MAX_TEXTO]
             del relato
             ref = self._ref_reproceso(corr.ref_opaca, k + 1)
@@ -391,7 +405,7 @@ class _Pasada:
 def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "veridy",
                     ahora: Callable[[], float] = time.time, compartir_con: str = "",
                     reprocesar: bool = False, reintentos_max: int = 3,
-                    reintento_horas: float = 24.0) -> ResultadoPasada:
+                    reintento_horas: float = 24.0, envios_max: int = 5) -> ResultadoPasada:
     dueno = str(uuid.uuid4())
     if not estado.tomar_cerrojo(CERROJO, dueno, ahora(), TTL_CERROJO_S):
         return ResultadoPasada(omitida=True, resultado="omitida")
@@ -399,7 +413,8 @@ def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "verid
     t0 = time.monotonic()
     r = ResultadoPasada()
     try:
-        p = _Pasada(veridy, nucleo, estado, id_empresa, ahora, compartir_con, reprocesar, reintentos_max, reintento_horas)
+        p = _Pasada(veridy, nucleo, estado, id_empresa, ahora, compartir_con, reprocesar, reintentos_max, reintento_horas,
+                    envios_max)
         r = p.r
         casos = sorted(veridy.listar_casos(), key=lambda c: (str(c.get("creation_date") or ""), str(c.get("id"))))
         r.casos = len(casos)

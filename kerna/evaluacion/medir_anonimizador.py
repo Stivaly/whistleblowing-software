@@ -105,6 +105,10 @@ def main():
     salida["idempotente"] = all(anonimizar(anonimizar(c["texto_original"]).texto).texto == anonimizar(c["texto_original"]).texto for c in casos)
     print(json.dumps(salida, ensure_ascii=False, indent=1))
     if "--json" in sys.argv:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import tabla_evaluaciones  # tabla `evaluaciones` (mejor esfuerzo) además del archivo
+        from datetime import date
+        tabla_evaluaciones.subir(tabla_evaluaciones.filas_anonimizador(salida, date.today().isoformat(), "desconocido"))
         Path(sys.argv[sys.argv.index("--json") + 1]).write_text(json.dumps(salida, ensure_ascii=False, indent=1), encoding="utf-8")
 
 

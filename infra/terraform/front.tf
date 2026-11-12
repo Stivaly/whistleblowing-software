@@ -52,6 +52,7 @@ resource "azurerm_linux_web_app" "front" {
     SCM_DO_BUILD_DURING_DEPLOYMENT = "true"
     WEBSITES_PORT                  = "8000"
     LOG_ANALYTICS_WORKSPACE_ID     = azurerm_log_analytics_workspace.logs.workspace_id
+    EVALUACIONES_TABLA_URL         = azurerm_storage_account.nucleo.primary_table_endpoint
     FRONT_AUTH                     = "clave"
     FRONT_CLAVE                    = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/front-clave-panel/)"
   }
@@ -65,6 +66,13 @@ resource "azurerm_role_assignment" "front_logs" {
   count                = var.crear_front ? 1 : 0
   scope                = azurerm_log_analytics_workspace.logs.id
   role_definition_name = "Log Analytics Reader"
+  principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "front_evaluaciones" {
+  count                = var.crear_front ? 1 : 0
+  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${azurerm_storage_table.evaluaciones.name}"
+  role_definition_name = "Storage Table Data Reader"
   principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
 }
 

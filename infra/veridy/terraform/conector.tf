@@ -53,6 +53,13 @@ variable "conector_reprocesar" {
   default     = false
 }
 
+variable "kerna_appinsights_conexion" {
+  description = "Cadena de conexión de Application Insights de Kerna: el conector envía sus eventos (reintentos, reproceso, compartido, valoraciones) al workspace de Log Analytics de Kerna. Vacía = sin envío. Pasar con TF_VAR_kerna_appinsights_conexion (az monitor app-insights component show ... --query connectionString); requiere imagen del conector con azure-monitor-opentelemetry."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
 locals {
   veridy_fqdn = "${local.base}-${local.sufijo}.${var.region}.azurecontainer.io" # = fqdn del grupo
 
@@ -70,6 +77,9 @@ locals {
       KERNA_ID_EMPRESA      = var.kerna_id_empresa
       CONECTOR_INTERVALO_S  = tostring(var.conector_intervalo_s)
       KERNA_REPROCESAR_REVISION_MANUAL = var.conector_reprocesar ? "1" : "0"
+    }
+    entorno_seguro = var.kerna_appinsights_conexion == "" ? {} : {
+      APPLICATIONINSIGHTS_CONNECTION_STRING = var.kerna_appinsights_conexion
     }
   } : null
 }

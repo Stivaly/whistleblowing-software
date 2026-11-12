@@ -1,0 +1,6 @@
+// Informe de gestión: reintentos del conector (eventos conector_reintento / conector_reproceso / conector_caso_compartido). Solo conteos; ref_opaca solo para contar casos únicos.
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-conector"
+| where Message in ("conector_reintento", "conector_reproceso", "conector_caso_compartido")
+| summarize eventos = count(), casos = dcount(tostring(Properties.ref_opaca)) by evento = Message, intento = coalesce(tostring(Properties.intento), ""), motivo = coalesce(tostring(Properties.motivo), "")
+| order by evento asc, intento asc

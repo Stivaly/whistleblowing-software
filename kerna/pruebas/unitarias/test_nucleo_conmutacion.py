@@ -130,3 +130,16 @@ def test_modo_registrado_por_etapa_en_telemetria():
     assert etapas["recuperacion"]["embedding"] == "voyage-4-large" and etapas["recuperacion"]["coleccion"] == "normativa_cl"
     assert etapas["recuperacion"]["version_corpus"] == 7
     assert {"anonimizacion", "clasificacion", "recuperacion", "generacion", "validacion"} <= set(etapas)
+
+
+def test_solicitud_terminada_incluye_modelo_exacto():
+    from kerna_comun import telemetria
+    visto = []
+    telemetria.quitar_emisores()
+    telemetria.registrar_emisor(lambda clase, nombre, valor, at: visto.append((nombre, dict(at))))
+    try:
+        correr(armar(gemini=FakeGemini({FLASH: falla(503)})))
+    finally:
+        telemetria.quitar_emisores()
+    fin = next(a for n, a in visto if n == "solicitud_terminada")
+    assert fin["modelo"] == LITE and fin["proveedor"] == "gemini"

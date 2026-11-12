@@ -48,7 +48,7 @@ def main(argv=None) -> int:
             try:
                 r = ejecutar_pasada(veridy, nucleo, estado, cfg.id_empresa, compartir_con=cfg.compartir_con,
                                  reprocesar=cfg.reprocesar, reintentos_max=cfg.reintentos_max,
-                                 reintento_horas=cfg.reintento_horas)
+                                 reintento_horas=cfg.reintento_horas, envios_max=cfg.envios_por_pasada)
                 log.info("pasada: %s casos=%d enviados=%d sugerencias=%d reenviados=%d reprocesados=%d decisiones=%d errores=%d",
                          r.resultado, r.casos, r.enviados, r.sugerencias, r.reenviados, r.reprocesados, r.decisiones, r.errores)
                 codigo = 3 if r.omitida else (0 if r.exitosa else 1)

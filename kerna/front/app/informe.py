@@ -8,7 +8,7 @@ import os
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-from . import consultas
+from . import consultas, evaluaciones
 
 DATOS = Path(__file__).parent / "datos"
 RANGOS = (7, 30, 90)
@@ -30,7 +30,7 @@ CONSULTAS_INFORME = {
     "casos": "front_casos_por_dia", "modos": "solicitudes_por_modo", "tokens": "tokens_por_solicitud",
     "latencia": "front_latencia", "etapas": "latencia_por_etapa", "disponibilidad": "disponibilidad_efectiva",
     "leyes": "front_articulos_por_ley", "valoraciones": "front_valoraciones", "errores": "errores_por_proveedor",
-    "revision": "informe_revision_manual",
+    "revision": "informe_revision_manual", "reintentos": "front_reintentos", "por_modelo": "front_tokens_por_modelo",
 }
 MODOS = ("oficial", "respaldo", "local", "manual")
 
@@ -83,8 +83,12 @@ def _pct(a, b):
 def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> dict:
     """`ejecutar(texto, ini, fin)` y los datos de evaluación se inyectan en las pruebas."""
     ejecutar = ejecutar or _filas_rango
-    evaluacion = evaluacion if evaluacion is not None else _cargar("evaluacion.json")
     crudo, fallos = {}, {}
+    if evaluacion is None:  # calidad en vivo desde la tabla `evaluaciones`
+        try:
+            evaluacion = evaluaciones.cargar()
+        except Exception as e:
+            evaluacion, fallos["evaluaciones"] = None, type(e).__name__
     for n in CONSULTAS_INFORME:
         try:
             crudo[n] = ejecutar(kql_rango(n, ini), ini, fin)
@@ -157,7 +161,8 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
                                   "filas": [[s["fecha"], s["configuracion"], round(s["recall5"], 3)] for s in serie], "fuente": r["fuente"]})
         cal["notas"].append("El recall se mide sobre el dataset público de evaluación, no sobre denuncias reales; las cifras no cambian con el período elegido.")
     else:
-        cal["notas"].append("Sin datos de evaluación: falta app/datos/evaluacion.json (ejecutar generar_datos_informe.py).")
+        cal["notas"].append(f"Sin datos de evaluación: la tabla `evaluaciones` no respondió ({fallos['evaluaciones']})." if "evaluaciones" in fallos
+                            else "Sin datos de evaluación: la tabla `evaluaciones` está vacía.")
     if evaluacion and evaluacion.get("anonimizador"):
         a = evaluacion["anonimizador"]
         cal["tablas"].append({"id": "anonimizador", "titulo": f"Anonimizador por reglas: recall por tipo de dato ({a['casos']} casos, medición {a['fecha']})",
@@ -166,7 +171,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
         cal["tablas"].append({"id": "anon_apariciones", "titulo": "Anonimizador: apariciones ocultas", "cols": ["Tipo", "Apariciones", "Ocultas"],
                               "filas": [[t["tipo"], t["total"], t["ocultas"]] for t in a["apariciones"]], "fuente": a["fuente"]})
     else:
-        cal["notas"].append("Sin datos del anonimizador en la instantánea.")
+        cal["notas"].append("Sin datos del anonimizador en la tabla `evaluaciones`.")
     if evaluacion and evaluacion.get("pruebas"):
         p = evaluacion["pruebas"]
         for capa, v in p["capas"].items():
@@ -194,7 +199,16 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
               "notas": [x for x in (sin("latencia", "latencia"), sin("etapas", "etapas")) if x]}
     conm = sum(modos[m] for m in ("respaldo", "local", "manual"))
     desemp["kpis"].append({"etiqueta": "Casos fuera del modo oficial", "valor": conm, "unidad": "casos", "fuente": LF_LA})
-    desemp["notas"].append("Reintentos: el núcleo no registra reintentos del conector en Log Analytics (solo los reintentos entre niveles del modelo, en Incidentes); sin datos de reintentos del conector.")
+    rt = crudo["reintentos"]
+    reint = [r for r in rt if r.get("evento") == "conector_reintento"]
+    desemp["kpis"].append({"etiqueta": "Reintentos del conector enviados", "valor": sum(int(_n(r["eventos"])) for r in reint) if "reintentos" not in fallos else None, "unidad": "reintentos", "fuente": LF_LA + ", evento conector_reintento"})
+    desemp["kpis"].append({"etiqueta": "Casos reprocesados por el conector", "valor": sum(int(_n(r["eventos"])) for r in rt if r.get("evento") == "conector_reproceso") if "reintentos" not in fallos else None, "unidad": "casos", "fuente": LF_LA + ", evento conector_reproceso"})
+    desemp["kpis"].append({"etiqueta": "Casos compartidos con el auditor", "valor": sum(int(_n(r["eventos"])) for r in rt if r.get("evento") == "conector_caso_compartido") if "reintentos" not in fallos else None, "unidad": "casos", "fuente": LF_LA + ", evento conector_caso_compartido"})
+    desemp["tablas"].append({"id": "reintentos", "titulo": "Reintentos del conector por n.º de intento y motivo", "cols": ["Intento", "Motivo", "Reintentos", "Casos distintos"],
+                             "filas": [[r.get("intento") or "-", r.get("motivo") or "-", int(_n(r["eventos"])), int(_n(r["casos"]))] for r in reint], "fuente": LF_LA + ", evento conector_reintento"})
+    desemp["notas"] += [x for x in (sin("reintentos", "reintentos del conector"),) if x]
+    if not rt and "reintentos" not in fallos:
+        desemp["notas"].append("Sin eventos del conector en el período: el conector solo envía a Log Analytics desde la imagen y el grupo que incluyen la telemetría de Azure.")
     ev = (evaluacion or {}).get("evaluador")
     if ev and ev.get("latencia_llamada_ms"):
         desemp["kpis"].append({"etiqueta": f"Latencia de llamada del evaluador {ev.get('cadena')} (mediana, medición offline)", "valor": round(ev["latencia_llamada_ms"]["mediana"]), "unidad": "ms", "fuente": "kerna/evaluacion/registro/recall_retriever.jsonl"})
@@ -229,13 +243,15 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
                          "cols": ["Modelo", "USD/M entrada", "USD/M salida", "Costo del período (USD)", "Costo por caso (USD)"] + [f"Proyección {k:,} denuncias/mes (USD)".replace(",", ".") for k in PROYECCION],
                          "filas": esc, "fuente": f"{PRECIOS_FUENTE}; tokens medidos en {LF_LA}"},
                         {"id": "tokens_modo", "titulo": "Tokens por modo", "cols": ["Modo", "Solicitudes", "Tokens entrada", "Tokens salida", "Entrada prom.", "Salida prom."],
-                         "filas": [[str(f["modo"]), int(_n(f["solicitudes"])), int(_n(f["tokens_entrada_total"])), int(_n(f["tokens_salida_total"])), round(_n(f["tokens_entrada_prom"])), round(_n(f["tokens_salida_prom"]))] for f in crudo["tokens"]], "fuente": LF_LA}],
+                         "filas": [[str(f["modo"]), int(_n(f["solicitudes"])), int(_n(f["tokens_entrada_total"])), int(_n(f["tokens_salida_total"])), round(_n(f["tokens_entrada_prom"])), round(_n(f["tokens_salida_prom"]))] for f in crudo["tokens"]], "fuente": LF_LA},
+                        {"id": "tokens_modelo", "titulo": "Consumo por modelo exacto", "cols": ["Modelo", "Solicitudes", "Tokens entrada", "Tokens salida"],
+                         "filas": [[str(f["modelo"]), int(_n(f["solicitudes"])), int(_n(f["tokens_entrada_total"])), int(_n(f["tokens_salida_total"]))] for f in crudo["por_modelo"]], "fuente": LF_LA + ", modelo de solicitud_terminada"}],
              "graficos": [{"tipo": "h", "titulo": "Costo del período por escenario (USD)", "items": [(e[0], e[3] or 0) for e in esc], "fmt": "usd"},
                           {"tipo": "h", "titulo": "Tokens totales por modo", "items": [(str(f["modo"]), int(_n(f["tokens_entrada_total"]) + _n(f["tokens_salida_total"]))) for f in crudo["tokens"]]}],
-             "notas": [x for x in (sin("tokens", "tokens"),) if x]}
+             "notas": [x for x in (sin("tokens", "tokens"), sin("por_modelo", "consumo por modelo")) if x]}
     costo["notas"] += [f"Supuesto: se valorizan los tokens medidos del proveedor actual (Gemini / Azure OpenAI) tal cual; el tokenizador de Claude cuenta distinto, así que la cifra es una estimación y no se aplica ningún factor de corrección. Escenario principal: {PRINCIPAL} (equivalente al rol de gpt-5-nano). Sonnet 5.5 y Opus 5.5 son comparativos.",
                        f"Precios al {PRECIOS_FECHA} ({PRECIOS_FUENTE}). Haiku 5.5 usa 0,50/2,50 USD/M solo si el prompt medio supera 100K tokens. Sin caché de prompts ni descuentos por lote.",
-                       "El evento solicitud_terminada no registra el modelo, solo el modo; no hay costo real facturado del proveedor actual medido en el período (la nube gratuita de Gemini no tiene cargo)."]
+                       "El consumo por modelo exacto solo existe para solicitudes procesadas por un núcleo que emite el modelo en solicitud_terminada; no hay costo real facturado del proveedor actual medido en el período (la nube gratuita de Gemini no tiene cargo)."]
     if evaluacion:
         if ev and ev.get("costo_usd") is not None:
             costo["notas"].append(f"Nota secundaria, costo real del proveedor actual en la última evaluación offline ({ev.get('cadena')}, 61 casos, precios 0,05/0,40 USD/M): {ev['costo_usd']:.4f} USD (kerna/evaluacion/registro/recall_retriever.jsonl).")

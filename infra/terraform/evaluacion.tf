@@ -99,6 +99,14 @@ resource "azurerm_container_app_job" "eval_embeddings" {
         name  = "MODELOS"
         value = var.eval_modelos
       }
+      env {
+        name  = "EVALUACIONES_TABLA_URL"
+        value = azurerm_storage_account.nucleo.primary_table_endpoint
+      }
+      env {
+        name  = "AZURE_CLIENT_ID"
+        value = azurerm_user_assigned_identity.pipeline.client_id
+      }
     }
   }
 
@@ -204,4 +212,19 @@ resource "azurerm_cognitive_deployment" "gpt_5_mini" {
   }
 
   depends_on = [azurerm_cognitive_deployment.gpt_5_nano]
+}
+
+# ------------------------------------------------------- tabla de resultados de medición
+# Cada medición (recall, anonimizador, pruebas, comparación de embeddings, job de Azure) escribe aquí además de su JSONL.
+resource "azurerm_storage_table" "evaluaciones" {
+  name                 = "evaluaciones"
+  storage_account_name = azurerm_storage_account.nucleo.name
+
+  depends_on = [azurerm_role_assignment.yo_tablas]
+}
+
+resource "azurerm_role_assignment" "pipeline_evaluaciones" {
+  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${azurerm_storage_table.evaluaciones.name}"
+  role_definition_name = "Storage Table Data Contributor"
+  principal_id         = azurerm_user_assigned_identity.pipeline.principal_id
 }

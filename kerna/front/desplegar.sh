@@ -7,8 +7,7 @@ APP="$(terraform -chdir="$RAIZ/infra/terraform" output -raw front_nombre)"
 TMP="$(mktemp -d)"; mkdir -p "$TMP/app/kql"
 cp -r "$AQUI/app/." "$TMP/app/"; cp "$AQUI/requirements.txt" "$TMP/"
 rm -rf "$TMP/app/__pycache__" "$TMP/app/kql"; mkdir "$TMP/app/kql"
-python3 "$AQUI/generar_datos_informe.py"; cp -r "$AQUI/app/datos" "$TMP/app/" 2>/dev/null || true
-for k in informe_revision_manual latencia_por_etapa disponibilidad_efectiva errores_por_proveedor solicitudes_por_modo tokens_por_solicitud front_casos_por_dia front_articulos_por_ley front_valoraciones front_latencia; do
+for k in informe_revision_manual latencia_por_etapa disponibilidad_efectiva errores_por_proveedor solicitudes_por_modo tokens_por_solicitud front_casos_por_dia front_articulos_por_ley front_valoraciones front_latencia front_reintentos front_tokens_por_modelo; do
   cp "$RAIZ/kerna/docs/observabilidad/consultas/$k.kql" "$TMP/app/kql/"
 done
 (cd "$TMP" && python3 -c "import shutil;shutil.make_archive('front','zip','.')")

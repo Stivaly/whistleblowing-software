@@ -56,6 +56,8 @@ from pathlib import Path
 AQUI = Path(__file__).resolve().parent
 sys.path.insert(0, str(AQUI.parent / "pipeline_bcn"))
 import embed_sync  # noqa: E402
+sys.path.insert(0, str(AQUI))
+import tabla_evaluaciones  # noqa: E402
 
 DATASET = AQUI / "datos" / "denuncias_publicas.json"
 CACHE = AQUI / "datos" / "embeddings_consultas.json"
@@ -497,6 +499,8 @@ def registrar(res: dict, *, campo: str, dataset: bytes, articulos_corpus: int, c
     registro.parent.mkdir(exist_ok=True)
     with registro.open("a") as f:
         f.write(json.dumps(entrada, ensure_ascii=False) + "\n")
+    if registro == REGISTRO:  # además a la tabla `evaluaciones` (mejor esfuerzo)
+        tabla_evaluaciones.subir(tabla_evaluaciones.filas_recall(entrada))
     return entrada
 
 

@@ -443,3 +443,56 @@ def test_no_reintenta_decision_de_contenido_ni_completadas(mundo):
     pasada(v, n, e)
     assert pasada_t(v, n, e, T0 + 99 * H, reprocesar=True).reenviados == 0
     assert len(n.solicitudes) == 2
+
+
+def test_tope_de_envios_por_pasada_casos_nuevos(mundo):
+    v, n, e = mundo
+    for i in range(5):
+        v.agregar("c%d" % i, fecha="2026-11-0%dT10:00:00Z" % (i + 1), relato="Hecho %d" % i)
+    assert pasada_t(v, n, e, T0, envios_max=2).enviados == 2
+    assert len(n.solicitudes) == 2
+    assert pasada_t(v, n, e, T0 + 1, envios_max=2).enviados == 2   # los que no cupieron esperan, sin perderse
+    assert pasada_t(v, n, e, T0 + 2, envios_max=2).enviados == 1
+    assert len(n.solicitudes) == 5
+
+
+def test_tope_de_envios_acota_reintentos_sin_consumir_intento(mundo):
+    v, n, e = mundo
+    for i in range(3):
+        v.agregar("c%d" % i, fecha="2026-11-0%dT10:00:00Z" % (i + 1), relato="Hecho %d" % i)
+    pasada_t(v, n, e, T0)
+    for ref in list(n.solicitudes):
+        _agotar(n, ref)
+    pasada_t(v, n, e, T0 + 1)
+    n0 = len(n.solicitudes)
+    assert pasada_t(v, n, e, T0 + 25 * H, envios_max=1).reenviados == 1
+    assert pasada_t(v, n, e, T0 + 25 * H + 1, envios_max=1).reenviados == 1
+    assert pasada_t(v, n, e, T0 + 25 * H + 2, envios_max=1).reenviados == 1
+    assert len(n.solicitudes) == n0 + 3
+
+
+def test_envios_por_pasada_desde_entorno():
+    from kerna_conector.config import _entero
+    assert _entero(None, 5) == 5 and _entero("3", 5) == 3 and _entero("x", 5) == 5
+
+
+def test_eventos_de_reintento_y_valoracion_sin_ids(mundo):
+    from kerna_comun import telemetria
+    visto = []
+    telemetria.quitar_emisores()
+    telemetria.registrar_emisor(lambda clase, nombre, valor, at: visto.append((nombre, dict(at))))
+    try:
+        v, n, e, ref = _caso_agotado(mundo)
+        pasada_t(v, n, e, T0 + 25 * H)
+    finally:
+        telemetria.quitar_emisores()
+    ev = next(a for nom, a in visto if nom == "conector_reintento")
+    assert ev["intento"] == 1 and ev["motivo"] == "cadena_agotada" and "c1" not in str(ev)
+
+
+def test_valoracion_del_auditor_sin_texto():
+    from types import SimpleNamespace as S
+    from kerna_conector.reconciliacion import _Pasada
+    assert _Pasada._valoracion(S(tipo="feedback", nota=S(valoracion="arriba"))) == "util"
+    assert _Pasada._valoracion(S(tipo="feedback", nota=S(valoracion="abajo"))) == "no_util"
+    assert _Pasada._valoracion(S(tipo="clasificacion_auditor", nota=S(articulos=[]))) == "ninguno_aplica"

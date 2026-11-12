@@ -282,8 +282,16 @@ def main(argv=None):
     ap.add_argument("--salida", default=str(INFORME))
     args = ap.parse_args(argv)
     candidatos = json.loads(CANDIDATOS.read_text())["candidatos"]
-    texto = generar_informe(cargar_registro(Path(args.registro)), candidatos, args.campo, args.mapeo)
+    entradas = cargar_registro(Path(args.registro))
+    texto = generar_informe(entradas, candidatos, args.campo, args.mapeo)
     Path(args.salida).write_text(texto, encoding="utf-8")
+    if Path(args.registro) == REGISTRO:  # resultados de la comparación a la tabla `evaluaciones` (mejor esfuerzo)
+        from datetime import datetime, timezone
+        import tabla_evaluaciones
+        medidos = [resumen(c, con_tokens_medidos(entradas, c, args.campo, e)) for c in candidatos
+                   if (e := ultima_corrida(entradas, c, args.campo, None, args.mapeo)) and e.get("metricas_articulo", {}).get("global")]
+        tabla_evaluaciones.subir(tabla_evaluaciones.filas_comparacion(
+            medidos, datetime.now(timezone.utc).isoformat(timespec="seconds"), "comparar_embeddings", args.campo, args.mapeo))
     print(texto)
     return 0
 

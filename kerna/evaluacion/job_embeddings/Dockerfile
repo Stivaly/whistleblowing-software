@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 ca-c
 COPY --from=ollama /usr/bin/ollama /usr/bin/ollama
 COPY --from=ollama /usr/lib/ollama /usr/lib/ollama
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
-    && pip install --no-cache-dir sentence-transformers==3.3.1
+    && pip install --no-cache-dir sentence-transformers==3.3.1 azure-data-tables azure-identity
 
 WORKDIR /app
 COPY evaluar.py rerank.py ./

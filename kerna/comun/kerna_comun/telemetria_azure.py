@@ -16,7 +16,7 @@ from kerna_comun import telemetria
 LOGGER = "kerna.eventos"
 # Atributos de baja cardinalidad: los únicos que se usan como dimensiones de métricas.
 DIMENSIONES = frozenset({"etapa", "modo", "recuperacion", "proveedor", "modelo", "embedding", "coleccion",
-                         "estado", "motivo", "codigo", "cliente", "contingencia", "resultado", "tipo",
+                         "estado", "motivo", "codigo", "cliente", "contingencia", "resultado", "tipo", "valoracion",
                          "json_valido"})
 _SIN_INSTRUMENTAR = ("azure_sdk", "django", "fastapi", "flask", "psycopg2", "requests", "urllib", "urllib3")
 
