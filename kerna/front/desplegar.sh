@@ -12,7 +12,7 @@ while [ $# -gt 0 ]; do case "$1" in --ref) REF="$2"; shift 2;; --sin-pruebas) PR
 APP="$(terraform -chdir="$RAIZ/infra/terraform" output -raw front_nombre)"
 TMP="$(mktemp -d)"; FUENTE="$(mktemp -d)"; trap 'rm -rf "$TMP" "$FUENTE"' EXIT; mkdir -p "$TMP/app/kql"
 if [ -n "$REF" ]; then
-  git -C "$RAIZ" archive "$REF" kerna/front kerna/docs/observabilidad/consultas kerna/pruebas | tar -x -C "$FUENTE"
+  git -C "$RAIZ" archive "$REF" kerna/front kerna/docs/observabilidad/consultas kerna/pruebas kerna/diseno/identidad-v3 | tar -x -C "$FUENTE"
   AQUI="$FUENTE/kerna/front"; RAIZ_PRUEBAS="$FUENTE"; RAIZ_KQL="$FUENTE"
   echo "Desplegando $(git -C "$RAIZ" rev-parse --short "$REF")"
 else
