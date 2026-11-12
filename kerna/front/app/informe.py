@@ -20,10 +20,10 @@ PRECIOS_FUENTE = "tabla de precios de la API de Anthropic (anthropic.com/pricing
 PRECIOS_CLAUDE = {  # modelo: (entrada, salida, entrada sobre 100K por prompt, salida sobre 100K)
     "Claude Haiku 5.5": (0.10, 0.50, 0.50, 2.50),
     "Claude Sonnet 5.5": (2.00, 10.00, None, None),
-    "Claude Opus 5.5": (4.00, 20.00, None, None),
 }
+EQUIVALENCIA = {"gpt-5-nano": "Claude Haiku 5.5", "gpt-5-mini": "Claude Sonnet 5.5"}  # modelo usado: equivalente Claude
+POR_DEFECTO = "Claude Haiku 5.5"  # modelos sin equivalencia (p. ej. Gemini de respaldo)
 UMBRAL_PROMPT = 100_000
-PRINCIPAL = "Claude Haiku 5.5"
 PROYECCION = (100, 1000)  # denuncias por mes
 LF_LA = "Log Analytics (AppTraces del núcleo)"
 CONSULTAS_INFORME = {
@@ -218,46 +218,55 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None) -> d
     ts = sum(_n(f["tokens_salida_total"]) for f in crudo["tokens"])
     nsol = sum(int(_n(f["solicitudes"])) for f in crudo["tokens"])
 
-    def usd_modelo(m):
-        pe, ps, pe2, ps2 = PRECIOS_CLAUDE[m]
-        tot = 0.0
-        for f in crudo["tokens"]:  # tramo alto si el prompt medio de ese modo supera 100K
-            alto = pe2 is not None and _n(f["tokens_entrada_prom"]) > UMBRAL_PROMPT
-            tot += _n(f["tokens_entrada_total"]) * (pe2 if alto else pe) / 1e6 + _n(f["tokens_salida_total"]) * (ps2 if alto else ps) / 1e6
-        return tot
-    hay = bool(nsol)
-    esc = []
-    for m, (pe, ps, _, _) in PRECIOS_CLAUDE.items():
-        u = usd_modelo(m)
-        esc.append([m, pe, ps, round(u, 4) if hay else None, round(u / nsol, 6) if hay else None,
-                    *[round(u / nsol * k, 2) if hay else None for k in PROYECCION]])
+    desglose = {}  # modelo Claude -> [solicitudes, entrada, salida, USD, modelos usados]
+    sin_equiv = []
+    for f in crudo["por_modelo"]:
+        usado = str(f["modelo"])
+        cl = EQUIVALENCIA.get(usado)
+        if cl is None:
+            cl = POR_DEFECTO
+            sin_equiv.append(usado)
+        pe, ps, pe2, ps2 = PRECIOS_CLAUDE[cl]
+        n, ent, sal = int(_n(f["solicitudes"])), _n(f["tokens_entrada_total"]), _n(f["tokens_salida_total"])
+        prom = _n(f.get("tokens_entrada_prom")) or (ent / n if n else 0)
+        alto = pe2 is not None and prom > UMBRAL_PROMPT
+        usd = ent * (pe2 if alto else pe) / 1e6 + sal * (ps2 if alto else ps) / 1e6
+        d = desglose.setdefault(cl, [0, 0, 0, 0.0, []])
+        d[0] += n; d[1] += int(ent); d[2] += int(sal); d[3] += usd
+        if usado not in d[4]:
+            d[4].append(usado)
+    nmod = sum(d[0] for d in desglose.values())
+    hay = bool(nmod)
+    total = sum(d[3] for d in desglose.values())
+    por_caso = total / nmod if hay else None
+    desg = [[cl, ", ".join(d[4]), d[0], d[1], d[2], round(d[3], 4)] for cl, d in desglose.items()]
     costo = {"id": "costo", "titulo": "Costo y consumo",
-             "justificacion": "Muestra el consumo medido de tokens y lo valoriza a precios de la API de Anthropic, para estimar cuánto costaría operar Kerna con Claude, sin importar el modelo que corre hoy.",
+             "justificacion": "Muestra el costo del período a precios de la API de Anthropic, según los tokens medidos por modelo y su equivalente Claude.",
              "kpis": [{"etiqueta": "Solicitudes con tokens medidos", "valor": nsol, "unidad": "solicitudes", "fuente": LF_LA},
                       {"etiqueta": "Tokens de entrada", "valor": int(te), "unidad": "tokens", "fuente": LF_LA + ", tokens_entrada de solicitud_terminada"},
                       {"etiqueta": "Tokens de salida", "valor": int(ts), "unidad": "tokens", "fuente": LF_LA},
-                      {"etiqueta": f"USD del período, escenario principal ({PRINCIPAL})", "valor": esc[0][3], "unidad": "USD", "fuente": f"{PRECIOS_FUENTE}; estimación"},
-                      {"etiqueta": f"USD por caso ({PRINCIPAL})", "valor": esc[0][4], "unidad": "USD", "fuente": "USD del período / solicitudes"}]
-             + [{"etiqueta": f"USD por {k:,} denuncias/mes ({PRINCIPAL})".replace(",", "."), "valor": esc[0][5 + i], "unidad": "USD", "fuente": "costo por caso x volumen mensual"} for i, k in enumerate(PROYECCION)],
-             "tablas": [{"id": "escenarios", "titulo": "Escenarios de costo con precios de Claude (USD por millón de tokens: entrada/salida)",
-                         "cols": ["Modelo", "USD/M entrada", "USD/M salida", "Costo del período (USD)", "Costo por caso (USD)"] + [f"Proyección {k:,} denuncias/mes (USD)".replace(",", ".") for k in PROYECCION],
-                         "filas": esc, "fuente": f"{PRECIOS_FUENTE}; tokens medidos en {LF_LA}"},
+                      {"etiqueta": "Costo del período", "valor": round(total, 4) if hay else None, "unidad": "USD", "fuente": "tokens por modelo x precios de la API de Anthropic"},
+                      {"etiqueta": "Costo por denuncia", "valor": round(por_caso, 6) if hay else None, "unidad": "USD", "fuente": "costo del período / solicitudes"}]
+             + [{"etiqueta": f"Proyección mensual, {format(k, ',d').replace(',', '.')} denuncias", "valor": round(por_caso * k, 2) if hay else None, "unidad": "USD", "fuente": "costo por denuncia x volumen mensual"} for k in PROYECCION],
+             "tablas": [{"id": "costo_modelo", "titulo": "Costo por modelo (precios USD por millón de tokens: Haiku 5.5 0,10/0,50; Sonnet 5.5 2,00/10,00)",
+                         "cols": ["Modelo Claude", "Modelo usado", "Solicitudes", "Tokens entrada", "Tokens salida", "Costo (USD)"],
+                         "filas": desg, "fuente": f"{PRECIOS_FUENTE}; tokens medidos en {LF_LA}"},
                         {"id": "tokens_modo", "titulo": "Tokens por modo", "cols": ["Modo", "Solicitudes", "Tokens entrada", "Tokens salida", "Entrada prom.", "Salida prom."],
                          "filas": [[str(f["modo"]), int(_n(f["solicitudes"])), int(_n(f["tokens_entrada_total"])), int(_n(f["tokens_salida_total"])), round(_n(f["tokens_entrada_prom"])), round(_n(f["tokens_salida_prom"]))] for f in crudo["tokens"]], "fuente": LF_LA},
                         {"id": "tokens_modelo", "titulo": "Consumo por modelo exacto", "cols": ["Modelo", "Solicitudes", "Tokens entrada", "Tokens salida"],
                          "filas": [[str(f["modelo"]), int(_n(f["solicitudes"])), int(_n(f["tokens_entrada_total"])), int(_n(f["tokens_salida_total"]))] for f in crudo["por_modelo"]], "fuente": LF_LA + ", modelo de solicitud_terminada"}],
-             "graficos": [{"tipo": "h", "titulo": "Costo del período por escenario (USD)", "items": [(e[0], e[3] or 0) for e in esc], "fmt": "usd"},
+             "graficos": [{"tipo": "h", "titulo": "Costo del período por modelo (USD)", "items": [(r[0], r[5]) for r in desg], "fmt": "usd"},
                           {"tipo": "h", "titulo": "Tokens totales por modo", "items": [(str(f["modo"]), int(_n(f["tokens_entrada_total"]) + _n(f["tokens_salida_total"]))) for f in crudo["tokens"]]}],
              "notas": [x for x in (sin("tokens", "tokens"), sin("por_modelo", "consumo por modelo")) if x]}
-    costo["notas"] += [f"Supuesto: se valorizan los tokens medidos del proveedor actual (Gemini / Azure OpenAI) tal cual; el tokenizador de Claude cuenta distinto, así que la cifra es una estimación y no se aplica ningún factor de corrección. Escenario principal: {PRINCIPAL} (equivalente al rol de gpt-5-nano). Sonnet 5.5 y Opus 5.5 son comparativos.",
-                       f"Precios al {PRECIOS_FECHA} ({PRECIOS_FUENTE}). Haiku 5.5 usa 0,50/2,50 USD/M solo si el prompt medio supera 100K tokens. Sin caché de prompts ni descuentos por lote.",
-                       "El consumo por modelo exacto solo existe para solicitudes procesadas por un núcleo que emite el modelo en solicitud_terminada; no hay costo real facturado del proveedor actual medido en el período (la nube gratuita de Gemini no tiene cargo)."]
-    if evaluacion:
-        if ev and ev.get("costo_usd") is not None:
-            costo["notas"].append(f"Nota secundaria, costo real del proveedor actual en la última evaluación offline ({ev.get('cadena')}, 61 casos, precios 0,05/0,40 USD/M): {ev['costo_usd']:.4f} USD (kerna/evaluacion/registro/recall_retriever.jsonl).")
-        pe = evaluacion.get("precios_embeddings") or {}
+    costo["notas"] += [f"Fuente de precios: {PRECIOS_FUENTE}. Equivalencias: gpt-5-nano = Claude Haiku 5.5; gpt-5-mini = Claude Sonnet 5.5. Haiku 5.5 usa 0,50/2,50 USD/M si el prompt supera 100K tokens."]
+    if not hay:
+        costo["notas"].append("Sin solicitudes con modelo registrado en el período: el costo se calcula cuando el núcleo emite el modelo en solicitud_terminada.")
+    if sin_equiv:
+        costo["notas"].append("Sin equivalencia fija, valorizados como Claude Haiku 5.5: " + ", ".join(sorted(set(sin_equiv))) + ".")
+    pe = (evaluacion or {}).get("precios_embeddings") or {}
+    if pe:
         desc = [k for k, v in pe.items() if v is None]
-        costo["notas"].append("Embeddings (kerna/evaluacion/precios_embeddings.json): sin precio verificado para " + (", ".join(desc[:4]) or "ninguno") + "; Anthropic no ofrece embeddings, por lo que su costo queda fuera de la estimación.")
+        costo["notas"].append("Embeddings: sin precio verificado para " + (", ".join(desc[:4]) or "ninguno") + "; Anthropic no ofrece embeddings y su costo queda fuera.")
 
     # ---- 5. Cobertura normativa ------------------------------------------------------------------------------
     ley_rows = [[str(f["norma"]) or "(sin nombre)", int(_n(f["articulos"]))] for f in crudo["leyes"]]

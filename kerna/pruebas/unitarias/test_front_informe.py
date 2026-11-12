@@ -32,7 +32,9 @@ def falso(texto, ini, fin):
         return [{"evento": "conector_reintento", "intento": "1", "motivo": "cadena_agotada", "eventos": 4, "casos": 3},
                 {"evento": "conector_reproceso", "intento": "1", "motivo": "", "eventos": 2, "casos": 2}]
     if "by modelo" in texto:
-        return [{"modelo": "gpt-5-nano", "solicitudes": 8, "tokens_entrada_total": 160000, "tokens_salida_total": 24000}]
+        return [{"modelo": "gpt-5-nano", "solicitudes": 8, "tokens_entrada_total": 160000, "tokens_salida_total": 24000, "tokens_entrada_prom": 20000},
+                {"modelo": "gpt-5-mini", "solicitudes": 1, "tokens_entrada_total": 10000, "tokens_salida_total": 2000, "tokens_entrada_prom": 10000},
+                {"modelo": "gemini-x", "solicitudes": 1, "tokens_entrada_total": 10000, "tokens_salida_total": 1000, "tokens_entrada_prom": 10000}]
     if "articulo_sugerido" in texto:
         return [{"norma": "Ley 21643", "articulos": 5}]
     if "front_valoraciones" in texto or "clasificacion_auditor" in texto:
@@ -64,12 +66,20 @@ def test_secciones_y_sin_proximos_pasos(inf):
     assert ids == ["resumen", "calidad", "desempeno", "costo", "cobertura", "incidentes"]
 
 
-def test_costo_claude_haiku(inf):
+def test_costo_real_por_modelo_con_equivalencia(inf):
     c = next(s for s in inf["secciones"] if s["id"] == "costo")
-    haiku = c["tablas"][0]["filas"][0]
-    assert haiku[0] == "Claude Haiku 5.5" and haiku[3] == pytest.approx(160000 * .10 / 1e6 + 24000 * .50 / 1e6, abs=1e-4)
-    assert haiku[5] == pytest.approx(haiku[4] * 100, abs=0.01)
-    assert any("tokenizador" in n for n in c["notas"])
+    filas = {f[0]: f for f in c["tablas"][0]["filas"]}
+    haiku = 170000 * .10 / 1e6 + 25000 * .50 / 1e6
+    sonnet = 10000 * 2 / 1e6 + 2000 * 10 / 1e6
+    assert filas["Claude Haiku 5.5"][5] == pytest.approx(haiku, abs=1e-4) and filas["Claude Sonnet 5.5"][5] == pytest.approx(sonnet, abs=1e-4)
+    assert "Claude Opus 5.5" not in filas
+    k = {x["etiqueta"]: x["valor"] for x in c["kpis"]}
+    assert k["Costo del período"] == pytest.approx(haiku + sonnet, abs=1e-3)
+    assert k["Costo por denuncia"] == pytest.approx((haiku + sonnet) / 10, abs=1e-5)
+    assert k["Proyección mensual, 1.000 denuncias"] == pytest.approx((haiku + sonnet) / 10 * 1000, abs=0.01)
+    texto = str(c).lower()
+    assert "estimaci" not in texto and "escenario" not in texto and "tokenizador" not in texto and "opus" not in texto
+    assert any("gemini-x" in n and "Haiku" in n for n in c["notas"])
 
 
 def test_dato_faltante_se_declara():

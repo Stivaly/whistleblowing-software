@@ -3,5 +3,5 @@ AppTraces
 | where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
 | extend modelo = coalesce(tostring(Properties.modelo), ""), entrada = todouble(Properties.tokens_entrada), salida = todouble(Properties.tokens_salida)
 | where isnotnull(entrada) and modelo != ""
-| summarize solicitudes = count(), tokens_entrada_total = sum(entrada), tokens_salida_total = sum(salida) by modelo
+| summarize solicitudes = count(), tokens_entrada_total = sum(entrada), tokens_salida_total = sum(salida), tokens_entrada_prom = round(avg(entrada)) by modelo
 | order by solicitudes desc
