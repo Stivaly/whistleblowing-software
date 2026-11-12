@@ -845,7 +845,7 @@ def cascada_negocio(t: dict, signo=None) -> dict:
     """Cascada del ingreso a la utilidad: barras con altura mínima visible (1,5 % del recorrido), valor como etiqueta y niveles para los conectores."""
     signo = signo or (lambda x: ("−" if x < 0 else "") + f.uf(abs(x)))
     pasos = [("Ingreso", t["ingreso"], "ing"), ("Costo de servir", -t["costo_servir"], "des"), ("Parte de Veridy", -t["participacion_veridy"], "des"), ("Costos fijos", -t["costos_fijos"], "des"),
-             ("Depreciación e interés", -(t["depreciacion"] + t["interes"]), "des"), ("Impuesto", -t["impuesto"], "des")]
+             ("Crédito y equipos", -(t["depreciacion"] + t["interes"]), "des"), ("Impuesto", -t["impuesto"], "des")]
     labels, vals, bp, sp_, bn, sn, cols, niv, run = [], [], [], [], [], [], [], [], 0.0
     pisos = []  # (índice, está sobre el cero): barras demasiado bajas para verse
     for nom, v, tipo in pasos:
