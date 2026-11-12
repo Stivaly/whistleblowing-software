@@ -53,7 +53,8 @@ def cli(monkeypatch):
 def test_ajustes_vista_y_menu(cli):
     assert cli.get("/panel/ajustes", follow_redirects=False).status_code == 303
     r = cli.get("/panel/ajustes", headers=H)
-    assert r.status_code == 200 and "Todavía no se aplican" not in r.text and "todavía no se aplican" in r.text
+    assert r.status_code == 200 and "Guardado, aún no aplicado" in r.text and "Casos por ronda" in r.text
+    assert "Así queda" not in r.text and "Cada ronda envía" not in r.text and "orb-svg" not in r.text  # sin franjas narrativas ni órbitas decorativas
     assert "Valores recomendados" in r.text and "ejemplo" not in r.text.lower()
     assert 'href="/panel/ajustes"' in cli.get("/panel", headers=H).text
 
@@ -130,10 +131,16 @@ def test_informe_compacto_html_y_pdf(monkeypatch):
     from test_front_informe import EVAL, FIN, INI, falso
     inf = informe.construir(INI, FIN, ejecutar=falso, evaluacion=EVAL)
     monkeypatch.setattr(principal, "_informe", lambda *a, **k: inf)
-    h = TestClient(principal.app, base_url="https://t").get("/panel/informe?dias=30", headers=H).text
+    c = TestClient(principal.app, base_url="https://t")
+    # sin datos calculados la página sale como esqueleto y el cuerpo llega por /panel/informe/cuerpo
+    shell = c.get("/panel/informe?dias=30", headers=H).text
+    assert 'data-carga="/panel/informe/cuerpo?dias=30"' in shell and "sk-g" in shell
+    h = c.get("/panel/informe/cuerpo?dias=30", headers=H).text
     assert "Contenido" not in h and "Responde en una página" not in h and "Es la evidencia central" not in h
-    assert "¿Cómo se resolvieron?" in h and h.count("<h4 class=\"inf-s\">Casos por día") == 1 and "10 nov" in h and "Modo oficial" not in h
-    assert "s-bad" in h and "Ley 21.643 · Ley Karin" in h and "…" not in h.split('id="cobertura"')[1].split("</section>")[0]
+    assert 'class="vd2' in h and h.count('class="kc ') == 6 and "s-bad" in h and 'role="tablist"' in h and "Ley 21.643 · Ley Karin" not in h
+    assert "<table" not in h and 'id="p-datos"' in h  # las tablas no van en el cuerpo
+    d = c.get("/panel/informe/datos?dias=30", headers=H).text
+    assert d.count("<details") >= 8 and "<table" in d and "<details open" not in d.split("<summary")[0]  # plegadas por defecto
     sec = vistas.informe(inf)
     cal = next(s for s in sec if s["id"] == "calidad")
     assert next(k for k in cal["kpis"] if k["etiqueta"].startswith("Recall@5 por artículo"))["e"] == "bad"

@@ -7,7 +7,7 @@
 <div><h1 id="acc-t" class="disp m-0" style="font-size:22px;line-height:1.1;color:var(--brand)">Panel de Kerna AI</h1><p class="pg-s">Entra con la clave de acceso</p></div></div>
 <div><label class="text-sm font-semibold block mb-1" for="c">Clave de acceso</label>
 <input id="c" class="field" type="password" name="clave" autocomplete="current-password" required autofocus aria-describedby="{% if error %}acc-e{% endif %}"></div>
-{% if error %}<p id="acc-e" role="alert" class="m-0 flex items-center gap-2 text-sm font-semibold t-bad">{{ ic('octagon-alert') }}<span>Clave incorrecta o demasiados intentos.</span></p>{% endif %}
+{% if error %}<p id="acc-e" role="alert" class="m-0 flex items-center gap-2 text-sm font-semibold t-bad">{{ ic('e-cadena-agotada') }}<span>Clave incorrecta o demasiados intentos.</span></p>{% endif %}
 <button class="btn btn-go" type="submit">Entrar {{ ic('log-in') }}</button>
 <p class="m-0 text-xs muted">El panel muestra solo cifras agregadas: nunca textos de denuncias ni datos de personas.</p>
 </form></section>

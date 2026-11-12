@@ -11,10 +11,10 @@
 <body>
 <div id="tt" role="tooltip"></div>
 <a class="skip" href="#main">Saltar al contenido</a>
-<div class="bgfx {% block fondo %}bg-a{% endblock %}" aria-hidden="true"><svg class="b-rot b1" viewBox="0 0 1200 1200" fill="none"><circle class="bo" cx="600" cy="600" r="560"/><circle class="bs" cx="1160" cy="600" r="12"/><circle class="bo" cx="600" cy="600" r="430"/></svg><svg class="b-rot b3" viewBox="0 0 1200 1200" fill="none">{% for g in range(0, 180, 15) %}<ellipse class="bro" cx="600" cy="600" rx="330" ry="100" transform="rotate({{ g }} 600 600)"/>{% endfor %}</svg></div>
+<div class="bgfx {% block fondo %}bg-a{% endblock %}" aria-hidden="true"><img class="b-rot b1" src="/estaticos/img/bg-orbitas.webp?v={{ ver }}" width="1600" height="1600" alt="" decoding="async"><img class="b-rot b3" src="/estaticos/img/bg-roseta.webp?v={{ ver }}" width="1600" height="1600" alt="" decoding="async"></div>
 {% block pagina %}{% endblock %}
 <script type="application/json" id="glosario">{{ glosario_json|safe }}</script>
 {% block datos %}{% endblock %}
-<script src="/estaticos/echarts.min.js?v=5.5.1" defer></script>
+{% block echarts %}{% endblock %}
 <script src="/estaticos/kerna.js?v={{ ver }}" defer></script>
 </body></html>

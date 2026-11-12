@@ -11,17 +11,23 @@ def par_uf() -> int:
 
 
 NOTAS_AJUSTE = {
-    "envios": "Más casos juntos acelera la fila, pero aumenta el riesgo de fallos por límites del proveedor.", "reintentos": "Cambia cuántos casos fallidos se rescatan solos.",
-    "espera": "Modifica cuánto tarda en repetirse un intento.", "revision": "Cambia la rapidez con que Kerna ve denuncias nuevas.",
-    "reprocesar": "Los casos en revisión manual volverán a la fila una vez.", "evaluador": "Apagado es más rápido y barato, con menos control de citas.",
-    "candidatos": "Cambia el cuidado y el costo del revisor.", "cadena": "Cambia qué modelo responde primero y cuál respalda.",
-    "compartir": "Solo afecta a los casos nuevos.", "maxresp": "Cambia desde cuándo un caso se marca como lento.", "alerta": "Cambia cuándo se destaca un caso sin sugerencia.",
+    "envios": "Más casos por ronda = respuestas más rápidas, más costo por hora y más riesgo de topar el límite del proveedor.",
+    "reintentos": "Más reintentos rescatan más casos solos, con más gasto de IA.",
+    "espera": "Esperar más da tiempo a que un proveedor se recupere; esperar menos acelera el reintento.",
+    "revision": "Revisar más seguido recibe los casos antes, con más consultas a Veridy.",
+    "reprocesar": "Encendido: al guardar, los casos en revisión manual vuelven a la fila una vez.",
+    "evaluador": "Apagado = más rápido y barato, con menos control de las citas.",
+    "candidatos": "Más artículos = revisión más cuidadosa y más costo.",
+    "cadena": "Cambia qué modelo responde primero y cuál respalda.",
+    "compartir": "Solo afecta a los casos nuevos.",
+    "maxresp": "Más bajo = más casos marcados como lentos.",
+    "alerta": "Más corto = se destacan antes los casos sin sugerencia.",
 }
 
 
 def _ajustes(L: str) -> dict:
     from . import ajustes
-    return {it["k"]: {"t": it["l"], "q": it["d"], "c": NOTAS_AJUSTE[it["k"]], "l": L} for g in ajustes.GRUPOS for it in g["items"]}
+    return {it["k"]: {"t": it["l"], "q": NOTAS_AJUSTE[it["k"]], "c": "", "l": ""} for g in ajustes.GRUPOS for it in g["items"]}
 
 
 def glosario() -> dict:
@@ -78,6 +84,14 @@ def glosario() -> dict:
         "neg_resultado": {"t": "Resultado del período", "q": "Cómo se pasa del ingreso a la utilidad, con todos los costos del informe de Kerna (capítulo 25).", "c": "Las barras muestran cada partida como parte del ingreso.", "l": L},
         "neg_supuestos": {"t": "Supuestos", "q": "Los supuestos son los del informe de Kerna: no se editan aquí.", "c": "Cambian en el archivo de parámetros financieros o con variables de entorno.", "l": L},
         "proyeccion": {"t": "Proyección a 5 años", "q": "Ingresos, costos y utilidad de cada año según el plan de negocio del capítulo 25 del informe: clientes esperados por año (de 5 a 17), precios en UF, inflación y descuento.", "c": "Sirve para decidir precios o planes, no para comprometer cifras. El año 0 es 2026; el año 1 es 2027.", "l": L},
+        "inf_veredicto": {"t": "Veredicto", "q": "Una frase que resume los 6 indicadores de arriba.", "c": "Rojo si alguno está bajo su meta; ámbar si alguno pide atención; verde si todos cumplen.", "l": L},
+        "inf_serie": {"t": "Acierto en las últimas mediciones", "q": "Cada punto es una medición del acierto, de la más antigua a la más reciente.", "c": f"La línea punteada es la meta de {meta_r} %.", "l": L},
+        "inf_anon": {"t": "Datos personales ocultados", "q": "De los casos que traen cada tipo de dato (nombre, correo, cargo), en cuántos el anonimizador lo detectó antes de enviarlo a la IA.", "c": "Barras cortas indican datos que podrían salir sin ocultar.", "l": L},
+        "inf_tokens": {"t": "Tokens", "q": "Los tokens son trozos de texto: lo que el modelo lee (entrada) y escribe (salida). Con ellos se calcula el costo.", "c": precios, "l": L},
+        "inf_rent": {"t": "Rentabilidad", "q": "Lo que queda de cada cliente después de servirlo, en UF, durante el período.", "c": "Verde: margen. Gris: costo de servir.", "l": L},
+        "inf_incid": {"t": "Incidentes", "q": "Casos que pasaron a revisión manual y fallas de proveedores o modelos, con su motivo.", "c": "Muchas fallas del mismo proveedor suelen indicar un límite de uso o una caída.", "l": L},
+        "inf_datos": {"t": "Datos", "q": "Todas las tablas del informe. Abre la que necesites.", "c": "También están completas en Excel y CSV.", "l": L},
+        "aj_estado": {"t": "Guardado, aún no aplicado", "q": "Kerna todavía no lee estos valores: sigue con su configuración actual hasta que lo haga.", "c": "", "l": ""},
         **_ajustes(L),
         "ingresos_uf": {"t": "Ingresos (UF)", "q": "Es la proyección del plan de negocio del capítulo 25 del informe: lo que se espera facturar cada año, en UF, con los clientes esperados por año (de 5 a 17). Así, los 638 UF del año 1 salen de 5 clientes.", "c": "El año 0 es 2026, así que el año 1 es 2027. Para pasar las UF a pesos se usa una UF supuesta de {uf} pesos: es un valor configurable que falta confirmar con el valor oficial.".replace("{uf}", f.miles(par_uf())), "l": L},
     }

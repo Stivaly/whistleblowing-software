@@ -84,7 +84,7 @@ def test_panel_con_error_de_consulta(monkeypatch):
     monkeypatch.setattr(consultas, "metricas", roto)
     c = TestClient(principal.app, follow_redirects=False)
     p = c.get("/panel", cookies={seguridad.COOKIE: seguridad.emitir_cookie()})
-    assert p.status_code == 200 and "No se pudo consultar" in p.text
+    assert p.status_code == 200 and "Sin conexión con Log Analytics" in p.text
 
 
 def test_referencia_keyvault_sin_resolver_no_sirve(monkeypatch):

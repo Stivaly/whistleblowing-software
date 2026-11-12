@@ -1,4 +1,4 @@
-/* Ajustes: estado en memoria, texto «Así queda», aviso de cambios y envío del formulario (la escritura la hace el servidor con CSRF). */
+/* Ajustes: estado en memoria, aviso de cambios y envío del formulario (la escritura la hace el servidor con CSRF). */
 (() => {
   'use strict';
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -16,18 +16,6 @@
     return v.filter((m) => m.on).map((m) => M[m.v][0]).join(' → ') || 'Ninguno';
   };
   const aviso = (k, v) => k === 'envios' && v > 7 ? 'Con tantos casos juntos puede superarse el límite del proveedor de IA.' : k === 'reintentos' && v === 0 ? 'Los casos fallidos quedarán en revisión manual sin nuevo intento.' : '';
-  const vivo = (id) => {
-    if (id === 'proc') return 'Cada ronda envía ' + s.envios + (s.envios === 1 ? ' caso' : ' casos') + ' a Kerna. ' + (s.reintentos === 0 ? 'Los casos que fallen no se reintentan.' : 'Un caso que falla se reintenta hasta ' + s.reintentos + (s.reintentos === 1 ? ' vez' : ' veces') + ', cada ' + s.espera + ' h.') + ' Veridy se revisa cada ' + fh(s.revision) + '.' + (s.reprocesar ? ' Al guardar, los casos en revisión manual vuelven a la fila.' : '');
-    if (id === 'ia') return (s.evaluador ? 'El revisor está encendido y compara ' + s.candidatos + ' artículos por caso.' : 'El revisor está apagado: más rápido y barato, con menos control de citas.') + ' Orden de modelos: ' + fmt(items.cadena, s.cadena) + '.';
-    if (id === 'comp') return s.compartir.length ? 'Cada caso se comparte con: ' + fmt(items.compartir, s.compartir) + '.' : 'Los casos no se comparten con ningún equipo.';
-    return 'Un caso se marca como lento pasados ' + s.maxresp + ' segundos y se destaca si sigue sin sugerencia tras ' + s.alerta + (s.alerta === 1 ? ' hora' : ' horas') + '.';
-  };
-  const sats = { proc: () => s.envios, ia: () => s.evaluador ? Math.min(s.candidatos, 12) : 0, comp: () => s.compartir.length, plazos: () => Math.round(s.maxresp / 5) };
-  const NS = 'http://www.w3.org/2000/svg';
-  function pintarSats(id, n) {
-    const svg = $('[data-sats="' + id + '"]'); if (!svg || svg.__n === n) return; svg.__n = n; svg.textContent = '';
-    for (let i = 0; i < n; i++) { const a = i * 2 * Math.PI / Math.max(1, n), c = document.createElementNS(NS, 'circle'); c.setAttribute('class', 'as'); c.setAttribute('r', 10); c.setAttribute('cx', 150 + 120 * Math.cos(a)); c.setAttribute('cy', 150 + 120 * Math.sin(a)); svg.appendChild(c); }
-  }
   const igual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   function pintar() {
     $$('.ctl').forEach((c) => {
@@ -47,7 +35,7 @@
         v.forEach((m, i) => {
           const row = document.createElement('div'); row.className = 'cn-row'; row.style.opacity = m.on ? '' : '.65';
           row.innerHTML = '<span class="cn-n">' + (i + 1) + '</span><div class="flex-1 min-w-0"><b class="block text-[14px]"></b><span class="text-xs muted"></span></div><div class="flex items-center gap-1.5"></div>';
-          $('b', row).textContent = M[m.v][0]; $('.muted', row).textContent = M[m.v][1];
+          $('b', row).textContent = M[m.v][0]; $('.muted', row).textContent = i === 0 ? 'Principal' : 'Respaldo';
           const bt = $('.flex.items-center', row);
           [[-1, 'arrow-up', 'Subir: '], [1, 'arrow-down', 'Bajar: ']].forEach(([d, ic, t]) => {
             const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-sec !min-h-[40px] !w-10 !px-0'; b.setAttribute('aria-label', t + M[m.v][0]); b.disabled = i + d < 0 || i + d >= v.length;
@@ -58,8 +46,6 @@
         });
       }
     });
-    $$('[data-vivo]').forEach((n) => { n.textContent = vivo(n.dataset.vivo); });
-    Object.keys(sats).forEach((id) => pintarSats(id, sats[id]()));
     const n = Object.keys(rec).filter((k) => !igual(s[k], base[k])).length, f = $('[data-barra]');
     f.hidden = !n; $('[data-ncambios]', f).textContent = n + (n === 1 ? ' cambio sin guardar' : ' cambios sin guardar');
     $('input[name=valores]', f).value = JSON.stringify(s);

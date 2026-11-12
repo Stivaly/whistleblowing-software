@@ -1,0 +1,7 @@
+// Latencia de la solicitud completa (evento solicitud_terminada, duracion_ms): P50 y P95 por hora.
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| extend duracion_ms = todouble(Properties.duracion_ms)
+| where isnotnull(duracion_ms)
+| summarize solicitudes = count(), p50_ms = percentile(duracion_ms, 50), p95_ms = percentile(duracion_ms, 95) by bin(TimeGenerated, 1h)
+| order by TimeGenerated asc

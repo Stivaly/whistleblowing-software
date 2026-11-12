@@ -1,0 +1,10 @@
+{% from "_macros.html" import tip, kc with context %}
+<section class="vd2 card s-{{ V2.veredicto.e }}" aria-label="Veredicto">{{ ic(ICONO[V2.veredicto.e]) }}<b>{{ V2.veredicto.t }}</b><span class="vd2-n">{{ V2.veredicto.n }}</span>{{ tip('inf_veredicto') }}</section>
+<section class="kg6" aria-label="Indicadores clave">{% for k in V2.cards %}{{ kc(k) }}{% endfor %}</section>
+<div class="tabs2" role="tablist" aria-label="Secciones del informe">{% for p in V2.pestanas %}<button type="button" role="tab" id="t-{{ p.id }}" aria-controls="p-{{ p.id }}" aria-selected="{{ 'true' if loop.first else 'false' }}" tabindex="{{ 0 if loop.first else -1 }}">{{ ic(p.i) }}<span>{{ p.t }}</span></button>{% endfor %}<button type="button" role="tab" id="t-datos" aria-controls="p-datos" aria-selected="false" tabindex="-1" class="t-datos">{{ ic('table') }}<span>Datos</span></button></div>
+{% for p in V2.pestanas %}<section class="tp" role="tabpanel" id="p-{{ p.id }}" aria-labelledby="t-{{ p.id }}"{% if not loop.first %} hidden{% endif %}>
+{% if p.stats %}<ul class="stt">{% for s in p.stats %}<li class="s-{{ s.e if s.e != 'n' else 'na' }}{% if s.e == 'n' %} n{% endif %}">{% if s.e != 'n' and s.e != 'na' %}{{ ic(ICONO[s.e]) }}{% endif %}<span>{{ s.l }}</span><b>{{ s.v }}{% if s.u %} <small>{{ s.u }}</small>{% endif %}</b></li>{% endfor %}</ul>{% endif %}
+<div class="cg">{% for c in V2.charts[p.id] %}<div class="card cc"><div class="hd flex items-center gap-1.5"><h3 class="cc-t">{{ c.t }}</h3>{{ tip(c.g) }}</div><div id="{{ c.id }}" class="cch" role="img" aria-label="{{ c.t }}"></div></div>{% else %}<div class="card cc cc-v"><span>{{ ic('e-sin-info') }}</span><b>Sin datos en este período</b></div>{% endfor %}</div>
+</section>{% endfor %}
+<section class="tp" role="tabpanel" id="p-datos" aria-labelledby="t-datos" hidden data-url="/panel/informe/datos?{{ q }}"><div class="cg"><div class="card cc cc-v sk"><b>Cargando las tablas…</b></div></div></section>
+<script type="application/json" id="inf-charts">{{ V2.charts|tojson }}</script>

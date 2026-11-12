@@ -44,3 +44,5 @@ Revisa cada fila y, si apruebas, bórralo tú manualmente (`rm -r .papelera/...`
 | 2026-11-12 | kerna/front/app/estaticos/kerna.css | .papelera/2026-11-12/kerna/front/app/estaticos/kerna.css | Reemplazado por los estilos de la maqueta aprobada (copia de la versión anterior) |
 | 2026-11-12 | kerna/front/app/plantillas/{acceso,base,informe,negocio,panel,portada,reintentar}.html | .papelera/2026-11-12/kerna/front/app/plantillas/ | Reescritas con el diseño nuevo (copias de las versiones antiguas, diseño monoespaciado) |
 | 2026-11-12 | kerna/front/app/plantillas/_simbolo.html | .papelera/2026-11-12/kerna/front/app/plantillas/_simbolo.html | Símbolo estático antiguo; el logo vivo se dibuja ahora con kerna.js |
+
+| 2026-11-12 | kerna/front/app/estaticos/echarts.min.js | .papelera/2026-11-12/kerna/front/app/estaticos/echarts.min.js | Reemplazado por echarts.custom.min.js (build propio, 617 KB en vez de 1,0 MB; solo los gráficos que usa el front) |

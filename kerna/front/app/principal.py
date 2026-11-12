@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.gzip import GZipMiddleware
 from fastapi.templating import Jinja2Templates
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from fastapi.responses import Response
 
@@ -185,13 +185,19 @@ def api_metricas(request: Request, dias: int = 7):
 
 
 def _informe(dias, desde, hasta):
+    dias, desde, hasta = _norm_informe(dias, desde, hasta)
+
     def calcular():
         ini, fin = inf_mod.periodo(dias, desde, hasta)
         try:
             n = negocio.cargar(dias=(fin - ini).days or 30)
         except Exception:
             n = None  # la sección de rentabilidad declara que no hay datos
-        return inf_mod.construir(ini, fin, negocio=n)
+        inf = inf_mod.construir(ini, fin, negocio=n)
+        if inf.get("fallos", 0) > 3:  # casi todo falló (p. ej. identidad aún sin token): un segundo intento antes de guardar el resultado
+            time.sleep(2)
+            inf = inf_mod.construir(ini, fin, negocio=n)
+        return inf
     return cache.obtener(("informe", dias, desde, hasta), calcular, 120)
 
 
@@ -207,7 +213,8 @@ def _informe_directo(dias):
         n = negocio.cargar(dias=(fin - ini).days or 30)
     except Exception:
         n = None
-    return inf_mod.construir(ini, fin, negocio=n)
+    inf = inf_mod.construir(ini, fin, negocio=n)
+    return inf
 
 
 @app.on_event("startup")
@@ -215,13 +222,45 @@ def _arranque():
     precalentar()
 
 
+def _norm_informe(dias, desde, hasta):
+    return (None, desde, hasta or None) if desde else (dias if dias in inf_mod.RANGOS else 30, None, None)
+
+
+def _ctx_informe(dias, desde, hasta):
+    d, ds, hs = _norm_informe(dias, desde, hasta)
+    ini, fin = inf_mod.periodo(d, ds, hs)
+    return {"q": f"desde={desde}&hasta={hasta}" if desde else f"dias={d}", "dias": d if not desde else 0, "desde": desde, "hasta": hasta,
+            "periodo_txt": f"{ini:%Y-%m-%d} a {(fin - timedelta(seconds=1)):%Y-%m-%d}"}
+
+
 @app.get("/panel/informe", response_class=HTMLResponse)
 def panel_informe(request: Request, dias: int = 30, desde: str = "", hasta: str = ""):
     if not _permitido(request):
         return RedirectResponse("/acceso", status_code=303)
-    inf = _informe(dias, desde or None, hasta or None)
-    q = f"desde={desde}&hasta={hasta}" if desde else f"dias={dias if dias in inf_mod.RANGOS else 30}"
-    return plantillas.TemplateResponse(request, "informe.html", {"inf": inf, "secciones": vistas.informe(inf), "ej": vistas.informe_ejecutivo(inf), "dias": dias if not desde else 0, "q": q, "desde": desde, "hasta": hasta, "fmt": exportar._fmt})
+    d, ds, hs = _norm_informe(dias, desde, hasta)
+    ctx = _ctx_informe(dias, desde, hasta)
+    listo = cache.hay(("informe", d, ds, hs))
+    if listo:  # con datos ya calculados la página sale completa; si no, sale el esqueleto y el cuerpo llega por /panel/informe/cuerpo
+        inf = _informe(d, ds, hs)
+        ctx.update(V2=vistas.informe_v2(inf))
+    return plantillas.TemplateResponse(request, "informe.html", {**ctx, "inf": {"meta": {"periodo": ctx["periodo_txt"]}}, "listo": listo})
+
+
+@app.get("/panel/informe/cuerpo", response_class=HTMLResponse)
+def panel_informe_cuerpo(request: Request, dias: int = 30, desde: str = "", hasta: str = ""):
+    if not _permitido(request):
+        return JSONResponse({"detalle": "no autorizado"}, status_code=401)
+    d, ds, hs = _norm_informe(dias, desde, hasta)
+    inf = _informe(d, ds, hs)
+    return plantillas.TemplateResponse(request, "informe_cuerpo.html", {**_ctx_informe(dias, desde, hasta), "V2": vistas.informe_v2(inf)})
+
+
+@app.get("/panel/informe/datos", response_class=HTMLResponse)
+def panel_informe_datos(request: Request, dias: int = 30, desde: str = "", hasta: str = ""):
+    if not _permitido(request):
+        return JSONResponse({"detalle": "no autorizado"}, status_code=401)
+    d, ds, hs = _norm_informe(dias, desde, hasta)
+    return plantillas.TemplateResponse(request, "informe_datos.html", {**_ctx_informe(dias, desde, hasta), "secciones": vistas.informe(_informe(d, ds, hs))})
 
 
 _FORMATOS = {"xlsx": (exportar.a_xlsx, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),

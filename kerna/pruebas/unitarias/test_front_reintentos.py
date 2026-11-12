@@ -106,13 +106,13 @@ def test_flujo_confirmar_pedir_y_doble_clic(cliente):
     r2 = cliente.post("/panel/reintentar", headers=H, data={"csrf": token()})
     assert r2.headers["location"] == "/panel?reintento=ya_solicitado"
     p = cliente.get("/panel?reintento=ya_solicitado", headers=H)
-    assert "Pedido en curso" in p.text and "Ya estaba pedido" in p.text and "Reintentar ahora" not in p.text
+    assert "Pedido en curso" in p.text and "ya pedido" in p.text and "Reintentar ahora" not in p.text
 
 
 def test_panel_muestra_bloque_y_no_se_rompe_si_la_tabla_falla(cliente, monkeypatch):
     p = cliente.get("/panel", headers=H)
-    assert "Casos esperando reintento" in p.text and "Reintentar ahora" in p.text and "Los modelos de IA no estaban disponibles" in p.text
+    assert "esperan reintento" in p.text and "Reintentar ahora" in p.text and "Los modelos de IA no estaban disponibles" in p.text
     monkeypatch.setattr(reintentos, "_tabla", lambda: (_ for _ in ()).throw(RuntimeError("sin acceso")))
     p = cliente.get("/panel", headers=H)
-    assert p.status_code == 200 and "Casos esperando reintento" not in p.text
+    assert p.status_code == 200 and "esperan reintento" not in p.text
     assert cliente.post("/panel/reintentar", headers=H, data={"csrf": token()}).headers["location"] == "/panel?reintento=error"

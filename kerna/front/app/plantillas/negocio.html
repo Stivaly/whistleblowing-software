@@ -1,14 +1,15 @@
 {% extends "base_panel.html" %}{% block titulo %}Negocio · Kerna AI{% endblock %}
+{% block echarts %}<script src="/estaticos/echarts.custom.min.js?v={{ ver }}" defer></script>{% endblock %}
 {% set seccion = 'negocio' %}
 {% block datos %}<script type="application/json" id="datos">{{ {'graficos': V.graficos if V else None}|tojson }}</script>{% endblock %}
 {% block vista %}
 <div class="pg-h">
-<div><h1 class="disp ph-t m-0" style="color:var(--brand)">Negocio</h1><p class="pg-s">Últimos {{ dias }} días · todo en UF · sin textos de denuncias</p></div>
+<div><h1 class="disp ph-t m-0" style="color:var(--brand)">Negocio</h1><p class="pg-s">Últimos {{ dias }} días · en UF</p></div>
 <div class="pg-a"><div class="seg" role="group" aria-label="Período">{% for d in (7, 30, 90) %}<a href="/panel/negocio?dias={{ d }}"{% if dias == d %} aria-current="true"{% endif %}>{{ d }} días</a>{% endfor %}</div>
 <a href="/panel/informe" class="btn btn-pri">{{ ic('file-down') }}<span>Informe</span></a></div></div>
 
-{% if error %}<div class="card p-4 bd-bad" role="alert"><b>No se pudieron leer las tablas de negocio</b> ({{ error }}). Revisa el rol Table Data Reader de la app.</div>
-{% elif not V %}<div class="pe pe-na card p-4">{{ ic('building-2') }}<span class="flex-1">Sin clientes registrados todavía.</span><span class="chip na">{{ ic('circle-minus') }} Sin datos</span></div>
+{% if error %}<div class="card p-4 bd-bad" role="alert"><b>Sin conexión con los datos de negocio</b> ({{ error }})</div>
+{% elif not V %}<div class="pe pe-na card p-4">{{ ic('building-2') }}<span class="flex-1">Sin clientes</span><span class="chip na">{{ ic('e-sin-info') }} Sin datos</span></div>
 {% else %}
 <section class="kg" aria-label="Indicadores de negocio">{% for k in V.kpis %}{{ kpi(k) }}{% endfor %}</section>
 
@@ -39,7 +40,5 @@
 <section class="card p-4"><div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">Año por año</h2>{{ tip('proyeccion') }}</div>
 <div class="tabla"><table><thead><tr><th>Año</th><th class="n">Clientes</th><th class="n">Ingresos (UF) {{ tip('ingresos_uf') }}</th><th class="n">Costo de servir</th><th class="n">Parte de Veridy</th><th class="n">Costos fijos</th><th class="n">Margen operativo</th><th class="n">Utilidad después de impuestos</th><th class="n">Caja del año</th></tr></thead><tbody>
 {% for a in V.anios %}<tr><td><b>{{ a.label }}</b></td><td class="n">{{ a.clientes }}</td><td class="n">{{ uf(a.ventas, 0) }}</td><td class="n">{{ uf(a.costo_ventas, 0) }}</td><td class="n">{{ uf(a.participacion_veridy, 0) }}</td><td class="n">{{ uf(a.costos_fijos, 0) }}</td><td class="n">{{ uf(a.margen_operativo, 0) }} ({{ dec_corto(a.margen_operativo_pct, 0) }} %)</td><td class="n">{{ uf(a.utilidad, 0) }}</td><td class="n">{{ uf(a.flujo, 0) }}</td></tr>{% endfor %}</tbody></table></div>
-<p class="nota">Cifras en UF. Supuestos del informe de Kerna: inflación {{ dec_corto(p.inflacion_pct, 1) }} % anual, descuento {{ dec_corto(p.tasa_descuento_pct, 1) }} %, {{ p.participacion_veridy_pct }} % del ingreso neto de los contratos de Veridy, crédito e impuesto de primera categoría. La inversión de {{ uf(p.inversion, 0) }} UF se recupera en el año {{ p.recuperacion_anio }}. El año 1 es {{ p.anios[0].calendario }}.</p></section>
-<p class="nota">1 UF = {{ miles(n.uf_clp) }} pesos · dólar a {{ miles(n.usd_clp) }} pesos. El costo de IA se mide en dólares a precios de Anthropic (Haiku 5.5 a 0,10 y 0,50 por millón de tokens, Sonnet 5.5 a 2 y 10) y se limita a la cuota del plan; sobre ella, las consultas pasan al modo local sin costo.</p>
 {% endif %}
 {% endblock %}

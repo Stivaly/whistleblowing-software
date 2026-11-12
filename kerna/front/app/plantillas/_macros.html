@@ -25,3 +25,13 @@
 {% macro hd(titulo, tipg=None, extra='') -%}
 <div class="hd flex items-center gap-1.5 mb-2"><h2 class="text-base font-bold m-0">{{ titulo }}</h2>{% if tipg %}{{ tip(tipg) }}{% endif %}{{ extra }}</div>
 {%- endmacro %}
+
+{% macro kc(k) -%}
+<article class="kc s-{{ k.e }}" id="k-{{ k.k }}">
+<div class="kc-h"><span class="kc-l">{{ k.l }}</span>{{ tip(k.k, k.x) }}</div>
+<div class="kc-v">{% if k.p %}<span class="kt-u">{{ k.p }}</span>{% endif %}<b>{{ k.v }}</b>{% if k.u %}<span class="kt-u">{{ k.u }}</span>{% endif %}</div>
+<div class="kc-f"><span class="kc-s">{{ ic(ICONO[k.e]) }}<span>{{ k.et }}</span></span>{% if k.tr %}<span class="kt-t t-{{ k.te }}" title="Comparación de la segunda mitad del período con la primera">{{ ic(k.ta) }}<span>{{ k.tr }}</span></span>{% endif %}</div>
+{% if k.d_l %}<svg viewBox="0 0 100 30" preserveAspectRatio="none" class="sp" aria-hidden="true"><path d="{{ k.d_a }}" class="sp-a"/><path d="{{ k.d_l }}" class="sp-l" vector-effect="non-scaling-stroke"/></svg>{% endif %}
+<small class="kc-m">{{ k.meta }}</small>
+</article>
+{%- endmacro %}

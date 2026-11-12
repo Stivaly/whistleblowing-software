@@ -1,0 +1,5 @@
+// Panel: reintentos del conector en 7 días (enviados, reprocesados con éxito) y último reintento enviado. Solo conteos y fecha.
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-conector"
+| where Message in ("conector_reintento", "conector_reproceso")
+| summarize eventos = count(), ultimo = max(TimeGenerated) by evento = Message

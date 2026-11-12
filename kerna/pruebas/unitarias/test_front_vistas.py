@@ -86,7 +86,7 @@ def test_render_portada_acceso_informe(cliente):
     r = cliente.post("/acceso", data={"clave": "mala"})
     assert r.status_code == 401 and "Clave incorrecta" in r.text
     t = cliente.get("/panel/informe?dias=7", headers=H).text
-    assert "Informe de gestión" in t and "descargar.pdf" in t and 'class="card doc' in t
+    assert "Informe de gestión" in t and "descargar.pdf" in t and 'id="inf-cuerpo"' in t and 'class="card doc' not in t
 
 
 def test_render_negocio(cliente, monkeypatch):

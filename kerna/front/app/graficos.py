@@ -82,6 +82,8 @@ def barras_v(items: list[tuple[str, float]], ancho: int = 560, alto: int = 180) 
 def icono(nombre: str, clave: str | None = None) -> Markup:
     """Ícono de Lucide desde el sprite local (estaticos/iconos.svg), dentro de <k-ic>. `clave` lo deja actualizable en vivo (data-i)."""
     di = f' data-i="{escape(clave)}"' if clave else ""
+    if nombre.startswith("e-"):  # ícono de estado de la identidad Núcleo (estaticos/estados.svg), en su baldosa de color
+        return Markup(f'<k-st data-e="{escape(nombre[2:])}" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="26 6 108 108"><use{di} href="/estaticos/estados.svg#{escape(nombre)}"/></svg></k-st>')
     return Markup(f'<k-ic n="{escape(nombre)}" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use{di} href="/estaticos/iconos.svg#{escape(nombre)}"/></svg></k-ic>')
 
 

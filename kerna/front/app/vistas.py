@@ -24,7 +24,11 @@ META_P95_S = inf.META_P95_MS / 1000
 SUG_OK, SUG_WARN = 90, 70          # % de denuncias con sugerencia
 RECALL_ALERTA = 0.10               # por debajo de la meta menos este margen: problema
 MANUAL_PROBLEMA_PCT = 10           # % de casos en revisión manual que se considera problema
-ICONO = {"ok": "circle-check", "warn": "triangle-alert", "bad": "octagon-alert", "na": "circle-minus"}
+# Íconos de estado de la identidad Núcleo (identidad-v3, tono entre paréntesis): bien = lista (verde), atención = contingencia-modelo (ámbar),
+# mal = cadena-agotada (rojo), sin datos = sin-info (neutro), en proceso = generando (azul). Los específicos están en ICONO_X.
+ICONO = {"ok": "e-lista", "warn": "e-contingencia-modelo", "bad": "e-cadena-agotada", "na": "e-sin-info", "pro": "e-generando"}
+ICONO_X = {"revision": "e-revision-citas", "tiempo": "e-revision-tiempo", "busqueda": "e-contingencia-busqueda", "sin_conexion": "e-sin-conexion",
+           "sin_normativa": "e-sin-normativa", "nucleo": "e-nucleo-no-disponible", "conector": "e-conector-en-proceso", "valorada": "e-valorada"}
 ESTADO_TXT = {"ok": "Bien", "warn": "Atención", "bad": "Problema", "na": "Sin datos"}
 PROV_ESTADO = {"operativo": "ok", "degradado": "warn", "caido": "bad", "sin_informacion": "na"}
 PROV_TXT = {"operativo": "Operativo", "degradado": "Degradado", "caido": "Caído", "sin_informacion": "Sin información"}
@@ -234,7 +238,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
         for p in prov["proveedores"]:
             e = PROV_ESTADO.get(p["estado"], "na")
             provs.append({**p, "e": e, "txt": PROV_TXT.get(p["estado"], "Sin información")})
-            mp.s[f"prov.{p['id']}"], mp.ico[f"prov.{p['id']}"] = e, ICONO[e]
+            mp.s[f"prov.{p['id']}"], mp.ico[f"prov.{p['id']}"] = e, (ICONO_X["sin_conexion"] if p["estado"] == "sin_informacion" else ICONO[e])
             mp.t[f"prov.{p['id']}.t"] = PROV_TXT.get(p["estado"], "Sin información")
             mp.x[f"prov.{p['id']}"] = p["mensaje"]
 
@@ -511,4 +515,149 @@ def informe(inf_: dict) -> list[dict]:
             n = -(-len(filas) // 3) if largo else 0
             tb.append({"titulo": t["titulo"].replace("(ms)", "(s)"), "cols": cols, "nums": nums, "fuente": t["fuente"], "filas": filas, "trozos": [filas[i:i + n] for i in range(0, len(filas), n)] if largo else None})
         out.append({"id": s["id"], "titulo": s["titulo"], "justificacion": "", "kpis": kp, "graficos": gr, "tablas": tb, "notas": s.get("notas", [])})
+    return out
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------
+# Informe de gestión en pantalla (v2): KPI con estado y tendencia, veredicto de una línea, pestañas con gráficos compactos.
+# Las tablas no van en el cuerpo: están en la pestaña «Datos» (plantilla informe_datos.html) y en XLSX/CSV.
+# ---------------------------------------------------------------------------------------------------------------------------------
+PESTANAS = [  # id, título, ícono utilitario, glosario, KPI de la pestaña (etiqueta del informe, rótulo claro)
+    ("resumen", "Resumen", "layout-dashboard", "inf_resumen", [("Disponibilidad efectiva", "Casos con sugerencia sobre los válidos"), ("% de sugerencias valoradas útiles", "Sugerencias útiles según auditores"), ("Revisión manual", "Casos en revisión manual")]),
+    ("calidad", "Calidad", "target", "inf_calidad", [("Recall@5 por artículo (global)", "Acierto con el artículo exacto"), ("Recall por ley (global)", "Acierto con la ley"), ("Pruebas automáticas (unitarias): pasadas/total", "Pruebas automáticas pasadas")]),
+    ("desempeno", "Rapidez", "timer", "inf_desempeno", [("Latencia P50 (ponderada por día)", "Caso típico"), ("Latencia P95 (máximo diario)", "9 de cada 10 casos, peor día"), ("Casos fuera del modo oficial", "Casos con el modelo de respaldo o a mano")]),
+    ("costo", "Costos", "coins", "inf_costo", [("Costo del período", "Costo del período"), ("Costo por denuncia", "Costo por denuncia"), ("Costo total mensual proyectado, 1.000 denuncias", "Costo mensual con 1.000 denuncias")]),
+    ("rentabilidad", "Rentabilidad", "wallet", "inf_rent", [("Ingreso del período", "Ingreso"), ("Margen operativo", "Margen operativo"), ("Utilidad después de impuestos", "Utilidad final"), ("Retorno anual del proyecto", "Retorno anual")]),
+    ("incidentes", "Incidentes", "triangle-alert", "inf_incid", [("Casos en revisión manual", "Casos en revisión manual"), ("Eventos de falla de proveedor o modelo", "Fallas de proveedor o modelo")]),
+]
+
+
+def _tendencia(serie: list[float], menos_es_mejor: bool | None, unidad: str = "%", pts: bool = False) -> dict:
+    """Mitad final frente a mitad inicial de una serie: texto, estado de la tendencia y flecha."""
+    s = [float(x) for x in serie if x is not None]
+    if len(s) < 4:
+        return {"tr": "", "te": "na", "ta": "minus"}
+    m = len(s) // 2
+    a, b = sum(s[:m]) / m, sum(s[m:]) / (len(s) - m)
+    d = (b - a) if pts else ((100 * (b - a) / a) if a else 0)
+    if abs(d) < (0.5 if pts else 3):
+        return {"tr": "estable", "te": "na", "ta": "minus"}
+    sube = d > 0
+    te = "na" if menos_es_mejor is None else ("ok" if sube != menos_es_mejor else "bad")
+    return {"tr": ("+" if sube else "−") + ("más de 200" if abs(d) > 200 and not pts else f.dec_corto(abs(d), 0 if abs(d) >= 10 else 1)) + (" pts" if pts else " %"), "te": te, "ta": "trending-up" if sube else "trending-down"}
+
+
+def _tabla(inf_: dict, id_: str) -> dict | None:
+    return next((t for s in inf_["secciones"] for t in s["tablas"] if t["id"] == id_), None)
+
+
+def informe_v2(inf_: dict) -> dict:
+    ej = informe_ejecutivo(inf_)
+    cd = _tabla(inf_, "casos_dia")
+    ld = _tabla(inf_, "lat_dia")
+    rs = _tabla(inf_, "recall_serie")
+    s_casos = [r[1] for r in cd["filas"]] if cd else []
+    s_sug = [100 * r[2] / r[1] for r in cd["filas"] if r[1]] if cd else []
+    s_p95 = [r[3] / 1000 for r in ld["filas"]] if ld else []
+    s_rec = [100 * r[2] for r in reversed(rs["filas"])] if rs and rs["filas"] else []
+    extra = {
+        "casos": (s_casos, None, False, "Cantidad de denuncias de Veridy"), "neg_sug": (s_sug, False, True, "meta 90 % o más"),
+        "calidad": (s_rec, False, True, f"meta {f.dec_corto(META_RECALL, 2)} o más"), "valoraciones": ([], None, False, "meta 70 % o más"),
+        "tiempo": (s_p95, True, False, f"meta {f.dec_corto(META_P95_S, 0)} s o menos"), "costo_k": ([], None, False, "según tokens y precios"),
+    }
+    nombres = {"casos": "Denuncias recibidas", "neg_sug": "Con sugerencia", "calidad": "Acierto", "valoraciones": "Valoradas útiles", "tiempo": "Tiempo de respuesta", "costo_k": "Costo del período"}
+    cards = []
+    for c in ej["tarjetas"]:
+        serie, menos, pts, meta = extra[c["k"]]
+        tr = _tendencia(serie, menos, pts=pts) if serie else {"tr": "", "te": "na", "ta": "minus"}
+        d = {"d_l": graficos.spark(serie), "d_a": graficos.spark_area(serie)} if len(serie) > 1 else {}
+        cards.append({"k": c["k"], "i": c["i"], "l": nombres[c["k"]], "v": c["v"], "u": c["u"], "p": c["p"], "e": c["e"], "et": c["et"], "meta": meta, "x": c["x"], **tr, **d})
+    mal = [c["l"] for c in cards if c["e"] == "bad"]
+    atencion = [c["l"] for c in cards if c["e"] == "warn"]
+    if mal:
+        e_v, txt = "bad", "Bajo la meta: " + ", ".join(mal)
+    elif atencion:
+        e_v, txt = "warn", "Atención: " + ", ".join(atencion)
+    elif all(c["e"] == "na" for c in cards):
+        e_v, txt = "na", "Sin datos en el período"
+    else:
+        e_v, txt = "ok", "Todo dentro de la meta"
+    veredicto = {"e": e_v, "t": txt, "n": f"{sum(1 for c in cards if c['e'] == 'ok')} de {len(cards)} en meta"}
+
+    kp = {k["etiqueta"]: k for s in vistas_informe_cache(inf_) for k in s["kpis"]}
+    pestanas = []
+    for id_, titulo, ico, g, items in PESTANAS:
+        stats = []
+        for et, rot in items:
+            k = kp.get(et)
+            if k:
+                stats.append({"l": rot, "v": k["v"], "u": k["u"], "e": k["e"] or "n"})
+        pestanas.append({"id": id_, "t": titulo, "i": ico, "g": g, "stats": stats})
+    return {"cards": cards, "veredicto": veredicto, "pestanas": pestanas, "charts": informe_charts(inf_)}
+
+
+def vistas_informe_cache(inf_: dict) -> list[dict]:
+    return informe(inf_)
+
+
+def informe_charts(inf_: dict) -> dict:
+    """Especificaciones de gráficos por pestaña, en datos simples; kerna.js las convierte en ECharts (canvas) al abrir la pestaña."""
+    T = lambda i: _tabla(inf_, i)  # noqa: E731
+    out: dict[str, list] = {p[0]: [] for p in PESTANAS}
+    cd = T("casos_dia")
+    if cd and any(r[1] for r in cd["filas"]):
+        out["resumen"].append({"id": "g-casos", "t": "Denuncias por día", "g": "casos_dia", "kind": "bar", "stack": True, "cats": [f.fecha_corta(str(r[0])) for r in cd["filas"]],
+                               "series": [{"n": "Con sugerencia", "d": [r[2] for r in cd["filas"]], "c": "ok"}, {"n": "Sin sugerencia", "d": [r[1] - r[2] for r in cd["filas"]], "c": "bad"}]})
+    ej = informe_ejecutivo(inf_)
+    if ej["n_modos"]:
+        col = {"oficial": "pro", "respaldo": "warn", "local": "na", "manual": "bad"}
+        out["resumen"].append({"id": "g-modos", "t": "Cómo se resolvieron", "g": "modos", "kind": "donut", "unit": "", "items": [{"n": m["t"], "v": m["n"], "c": col[m["k"]]} for m in ej["modos"] if m["n"]]})
+    rl = T("recall_ley")
+    if rl and rl["filas"]:
+        out["calidad"].append({"id": "g-recall", "t": "Acierto por ley", "g": "acierto_ley", "kind": "bar", "h": True, "unit": " %", "meta": {"v": round(100 * (rl["filas"][0][7] or META_RECALL)), "t": "Meta"},
+                               "cats": [inf.ley_corta(r[0]) for r in rl["filas"]], "full": [inf.nombre_ley(r[0]) for r in rl["filas"]],
+                               "series": [{"n": "Acierto", "d": [round(100 * r[4], 1) for r in rl["filas"]], "cs": ["ok" if r[4] >= (r[7] or META_RECALL) else ("warn" if r[4] >= (r[7] or META_RECALL) - RECALL_ALERTA else "bad") for r in rl["filas"]]}]})
+    rs = T("recall_serie")
+    if rs and len(rs["filas"]) > 1:
+        fr = list(reversed(rs["filas"]))
+        out["calidad"].append({"id": "g-serie", "t": "Acierto en las últimas mediciones", "g": "inf_serie", "kind": "line", "unit": " %", "meta": {"v": round(100 * META_RECALL), "t": "Meta"},
+                               "cats": [f.fecha_corta(str(r[0])[:10]) + " " + str(r[0])[11:16] for r in fr], "series": [{"n": "Acierto", "d": [round(100 * r[2], 1) for r in fr], "c": "pro", "area": True}]})
+    an = T("anonimizador")
+    if an and an["filas"]:
+        out["calidad"].append({"id": "g-anon", "t": "Datos personales ocultados", "g": "inf_anon", "kind": "bar", "h": True, "unit": " %", "cats": [str(r[0]).capitalize() for r in an["filas"]],
+                               "series": [{"n": "Ocultados", "d": [round(100 * r[3]) for r in an["filas"]], "cs": ["ok" if r[3] >= .9 else ("warn" if r[3] >= .6 else "bad") for r in an["filas"]]}]})
+    ld = T("lat_dia")
+    if ld and ld["filas"]:
+        out["desempeno"].append({"id": "g-lat", "t": "Tiempo de respuesta por día", "g": "latencia", "kind": "line", "unit": " s", "meta": {"v": META_P95_S, "t": "Meta"}, "cats": [f.fecha_corta(str(r[0])) for r in ld["filas"]],
+                                 "series": [{"n": "9 de cada 10 casos", "d": [round(r[3] / 1000, 1) for r in ld["filas"]], "c": "na", "area": True}, {"n": "Caso típico", "d": [round(r[2] / 1000, 1) for r in ld["filas"]], "c": "pro", "area": True}]})
+    le = T("lat_etapa")
+    if le and le["filas"]:
+        out["desempeno"].append({"id": "g-etapa", "t": "¿Dónde se va el tiempo?", "g": "etapas", "kind": "bar", "h": True, "unit": " s", "cats": [str(r[0]).capitalize() for r in le["filas"]],
+                                 "series": [{"n": "9 de cada 10 casos", "d": [round(r[3] / 1000, 1) for r in le["filas"]], "c": "pro"}]})
+    tm = T("tokens_modo")
+    if tm and tm["filas"]:
+        out["costo"].append({"id": "g-tokmodo", "t": "Tokens por modo", "g": "inf_tokens", "kind": "donut", "unit": "", "items": [{"n": str(r[0]).capitalize(), "v": r[2] + r[3], "c": {"oficial": "pro", "respaldo": "warn", "local": "na", "manual": "bad"}.get(str(r[0]), "na")} for r in tm["filas"]]})
+    tl = T("tokens_modelo")
+    if tl and tl["filas"]:
+        out["costo"].append({"id": "g-tokmod", "t": "Tokens por modelo", "g": "inf_tokens", "kind": "bar", "h": True, "stack": True, "unit": "", "cats": [str(r[0]) for r in tl["filas"]],
+                             "series": [{"n": "Entrada", "d": [r[2] for r in tl["filas"]], "c": "pro"}, {"n": "Salida", "d": [r[3] for r in tl["filas"]], "c": "na"}]})
+    rp = T("rent_proyeccion")
+    if rp and rp["filas"]:
+        out["rentabilidad"].append({"id": "g-proy", "t": "Utilidad por año (proyección)", "g": "proyeccion", "kind": "bar", "unit": " UF", "cats": [str(r[0]).split(" ")[0] and "Año " + str(r[0]).split(" ")[0] for r in rp["filas"]],
+                                    "series": [{"n": "Utilidad después de impuestos", "d": [r[7] for r in rp["filas"]], "cs": ["ok" if r[7] > 0 else "bad" for r in rp["filas"]]}]})
+    rc = T("rent_clientes")
+    if rc and rc["filas"]:
+        out["rentabilidad"].append({"id": "g-cli", "t": "Margen por cliente", "g": "inf_rent", "kind": "bar", "h": True, "stack": True, "unit": " UF", "cats": [str(r[0]) for r in rc["filas"]],
+                                    "series": [{"n": "Costo de servir", "d": [r[5] for r in rc["filas"]], "c": "na"}, {"n": "Margen", "d": [r[6] for r in rc["filas"]], "c": "ok"}]})
+    rv = T("revision")
+    if rv and rv["filas"]:
+        out["incidentes"].append({"id": "g-rev", "t": "Revisión manual: motivos", "g": "inf_incid", "kind": "bar", "h": True, "unit": "", "cats": [str(r[0]).replace("_", " ").capitalize() for r in rv["filas"]],
+                                  "series": [{"n": "Casos", "d": [r[1] for r in rv["filas"]], "c": "bad"}]})
+    fl = T("fallas")
+    if fl and fl["filas"]:
+        agg: dict[str, int] = {}
+        for r in fl["filas"]:
+            agg[str(r[1])] = agg.get(str(r[1]), 0) + int(r[4])
+        it = sorted(agg.items(), key=lambda x: -x[1])
+        out["incidentes"].append({"id": "g-fallas", "t": "Fallas por proveedor", "g": "inf_incid", "kind": "bar", "h": True, "unit": "", "cats": [a.capitalize() for a, _ in it], "series": [{"n": "Eventos", "d": [b for _, b in it], "c": "warn"}]})
     return out

@@ -1,0 +1,7 @@
+// ALERTA: P95 de la solicitud completa sobre 15 s (con al menos 3 solicitudes en la última hora).
+AppTraces
+| where TimeGenerated > ago(1h) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| extend duracion_ms = todouble(Properties.duracion_ms)
+| where isnotnull(duracion_ms)
+| summarize solicitudes = count(), p95_ms = percentile(duracion_ms, 95)
+| where solicitudes >= 3 and p95_ms > 15000

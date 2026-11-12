@@ -140,9 +140,9 @@ def a_pdf(inf: dict) -> bytes:
     P = lambda t, e="p": Paragraph(escape(str(t)), est[e])  # noqa: E731
     ancho = A4[0] - 36 * mm
 
-    COL = {"neutro": az, "ok": HexColor("#1F7A3D"), "warn": HexColor("#8F5200"), "bad": HexColor("#B42318"), "na": sec}
-    BAR = {"neutro": HexColor("#8E9AD0"), "ok": HexColor("#2F9255"), "warn": HexColor("#D68A00"), "bad": HexColor("#D4372A"), "na": HexColor("#8E9AD0")}
-    FON = {"neutro": HexColor("#FFFFFF"), "ok": HexColor("#E5F5EA"), "warn": HexColor("#FFF1D6"), "bad": HexColor("#FDE9E7"), "na": HexColor("#F5F7FB")}
+    COL = {"neutro": az, "ok": HexColor("#236F4A"), "warn": HexColor("#7C6119"), "bad": HexColor("#84312C"), "na": sec}  # paleta Núcleo (identidad v3), ver kerna.css
+    BAR = {"neutro": HexColor("#8E9AD0"), "ok": HexColor("#2E8D5C"), "warn": HexColor("#9F7C22"), "bad": HexColor("#A4403A"), "na": HexColor("#8E9AD0")}
+    FON = {"neutro": HexColor("#FFFFFF"), "ok": HexColor("#E6FBEF"), "warn": HexColor("#FFF7E4"), "bad": HexColor("#FFEAE8"), "na": HexColor("#F5F7FB")}
     TXT = {"ok": "Bien", "warn": "Atención", "bad": "Mal", "na": "Sin dato"}
 
     def marca(c, e, x, y, r=3.2):
@@ -285,34 +285,45 @@ def a_pdf(inf: dict) -> bytes:
         tb.setStyle(estilo)
         return tb
 
-    h = [Spacer(1, 1), PageBreak()]
-    for i, s in enumerate(secs):
+    # Orden del documento (pirámide invertida): veredicto y KPI con color, luego gráficos por sección y, al final, el anexo con todas las tablas.
+    v2 = vistas.informe_v2(inf)
+    ver = v2["veredicto"]
+    fila_v = Table([[P(("Veredicto: " + ver["t"]), "h2"), P(ver["n"], "n")]], colWidths=[ancho * .78, ancho * .22])
+    fila_v.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, -1), FON[ver["e"]]), ("LINEBEFORE", (0, 0), (0, -1), 3, BAR[ver["e"]]), ("BOX", (0, 0), (-1, -1), .4, ln),
+                                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"), ("TOPPADDING", (0, 0), (-1, -1), 4), ("BOTTOMPADDING", (0, 0), (-1, -1), 5), ("LEFTPADDING", (0, 0), (-1, -1), 8)]))
+    h = [Spacer(1, 1), PageBreak(), P("Resumen", "h1"), fila_v, Spacer(1, 6),
+         Tarjetas([(c["l"], str(c["v"]), (c["u"] or ""), c["e"]) for c in v2["cards"]], cols=3), Spacer(1, 6), Modos(ej), Spacer(1, 4)]
+    for s_ in secs:
+        if s_["id"] != "resumen" and not s_["kpis"] and not s_["graficos"]:
+            continue
         h.append(CondPageBreak(60 * mm))
-        h.append(P(s["titulo"], "h1"))
-        if s["id"] == "resumen":
-            h += [Tarjetas([(t["l"], str(t["v"]), t["u"], t["e"]) for t in ej["tarjetas"]]), Spacer(1, 6), Modos(ej), Spacer(1, 4)]
-            if ej["dias"]:
-                n = -(-len(ej["dias"]) // 3)
-                trozos = [ej["dias"][j:j + n] for j in range(0, len(ej["dias"]), n)]
-                tablas = []
-                for tz in trozos:
-                    tb = Table([[PN("Día", "ch"), PN("Casos", "ch", True), PN("Con sug.", "ch", True)]] + [[PN(r["d"]), PN(r["c"], "c", True), PN(r["s"], "c", True)] for r in tz], colWidths=[(ancho / 3 - 6) * .38, (ancho / 3 - 6) * .26, (ancho / 3 - 6) * .36], repeatRows=1)
-                    tb.setStyle(estilo); tablas.append(tb)
-                h += [P("Casos por día", "h2"), Table([tablas], colWidths=[ancho / 3] * len(tablas), style=[("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 0), ("RIGHTPADDING", (0, 0), (-1, -1), 6)])]
-        elif s["kpis"]:
-            h.append(Tarjetas([(k["etiqueta"], k["v"], k["u"], k["e"] if k["e"] in COL and k["e"] != "na" else ("na" if k["e"] == "na" else "neutro")) for k in s["kpis"]], cols=3))
-        for g in s["graficos"]:
+        if s_["id"] != "resumen":
+            h.append(P(s_["titulo"], "h1"))
+            if s_["kpis"]:
+                h.append(Tarjetas([(k["etiqueta"], k["v"], k["u"], k["e"] if k["e"] in COL and k["e"] != "na" else ("na" if k["e"] == "na" else "neutro")) for k in s_["kpis"]], cols=3))
+        for g in s_["graficos"]:
             h += [Spacer(1, 5), Barras(g)]
-        for tb in s["tablas"]:
-            h.append(P(tb["titulo"], "h2"))
+        for n in s_["notas"]:
+            h += [Spacer(1, 2), P("Nota: " + n, "n")]
+        h.append(Spacer(1, 8))
+    h += [PageBreak(), P("Anexo: tablas", "h1")]
+    if ej["dias"]:
+        n = -(-len(ej["dias"]) // 3)
+        trozos = [ej["dias"][j:j + n] for j in range(0, len(ej["dias"]), n)]
+        tablas = []
+        for tz in trozos:
+            tb = Table([[PN("Día", "ch"), PN("Casos", "ch", True), PN("Con sug.", "ch", True)]] + [[PN(r["d"]), PN(r["c"], "c", True), PN(r["s"], "c", True)] for r in tz], colWidths=[(ancho / 3 - 6) * .38, (ancho / 3 - 6) * .31, (ancho / 3 - 6) * .31])
+            tb.setStyle(estilo); tablas.append(tb)
+        h += [P("Resumen · Casos por día", "h2"), Table([tablas], colWidths=[ancho / 3] * len(tablas), style=[("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 0), ("RIGHTPADDING", (0, 0), (-1, -1), 6)])]
+    for s_ in secs:
+        for tb in s_["tablas"]:
+            h.append(P(f"{s_['titulo']} · {tb['titulo']}", "h2"))
             if tb["trozos"]:
                 w = ancho / 3
                 h.append(Table([[tabla(tb, ch, w - 6) for ch in tb["trozos"]]], colWidths=[w] * len(tb["trozos"]), style=[("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 0), ("RIGHTPADDING", (0, 0), (-1, -1), 6)]))
             else:
                 h.append(tabla(tb, tb["filas"], ancho))
-        for n in s["notas"]:
-            h += [Spacer(1, 2), P("Nota: " + n, "n")]
-        h.append(Spacer(1, 8))
+    h.append(Spacer(1, 8))
     h.append(P("Verde: dentro de la meta. Ámbar: atención. Rojo: bajo la meta. Un guion (—) es una cifra sin dato. La fuente de cada cifra está en el XLSX y el CSV.", "n"))
     doc.build(h)
     return out.getvalue()

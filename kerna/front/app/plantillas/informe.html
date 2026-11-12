@@ -1,35 +1,13 @@
 {% extends "base_panel.html" %}{% block titulo %}Informe de gestión · Kerna AI{% endblock %}
+{% block echarts %}<script src="/estaticos/echarts.custom.min.js?v={{ ver }}" defer></script>{% endblock %}
 {% set seccion = 'informe' %}
-{% macro tabla_html(t, filas) %}<div class="tabla"><table><thead><tr>{% for c in t.cols %}<th{% if t.nums[loop.index0] %} class="n"{% endif %}>{{ c }}</th>{% endfor %}</tr></thead><tbody>
-{% for fila in filas %}<tr>{% for c in fila %}<td{% if c.n %} class="n"{% endif %}>{% if c.chip %}<span class="chip {{ c.chip }}">{{ ic(ICONO[c.chip]) }}{{ c.t }}</span>{% elif c.na %}<span class="v-na">—</span>{% else %}{{ c.t }}{% endif %}</td>{% endfor %}</tr>{% else %}<tr><td colspan="{{ t.cols|length }}"><span class="v-na">—</span></td></tr>{% endfor %}</tbody></table></div>{% endmacro %}
 {% block vista %}
-<div class="pg-h"><div><h1 class="disp ph-t m-0" style="color:var(--brand)">Informe de gestión</h1><p class="pg-s">Período {{ inf.meta.periodo }} · corte {{ inf.meta.corte }}</p></div>
-<div class="pg-a"><div class="seg" role="group" aria-label="Período">{% for d in (7, 30, 90) %}<a href="/panel/informe?dias={{ d }}"{% if dias == d %} aria-current="true"{% endif %}>{{ d }} días</a>{% endfor %}</div></div></div>
-
-<section class="card p-3 inf-bar" aria-label="Período y descargas">
-<form method="get" action="/panel/informe" class="inf-f"><span class="inf-k flex items-center gap-1.5">Otro período {{ tip('periodo') }}</span><label class="sr-only" for="d1">Desde</label><input id="d1" name="desde" type="date" class="field" value="{{ desde }}"><span class="muted">a</span><label class="sr-only" for="d2">Hasta</label><input id="d2" name="hasta" type="date" class="field" value="{{ hasta }}"><button class="btn btn-dark" type="submit">Aplicar</button></form>
-<div class="inf-d"><span class="inf-k">Descargar</span>{% for k, n, i, cl in (('pdf','PDF','file-text','btn-pri'),('xlsx','Excel','file-spreadsheet','btn-dark'),('csv','CSV','table','btn-dark')) %}<a class="btn {{ cl }}" href="/panel/informe/descargar.{{ k }}?{{ q }}">{{ ic(i) }}<span>{{ n }}</span></a>{{ tip('fmt_' ~ k) }}{% endfor %}</div></section>
-
-<article class="card doc inf p-4 md:p-5 grid gap-5" aria-label="Informe de gestión">
-{% for s in secciones %}<section id="{{ s.id }}" style="scroll-margin-top:90px">
-<h3 class="inf-h">{{ s.titulo }}</h3>
-{% if s.id == 'resumen' %}<div class="kg inf-kg">{% for k in ej.tarjetas %}{{ kpi(k) }}{% endfor %}</div>
-<div class="grid lg:grid-cols-2 gap-3 mt-3 items-start">
-<div class="card p-3"><div class="hd flex items-center gap-1.5 mb-2"><h4 class="inf-s">¿Cómo se resolvieron?</h4>{{ tip('modos') }}</div>
-{% if ej.n_modos %}<div class="mb mb-lg" role="img" aria-label="Reparto de los casos por modo" style="display:flex;gap:2px">{% for x in ej.modos %}<i class="s-{{ x.est }}" style="width:{{ x.w }}%" title="{{ x.t }}: {{ miles(x.n) }}"></i>{% endfor %}</div>
-<ul class="list-none p-0 m-0 mt-2 inf-mo">{% for x in ej.modos %}<li class="rw s-{{ x.est }}">{{ ic(ICONO[x.est]) }}<span>{{ x.t }}</span><b>{{ miles(x.n) }}</b><em>{{ x.p }} %</em></li>{% endfor %}</ul>
-{% else %}<p class="muted m-0 text-sm">—</p>{% endif %}</div>
-<div class="card p-3"><div class="hd flex items-center gap-1.5 mb-2"><h4 class="inf-s">Casos por día</h4>{{ tip('casos_dia') }}</div>
-{% if ej.dias %}<div class="inf-tr">{% for ch in ej.dias|batch(((ej.dias|length / 3)|round(0, 'ceil')|int) if ej.dias|length > 12 else ej.dias|length) %}<div class="tabla"><table><thead><tr><th>Día</th><th class="n">Casos</th><th class="n">Con sug.</th></tr></thead><tbody>{% for r in ch %}<tr><td>{{ r.d }}</td><td class="n">{{ r.c }}</td><td class="n">{{ r.s }}</td></tr>{% endfor %}</tbody></table></div>{% endfor %}</div>
-{% else %}<p class="muted m-0 text-sm">—</p>{% endif %}</div></div>
-{% endif %}
-{% if s.kpis and s.id != 'resumen' %}<div class="inf-iv">{% for k in s.kpis %}<div class="iv {{ ('s-' ~ k.e) if k.e else 'n' }}" title="Fuente: {{ k.fuente }}"><small>{{ k.etiqueta }}</small>{% if k.e == 'na' %}<b class="v v-na">—</b>{% else %}<b class="v">{{ k.v }}{% if k.u %}<span class="kt-u"> {{ k.u }}</span>{% endif %}</b>{% endif %}{% if k.e and k.e != 'na' %}<span class="iv-i">{{ ic(ICONO[k.e]) }}</span>{% endif %}</div>{% endfor %}</div>{% endif %}
-{% if s.graficos or s.tablas %}<div class="inf-tg">
-{% for g in s.graficos %}<div class="inf-t"><h4 class="sub">{{ g.titulo }}</h4><ul class="hb-l">{% for b in g.barras %}<li class="hb s-{{ b.e }}" title="{{ b.full }}"><span class="hb-n">{{ b.n }}</span><span class="mb inf-mb"><i style="width:{{ b.w }}%"></i>{% if g.meta_pos %}<u style="left:{{ g.meta_pos }}%"></u>{% endif %}</span><b class="hb-v">{% if b.e != 'na' %}{{ ic(ICONO[b.e]) }}{% endif %}<span>{{ b.v }}</span></b></li>{% endfor %}</ul></div>{% endfor %}
-{% for t in s.tablas %}<div class="inf-t{% if t.trozos or t.cols|length > 5 %} inf-t-w{% endif %}"><h4 class="sub">{{ t.titulo }}</h4>
-{% if t.trozos %}<div class="inf-tr">{% for ch in t.trozos %}{{ tabla_html(t, ch) }}{% endfor %}</div>{% else %}{{ tabla_html(t, t.filas) }}{% endif %}</div>{% endfor %}</div>{% endif %}
-{% for n in s.notas %}<p class="nota">{{ n }}</p>{% endfor %}
-</section>{% endfor %}
-<footer class="text-xs muted pt-2 border-t" style="border-color:var(--line)">Fuentes: registros del núcleo de Kerna (Log Analytics), mediciones guardadas y tablas de clientes; capítulo 25 del informe para costos y rentabilidad. Pasa el cursor sobre una cifra para ver su fuente.</footer>
-</article>
+<div class="pg-h"><div><h1 class="disp ph-t m-0" style="color:var(--brand)">Informe de gestión</h1><p class="pg-s">{{ inf.meta.periodo }}</p></div>
+<div class="pg-a"><div class="seg" role="group" aria-label="Período">{% for d in (7, 30, 90) %}<a href="/panel/informe?dias={{ d }}"{% if dias == d %} aria-current="true"{% endif %}>{{ d }} días</a>{% endfor %}</div>
+<details class="otro"><summary class="btn btn-sec">{{ ic('calendar-range') }}<span>Otro período</span></summary>
+<form method="get" action="/panel/informe" class="otro-f card"><label class="sr-only" for="d1">Desde</label><input id="d1" name="desde" type="date" class="field" value="{{ desde }}"><label class="sr-only" for="d2">Hasta</label><input id="d2" name="hasta" type="date" class="field" value="{{ hasta }}"><button class="btn btn-dark" type="submit">Aplicar</button></form></details>
+<div class="dl" role="group" aria-label="Descargar">{% for k, n, i, cl in (('pdf','PDF','file-text','btn-pri'),('xlsx','Excel','file-spreadsheet','btn-dark'),('csv','CSV','table','btn-dark')) %}<a class="btn {{ cl }}" href="/panel/informe/descargar.{{ k }}?{{ q }}" title="Descargar en {{ n }}">{{ ic(i) }}<span>{{ n }}</span></a>{% endfor %}</div></div></div>
+<div id="inf-cuerpo" class="grid gap-3 md:gap-4"{% if not listo %} data-carga="/panel/informe/cuerpo?{{ q }}"{% endif %}>
+{% if listo %}{% include "informe_cuerpo.html" %}{% else %}<div class="kg6 sk-g" aria-busy="true" aria-label="Cargando el informe">{% for i in range(6) %}<div class="kc sk"></div>{% endfor %}</div>{% endif %}
+</div>
 {% endblock %}

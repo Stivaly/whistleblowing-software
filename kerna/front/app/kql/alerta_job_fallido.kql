@@ -1,0 +1,6 @@
+// ALERTA: ejecución fallida de un job (una fila por job con fallos en la ventana de la alerta).
+ContainerAppSystemLogs_CL
+| where TimeGenerated > ago(30m) and isnotempty(JobName_s)
+| where Reason_s in ("BackoffLimitExceeded", "DeadlineExceeded")
+        or (Reason_s == "ContainerTerminated" and Log_s !has "exit code '0'")
+| summarize fallos = count(), ultimo = max(TimeGenerated) by job = JobName_s

@@ -105,7 +105,7 @@
       xt = fallo ? 'No se pudo actualizar la última vez; se vuelve a intentar en un minuto. Último dato bueno: ' + hace(q) + '.'
         : 'Último dato: ' + hace(q) + '. Próxima actualización en unos ' + Math.max(1, 60 - q) + ' s.';
     }
-    tt.innerHTML = '<b>' + esc(g.t) + '</b>' + esc(g.q) + '<span class="l">' + esc(g.l) + '</span>' + esc(g.c) + (xt ? '<span class="l">En este caso</span>' + esc(xt) : '');
+    tt.innerHTML = '<b>' + esc(g.t) + '</b>' + esc(g.q) + (g.l ? '<span class="l">' + esc(g.l) + '</span>' : '') + esc(g.c) + (xt ? '<span class="l">En este caso</span>' + esc(xt) : '');
     b.setAttribute('aria-describedby', 'tt'); tt.classList.add('on');
     const r = b.getBoundingClientRect(), w = tt.offsetWidth, h = tt.offsetHeight;
     const x = Math.min(Math.max(12, r.left + r.width / 2 - w / 2), innerWidth - w - 12); let y = r.bottom + 8; if (y + h > innerHeight - 8) y = r.top - h - 8;
@@ -154,15 +154,25 @@
 
   /* ---------- gráficos (ECharts, SVG) ---------- */
   const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  const redim = [];
-  function mk(id, opt, vacio) {
+  /* Gráficos: canvas (no SVG), una instancia por gráfico visible, creada al entrar en pantalla y destruida al salir de la pestaña */
+  const pend = new Map(), vivos = new Map();
+  const vioC = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return; const id = e.target.id; vioC.unobserve(e.target); const a = pend.get(id); pend.delete(id); if (a) pintar(id, a[0], a[1]);
+  }), { rootMargin: '200px' });
+  function pintar(id, opt, vacio) {
     const c0 = document.getElementById(id); if (!c0 || !window.echarts) return;
-    let c = echarts.getInstanceByDom(c0);
-    if (vacio) { if (c) { c.dispose(); } c0.innerHTML = '<div class="chart-vacio">' + vacio + '</div>'; return; }
-    if (!c) { c0.innerHTML = ''; c = echarts.init(c0, null, { renderer: 'svg' }); const ro = new ResizeObserver(() => c.resize()); ro.observe(c0); redim.push(c); }
-    c.setOption(opt, true); c.resize();
+    let v = vivos.get(id);
+    if (vacio) { if (v) { v.ro.disconnect(); v.c.dispose(); vivos.delete(id); } c0.innerHTML = '<div class="chart-vacio">' + vacio + '</div>'; return; }
+    if (!v) { c0.innerHTML = ''; const c = echarts.init(c0, null, { renderer: 'canvas' }); const ro = new ResizeObserver(() => c.resize()); ro.observe(c0); v = { c, ro }; vivos.set(id, v); }
+    v.c.setOption(opt, true);
   }
-  const base = () => ({ textStyle: { fontFamily: 'Inter' }, aria: { enabled: true }, animation: !RM, animationDuration: 450, animationDurationUpdate: 200, animationEasing: 'cubicOut' });
+  function mk(id, opt, vacio) {
+    const c0 = document.getElementById(id); if (!c0) return;
+    if (vivos.has(id)) return pintar(id, opt, vacio);
+    pend.set(id, [opt, vacio]); vioC.observe(c0);
+  }
+  function soltar(raiz) { $$('.cch', raiz).forEach((n) => { vioC.unobserve(n); pend.delete(n.id); const v = vivos.get(n.id); if (v) { v.ro.disconnect(); v.c.dispose(); vivos.delete(n.id); } }); }
+  const base = () => ({ textStyle: { fontFamily: 'Inter' }, aria: { enabled: true }, animation: !RM, animationDuration: 450, animationDurationUpdate: 0, animationEasing: 'cubicOut' });
   const fmtUF = (v) => v.toLocaleString('es-CL', { maximumFractionDigits: 0 });
   function graficos(g) {
     if (!g) return;
@@ -220,12 +230,74 @@
     }
   }
   graficos(DATOS.graficos);
-  addEventListener('resize', () => redim.forEach((c) => c.resize()));
+
+  /* ---------- Informe: pestañas, gráficos por pestaña (canvas, solo los de la pestaña abierta) y tablas bajo demanda ---------- */
+  const CK = { ok: '--ok-bar', warn: '--warn-bar', bad: '--bad-bar', na: '--na-bar', pro: '--pro-bar' };
+  const colC = (k) => css(CK[k] || '--brand-2');
+  const fnum = (v) => (typeof v === 'number' ? v.toLocaleString('es-CL', { maximumFractionDigits: 1 }) : v);
+  function opcionInforme(sp) {
+    const u = sp.unit || '', ink = css('--ink'), mu = css('--muted'), ln = '#DDE2EF', h = !!sp.h, tip = { trigger: sp.kind === 'donut' ? 'item' : 'axis', valueFormatter: (v) => fnum(v) + u, confine: true };
+    const o = { ...base(), tooltip: tip, aria: { enabled: true } };
+    const meta = sp.meta && { symbol: 'none', silent: true, data: [h ? { xAxis: sp.meta.v } : { yAxis: sp.meta.v }], label: { formatter: sp.meta.t + ' ' + fnum(sp.meta.v) + u, color: ink, fontSize: 10.5, fontWeight: 700, position: h ? 'insideStartTop' : 'insideEndTop' }, lineStyle: { color: ink, type: 'dashed', width: 1.5 } };
+    if (sp.kind === 'donut') {
+      const tot = sp.items.reduce((a, x) => a + x.v, 0);
+      return { ...o, legend: { bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: ink, fontSize: 11 } },
+        graphic: [{ type: 'text', left: 'center', top: '36%', style: { text: fnum(tot), fontSize: 22, fontWeight: 700, fill: ink, fontFamily: 'Unbounded' } }],
+        series: [{ type: 'pie', radius: ['52%', '74%'], center: ['50%', '44%'], label: { show: false }, itemStyle: { borderColor: '#fff', borderWidth: 2 }, data: sp.items.map((x) => ({ name: x.n, value: x.v, itemStyle: { color: colC(x.c) } })) }] };
+    }
+    const cat = { type: 'category', data: sp.cats, inverse: h, axisLabel: { color: mu, fontSize: 10.5, width: h ? 96 : undefined, overflow: 'truncate', interval: sp.kind === 'line' ? 'auto' : (!h && sp.cats.length > 8 ? Math.ceil(sp.cats.length / 7) - 1 : 0) }, axisLine: { lineStyle: { color: ln } }, axisTick: { show: false }, boundaryGap: sp.kind !== 'line' };
+    const val = { type: 'value', axisLabel: { color: mu, fontSize: 10.5, formatter: (v) => fnum(v) }, splitLine: { lineStyle: { color: '#EEF1F8' } }, max: sp.meta ? (m) => Math.max(m.max, sp.meta.v * 1.15) : undefined };
+    const multi = sp.series.length > 1;
+    const series = sp.series.map((s, i) => {
+      const dato = s.cs ? s.d.map((v, j) => ({ value: v, itemStyle: { color: colC(s.cs[j]) } })) : s.d, color = s.c ? colC(s.c) : undefined;
+      const x = sp.kind === 'line' ? { type: 'line', smooth: true, symbol: 'none', lineStyle: { width: 2.5, color }, itemStyle: { color }, areaStyle: s.area ? { color, opacity: .14 } : undefined }
+        : { type: 'bar', stack: sp.stack ? 's' : undefined, barMaxWidth: 22, itemStyle: { color, borderRadius: sp.stack ? 0 : (h ? [0, 3, 3, 0] : [3, 3, 0, 0]) }, label: !multi && h ? { show: true, position: 'right', fontSize: 10.5, color: ink, formatter: (p) => fnum(p.value) + u } : { show: false } };
+      return { name: s.n, data: dato, ...x, markLine: i === 0 && meta ? meta : undefined };
+    });
+    return { ...o, legend: multi ? { top: 0, right: 0, icon: 'roundRect', itemWidth: 10, itemHeight: 6, textStyle: { color: ink, fontSize: 11 } } : { show: false },
+      grid: { left: 6, right: h ? 36 : 10, top: multi ? 26 : (sp.meta ? 22 : 10), bottom: 4, containLabel: true },
+      xAxis: h ? val : cat, yAxis: h ? cat : val, series };
+  }
+  function iniciarInforme() {
+    const cuerpo = document.getElementById('inf-cuerpo'); if (!cuerpo) return;
+    const specs = leerJSON('inf-charts'); if (!specs) return;
+    const tabs = $$('.tabs2 [role=tab]', cuerpo); let activa = null;
+    const abrir = (id, enfocar) => {
+      if (activa === id) return;
+      if (activa) soltar(document.getElementById('p-' + activa));
+      activa = id;
+      tabs.forEach((t) => { const on = t.id === 't-' + id; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; if (on && enfocar) t.focus(); });
+      $$('.tp', cuerpo).forEach((p) => { p.hidden = p.id !== 'p-' + id; });
+      try { history.replaceState(null, '', '#' + id); } catch (_) { /* sin historial */ }
+      (specs[id] || []).forEach((sp) => mk(sp.id, opcionInforme(sp)));
+      if (id === 'datos') cargarDatos();
+    };
+    const cargarDatos = async () => {
+      const p = document.getElementById('p-datos'); if (!p || !p.dataset.url || p.dataset.listo) return; p.dataset.listo = '1';
+      try { const r = await fetch(p.dataset.url, { credentials: 'same-origin', headers: { Accept: 'text/html' } }); if (!r.ok) throw new Error(r.status); p.innerHTML = await r.text(); }
+      catch (_) { p.dataset.listo = ''; p.innerHTML = '<div class="card cc cc-v"><b>No se pudieron cargar las tablas. Vuelve a abrir esta pestaña.</b></div>'; }
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => abrir(t.id.slice(2)));
+      t.addEventListener('keydown', (e) => { const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (d) { e.preventDefault(); abrir(tabs[(i + d + tabs.length) % tabs.length].id.slice(2), true); } });
+    });
+    const h = location.hash.slice(1); abrir(tabs.some((t) => t.id === 't-' + h) ? h : tabs[0].id.slice(2));
+  }
+  (async () => {
+    const c = document.getElementById('inf-cuerpo'); if (!c) return;
+    if (c.dataset.carga) {
+      try { const r = await fetch(c.dataset.carga, { credentials: 'same-origin', headers: { Accept: 'text/html' } }); if (r.status === 401) { location.href = '/acceso'; return; } if (!r.ok) throw new Error(r.status); c.innerHTML = await r.text(); }
+      catch (_) { c.innerHTML = '<div class="card p-4 bd-bad" role="alert"><b>No se pudo cargar el informe.</b> Recarga la página en un momento.</div>'; return; }
+    }
+    iniciarInforme();
+  })();
 
   /* ---------- En vivo: el Resumen consulta /api/metricas y /api/proveedores cada 60 s si la pestaña está visible ---------- */
   const PROV_E = { operativo: 'ok', degradado: 'warn', caido: 'bad', sin_informacion: 'na' };
   const PROV_T = { operativo: 'Operativo', degradado: 'Degradado', caido: 'Caído', sin_informacion: 'Sin información' };
-  const ICO = { ok: 'circle-check', warn: 'triangle-alert', bad: 'octagon-alert', na: 'circle-minus' };
+  const ICO = { ok: 'e-lista', warn: 'e-contingencia-modelo', bad: 'e-cadena-agotada', na: 'e-sin-info' };
+  const icoHref = (id) => (id.startsWith('e-') ? '/estaticos/estados.svg#' : '/estaticos/iconos.svg#') + id;
+  const setIco = (u, id) => { u.setAttribute('href', icoHref(id)); const t = u.closest('k-st'); if (t) t.dataset.e = id.slice(2); };
   const setCls = (n, e) => { n.className = n.className.replace(/\bs-(ok|warn|bad|na)\b/g, '').trim() + ' s-' + e; };
   function aplicar(m) {
     $$('[data-t]').forEach((n) => { const k = n.dataset.t; if (k in m.t) poner(n, m.t[k]); });
@@ -234,14 +306,14 @@
     $$('[data-l]').forEach((n) => { const k = n.dataset.l; if (k in m.l) n.style.left = m.l[k] + '%'; });
     $$('[data-rot]').forEach((n) => { const k = n.dataset.rot; if (k in m.rot) n.style.transform = 'rotate(' + m.rot[k] + 'deg)'; });
     $$('[data-d]').forEach((n) => { const k = n.dataset.d; if (k in m.d) n.setAttribute('d', m.d[k]); });
-    $$('[data-i]').forEach((n) => { const k = n.dataset.i; if (k in m.ico) n.setAttribute('href', '/estaticos/iconos.svg#' + m.ico[k]); });
+    $$('[data-i]').forEach((n) => { const k = n.dataset.i; if (k in m.ico) setIco(n, m.ico[k]); });
     $$('[data-xk]').forEach((n) => { const k = n.dataset.xk; if (k in m.x) n.setAttribute('x', m.x[k]); });
     $$('.kt').forEach((n) => { n.classList.add('upd'); setTimeout(() => n.classList.remove('upd'), 900); });
   }
   function proveedores(p) {
     (p.proveedores || []).forEach((x) => {
       const e = PROV_E[x.estado] || 'na', li = document.getElementById('pv-' + x.id); if (!li) return;
-      setCls(li, e); const u = $('use', li); if (u) u.setAttribute('href', '/estaticos/iconos.svg#' + ICO[e]);
+      setCls(li, e); const u = $('use', li); if (u) setIco(u, x.estado === 'sin_informacion' ? 'e-sin-conexion' : ICO[e]);
       const t = $('[data-pt]', li); if (t) t.textContent = PROV_T[x.estado] || 'Sin información';
       const k = $('k-tip', li); if (k) k.setAttribute('x', x.mensaje);
     });

@@ -1,0 +1,5 @@
+// ALERTA: solicitudes en revision_manual por cadena_agotada (todos los modelos de la cadena fallaron).
+AppTraces
+| where TimeGenerated > ago(30m) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| where tostring(Properties.estado) == "revision_manual" and tostring(Properties.motivo) == "cadena_agotada"
+| project TimeGenerated, id_solicitud = tostring(Properties.id_solicitud)

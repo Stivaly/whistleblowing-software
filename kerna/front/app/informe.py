@@ -369,7 +369,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
     rent = _rentabilidad(negocio)
     return {"meta": {"titulo": "Informe de gestión de Kerna AI", "periodo": per, "desde": ini.isoformat(timespec="seconds"), "hasta": fin.isoformat(timespec="seconds"),
                      "corte": corte, "evaluacion_generada": (evaluacion or {}).get("generado")},
-            "secciones": [resumen, cal, desemp, costo, rent, cob, inc]}
+            "secciones": [resumen, cal, desemp, costo, rent, cob, inc], "fallos": len(fallos)}
 
 
 def _rentabilidad(n: dict | None) -> dict:
