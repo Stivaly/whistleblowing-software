@@ -1,106 +1,183 @@
 <title>Logo Kerna AI</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: tres láminas oscuras apiladas, cada una con su pieza grande, su versión chica y su idea en una línea */
+/* Layout: documento de marca en una columna; el símbolo grande abre, luego idea, construcción, sistema de estados, versiones y reglas */
 :root{
-  --fondo:#F4F6FA; --panel:#FFFFFF; --tinta:#0B1020; --sec:#4A5578; --linea:#DCE1EC; --lima:#CFFF5E; --verde:#3F6212;
+  --papel:#F5F7FB; --hoja:#FFFFFF; --azul:#1C2A6B; --sec:#4A5578; --linea:#DCE1EC; --lima:#CFFF5E; --oliva:#3F6212;
   --display:"Unbounded","Arial Black",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;
 }
-body{background:var(--fondo);color:var(--tinta);font-family:var(--mono);font-size:14px;line-height:1.6}
-.pag{max-width:1080px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
-header{display:grid;gap:6px}
-header h1{font-family:var(--display);font-weight:500;font-size:clamp(20px,3vw,28px);margin:0;text-wrap:balance}
-header p{margin:0;color:var(--sec);max-width:62ch}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--papel:#0B1020;--hoja:#10172C;--azul:#C9D3FF;--sec:#A9B2CF;--linea:#26304D;--oliva:#CFFF5E;color-scheme:dark}}
+:root[data-theme="dark"]{--papel:#0B1020;--hoja:#10172C;--azul:#C9D3FF;--sec:#A9B2CF;--linea:#26304D;--oliva:#CFFF5E;color-scheme:dark}
+body{background:var(--papel);color:var(--azul);font-family:var(--mono);font-size:14px;line-height:1.65}
+.pag{max-width:1040px;margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:56px}
 .eti{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sec)}
-.dir{background:var(--panel);border:1px solid var(--linea);display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);min-width:0}
-.esc{display:grid;place-items:center;padding:48px 24px;min-height:260px;border-right:1px solid var(--linea);
-  background-image:linear-gradient(var(--linea) 1px,transparent 1px),linear-gradient(90deg,var(--linea) 1px,transparent 1px);background-size:32px 32px;background-position:center}
-.info{display:grid;align-content:space-between;gap:20px;padding:24px;min-width:0}
-.info h2{font-family:var(--display);font-weight:700;font-size:22px;margin:0;letter-spacing:.02em}
-.info p{margin:0;color:var(--sec)}
-.chicos{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.chicos figure{margin:0;display:grid;justify-items:center;gap:4px}
-.chicos figcaption{font-size:10px;color:var(--sec);font-variant-numeric:tabular-nums}
-.chip{display:inline-grid;place-items:center;border:1px solid var(--linea);background:var(--fondo);padding:6px}
-.marca{display:flex;align-items:center;gap:.4em;font-size:clamp(34px,6vw,58px)}
-.marca svg.sim{width:1.6em;height:1.6em;flex:none}
-.wm{font-family:var(--display);font-weight:700;letter-spacing:.06em;line-height:1}
-.ai{font-family:var(--mono);font-weight:500;font-size:.38em;letter-spacing:.12em;color:var(--verde);align-self:flex-start;margin-top:.1em}
-.letraA{height:.74em;width:auto;flex:none;margin-left:.04em}
-.letras{display:flex;align-items:baseline}
-@media (max-width:720px){.dir{grid-template-columns:1fr}.esc{border-right:0;border-bottom:1px solid var(--linea)}}
+h1,h2{font-family:var(--display);margin:0;text-wrap:balance}
+h2{font-weight:500;font-size:20px}
+p{margin:0;max-width:64ch}
+.sec{display:grid;gap:20px}
+.hoja{background:var(--hoja);border:1px solid var(--linea)}
+
+/* símbolo */
+.orb{fill:none;stroke:var(--azul);stroke-width:2;stroke-linecap:round;stroke-dasharray:.1 4.6}
+.orb.f{stroke-width:1.6;opacity:.45;stroke-dasharray:.1 3.6}
+.nuc{fill:var(--azul)}
+.nuc-l{fill:var(--lima)}
+.sat{fill:var(--lima);stroke:var(--azul);stroke-width:2}
+.sat-h{fill:var(--hoja);stroke:var(--azul);stroke-width:2}
+.gira{transform-origin:32px 32px;animation:g 40s linear infinite}
+.gira.r{animation-duration:60s;animation-direction:reverse}
+@keyframes g{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.gira{animation:none}}
+
+.heroe{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:center;padding:40px;}
+.heroe svg{width:100%;max-width:360px;justify-self:center}
+.heroe h1{font-weight:700;font-size:clamp(40px,7vw,76px);letter-spacing:.05em;line-height:1}
+.heroe h1 span{font-family:var(--mono);font-weight:500;font-size:.3em;letter-spacing:.14em;color:var(--oliva);vertical-align:top;margin-left:.3em}
+.heroe .lema{color:var(--sec);margin-top:16px}
+
+.tres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.tres div{display:grid;gap:6px;padding:20px;min-width:0}
+.tres b{font-family:var(--display);font-weight:500;font-size:14px}
+
+.const{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:32px;align-items:center;padding:28px}
+.const ul{margin:0;padding-left:1.1em;display:grid;gap:8px}
+.guia{fill:none;stroke:var(--sec);stroke-width:.4;opacity:.6}
+.cota{font:500 3px var(--mono);fill:var(--sec)}
+
+.estados{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.estados figure{margin:0;padding:20px;display:grid;gap:10px;justify-items:center;text-align:center}
+.estados svg{width:96px;height:96px}
+.estados figcaption{display:grid;gap:2px}
+.estados figcaption b{font-family:var(--display);font-weight:500;font-size:13px}
+.estados figcaption span{font-size:12px;color:var(--sec)}
+
+.vers{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
+.vers figure{margin:0;display:grid;gap:12px;padding:20px;min-width:0}
+.lienzo{min-height:130px;display:grid;place-items:center}
+.osc{--azul:#E8ECFF;--hoja:#0B1020;background:#0B1020}
+.cla{--azul:#1C2A6B;--hoja:#FFFFFF;background:#FFFFFF;border:1px solid #E3E7F1}
+.lockup{display:flex;align-items:center;gap:12px;color:var(--azul)}
+.lockup svg{width:52px;height:52px;flex:none}
+.lockup b{font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:.06em}
+.lockup i{font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--oliva);align-self:flex-start;margin-top:6px}
+.osc .lockup i{color:#CFFF5E}
+.fav{display:flex;gap:14px;align-items:flex-end}
+.fav span{display:grid;place-items:center;border:1px solid var(--linea);background:var(--hoja);padding:6px}
+
+.reglas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.reglas div{padding:20px;display:grid;gap:8px;min-width:0}
+.reglas ul{margin:0;padding-left:1.1em;display:grid;gap:6px}
+
+@media (max-width:760px){.heroe,.const{grid-template-columns:1fr;padding:24px}.tres,.reglas{grid-template-columns:1fr}.estados{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <!-- A · Órbita: anillo grueso con un hueco; el satélite lima entra por el hueco hacia el núcleo -->
-  <symbol id="orbita" viewBox="0 0 64 64">
-    <circle cx="32" cy="32" r="22" fill="none" style="stroke:var(--tinta)" stroke-width="7" stroke-dasharray="99.6 22 16.6 0"/>
-    <circle cx="32" cy="32" r="6.5" style="fill:var(--tinta)"/>
-    <circle cx="47.6" cy="16.4" r="7.5" fill="#CFFF5E" style="stroke:var(--tinta)" stroke-width="2.5"/>
-  </symbol>
-  <!-- B · Señal: placa con el núcleo lima en la esquina y dos ondas que salen hacia la norma -->
-  <symbol id="senal" viewBox="0 0 64 64">
-    <rect x="2" y="2" width="60" height="60" rx="14" style="fill:var(--tinta)"/>
-    <circle cx="20" cy="44" r="7" style="fill:var(--panel)"/>
-    <circle cx="20" cy="44" r="3.4" fill="#CFFF5E"/>
-    <path d="M20 28 A16 16 0 0 1 36 44" fill="none" style="stroke:var(--panel)" stroke-width="5" stroke-linecap="round"/>
-    <path d="M20 16 A28 28 0 0 1 48 44" fill="none" style="stroke:var(--panel)" stroke-width="5" stroke-linecap="round"/>
-  </symbol>
-  <!-- C · A con núcleo: la A del nombre lleva el núcleo lima en lugar de la barra -->
-  <symbol id="letraA" viewBox="0 0 40 48">
-    <path d="M4 46 L20 4 L36 46" fill="none" style="stroke:var(--tinta)" stroke-width="8" stroke-linejoin="miter" stroke-linecap="butt"/>
-    <circle cx="20" cy="31" r="5.5" fill="#CFFF5E" style="stroke:var(--tinta)" stroke-width="2"/>
+  <symbol id="k" viewBox="0 0 64 64">
+    <circle class="orb f" cx="32" cy="32" r="29"/>
+    <ellipse class="orb" cx="32" cy="32" rx="26" ry="10" transform="rotate(-30 32 32)"/>
+    <ellipse class="orb" cx="32" cy="32" rx="26" ry="10" transform="rotate(30 32 32)"/>
+    <circle class="nuc" cx="32" cy="32" r="6.5"/>
+    <circle class="nuc-l" cx="32" cy="32" r="2.4"/>
+    <circle class="sat" cx="54.5" cy="19" r="4.6"/>
+    <circle class="sat-h" cx="54.5" cy="45" r="3.4"/>
   </symbol>
 </svg>
 
 <main class="pag">
-  <header>
-    <span class="eti">Kerna AI · logo · ronda 2 · fondo claro</span>
-    <h1>Tres direcciones para elegir</h1>
-    <p>Las tres usan la paleta de Núcleo sobre fondo claro, con el lima como único acento. Elige una o dime qué mezclar.</p>
-  </header>
 
-  <section class="dir" aria-labelledby="t-a">
-    <div class="esc"><div class="marca" role="img" aria-label="Kerna AI, dirección Órbita">
-      <svg class="sim"><use href="#orbita"/></svg><span class="wm">KERNA</span><span class="ai">AI</span></div></div>
-    <div class="info">
-      <div><span class="eti">A</span><h2 id="t-a">Órbita</h2></div>
-      <p>Un anillo grueso con una abertura. El satélite lima entra por ahí hacia el núcleo: el artículo que encaja con el caso.</p>
-      <div class="chicos">
-        <figure><span class="chip"><svg width="16" height="16"><use href="#orbita"/></svg></span><figcaption>16</figcaption></figure>
-        <figure><span class="chip"><svg width="32" height="32"><use href="#orbita"/></svg></span><figcaption>32</figcaption></figure>
-        <figure><span class="chip"><svg width="56" height="56"><use href="#orbita"/></svg></span><figcaption>56</figcaption></figure>
-      </div>
+  <section class="hoja heroe" aria-label="Logo">
+    <svg viewBox="-2 -2 68 68" role="img" aria-label="Símbolo de Kerna AI">
+      <g class="gira r"><circle class="orb f" cx="32" cy="32" r="29"/></g>
+      <ellipse class="orb" cx="32" cy="32" rx="26" ry="10" transform="rotate(-30 32 32)"/>
+      <ellipse class="orb" cx="32" cy="32" rx="26" ry="10" transform="rotate(30 32 32)"/>
+      <circle class="nuc" cx="32" cy="32" r="6.5"/><circle class="nuc-l" cx="32" cy="32" r="2.4"/>
+      <circle class="sat" cx="54.5" cy="19" r="4.6"/><circle class="sat-h" cx="54.5" cy="45" r="3.4"/>
+    </svg>
+    <div>
+      <span class="eti">Kerna AI · estrategia de logo</span>
+      <h1>KERNA<span>AI</span></h1>
+      <p class="lema">Un núcleo, dos órbitas y lo que encaja. El símbolo sale del mismo dibujo que Kerna usa dentro de Veridy; no es un ícono aparte.</p>
     </div>
   </section>
 
-  <section class="dir" aria-labelledby="t-b">
-    <div class="esc"><div class="marca" role="img" aria-label="Kerna AI, dirección Señal">
-      <svg class="sim"><use href="#senal"/></svg><span class="wm">KERNA</span><span class="ai">AI</span></div></div>
-    <div class="info">
-      <div><span class="eti">B</span><h2 id="t-b">Señal</h2></div>
-      <p>Una placa clara con el núcleo lima en la esquina y dos ondas que salen de él: Kerna lee el caso y responde con la norma. Funciona muy bien como ícono de app.</p>
-      <div class="chicos">
-        <figure><span class="chip"><svg width="16" height="16"><use href="#senal"/></svg></span><figcaption>16</figcaption></figure>
-        <figure><span class="chip"><svg width="32" height="32"><use href="#senal"/></svg></span><figcaption>32</figcaption></figure>
-        <figure><span class="chip"><svg width="56" height="56"><use href="#senal"/></svg></span><figcaption>56</figcaption></figure>
-      </div>
+  <section class="sec">
+    <span class="eti">1 · La idea</span>
+    <h2>Kerna es el centro de gravedad del caso</h2>
+    <p>Cada denuncia trae hechos sueltos. Kerna los pone en órbita alrededor de la norma chilena hasta que algo encaja. El logo cuenta eso con tres piezas: el núcleo, las órbitas punteadas por donde viajan las leyes candidatas y el satélite lima, que es el artículo que encajó.</p>
+    <div class="tres">
+      <div class="hoja"><b>Núcleo</b><span>Kerna. Azul sólido con el centro lima: está encendido, analizando.</span></div>
+      <div class="hoja"><b>Órbitas punteadas</b><span>Las rutas de búsqueda. Punteadas porque son posibilidades, no certezas.</span></div>
+      <div class="hoja"><b>Satélites</b><span>Lima: el artículo que encaja. Hueco: el candidato que aún no se confirma.</span></div>
+    </div>
+    <p>Los dos satélites quedan a la derecha, uno arriba y otro abajo del núcleo. Ese gesto dibuja una K sin escribirla.</p>
+  </section>
+
+  <section class="sec">
+    <span class="eti">2 · Construcción</span>
+    <h2>Medidas sobre una retícula de 64</h2>
+    <div class="hoja const">
+      <svg viewBox="-2 -2 68 68" aria-label="Construcción del símbolo">
+        <rect class="guia" x="0" y="0" width="64" height="64"/>
+        <line class="guia" x1="32" y1="0" x2="32" y2="64"/><line class="guia" x1="0" y1="32" x2="64" y2="32"/>
+        <line class="guia" x1="32" y1="32" x2="54.5" y2="19"/><line class="guia" x1="32" y1="32" x2="54.5" y2="45"/>
+        <use href="#k"/>
+        <text class="cota" x="34" y="27">30°</text><text class="cota" x="34" y="40">30°</text>
+        <text class="cota" x="2" y="5">r 29</text>
+      </svg>
+      <ul>
+        <li>Órbita exterior: círculo de radio 29, punteado fino al 45 %.</li>
+        <li>Dos órbitas elípticas 26 × 10, giradas +30° y −30°.</li>
+        <li>Núcleo de radio 6,5 con centro lima de 2,4.</li>
+        <li>Satélites en el extremo de cada elipse: lima de 4,6 arriba, hueco de 3,4 abajo.</li>
+        <li>Punto de 0,1 cada 4,6 en las órbitas: se lee como línea suave de lejos y como sistema de cerca.</li>
+      </ul>
     </div>
   </section>
 
-  <section class="dir" aria-labelledby="t-c">
-    <div class="esc"><div class="marca" role="img" aria-label="Kerna AI, dirección A con núcleo">
-      <span class="letras"><span class="wm">KERN</span><svg class="letraA" viewBox="0 0 40 48"><use href="#letraA"/></svg></span><span class="ai">AI</span></div></div>
-    <div class="info">
-      <div><span class="eti">C</span><h2 id="t-c">A con núcleo</h2></div>
-      <p>El logo es la palabra. La A cambia su barra por el núcleo lima, y esa A sola sirve de ícono. La más sobria y formal de las tres.</p>
-      <div class="chicos">
-        <figure><span class="chip"><svg width="16" height="19" viewBox="0 0 40 48"><use href="#letraA"/></svg></span><figcaption>16</figcaption></figure>
-        <figure><span class="chip"><svg width="32" height="38" viewBox="0 0 40 48"><use href="#letraA"/></svg></span><figcaption>32</figcaption></figure>
-        <figure><span class="chip"><svg width="56" height="67" viewBox="0 0 40 48"><use href="#letraA"/></svg></span><figcaption>56</figcaption></figure>
-      </div>
+  <section class="sec">
+    <span class="eti">3 · Un sistema, no un dibujo fijo</span>
+    <h2>El mismo símbolo cuenta en qué está Kerna</h2>
+    <p>En Veridy el logo se mueve con el estado del caso. Así la marca y la interfaz son la misma cosa.</p>
+    <div class="estados">
+      <figure class="hoja">
+        <svg viewBox="-2 -2 68 68" aria-hidden="true"><g class="gira"><ellipse class="orb" cx="32" cy="32" rx="26" ry="10" transform="rotate(-30 32 32)"/><circle class="sat-h" cx="54.5" cy="19" r="3.4"/></g><g class="gira r"><ellipse class="orb" cx="32" cy="32" rx="26" ry="10" transform="rotate(30 32 32)"/><circle class="sat-h" cx="54.5" cy="45" r="3.4"/></g><circle class="nuc" cx="32" cy="32" r="6.5"/><circle class="nuc-l" cx="32" cy="32" r="2.4"/></svg>
+        <figcaption><b>Analizando</b><span>Las órbitas giran</span></figcaption></figure>
+      <figure class="hoja">
+        <svg viewBox="-2 -2 68 68" aria-hidden="true"><use href="#k"/></svg>
+        <figcaption><b>Sugerencia lista</b><span>Un satélite acoplado</span></figcaption></figure>
+      <figure class="hoja">
+        <svg viewBox="-2 -2 68 68" aria-hidden="true"><circle class="orb f" cx="32" cy="32" r="29"/><ellipse class="orb" cx="32" cy="32" rx="26" ry="10" transform="rotate(-30 32 32)"/><ellipse class="orb" cx="32" cy="32" rx="26" ry="10" transform="rotate(30 32 32)"/><circle class="nuc" cx="32" cy="32" r="6.5"/><circle class="nuc-l" cx="32" cy="32" r="2.4"/></svg>
+        <figcaption><b>Sin norma aplicable</b><span>Órbitas vacías</span></figcaption></figure>
+      <figure class="hoja">
+        <svg viewBox="-2 -2 68 68" aria-hidden="true"><circle class="orb f" cx="32" cy="32" r="29"/><circle class="nuc" cx="32" cy="32" r="6.5" opacity=".35"/><circle class="sat-h" cx="54.5" cy="19" r="3.4" opacity=".5"/></svg>
+        <figcaption><b>Sin conexión</b><span>Núcleo apagado, sin órbitas</span></figcaption></figure>
     </div>
   </section>
+
+  <section class="sec">
+    <span class="eti">4 · Versiones</span>
+    <h2>Horizontal, sobre claro y oscuro, y favicon</h2>
+    <div class="vers">
+      <figure class="hoja"><div class="lienzo cla"><div class="lockup"><svg viewBox="-2 -2 68 68"><use href="#k"/></svg><b>KERNA</b><i>AI</i></div></div><figcaption class="eti">Fondo claro</figcaption></figure>
+      <figure class="hoja"><div class="lienzo osc"><div class="lockup"><svg viewBox="-2 -2 68 68"><use href="#k"/></svg><b>KERNA</b><i>AI</i></div></div><figcaption class="eti">Fondo oscuro</figcaption></figure>
+      <figure class="hoja"><div class="lienzo"><div class="fav">
+        <span><svg width="16" height="16" viewBox="-2 -2 68 68"><use href="#k"/></svg></span>
+        <span><svg width="24" height="24" viewBox="-2 -2 68 68"><use href="#k"/></svg></span>
+        <span><svg width="40" height="40" viewBox="-2 -2 68 68"><use href="#k"/></svg></span>
+        <span><svg width="64" height="64" viewBox="-2 -2 68 68"><use href="#k"/></svg></span>
+      </div></div><figcaption class="eti">16 · 24 · 40 · 64 px</figcaption></figure>
+    </div>
+    <p>Bajo 24 px el punteado se pierde: en el favicon conviene una versión con órbitas continuas y finas. La preparo cuando elijas este camino.</p>
+  </section>
+
+  <section class="sec">
+    <span class="eti">5 · Uso</span>
+    <div class="reglas">
+      <div class="hoja"><b>Sí</b><ul><li>Azul marino para el símbolo y la palabra; lima solo en el centro del núcleo y en el satélite que encaja.</li><li>Animar las órbitas muy lento, solo mientras Kerna analiza.</li><li>Dejar alrededor un margen igual al radio de la órbita exterior.</li></ul></div>
+      <div class="hoja"><b>No</b><ul><li>Rellenar las órbitas o volverlas líneas gruesas: pierden la sensación de sistema.</li><li>Poner el lima en el texto sobre fondo claro: no se lee.</li><li>Agregar más satélites: cada uno significa un artículo.</li></ul></div>
+    </div>
+  </section>
+
 </main>
