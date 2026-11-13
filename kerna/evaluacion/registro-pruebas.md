@@ -98,3 +98,9 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 - Elección: Logic App de consumo por no tener código, almacenamiento ni imagen (Function con temporizador exige cuenta de almacenamiento y despliegue de código; Container Apps Job exige entorno e imagen). Costo estimado ~0,2 USD/mes (96 corridas/día x 2 acciones + disparador, ~0,000025 USD por acción); la usuaria no sube a B1.
 - Ejecuciones (`ping_front.sh`): 16:34, 16:49 y 17:04 UTC, las tres `Succeeded` (~0,2 s cada una).
 - TTFB (`ttfb_front.sh`, 17:1x UTC, sin visita humana en más de 30 min): `/salud` frío 53 ms, caliente 43-50 ms; `/` frío 46 ms, caliente 49-78 ms; todo HTTP 200. Antes, tras 20 min de inactividad la primera visita tardaba varios segundos.
+
+## 2026-11-13 · Auditoría de las 150 denuncias sintéticas (orquestador, lectura completa)
+- Commit: 0ba24ef12. Origen: `kerna/evaluacion/datos/denuncias_sinteticas_20261113.json` (sin modificar). Resultado: `kerna/evaluacion/datos/denuncias_sinteticas_20261113_auditadas.json` (fuera de git).
+- Lectura de los 150 relatos completos. Realistas, específicos, en primera persona o como testigos; temas: trato y acoso laboral, acoso sexual, discriminación (género, edad, orientación, discapacidad, etnia, embarazo), datos personales (salud, geolocalización, cámaras, historiales crediticios), fraude, sobornos, conflicto de interés, lavado, seguridad laboral y alimentaria, represalias, jornada y salarios. Tonos variados (formal, desordenado, sin tildes, terceros). Unos 20 ambiguos o sin falta (p. ej. 21, 25, 27, 46, 116, 119, 120, 123, 128). Largos: 30 < 400, 57 de 400 a 1.299, 63 ≥ 1.300 caracteres (máx. 2.179).
+- Corrección: los 47 correos terminaban en `.example`, una marca artificial; se pasaron a dominios plausibles según el país del relato. Los teléfonos con 555 se mantienen.
+- Supuesto, a confirmar: la mayoría ocurre fuera de Chile; se etiquetan por la conducta con la norma chilena equivalente.
