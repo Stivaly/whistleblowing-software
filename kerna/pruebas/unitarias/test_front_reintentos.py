@@ -159,8 +159,8 @@ def test_boton_en_curso_gris_con_progreso_y_tooltip_con_desde_cuando_y_cuanto_fa
     s = {"estado": "en_curso", "inicio": "2026-11-13T03:10:00Z", "total": "99", "resueltos": "33", "eta_s": "600", "actualizado_en": "2026-11-13T03:29:50Z"}
     vm = reintentos.vista_boton(s, AHORA)
     assert vm["modo"] == "curso" and vm["texto"] == "Reintentando… espera" and vm["sub"] == "33 de 99" and vm["avance"] == 33
-    assert "13 nov 03:10 UTC" in vm["ayuda"] and "faltan unos 10 min" in vm["ayuda"] and "33 de 99" in vm["ayuda"] and not vm["detenido"]
-    assert "aún sin estimación" in reintentos.vista_boton({**s, "eta_s": "-1"}, AHORA)["ayuda"]
+    assert "13 nov 03:10 UTC" in vm["ayuda"] and "Faltan unos 10 min" in vm["ayuda"] and "33 de 99" in vm["ayuda"] and not vm["detenido"]
+    assert "Aún sin estimación" in reintentos.vista_boton({**s, "eta_s": "-1"}, AHORA)["ayuda"]
     quieto = reintentos.vista_boton({**s, "actualizado_en": "2026-11-13T03:00:00Z"}, AHORA)
     assert quieto["detenido"] and "puede estar detenido" in quieto["ayuda"]
     sol = reintentos.vista_boton({"estado": "solicitado", "solicitado_en": "2026-11-13T03:25:00Z"}, AHORA)

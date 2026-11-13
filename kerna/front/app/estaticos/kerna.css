@@ -1050,7 +1050,7 @@ html,body{max-width:100%}
 .cola-a{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
 .rei-w{position:relative;display:inline-flex;flex-direction:column;gap:3px;cursor:help;border-radius:6px}
 .rei-w:focus-visible{outline:3px solid var(--brand-2);outline-offset:3px}
-.btn.btn-off,.btn.btn-off:hover{background:#E4E7F0;color:#4B5578;border-color:#C3C9DB;box-shadow:none;cursor:not-allowed;pointer-events:none;transform:none}
+.btn.btn-off,.btn.btn-off:hover,.btn.btn-off:disabled{opacity:1;background:#E4E7F0;color:#4B5578;border-color:#C3C9DB;box-shadow:none;cursor:not-allowed;pointer-events:none;transform:none}
 .btn-off small{font:500 11.5px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.04em;color:#4B5578;padding-left:8px;border-left:1px solid #B5BCD2}
 .rei-sp{display:inline-flex;animation:spin 2.6s linear infinite;will-change:transform}
 .rei-sp k-st{--s:26px}

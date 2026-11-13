@@ -141,7 +141,7 @@ def vista_boton(s: dict | None, ahora=None) -> dict:
             partes = [f"Pedido {hace(s.get('solicitado_en'), ahora) or 'recién'}", "esperando que el conector lo tome", "si Veridy está apagado, se atiende al encenderlo"]
         if quieto:
             partes.append(f"sin avance {hace(s.get('actualizado_en'), ahora)}: el conector puede estar detenido")
-        return {"modo": "curso", "texto": "Reintentando… espera", "sub": f"{listos} de {total}" if curso and total else "", "ayuda": ". ".join(partes) + ".",
+        return {"modo": "curso", "texto": "Reintentando… espera", "sub": f"{listos} de {total}" if curso and total else "", "ayuda": ". ".join(x[:1].upper() + x[1:] for x in partes) + ".",
                 "avance": round(100 * listos / total) if curso and total else None, "detenido": quieto}
     vm = {"modo": "normal", "texto": "Reintentar ahora", "sub": "", "ayuda": "", "avance": None, "detenido": False}
     if est == "atendido" and s.get("reintentados") is not None:

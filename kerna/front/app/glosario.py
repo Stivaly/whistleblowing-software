@@ -41,7 +41,7 @@ def glosario() -> dict:
     return {
         "envivo": {"t": "En vivo", "q": "Se actualiza solo cada minuto y muestra la hora del último dato recibido.",
                    "c": "Los datos de telemetría pueden tardar unos minutos en llegar: lo último que ves puede ir atrasado.", "l": L},
-        "reintento_estado": {"t": "Reintento en curso", "q": "Kerna está generando de nuevo las sugerencias pendientes; el botón vuelve cuando termina.", "c": "", "l": "Ahora"},
+        "reintento_estado": {"t": "Reintento en curso", "q": "Kerna está generando de nuevo las sugerencias pendientes; el botón vuelve cuando termina.", "c": "", "l": ""},
         "estado": {"t": "Estado general", "q": "Resumen de 5 segundos: junta la salud de los modelos, los proveedores, la calidad y la rapidez. Verde = todo bien, ámbar = atención, rojo = problema.",
                    "c": "Un solo indicador en rojo hace que el estado general sea «problema»; en ámbar, «atención».", "l": L},
         "salud_modelo": {"t": "Modelos de IA", "q": "Los modelos de lenguaje que redactan la sugerencia: uno principal y uno de respaldo.", "c": "Ámbar: a veces entra el respaldo. Rojo: muchos casos pasan a revisión manual.", "l": L},
