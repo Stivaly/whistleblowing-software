@@ -1109,5 +1109,5 @@ html,body{max-width:100%}
 @media(prefers-reduced-motion:reduce){.chip.gir k-st{animation:none}}
 .ao.hk{transition:stroke .4s,stroke-width .4s,stroke-dasharray .4s,opacity .4s}
 .arc.hk,.arc2.hk{transition:stroke-dasharray .7s var(--ease),opacity .3s ease}
-.ct-l{display:flex;align-items:center;gap:0 4px;flex-wrap:nowrap}.ct-l .ct-n{min-width:0;line-height:1.25}.ct-l>k-tip,.ct-l>.rst{flex:none;margin-left:0}
+.ct-n{line-height:1.25}
 .team-n{font-size:16px;font-weight:600}

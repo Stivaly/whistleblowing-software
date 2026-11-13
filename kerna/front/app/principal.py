@@ -369,7 +369,7 @@ def panel_ajustes(request: Request):
     if not _permitido(request):
         return RedirectResponse("/acceso", status_code=303)
     try:
-        est, error = aj.cargar(), None
+        est, error = cache.obtener(("ajustes",), aj.cargar, 15), None
     except Exception as e:
         est, error = {"valores": aj.RECOMENDADO, "guardado_en": None}, type(e).__name__
     return plantillas.TemplateResponse(request, "ajustes.html", {
@@ -398,6 +398,7 @@ def guardar_ajustes(request: Request, csrf: str = Form(""), valores: str = Form(
         return fin("invalido", 400)
     try:
         g = aj.guardar(v)
+        cache.invalidar(("ajustes",))
         return fin("ok", guardado_en=g["guardado_en"])
     except Exception:
         return fin("error", 502)
