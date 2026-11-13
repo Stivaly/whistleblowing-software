@@ -80,7 +80,7 @@ Diseña tú un encargo muy cuidadoso que solo le pida crear un conjunto de relat
 - casos ambiguos y casos que no corresponden a ninguna falta;
 - datos personales ficticios inventados (nombres, documentos, correos, teléfonos), para probar el anonimizador.
 
-Pide un formato de salida JSON con campos neutros (`id`, `relato`, `fuente_inspiracion`, `extension`) y una cantidad concreta (por ejemplo, 150).
+Pide solo el relato: un JSON con una lista de objetos `{"relato": "..."}` y nada más, en una cantidad concreta (por ejemplo, 150). El agente se inspira en situaciones de foros públicos **sin copiar textos literales**, y todos los datos personales son inventados.
 
 Tú, el orquestador, guardas el resultado en `kerna/evaluacion/datos/` (fuera de git, como el dataset actual) y registras la generación en `kerna/evaluacion/registro-pruebas.md`. No lo cargues en Veridy sin dejarlo anotado. Si el conector está desplegado, puedes enviar un lote pequeño de prueba y registrar el resultado.
 
@@ -103,8 +103,19 @@ Lo que no cumpla se lo encargas al agente siguiente. No te detengas mientras que
 ## Modo de trabajo: auditor e iterativo
 
 - Sigue iterando (encargar, auditar, volver a encargar) hasta que **todo** lo que pidió la usuaria esté resuelto.
-- Si algo depende de una decisión suya, no te detengas: avanza con un **supuesto razonable**, aplícalo y anótalo como «supuesto, a confirmar». Ejemplos: el valor de la UF, el texto que falta sobre el PDF, la paleta concreta para dar viveza.
+- Si algo depende de una decisión suya, no te detengas: avanza con un **supuesto razonable**, aplícalo y anótalo como «supuesto, a confirmar». Ejemplos: el valor de la UF, la paleta concreta para dar viveza.
 - Deja para el final solo lo que de verdad requiere su autorización, como reemplazar recursos de Azure.
+
+## Reglas adicionales (autorizadas por la usuaria)
+
+1. **Convivencia con el otro agente:** otro agente trabaja en paralelo en los modelos, en la misma rama. Cada agente commitea **solo los archivos que tocó**, con `git add <rutas>` y nunca `git add -A` ni `git add .`. No toca `kerna/nucleo/` ni la evaluación de modelos. Antes de desplegar, confirma con `git status` que el despliegue es de un commit propio y que las pruebas del front pasan.
+2. **Volver atrás:** antes de cada despliegue, anota en el resumen el último commit desplegado que funcionaba bien. Si después de desplegar `/salud` no responde 200, o el panel muestra errores o vistas rotas, vuelve a ese commit de inmediato con `kerna/front/desplegar.sh --ref <commit bueno>`. Luego anota qué pasó.
+3. **Contraste:** con los colores más vivos, todo texto y cifra debe tener contraste AA: 4,5:1 para texto normal y 3:1 para cifras grandes y elementos gráficos. Verifícalo con `kerna/diseno/identidad-v3/calcular_contraste_v3.py`, o con un cálculo equivalente, sobre los pares realmente usados. La lima, el amarillo y el cian van como fondo o acento, nunca como color de texto sobre fondo claro.
+4. **Ajustes que funcionen de verdad:** hoy se guardan en la tabla `ajustes`, pero nadie los lee («Guardado, aún no aplicado»). Haz que el **conector** lea los que le corresponden: casos por ronda, reintentos automáticos, espera entre reintentos, frecuencia de revisión de Veridy y reintentar los de revisión manual. Agrega pruebas. Los ajustes de IA (revisor, artículos por caso, orden de modelos) son del núcleo, que maneja el otro agente: no lo toques. Déjalos anotados para él. El conector con este cambio se despliega junto con el del punto 7. Mientras no esté desplegado, la vista indica qué ajustes ya se aplican y cuáles no.
+5. **«En vivo»:** los datos de Log Analytics llegan con unos minutos de retraso. Que el indicador «En vivo» y su tooltip digan la verdad: hora del último dato recibido y un aviso de que puede tardar unos minutos. Si es viable sin tocar el núcleo, agrega una fuente más inmediata, por ejemplo el estado de los casos en el conector.
+6. **La maqueta ya no es referencia:** la guía vigente es `kerna/front/diseno-v2/direccion-diseno.md` más lo que está en producción. `kerna/front/diseno-v2/maqueta.html` quedó obsoleta: no se usa como fuente de diseño.
+7. **Veridy apagado:** el vigía lo apaga tras 60 minutos sin uso. Tienes autorización para encenderlo con `infra/veridy/veridy.sh encender` **solo si lo necesitas de verdad**, por ejemplo para probar el reintento con casos reales o verificar el conector. No lo enciendas por otras razones. Antes, comprueba su estado con `infra/veridy/veridy.sh estado`.
+8. **Mediciones:** el plan F1 duerme la aplicación tras unos 20 minutos sin uso. Antes de medir rendimiento haz una visita de calentamiento y descarta la primera medición. Si comparas, informa los dos valores, en frío y en caliente.
 
 ## Al terminar
 
