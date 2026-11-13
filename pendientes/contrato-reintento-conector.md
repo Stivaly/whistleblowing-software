@@ -37,6 +37,8 @@ Se reescribe al final de cada pasada (cada `intervalo_s`, 30 s por defecto; 10 s
 
 `actualizado_en` (hora del último dato; el conector está caído si tiene más de 5 min), `ultima_pasada` (`ok`, `con_errores`, `nucleo_caido`…), `casos` (casos en Veridy), `archivados` (casos del estado que ya no existen en Veridy: se marcan, no se borran, y no entran en ningún otro conteo; si reaparecen se reactivan), `nuevo`, `pendiente` (esperando al núcleo), `error`, `completado` (con sugerencia publicada, incluidos los de revisión manual), `en_revision_manual` (completados cuya última sugerencia es revisión manual; los más antiguos se rellenan de a 20 por pasada, `resultado_desconocido` cuenta los que faltan), `nucleo_caido`, `enviados`/`sugerencias`/`errores` (de la última pasada), `en_reintento` (hay corrida), `intervalo_s`.
 
+`pendientes_por_motivo` (JSON en texto, p. ej. `{"cadena_agotada": 1, "error": 1, "validacion_fallida": 2}`): casos pendientes por motivo, con la clave del núcleo (`cadena_agotada`, `tiempo_agotado`, `validacion_fallida`, `sin_normativa_aplicable`, `sin_motivo`) y `error` para los que fallaron al procesar. La suma es `en_revision_manual + error`. Campo opcional: el front lo usa solo si es JSON válido y suma ese total; si falta, desglosa por situación (revisión manual / error).
+
 ## Ajustes que el conector ya aplica
 
 Lee la fila `ajustes`/`kerna`/`actual` en cada pasada (`ajustes_de_tabla` en la fila `conector` indica si la leyó) y aplica de inmediato, sin reiniciar; la fila `conector` también trae los valores en uso (`envios_max`, `reintentos_max`, `espera_h`, `intervalo_s`, `ajustes_aplicados`):
@@ -58,3 +60,4 @@ Valores fuera de rango se ignoran (rige el del entorno). **No son del conector**
 ## Verificación del botón (2026-11-13, conector c6a17f85b)
 - Pedido real: el bloque pasó a «Reintentando… espera» (botón gris deshabilitado, ícono girando, tooltip con inicio y «aún sin estimación» cuando `eta_s` es -1) y terminó en «6 reintentados · 2 con sugerencia». Detalle en `kerna/evaluacion/registro-pruebas.md`.
 - Pendiente del front: las cifras grandes del Resumen salen de la telemetría acumulada, no del estado del conector.
+- Conector `0e75d50c8` (publica `pendientes_por_motivo`): en producción `{"cadena_agotada": 1, "error": 1, "validacion_fallida": 2}`; el Resumen lo muestra con sus íconos (capturas `prod19*`).
