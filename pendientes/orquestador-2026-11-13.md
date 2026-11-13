@@ -38,6 +38,7 @@ Si falta uno, crear un script de función fija en `kerna/operaciones/`, commitea
 | Crear la cuenta `kerna-e2e` de Veridy (destinatario sin permisos extra; clave en Key Vault `veridy-kerna-e2e-password`, nunca impresa; verifica el inicio de sesión; idempotente) | `kerna/operaciones/crear_cuenta_e2e.sh` |
 | Ejecutar un script de Python dentro del contenedor de Veridy (base de los dos anteriores; se carga con `source`) | `kerna/operaciones/_veridy_remoto.sh` (`remoto_py archivo.py`) |
 | Historial del ping al front (Logic App cada 15 min) | `kerna/operaciones/ping_front.sh [N]` |
+| TTFB del front, frío y caliente | `kerna/operaciones/ttfb_front.sh` |
 | Despertar o reiniciar el front antes de medir | `kerna/operaciones/despertar_front.sh [--reiniciar]` |
 | Navegador | `kerna/operaciones/playwright.sh pdf \| modal [--confirmar] \| script <archivo.py>` |
 | Capturas y mediciones de vistas | `kerna/front/herramientas/medir_vistas.sh` |

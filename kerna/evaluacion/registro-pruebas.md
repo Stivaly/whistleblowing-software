@@ -92,3 +92,9 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 - `kerna/operaciones/crear_cuenta_e2e.sh`: usuario `kerna-e2e`, rol destinatario (`receiver`), sin permisos extra (no borra, no comparte, no redacta, no edita ajustes), sin avisos por correo, en el mismo canal que `kerna-conector`; clave de 40 caracteres en Key Vault `veridy-kerna-e2e-password`. Inicio de sesión verificado con el cliente del conector (correcto; la lista le muestra 116 casos).
 - Motivo del rol: las e2e solo leen casos y notas; el rol de administración no hace falta y daría permisos de más.
 
+
+## 2026-11-13 · Ping al front cada 15 min (A7)
+- Fecha: 2026-11-13 16:30-17:15 UTC · Commit: ec46451f5 (+ `ttfb_front.sh`). Recurso: Logic App de consumo `logic-kerna-dev-ping-front` (chilecentral), recurrencia de 15 min + GET a `/salud` y `/` en paralelo; Terraform `infra/terraform/ping_front.tf`, plan «4 a crear, 0 a destruir», aplicado con `infra/aplicar.sh kerna -y`.
+- Elección: Logic App de consumo por no tener código, almacenamiento ni imagen (Function con temporizador exige cuenta de almacenamiento y despliegue de código; Container Apps Job exige entorno e imagen). Costo estimado ~0,2 USD/mes (96 corridas/día x 2 acciones + disparador, ~0,000025 USD por acción); la usuaria no sube a B1.
+- Ejecuciones (`ping_front.sh`): 16:34, 16:49 y 17:04 UTC, las tres `Succeeded` (~0,2 s cada una).
+- TTFB (`ttfb_front.sh`, 17:1x UTC, sin visita humana en más de 30 min): `/salud` frío 53 ms, caliente 43-50 ms; `/` frío 46 ms, caliente 49-78 ms; todo HTTP 200. Antes, tras 20 min de inactividad la primera visita tardaba varios segundos.
