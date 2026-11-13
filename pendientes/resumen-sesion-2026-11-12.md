@@ -148,3 +148,9 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
 
 ## 2026-11-13 03:40 · pendientes reales en el Resumen
 Último desplegado bueno antes de este cambio: 88b7c98b7 (volver con `kerna/front/desplegar.sh --ref 88b7c98b7`).
+
+### Orquestador 2026-11-13 (segunda tanda, 03:00-03:50)
+- Conector `c6a17f85b` desplegado (plan: solo reemplazo del ACI de Veridy). Reconcilia con Veridy: 62 casos que ya no existen quedan archivados (marcados, no borrados); `completado` ya no supera a `casos`.
+- Botón de reintento verificado con un pedido real: gris, deshabilitado y girando mientras corre; al terminar, «6 reintentados · 2 con sugerencia». Capturas en `kerna/front/diseno-v2/capturas/prod17-reintento-{curso,fin}-{m,d}.png`.
+- Front `4780c54cd` desplegado. Lo pendiente del Resumen sale del estado real del conector: 4 casos esperan reintento (antes mostraba 206, sacado de la telemetría acumulada). Si el estado tiene más de 5 minutos, vuelve a la telemetría con el rótulo «Estimado». Capturas `prod18*` (auditada `prod18resumen-d.png`).
+- Falta (menor): que el conector entregue el motivo de cada caso pendiente, para recuperar el desglose por motivo con datos reales. Supuesto a confirmar: el estado del conector cuenta como reciente si tiene menos de 5 minutos.
