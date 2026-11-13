@@ -92,3 +92,6 @@
 
 ### Resumen y Ajustes v13 (2026-11-13, agente de Resumen)
 - Último commit desplegado bueno antes de este despliegue: ff6732151 (front). Si algo falla: `kerna/front/desplegar.sh --ref ff6732151`.
+- Desplegado: commits 12b665cd4 y siguientes (Resumen con bandas tintadas y arcos orbitales WebP en las esquinas, ancho máximo 1.440 centrado en todas las vistas, proveedores con nombre y estado, «Sin ley registrada 323» convertido en nota «323 artículos sugeridos sin ley identificada en el registro»; Ajustes: equipos de Compartir en HTML a 11,5 px, paneles Compartir y Plazos sin huecos, última fila de Procesamiento a ancho completo). 122 pruebas del front, `probar_iconos.sh` (0 fallos), `probar_movimiento.sh` (CPU 0,01 %) y `probar_front.sh` pasan. Capturas `kerna/front/diseno-v2/capturas/prod13-*.png` (390, 1366, 1920) y `prod13.json`.
+- Supuesto, a confirmar: el «(sin nombre) 323» son artículos sugeridos cuyo registro de telemetría no trae la ley; se muestra como nota, no como chip.
+- Contraste AA: tintes de banda verificados con `test_front_resumen_v13.py` (texto de estado verde oscurecido a #17622E dentro de las bandas).

@@ -1155,3 +1155,4 @@ html,body{max-width:100%}
  .as-s[data-g=plazos] .ap-st{width:96px;height:96px}
  .as-s[data-g=plazos] .as-r{padding-block:10px}
 }
+#zona .z-ly{background-image:var(--arc),linear-gradient(100deg,var(--z1),var(--z2));background-size:180px 180px,100% 100%;background-position:right -90px top -90px,0 0}
