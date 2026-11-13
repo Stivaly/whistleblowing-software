@@ -99,7 +99,7 @@ Si una tarea no tiene script, no la improvises con comandos sueltos: escribe un 
 - **Verificación:** pulsa «Reintentar» desde el front, confirma en el log del conector y en la telemetría que los casos se reprocesan y que baja el número en revisión manual, y regístralo en `kerna/evaluacion/registro-pruebas.md`.
 
 ### 8. Dataset sintético (pista aparte)
-Si las 271 no pueden reprocesarse, o hace falta más volumen, lanza un agente que genere denuncias sintéticas. **Ese agente no puede saber nada del contexto**: ni que son para un modelo, ni cómo se evaluarán, ni qué leyes, ni el país.
+Lanza un agente que genere más denuncias sintéticas. Otro agente ya está reuniendo denuncias públicas; esta pista solo **aporta más relatos**. **Ese agente no puede saber nada del contexto**: ni que son para un modelo, ni cómo se evaluarán, ni qué leyes, ni el país.
 
 Diseña tú un encargo muy cuidadoso que solo le pida crear un conjunto de relatos de denuncias laborales y corporativas realistas, en español neutro con modismos locales variados. Que busque situaciones reales en foros públicos (por ejemplo, Reddit) y las adapte a relatos de denuncia específicos, en primera persona y anonimizados. Debe tener variedad de:
 - temas (trato en el trabajo, acoso, discriminación, uso indebido de información personal, fraude, sobornos, conflictos de interés, seguridad, otros);
@@ -109,7 +109,7 @@ Diseña tú un encargo muy cuidadoso que solo le pida crear un conjunto de relat
 
 Pide solo el relato: un JSON con una lista de objetos `{"relato": "..."}` y nada más, en una cantidad concreta (por ejemplo, 150). El agente se inspira en situaciones de foros públicos **sin copiar textos literales**, y todos los datos personales son inventados.
 
-Tú, el orquestador, guardas el resultado en `kerna/evaluacion/datos/` (fuera de git, como el dataset actual) y registras la generación en `kerna/evaluacion/registro-pruebas.md`. No lo cargues en Veridy sin dejarlo anotado. Si el conector está desplegado, puedes enviar un lote pequeño de prueba y registrar el resultado.
+Tú, el orquestador, guardas el resultado en `kerna/evaluacion/datos/` (fuera de git, como el dataset actual) y registras la generación en `kerna/evaluacion/registro-pruebas.md`. **Solo generar:** no las cargues en Veridy, no las pruebes ni las evalúes. Eso lo decide la usuaria con el otro agente. Guarda un archivo nuevo y no modifiques los datasets existentes.
 
 ## Auditoría (la haces tú, en cada entrega)
 
