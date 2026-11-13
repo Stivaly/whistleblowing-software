@@ -10,6 +10,9 @@ recorren IPs públicas piden páginas sueltas o rutas inexistentes, pero no ejec
 aplicación, así que no la mantienen encendida. Tampoco cuentan las peticiones del Conector Veridy
 (llevan el parámetro kerna_conector=1): sondea cada 30 s y impediría el apagado.
 
+Desde VERIDY_PG_SIEMPRE_DESDE (por defecto 2026-11-27) PostgreSQL no se apaga nunca: solo se detiene el
+grupo de contenedores (Veridy se levanta en local y la base queda arriba).
+
 Si existe /control/mantener_hasta con una fecha ISO futura (veridy.sh mantener), no apaga.
 Solo usa la biblioteca estándar de Python.
 """
@@ -26,6 +29,7 @@ GRUPO_ID = os.environ["VERIDY_GRUPO_ID"]  # /subscriptions/.../containerGroups/<
 PG_ID = os.environ["VERIDY_PG_ID"]        # /subscriptions/.../flexibleServers/<nombre>
 LOG = os.environ.get("VERIDY_ACCESS_LOG", "/var/globaleaks/log/access.log")
 MANTENER = os.environ.get("VERIDY_MANTENER", "/control/mantener_hasta")
+PG_SIEMPRE_DESDE = os.environ.get("VERIDY_PG_SIEMPRE_DESDE", "2026-11-27")
 INACTIVIDAD = int(os.environ.get("VERIDY_INACTIVIDAD_MIN", "60")) * 60
 USO = re.compile(r'"[A-Z]+ /api/(?!health[ ?/])[^"]*" [23]\d\d ')
 CONECTOR = "kerna_conector=1"
@@ -50,10 +54,23 @@ def token() -> str:
 
 def detener(recurso_id: str, api: str):
     req = urllib.request.Request(f"https://management.azure.com{recurso_id}/stop?api-version={api}",
-                                 data=b"", method="POST",
-                                 headers={"Authorization": f"Bearer {token()}"})
+                                 data=b"{}", method="POST",
+                                 headers={"Authorization": f"Bearer {token()}",
+                                          "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=30) as r:
         decir(f"stop {recurso_id.rsplit('/', 1)[-1]}: HTTP {r.status}")
+
+
+def apagar_pg(ahora: datetime | None = None) -> bool:
+    """False desde PG_SIEMPRE_DESDE: a partir de esa fecha la base queda siempre arriba."""
+    ahora = ahora or datetime.now(timezone.utc)
+    try:
+        desde = datetime.fromisoformat(PG_SIEMPRE_DESDE)
+    except ValueError:
+        return True
+    if desde.tzinfo is None:
+        desde = desde.replace(tzinfo=timezone.utc)
+    return ahora < desde
 
 
 def mantener_activo() -> bool:
@@ -90,11 +107,14 @@ def main():
         if mantener_activo():
             continue
         if time.time() - ultimo_uso >= INACTIVIDAD:
-            decir(f"{INACTIVIDAD // 60} min sin uso: apagando PostgreSQL y el grupo")
-            try:
-                detener(PG_ID, "2022-12-01")
-            except Exception as e:
-                decir(f"ERROR al apagar PostgreSQL: {e}")
+            if apagar_pg():
+                decir(f"{INACTIVIDAD // 60} min sin uso: apagando PostgreSQL y el grupo")
+                try:
+                    detener(PG_ID, "2022-12-01")
+                except Exception as e:
+                    decir(f"ERROR al apagar PostgreSQL: {e}")
+            else:
+                decir(f"{INACTIVIDAD // 60} min sin uso: apagando el grupo (PostgreSQL queda arriba)")
             try:
                 detener(GRUPO_ID, "2023-05-01")  # detiene también a este contenedor
             except Exception as e:

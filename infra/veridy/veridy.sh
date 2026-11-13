@@ -3,7 +3,7 @@
 #
 # Uso (desde cualquier carpeta del repo):
 #   infra/veridy/veridy.sh encender          enciende PostgreSQL y luego Veridy; muestra el link (hasta 3 min)
-#   infra/veridy/veridy.sh apagar            apaga Veridy y PostgreSQL
+#   infra/veridy/veridy.sh apagar            apaga Veridy y PostgreSQL (desde 2026-11-27 solo Veridy)
 #   infra/veridy/veridy.sh estado            estado de ambos y el link
 #   infra/veridy/veridy.sh mantener 3d       no apagar por inactividad durante 3 días (también 12h, 90m)
 #   infra/veridy/veridy.sh mantener no       vuelve al apagado por inactividad
@@ -11,6 +11,7 @@
 #
 # El apagado es automático: el vigía del grupo apaga todo tras 60 min sin uso
 # (variable inactividad_min de Terraform). Encender es siempre manual.
+# Desde 2026-11-27 PostgreSQL queda siempre arriba: solo se apagan los contenedores de Veridy.
 #
 # Requisitos: Azure CLI con sesión iniciada (si responde AADSTS50076, repetir az login)
 # y Terraform aplicado en infra/veridy/terraform (de ahí se leen los nombres).
@@ -52,8 +53,12 @@ encender() {
 apagar() {
   echo "==> Apagando Veridy"
   az container stop -g "$RG" -n "$ACI" --only-show-errors -o none || true
-  echo "==> Apagando PostgreSQL"
-  az postgres flexible-server stop -g "$RG" -n "$PG" --only-show-errors -o none || true
+  if [[ "$(date -u +%F)" < "2026-11-27" ]]; then
+    echo "==> Apagando PostgreSQL"
+    az postgres flexible-server stop -g "$RG" -n "$PG" --only-show-errors -o none || true
+  else
+    echo "==> PostgreSQL queda arriba (desde 2026-11-27 no se apaga)"
+  fi
   estado
 }
 
