@@ -34,6 +34,7 @@ Si falta uno, crear un script de función fija en `kerna/operaciones/`, commitea
 | Tablas de Azure | `kerna/operaciones/tablas.sh ver <tabla> ["filtro"] \| solicitud \| ajustes` · escribir: `CONFIRMAR=si kerna/operaciones/tablas.sh escribir <tabla> <PK> <RK> campo=valor…` |
 | Probar el front en producción | `kerna/operaciones/probar_front.sh [--clave-anterior] [--reintento]` (código 1 si algo falla) |
 | Cargar denuncias en Veridy | `kerna/operaciones/cargar_denuncias.sh [N] [--dry-run \| --verificar \| --casos …]` (idempotente; código 3 = límite por hora, repetir después) |
+| Historial del ping al front (Logic App cada 15 min) | `kerna/operaciones/ping_front.sh [N]` |
 | Despertar o reiniciar el front antes de medir | `kerna/operaciones/despertar_front.sh [--reiniciar]` |
 | Navegador | `kerna/operaciones/playwright.sh pdf \| modal [--confirmar] \| script <archivo.py>` |
 | Capturas y mediciones de vistas | `kerna/front/herramientas/medir_vistas.sh` |
