@@ -158,3 +158,5 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
 
 ### Front tanda 2026-11-13 (A1-A5)
 - Último front bueno antes de esta tanda: `e1e38e947` (volver con `kerna/front/desplegar.sh --ref e1e38e947`).
+- A1: Firefox no resuelve de forma fiable los sprites externos (`<use href="/estaticos/iconos.svg#id">`); los símbolos ahora van dentro de cada página (`<svg id="sprites">` en base.html) y todo `<use>` apunta a `#id`. `probar_iconos.sh` corre en Chromium, Firefox y WebKit y falla si queda un sprite externo. A2: barra de Ajustes con espacio reservado y botones parejos. A3: «Acierto por ley» comparte fila (Resumen con «El camino…», Informe con sus 3 datos). A4: textos más cortos. A5: el Resumen muestra siempre el último estado del conector con su hora.
+- Front desplegado: `bb2643f7f`. Capturas `prod20-*` (Chromium) y `prod20ff-*` (Firefox) en `kerna/front/diseno-v2/capturas/`.
