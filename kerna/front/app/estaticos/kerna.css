@@ -1057,8 +1057,8 @@ html,body{max-width:100%}
 .rei-bar{display:block;height:3px;background:#D5DBEC;overflow:hidden;border-radius:2px}
 .rei-bar b{display:block;height:100%;width:100%;background:var(--brand-2);transform-origin:left;transition:transform .8s var(--ease)}
 .rei-det .rei-bar b{background:var(--warn-bar)}
-.rei-r{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)}
-.rei-r b{display:block;font-weight:700;color:var(--ok)}.rei-r small{display:block;font-size:11.5px;color:var(--muted)}
+.rei-ok{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)}
+.rei-ok b{display:block;font-weight:700;color:var(--ok)}.rei-ok small{display:block;font-size:11.5px;color:var(--muted)}
 @media(prefers-reduced-motion:reduce){.rei-sp{animation:none}.rei-bar b{transition:none}}
 @media(max-width:599px){.cola-a .rei-w,.cola-a .rei-w .btn{width:100%}.cola-a .rei-w .btn{justify-content:center}}
 
@@ -1110,4 +1110,4 @@ html,body{max-width:100%}
 .ao.hk{transition:stroke .4s,stroke-width .4s,stroke-dasharray .4s,opacity .4s}
 .arc.hk,.arc2.hk{transition:stroke-dasharray .7s var(--ease),opacity .3s ease}
 .ct-l{display:flex;align-items:center;gap:0 4px;flex-wrap:nowrap}.ct-l .ct-n{min-width:0;line-height:1.25}.ct-l>k-tip,.ct-l>.rst{flex:none;margin-left:0}
-.team-n{font-size:21px}
+.team-n{font-size:16px;font-weight:600}

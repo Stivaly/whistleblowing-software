@@ -3,7 +3,7 @@
 {% block datos %}<script type="application/json" id="ajustes-datos">{{ datos|tojson }}</script>{% endblock %}
 {% block vista %}
 <div class="aj">
-<header class="bar"><div class="bar-t"><h1 class="h1">Ajustes</h1><span class="chip ok" data-estado role="status" aria-live="polite">{{ ic('e-lista', px=18, mini=True) }}<span>{% if guardado_en %}Todo guardado{% else %}Valores recomendados{% endif %}</span></span>{{ tip('aj_estado') }}{% if guardado_en %}<span class="bar-p" data-guardado>{{ fecha_hora(guardado_en) }}</span>{% else %}<span class="bar-p" data-guardado></span>{% endif %}</div>
+<header class="bar"><div class="bar-t"><h1 class="h1">Ajustes</h1><span class="chip ok" data-estado role="status" aria-live="polite">{{ ic('e-lista', px=18, mini=True) }}<span>{% if guardado_en %}Todo guardado{% else %}Sin cambios{% endif %}</span></span>{{ tip('aj_estado') }}{% if guardado_en %}<span class="bar-p" data-guardado>{{ fecha_hora(guardado_en) }}</span>{% else %}<span class="bar-p" data-guardado></span>{% endif %}</div>
 <div class="bar-a"><button type="button" class="btn btn-sec" data-restaurar>{{ ic('rotate-ccw') }}<span>Valores recomendados</span></button></div></header>
 
 {% if aviso == 'ok' %}<p class="cola-av s-ok" role="status">{{ ic('e-valorada', px=40) }}<span>Ajustes guardados</span></p>
