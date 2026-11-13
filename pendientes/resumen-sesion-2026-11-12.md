@@ -124,3 +124,24 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
 - Resumen: «Acierto por ley» reparte el ancho (leyes flex 3, nota flex 1).
 - `rasterizar_decoracion.py` ya no genera `bg-orbitas.webp` (retocado a mano).
 - Portada 390/1366/1920: sin scroll horizontal, sin huecos > 16 px entre bloques (`kerna/operaciones/medir_portada.py`, vía `playwright.sh script`); menos aire bajo el héroe en escritorio. probar_iconos 0 fallos/1203; probar_movimiento y probar_front bien; pytest 138.
+
+## Orquestador 2026-11-13
+
+**Desplegado en producción:** front `88b7c98b7` (antes: 82e9839c7 → ff6732151 → eddb6d7aa → 9eea6cad1 → 301ef5df9; nunca hubo que volver atrás). Conector con tag `987d2fe98`, aplicado con `infra/aplicar.sh veridy -y` (plan: 2 a crear, 1 a destruir = reemplazo del grupo de contenedores ACI y un rol nuevo; no tocó PostgreSQL, almacenamiento ni Key Vault). 138 pruebas del front y 66 del conector pasan.
+
+**Qué quedó**
+- **Conector:** atiende «Reintentar» de verdad: toma la lista real de casos sin sugerencia o en revisión manual, publica el avance y el resultado (contrato en `pendientes/contrato-reintento-conector.md`). Verificado: 99 reintentados, 74 con sugerencia; revisión manual de 93 a 18; eventos de reproceso de 6 a 81 (en `kerna/evaluacion/registro-pruebas.md`). Lo real eran 99 casos, no 271: la cifra antigua contaba 62 casos que ya no existen en Veridy. Lee de `ajustes` casos por ronda, reintentos automáticos, espera, frecuencia de revisión y reintentar revisión manual, y escribe una fila de estado inmediato para «En vivo».
+- **Ajustes:** paneles azules con movimiento (órbitas, satélites con transición, arco animado), estado de guardado sin recarga, «Se aplica ya» / «Aún no se aplica», vista previa del efecto, teclado y foco, «Compartir» con nombres completos.
+- **Resumen:** bandas tintadas con corte de esquina y arcos orbitales, contenido de 1.440 px como máximo, colores de la identidad, proveedores con nombre y estado, botón de reintento siempre visible (gris y girando mientras está en curso, con el resultado al terminar).
+- **Negocio:** las mismas bandas, cascada al lado de la frase, anillo de clientes con y sin uso, proyección en 3 columnas, indicadores renombrados.
+- **Informe:** colores vivos, banda de indicadores en 3×2 hasta 1.800 px, baldosas de la identidad en lugar de las tarjetas con borde de color. El PDF no cambia salvo los nombres.
+- **Todo el front:** «?» de una sola línea, entrada escalonada por banda, prueba de íconos con navegador real (`kerna/operaciones/probar_iconos.sh`, 0 fallos en 1.203 elementos) y prueba de movimiento (`probar_movimiento.sh`). TTFB en caliente de 12 a 18 ms, CPU en reposo ≤ 0,07 %.
+- **Dataset:** 150 relatos sintéticos en `kerna/evaluacion/datos/denuncias_sinteticas_20261113.json`. Solo se generaron.
+
+**Capturas que audité** (en `kerna/front/diseno-v2/capturas/`): prod12-ajustes-d1920, prod12-resumen-d1920, prod13-resumen-{d1920,m}, prod12/prod14-negocio-d1920, prod14-informe-d, prod14-ajustes-m, prod15-{informe,negocio}-d, prod16-negocio-d, prod16-portada-d1920. Devolví: etiquetas de 8 px y huecos en Ajustes; Resumen sin zonas, estirado y opaco; banda de indicadores del Informe apretada; adornos encima del texto; fila de Clientes apretada a 1366.
+
+**Supuestos, a confirmar:** «323 artículos sugeridos sin ley identificada» se muestra como nota; los anillos de Negocio (con o sin uso; utilidad frente a costos del último año); Plazos y Compartir marcados «Aún no se aplica»; los renombres de indicadores (lista en `pendientes/kerna-pendientes.md`).
+
+**Falta:** el estado «en curso» del botón solo se vio con una respuesta simulada; los ajustes de IA los tiene que aplicar el núcleo (anotado para el otro agente); el mapa de calor del Resumen necesita 7 días de datos; el conector todavía cuenta 62 casos que ya no existen en Veridy; `conector_tag` y `kerna_tablas_cuenta` están solo en el `terraform.tfvars` local, que git ignora. `bg-orbitas.webp`, regenerado sin querer, está en la papelera y la versión buena quedó restaurada.
+
+**Necesita a la usuaria:** valor de la UF, plan B1, cuenta `kerna-e2e`, decidir si se cargan o evalúan los 150 relatos y revisar los renombres.

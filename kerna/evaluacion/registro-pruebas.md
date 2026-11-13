@@ -63,3 +63,9 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 | 2026-11-12 00:48 | 978c760df+cambios | procesamiento de las nuevas en el conector y el núcleo | `veridy.sh logs conector`; `az containerapp logs show` del núcleo | El conector pasó de 16 a 21 casos; enviados 2 y 3 al núcleo (POST /v1/casos 202) y sugerencias devueltas (GET 200); sin errores en las últimas pasadas | Una advertencia por pasada: `compartir: Veridy rechazó la operación (http 403)` para un caso. Los registros no muestran si hubo modo respaldo por cuota del LLM. |
 | 2026-11-11 | 978c760df+cambios | anonimizador por reglas sobre 113 `texto_original` (sin modelos, host) | `evaluacion/medir_anonimizador.py --json evaluacion/registro/anonimizador_2026-11-11.json` | Recall por caso: correo 3/3, RUT 1/1, personas 24/27 (0,89), dirección 0/2; 0 de 36 edades; empresas, cargos, causas, ubicación y salud sin tipo (0). Sobre-enmascaramiento: 221 PERSONA en 86 casos sin personas declaradas; 13 TELEFONO son números de causa. Idempotente en 112 de 113 | Detalle en `informe-anonimizador.md`. |
 | 2026-11-11 | 978c760df+cambios | `pruebas/unitarias/test_crear_denuncias.py` (prueba nueva del relato completo y la del resumen) | `pytest -q pruebas/unitarias/test_crear_denuncias.py` | 7 OK | Suite completa: ver abajo. |
+
+## 2026-11-13 · Generación de denuncias sintéticas (solo generación)
+- Commit base: 39779693a. Archivo: `kerna/evaluacion/datos/denuncias_sinteticas_20261113.json` (fuera de git).
+- 150 relatos `{"relato": ...}`, español con modismos variados, temas mixtos, ~15 % ambiguos y ~10 % sin falta, datos personales ficticios. Largo: mín. 92, mediana 1.090, máx. 2.179 caracteres.
+- Generado por un agente Sonnet sin contexto del proyecto (inspiración en foros públicos, sin copia literal). Primera versión rechazada (mediana 193 caracteres, plantillas).
+- No cargado en Veridy ni evaluado: lo decide la usuaria.

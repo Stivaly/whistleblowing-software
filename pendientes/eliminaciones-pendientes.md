@@ -46,3 +46,5 @@ Revisa cada fila y, si apruebas, bórralo tú manualmente (`rm -r .papelera/...`
 | 2026-11-12 | kerna/front/app/plantillas/_simbolo.html | .papelera/2026-11-12/kerna/front/app/plantillas/_simbolo.html | Símbolo estático antiguo; el logo vivo se dibuja ahora con kerna.js |
 
 | 2026-11-12 | kerna/front/app/estaticos/echarts.min.js | .papelera/2026-11-12/kerna/front/app/estaticos/echarts.min.js | Reemplazado por echarts.custom.min.js (build propio, 617 KB en vez de 1,0 MB; solo los gráficos que usa el front) |
+
+- 2026-11-13 · kerna/front/app/estaticos/img/bg-orbitas.webp (versión regenerada por rasterizar_decoracion.sh, sin commitear) → .papelera/2026-11-13/kerna/front/app/estaticos/img/bg-orbitas.regenerado.webp · motivo: podía reintroducir el satélite quitado a mano de la portada; se restauró la versión commiteada.
