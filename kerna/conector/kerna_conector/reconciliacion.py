@@ -42,6 +42,11 @@ class ResultadoPasada:
     nucleo_caido: bool = False
     omitida: bool = False
     resultado: str = "ok"
+    manual_total: int = 0       # corrida manual: casos objetivo (más los que esperan turno)
+    manual_fin: int = 0         # ya resueltos
+    manual_con: int = 0         # resueltos con sugerencia
+    manual_en_vuelo: int = 0    # enviados al núcleo y sin respuesta
+    manual_completa: bool = False  # no queda nada por reintentar
 
     @property
     def exitosa(self) -> bool:
@@ -51,9 +56,15 @@ class ResultadoPasada:
 class _Pasada:
     def __init__(self, veridy, nucleo, estado: est.Estado, id_empresa: str, ahora: Callable[[], float],
                  compartir_con: str = "", reprocesar: bool = False, reintentos_max: int = 3,
-                 reintento_horas: float = 24.0, envios_max: int = 5, forzar: bool = False):
-        self.forzar = forzar  # reintento manual pedido desde el panel: sin esperas y sin tope de envíos por pasada
-        self.envios_max, self.envios = (0 if forzar else envios_max), 0  # tope de envíos al núcleo por pasada (casos nuevos y reintentos)
+                 reintento_horas: float = 24.0, envios_max: int = 5, corrida=None, en_vuelo_max: int = 12):
+        # `corrida`: reintento manual pedido desde el panel (objeto con `.id`): sin esperas ni tope de envíos por
+        # pasada, pero con a lo sumo `en_vuelo_max` casos reenviados al núcleo sin respuesta (para no saturarlo).
+        self.corrida, self.en_vuelo_max = corrida, en_vuelo_max
+        self._vuelo_base: Optional[int] = None
+        self._vuelo_extra = 0
+        self.esperando = 0  # casos por reintentar que esperan turno por el tope en vuelo
+        self.rellenos = 0   # lecturas de relleno de `resultado` hechas en esta pasada
+        self.envios_max, self.envios = (0 if corrida else envios_max), 0  # tope de envíos al núcleo por pasada (casos nuevos y reintentos)
         self.reprocesar = reprocesar
         self.reintentos_max, self.reintento_horas = reintentos_max, reintento_horas
         self.v, self.n, self.e, self.ahora = veridy, nucleo, estado, ahora
@@ -157,20 +168,44 @@ class _Pasada:
 
     # ---- etapas por caso ----------------------------------------------------------------------------------
     def _debido(self, corr: est.Correspondencia) -> bool:
-        return corr.proximo_intento <= self.ahora()
+        return self.corrida is not None or corr.proximo_intento <= self.ahora()
+
+    # ---- corrida manual: marcas por caso en `objeto_procesado` (tipo "manual", clave "<corrida>:<marca>") ---------
+    def _m(self, marca: str) -> str:
+        return "%s:%s" % (self.corrida.id, marca)
+
+    def _objetivo(self, id_caso: str, grupo: str) -> None:
+        if not self.e.objeto_procesado(id_caso, "manual", self._m("objetivo")):
+            self.e.marcar_procesado(id_caso, "manual", self._m("objetivo"), grupo)
+
+    def _cerrar_objetivo(self, id_caso: str, estado_res: str) -> None:
+        """Cierra el caso en la corrida: con sugerencia ("con") si el resultado es `completada`, si no "sin"."""
+        if self.corrida is None or not self.e.objeto_procesado(id_caso, "manual", self._m("objetivo")) \
+                or self.e.objeto_procesado(id_caso, "manual", self._m("fin")):
+            return
+        self.e.marcar_procesado(id_caso, "manual", self._m("fin"), "con" if estado_res == "completada" else "sin")
+
+    def _fijar_resultado(self, id_caso: str, estado_res: str, motivo: Optional[str] = None) -> None:
+        self.e.fijar_procesado(id_caso, "resultado", "actual", estado_res if not motivo else "%s|%s" % (estado_res, motivo))
 
     def procesar(self, meta: dict) -> None:
         id_caso = str(meta["id"])
         corr = self.e.obtener(id_caso) or self.e.registrar(id_caso, str(uuid.uuid4()))
         if not self._debido(corr):
             return
+        if self.corrida is not None and corr.estado in (est.NUEVO, est.ERROR, est.PENDIENTE):
+            self._objetivo(id_caso, "A")
         if corr.estado in (est.NUEVO, est.ERROR):
             self._nuevo(meta, corr)
         elif corr.estado == est.PENDIENTE:
             self._pendiente(corr)
         elif corr.estado == est.COMPLETADO:
-            if self.reintentos_max > 0:
-                self._reproceso(corr)
+            if self.corrida is not None:
+                self._manual(corr)
+            else:
+                if self.reintentos_max > 0:
+                    self._reproceso(corr)
+                self._rellenar_resultado(corr)
             self._decisiones(corr)
 
     def _leer(self, id_caso: str, meta: Optional[dict] = None) -> Optional[dict]:
@@ -192,6 +227,7 @@ class _Pasada:
         caso = self._leer(id_caso, meta)
         if caso is None:
             self.e.actualizar(id_caso, estado=est.ERROR)
+            self._cerrar_objetivo(id_caso, "error")
             return
         # Sugerencia ya publicada antes de que el estado supiera del caso (estado perdido): se adopta.
         previa = lector_casos.notas_de_cuenta(caso, self.id_cuenta, "kerna_sugerencia")
@@ -199,16 +235,21 @@ class _Pasada:
             self.e.marcar_procesado(id_caso, "sugerencia", "unica", previa[0].id_nota)
             self.e.actualizar(id_caso, estado=est.COMPLETADO, id_nota_sugerencia=previa[0].id_nota,
                               id_solicitud=previa[0].nota.id_solicitud, intentos=0, proximo_intento=0, ultimo_error=None)
+            ult = max(previa, key=lambda n: n.nota.generado_en)
+            self._fijar_resultado(id_caso, str(ult.nota.estado), ult.nota.motivo_revision)
+            self._cerrar_objetivo(id_caso, str(ult.nota.estado))
             return
         try:
             relato = lector_casos.extraer_relato(caso)
         except Exception as exc:
             self._fallo(id_caso, "ilegible_" + type(exc).__name__)
             self.e.actualizar(id_caso, estado=est.ERROR)
+            self._cerrar_objetivo(id_caso, "error")
             return
         if not relato.strip():
             self._fallo(id_caso, "sin_texto")
             self.e.actualizar(id_caso, estado=est.ERROR)
+            self._cerrar_objetivo(id_caso, "error")
             return
         if not self._cupo():
             del relato
@@ -224,6 +265,7 @@ class _Pasada:
         except ErrorNucleo as exc:
             self._fallo(id_caso, "nucleo_%s" % exc.codigo)
             self.e.actualizar(id_caso, estado=est.ERROR)
+            self._cerrar_objetivo(id_caso, "error")
             return
         finally:
             del texto
@@ -262,6 +304,8 @@ class _Pasada:
             lambda: publicador.contenido(publicador.armar_sugerencia(res)))
         if not ya:
             self.r.sugerencias += 1
+        self._fijar_resultado(id_caso, str(res.get("estado")), res.get("motivo_revision"))
+        self._cerrar_objetivo(id_caso, str(res.get("estado")))
         self.e.actualizar(id_caso, estado=est.COMPLETADO, id_nota_sugerencia=id_nota,
                           id_solicitud=res.get("id_solicitud") or corr.id_solicitud,
                           intentos=0, proximo_intento=0, ultimo_error=None)
@@ -294,7 +338,7 @@ class _Pasada:
             if k >= self.reintentos_max:
                 e.marcar_procesado(id_caso, "reproceso", "final")
                 return
-            if k > 0 and not self.forzar and self.ahora() - float(e.id_nota_procesado(id_caso, "reproceso", "ts%d" % k) or 0) < espera:
+            if k > 0 and self.ahora() - float(e.id_nota_procesado(id_caso, "reproceso", "ts%d" % k) or 0) < espera:
                 return
         caso = self._leer(id_caso)
         if caso is None:
@@ -302,11 +346,13 @@ class _Pasada:
         if not en_vuelo:
             propias = lector_casos.notas_de_cuenta(caso, self.id_cuenta, "kerna_sugerencia")
             ultima = max(propias, key=lambda n: n.nota.generado_en, default=None)
+            if ultima is not None:
+                self._fijar_resultado(id_caso, str(ultima.nota.estado), ultima.nota.motivo_revision)
             if ultima is None or ultima.nota.estado != "revision_manual" or \
                     ultima.nota.motivo_revision not in MOTIVOS_REINTENTABLES:
                 e.marcar_procesado(id_caso, "reproceso", "final")
                 return
-            if k == 0 and not self.reprocesar and not self.forzar and self.ahora() - self._epoch(ultima.nota.generado_en) < espera:
+            if k == 0 and not self.reprocesar and self.ahora() - self._epoch(ultima.nota.generado_en) < espera:
                 return
             try:
                 relato = lector_casos.extraer_relato(caso)
@@ -358,11 +404,125 @@ class _Pasada:
             return
         id_nota = self.v.publicar_nota(id_caso, publicador.contenido(publicador.armar_sugerencia(res))).get("id")
         e.marcar_procesado(id_caso, "reproceso", "final", str(id_nota or ""))
+        self._fijar_resultado(id_caso, str(res.get("estado")), res.get("motivo_revision"))
         self.r.reprocesados += 1
         log.info("reintento %d: nueva sugerencia estado=%s modo=%s", k, res.get("estado"), res.get("modo"))
         telemetria.contador("conector_caso_reprocesado", estado=str(res.get("estado")), modo=str(res.get("modo")))
         telemetria.evento("conector_reproceso", ref_opaca=corr.ref_opaca, intento=k, estado=str(res.get("estado")),
                           modo=str(res.get("modo")))
+
+    # ---- resultado conocido de cada caso (para el estado en vivo y para dirigir los reintentos) -----------------
+    def _rellenar_resultado(self, corr: est.Correspondencia) -> None:
+        """Casos completados antes de que el conector guardara el resultado: se lee la última nota de a poco."""
+        if self.rellenos >= 20 or self.e.objeto_procesado(corr.id_caso, "resultado", "actual"):
+            return
+        self.rellenos += 1
+        caso = self._leer(corr.id_caso)
+        if caso is None:
+            return
+        propias = lector_casos.notas_de_cuenta(caso, self.id_cuenta, "kerna_sugerencia")
+        ultima = max(propias, key=lambda n: n.nota.generado_en, default=None)
+        self._fijar_resultado(corr.id_caso, str(ultima.nota.estado) if ultima else "sin_nota",
+                              ultima.nota.motivo_revision if ultima else None)
+
+    def _manual(self, corr: est.Correspondencia) -> None:
+        """Reintento manual de un caso con sugerencia en revisión manual (cualquier motivo): reenvía al núcleo con una
+        referencia derivada de la corrida, consulta su resultado y, si hay sugerencia, publica una nota nueva."""
+        id_caso, e = corr.id_caso, self.e
+        if e.objeto_procesado(id_caso, "manual", self._m("fin")) or e.objeto_procesado(id_caso, "manual", self._m("omitido")):
+            return
+        ref = self._ref_manual(corr.ref_opaca)
+        if e.objeto_procesado(id_caso, "manual", self._m("enviado")):
+            try:
+                res = self._llamar(self.n.consultar_sugerencia, ref)
+            except NucleoNoDisponible:
+                self.r.nucleo_caido = True
+                return
+            except ErrorNucleo as exc:
+                self._fallo(id_caso, "nucleo_%s" % exc.codigo)
+                return
+            if res is None or res.get("estado") not in ("completada", "revision_manual"):
+                return
+            if res.get("estado") == "completada":
+                caso = self._leer(id_caso)
+                if caso is None:
+                    return
+                self.v.publicar_nota(id_caso, publicador.contenido(publicador.armar_sugerencia(res)))
+                self.r.reprocesados += 1
+                telemetria.contador("conector_caso_reprocesado", estado="completada", modo=str(res.get("modo")))
+                telemetria.evento("conector_reproceso", ref_opaca=corr.ref_opaca, intento=0, estado="completada",
+                                  modo=str(res.get("modo")))
+            self._fijar_resultado(id_caso, str(res.get("estado")), res.get("motivo_revision"))
+            e.marcar_procesado(id_caso, "manual", self._m("recibido"))
+            self._cerrar_objetivo(id_caso, str(res.get("estado")))
+            return
+        conocido = e.id_nota_procesado(id_caso, "resultado", "actual")
+        if conocido and not conocido.startswith("revision_manual"):
+            e.marcar_procesado(id_caso, "manual", self._m("omitido"))
+            return
+        if conocido and self._sin_turno():
+            self.esperando += 1
+            return
+        caso = self._leer(id_caso)
+        if caso is None:
+            self.esperando += 1
+            return
+        propias = lector_casos.notas_de_cuenta(caso, self.id_cuenta, "kerna_sugerencia")
+        ultima = max(propias, key=lambda n: n.nota.generado_en, default=None)
+        if ultima is not None:
+            self._fijar_resultado(id_caso, str(ultima.nota.estado), ultima.nota.motivo_revision)
+            if ultima.nota.estado != "revision_manual":
+                e.marcar_procesado(id_caso, "manual", self._m("omitido"))
+                return
+        if self._sin_turno():
+            self.esperando += 1
+            return
+        try:
+            relato = lector_casos.extraer_relato(caso)
+        except Exception as exc:
+            self._fallo(id_caso, "ilegible_" + type(exc).__name__)
+            self.esperando += 1
+            return
+        if not relato.strip():
+            self._fallo(id_caso, "sin_texto")
+            self.esperando += 1
+            return
+        texto = anonimizar(relato).texto[:MAX_TEXTO]
+        del relato
+        try:
+            self._llamar(self.n.enviar_caso, ref, texto)
+        except NucleoNoDisponible:
+            self.r.nucleo_caido = True
+            self.esperando += 1
+            return
+        except ErrorNucleo as exc:
+            self._fallo(id_caso, "nucleo_%s" % exc.codigo)
+            self.esperando += 1
+            return
+        finally:
+            del texto
+        self._objetivo(id_caso, "B")
+        e.marcar_procesado(id_caso, "manual", self._m("enviado"), ref)
+        self._vuelo_extra += 1
+        self.r.reenviados += 1
+        telemetria.contador("conector_caso_reenviado", intento=0)
+        telemetria.evento("conector_reintento", ref_opaca=corr.ref_opaca, intento=0, motivo="manual")
+
+    def _ref_manual(self, ref_opaca: str) -> str:
+        return str(uuid.uuid5(uuid.NAMESPACE_OID, "%s/manual/%s" % (ref_opaca, self.corrida.id)))
+
+    def _sin_turno(self) -> bool:
+        if self._vuelo_base is None:
+            self._vuelo_base = (self.e.contar_objetos("manual", self._m("enviado"))
+                                - self.e.contar_objetos("manual", self._m("recibido")))
+        return self._vuelo_base + self._vuelo_extra >= self.en_vuelo_max
+
+    def totales_manual(self) -> tuple[int, int, int, int]:
+        """(objetivos, resueltos, con sugerencia, en vuelo) de la corrida, desde el estado."""
+        e = self.e
+        fin = e.contar_objetos("manual", self._m("fin"))
+        return (e.contar_objetos("manual", self._m("objetivo")), fin, e.contar_objetos("manual", self._m("fin"), "con"),
+                e.contar_objetos("manual", self._m("enviado")) - e.contar_objetos("manual", self._m("recibido")))
 
     @staticmethod
     def _valoracion(d) -> str:
@@ -406,7 +566,8 @@ class _Pasada:
 def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "veridy",
                     ahora: Callable[[], float] = time.time, compartir_con: str = "",
                     reprocesar: bool = False, reintentos_max: int = 3,
-                    reintento_horas: float = 24.0, envios_max: int = 5, forzar: bool = False) -> ResultadoPasada:
+                    reintento_horas: float = 24.0, envios_max: int = 5, corrida=None,
+                    en_vuelo_max: int = 12) -> ResultadoPasada:
     dueno = str(uuid.uuid4())
     if not estado.tomar_cerrojo(CERROJO, dueno, ahora(), TTL_CERROJO_S):
         return ResultadoPasada(omitida=True, resultado="omitida")
@@ -415,7 +576,7 @@ def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "verid
     r = ResultadoPasada()
     try:
         p = _Pasada(veridy, nucleo, estado, id_empresa, ahora, compartir_con, reprocesar, reintentos_max, reintento_horas,
-                    envios_max, forzar)
+                    envios_max, corrida, en_vuelo_max)
         r = p.r
         casos = sorted(veridy.listar_casos(), key=lambda c: (str(c.get("creation_date") or ""), str(c.get("id"))))
         r.casos = len(casos)
@@ -426,6 +587,10 @@ def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "verid
             except Exception as exc:  # una falla en un caso no detiene la pasada
                 r.errores += 1
                 log.warning("falla inesperada en un caso: %s", type(exc).__name__)
+        if corrida is not None:
+            obj, fin, con, vuelo = p.totales_manual()
+            r.manual_total, r.manual_fin, r.manual_con, r.manual_en_vuelo = obj + p.esperando, fin, con, vuelo
+            r.manual_completa = p.esperando == 0 and obj == fin and not r.nucleo_caido
         r.resultado = "ok" if r.exitosa else ("nucleo_caido" if r.nucleo_caido and not r.errores else "con_errores")
     except Exception as exc:
         r.errores += 1

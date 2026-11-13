@@ -60,6 +60,26 @@ variable "kerna_appinsights_conexion" {
   sensitive   = true
 }
 
+variable "kerna_tablas_cuenta" {
+  description = "Cuenta de almacenamiento de Kerna cuyas tablas (ajustes, reintentosmanuales) lee y escribe el conector: {nombre, grupo}. Vacía = el conector no lee ajustes ni atiende el reintento manual."
+  type        = object({ nombre = string, grupo = string })
+  default     = null
+}
+
+data "azurerm_storage_account" "kerna_tablas" {
+  count               = var.crear_conector && var.kerna_tablas_cuenta != null ? 1 : 0
+  name                = var.kerna_tablas_cuenta.nombre
+  resource_group_name = var.kerna_tablas_cuenta.grupo
+}
+
+# La identidad del grupo de Veridy (la del conector) escribe en las tablas de Kerna con Entra ID.
+resource "azurerm_role_assignment" "veridy_kerna_tablas" {
+  count                = var.crear_conector && var.kerna_tablas_cuenta != null ? 1 : 0
+  scope                = data.azurerm_storage_account.kerna_tablas[0].id
+  role_definition_name = "Storage Table Data Contributor"
+  principal_id         = azurerm_user_assigned_identity.veridy.principal_id
+}
+
 locals {
   veridy_fqdn = "${local.base}-${local.sufijo}.${var.region}.azurecontainer.io" # = fqdn del grupo
 
@@ -77,6 +97,7 @@ locals {
       KERNA_ID_EMPRESA      = var.kerna_id_empresa
       CONECTOR_INTERVALO_S  = tostring(var.conector_intervalo_s)
       KERNA_REPROCESAR_REVISION_MANUAL = var.conector_reprocesar ? "1" : "0"
+      KERNA_TABLAS_URL      = var.kerna_tablas_cuenta == null ? "" : data.azurerm_storage_account.kerna_tablas[0].primary_table_endpoint
     }
     entorno_seguro = var.kerna_appinsights_conexion == "" ? {} : {
       APPLICATIONINSIGHTS_CONNECTION_STRING = var.kerna_appinsights_conexion

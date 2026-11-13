@@ -454,3 +454,6 @@ Ninguna clave se ve ni se imprime: los scripts las leen de Key Vault por dentro.
 | Limpiar Docker (imágenes y caché, nunca volúmenes) | `infra/limpiar_docker.sh` |
 
 Si una tarea no tiene script, no la improvises con comandos sueltos: escribe un script nuevo de función fija en `kerna/operaciones/`, commitéalo y agrégalo a este índice.
+
+## Ajustes de IA que debe leer el núcleo (anotado 2026-11-13 por el agente del conector)
+El conector ya aplica `envios`, `reintentos`, `espera`, `revision` y `reprocesar` (ver `pendientes/contrato-reintento-conector.md`). Falta que el núcleo lea de la tabla `ajustes` (fila `kerna`/`actual`, JSON en `valores`) y aplique: `evaluador` (revisor automático de citas, bool), `candidatos` (artículos por caso, 3 a 20, depende de `evaluador`) y `cadena` (orden y activación de modelos: lista de `{v: azure|gemini, on: bool}`). Las llaves `compartir`, `maxresp` y `alerta` son del panel. Referencia: `kerna/front/app/ajustes.py` (`validar`).

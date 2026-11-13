@@ -498,34 +498,204 @@ def test_valoracion_del_auditor_sin_texto():
     assert _Pasada._valoracion(S(tipo="clasificacion_auditor", nota=S(articulos=[]))) == "ninguno_aplica"
 
 
-def test_reintento_manual_forzado_salta_la_espera_de_24_h_y_el_tope(mundo):
+class C:  # corrida manual mínima
+    id = "m1"
+    inicio = T0
+
+
+def _manual(v, n, e, t, en_vuelo_max=12, corrida=C):
+    return ejecutar_pasada(v, n, e, "emp", ahora=lambda: t, corrida=corrida, en_vuelo_max=en_vuelo_max)
+
+
+def test_corrida_manual_reintenta_todos_los_de_revision_manual_sin_importar_motivo(mundo):
+    v, n, e = mundo
+    for i, motivo in enumerate(["sin_normativa_aplicable", "validacion_fallida", "cadena_agotada"]):
+        v.agregar("c%d" % i, fecha="2026-11-01T1%d:00:00Z" % i)
+    v.agregar("ok", fecha="2026-11-02T10:00:00Z")
+    pasada(v, n, e)
+    refs = list(n.solicitudes)
+    for ref, motivo in zip(refs[:3], ["sin_normativa_aplicable", "validacion_fallida", "cadena_agotada"]):
+        n.completar(ref, estado="revision_manual", motivo_revision=motivo, modo="manual", articulos=[])
+    n.completar(refs[3])
+    pasada(v, n, e)
+    assert pasada_t(v, n, e, T0 + 60, reprocesar=False).reenviados == 0   # el reintento automático no toca estos motivos
+    r = _manual(v, n, e, T0 + 60)
+    assert r.reenviados == 3 and len(n.solicitudes) == 7                  # la completada no se reenvía
+    assert (r.manual_total, r.manual_fin, r.manual_en_vuelo, r.manual_completa) == (3, 0, 3, False)
+    for x in [x for x in n.solicitudes if x not in refs]:
+        n.completar(x)
+    r = _manual(v, n, e, T0 + 120)
+    assert (r.manual_total, r.manual_fin, r.manual_con, r.manual_en_vuelo, r.manual_completa) == (3, 3, 3, 0, True)
+    assert r.reprocesados == 3
+    r = _manual(v, n, e, T0 + 180)                                        # idempotente
+    assert r.reenviados == 0 and len(n.solicitudes) == 7 and r.manual_completa
+    assert len([s for s in v.notas_publicadas("kerna_sugerencia") if s.estado == "completada"]) == 4
+
+
+def test_corrida_manual_respeta_el_tope_en_vuelo_y_avanza_por_turnos(mundo):
+    v, n, e = mundo
+    for i in range(5):
+        v.agregar("c%d" % i, fecha="2026-11-01T1%d:00:00Z" % i)
+    pasada(v, n, e)
+    refs = list(n.solicitudes)
+    for ref in refs:
+        _agotar(n, ref)
+    pasada(v, n, e)
+    r = _manual(v, n, e, T0, en_vuelo_max=2)
+    assert r.reenviados == 2 and r.manual_total == 5 and r.manual_en_vuelo == 2 and not r.manual_completa
+    for x in [x for x in n.solicitudes if x not in refs]:
+        n.completar(x)
+    for t in range(1, 6):
+        r = _manual(v, n, e, T0 + t, en_vuelo_max=2)
+        for x in [x for x in n.solicitudes if x not in refs and "estado" not in n.solicitudes[x] or n.solicitudes[x].get("estado") == "pendiente"]:
+            n.completar(x)
+        if r.manual_completa:
+            break
+    assert r.manual_completa and r.manual_fin == 5 and r.manual_con == 5 and len(n.solicitudes) == 10
+
+
+def test_corrida_manual_cuenta_los_que_siguen_sin_sugerencia(mundo):
     v, n, e, ref = _caso_agotado(mundo)
-    assert pasada_t(v, n, e, T0 + 60).reenviados == 0              # sin forzar, el fallo es reciente
-    r = ejecutar_pasada(v, n, e, ahora=lambda: T0 + 60, forzar=True, envios_max=1)
-    assert r.reenviados == 1 and len(n.solicitudes) == 2
+    _manual(v, n, e, T0)
+    nueva = [x for x in n.solicitudes if x != ref][0]
+    _agotar(n, nueva)
+    r = _manual(v, n, e, T0 + 5)
+    assert (r.manual_total, r.manual_fin, r.manual_con, r.manual_completa) == (1, 1, 0, True)
+    assert [s.estado for s in v.notas_publicadas("kerna_sugerencia")] == ["revision_manual"]  # no duplica la nota
+
+
+def test_corrida_manual_incluye_casos_sin_sugerencia_pendientes_y_con_error(mundo):
+    v, n, e = mundo
+    v.agregar("c1")
+    v.agregar("c2", fecha="2026-11-02T10:00:00Z")
+    pasada(v, n, e)                                   # c1 y c2 quedan pendientes en el núcleo
+    r = _manual(v, n, e, T0)
+    assert r.manual_total == 2 and r.manual_fin == 0 and not r.manual_completa
+    for ref in list(n.solicitudes):
+        n.completar(ref)
+    r = _manual(v, n, e, T0 + 5)
+    assert (r.manual_total, r.manual_fin, r.manual_con, r.manual_completa) == (2, 2, 2, True)
+
+
+def test_corrida_manual_sin_nada_que_reintentar_termina_de_inmediato(mundo):
+    v, n, e = mundo
+    v.agregar("c1")
+    n.completar_al_enviar = True
+    pasada(v, n, e)
+    pasada(v, n, e)
+    r = _manual(v, n, e, T0)
+    assert r.manual_completa and r.manual_total == 0 and r.reenviados == 0
+
+
+def test_resultado_se_rellena_y_alimenta_el_estado_en_vivo(mundo):
+    v, n, e, ref = _caso_agotado(mundo)
+    assert e.contar_objetos("resultado", "actual", "revision_manual", prefijo_nota=True) == 1
+    assert e.contar_estados() == {"completado": 1}
+
+
+def test_corrida_retomable_tras_reinicio_del_conector(mundo):
+    v, n, e, ref = _caso_agotado(mundo)
+    _manual(v, n, e, T0)
+    e2 = e                                              # el estado persiste: otra instancia de pasada = reinicio
+    r = _manual(v, n, e2, T0 + 5)
+    assert r.reenviados == 0 and len(n.solicitudes) == 2 and r.manual_en_vuelo == 1
 
 
 class TablaFalsa:
     def __init__(self):
-        self.fila = None
+        self.filas = {}
 
     def get_entity(self, pk, rk):
-        if self.fila is None:
+        if rk not in self.filas:
             raise type("ResourceNotFoundError", (Exception,), {})()
-        return dict(self.fila)
+        return dict(self.filas[rk])
 
     def upsert_entity(self, ent, mode="merge"):
-        self.fila = {**(self.fila or {}), **ent}
+        self.filas[ent["RowKey"]] = {**self.filas.get(ent["RowKey"], {}), **ent}
 
 
-def test_solicitud_manual_se_lee_una_vez_y_se_marca_atendida():
+def test_solicitud_manual_se_toma_avanza_y_se_cierra_con_resultado():
+    from kerna_conector.solicitudes import SolicitudReintento
+    t = TablaFalsa()
+    reloj = [T0]
+    s = SolicitudReintento(t, ahora=lambda: reloj[0])
+    assert s.activa() is None and not s.pedida()                    # sin fila
+    t.filas["solicitud"] = {"estado": "solicitado", "solicitado_en": "2026-11-13T03:00:00Z"}
+    c = s.activa()
+    f = t.filas["solicitud"]
+    assert c.id.startswith("m") and f["estado"] == "en_curso" and f["inicio"] and f["solicitado_en"]
+    assert s.activa().id == c.id                                    # sigue la misma corrida
+    reloj[0] += 100
+    s.progreso(c, total=10, enviados=6, resueltos=4, con=3, en_vuelo=2)
+    f = t.filas["solicitud"]
+    assert (f["total"], f["resueltos"], f["con_sugerencia"], f["sin_sugerencia"], f["en_vuelo"]) == (10, 4, 3, 1, 2)
+    assert f["eta_s"] == 150 and f["estado"] == "en_curso"
+    reloj[0] += 150
+    s.terminar(c, total=10, resueltos=10, con=8)
+    f = t.filas["solicitud"]
+    assert f["estado"] == "atendido" and f["reintentados"] == 10 and f["con_sugerencia"] == 8 and f["sin_sugerencia"] == 2
+    assert f["fin"] and f["atendido_en"] and f["incompleto"] is False and s.activa() is None
+    assert not SolicitudReintento(None).pedida() and SolicitudReintento(None).activa() is None
+    SolicitudReintento(None).terminar(c)
+
+
+def test_corrida_atascada_se_cierra_tras_dos_horas():
+    from kerna_conector.solicitudes import SolicitudReintento
+    t = TablaFalsa()
+    reloj = [T0]
+    s = SolicitudReintento(t, ahora=lambda: reloj[0])
+    t.filas["solicitud"] = {"estado": "solicitado"}
+    s.activa()
+    reloj[0] += 7300
+    assert s.activa() is None
+    assert t.filas["solicitud"]["estado"] == "atendido" and t.filas["solicitud"]["incompleto"] is True
+
+
+def test_solicitar_desde_el_conector_no_pisa_una_corrida_en_curso():
     from kerna_conector.solicitudes import SolicitudReintento
     t = TablaFalsa()
     s = SolicitudReintento(t)
-    assert not s.pedida()                                           # sin fila
-    t.fila = {"estado": "solicitado"}
-    assert s.pedida()
-    s.atender(4)
-    assert t.fila["estado"] == "atendido" and t.fila["reintentados"] == 4 and not s.pedida()
-    assert not SolicitudReintento(None).pedida()                    # sin tabla configurada: inactivo
-    SolicitudReintento(None).atender(1)
+    assert s.solicitar("ajustes") and t.filas["solicitud"]["estado"] == "solicitado" and t.filas["solicitud"]["origen"] == "ajustes"
+    assert not s.solicitar("ajustes")
+    s.publicar_vivo({"casos": 3})
+    assert t.filas["conector"]["casos"] == 3 and t.filas["conector"]["actualizado_en"]
+
+
+def _cfg():
+    from kerna_conector.config import Config
+    return Config("http://v", "u", "p", "http://k", "i", "s")
+
+
+def test_ajustes_del_panel_se_aplican_y_los_invalidos_se_ignoran():
+    from kerna_conector.ajustes import parametros
+    base = parametros(_cfg(), None)
+    assert (base.envios_max, base.reintentos_max, base.reintento_horas, base.intervalo_s, base.de_ajustes) == (5, 3, 24.0, 30.0, False)
+    fila = {"valores": json.dumps({"envios": 8, "reintentos": 0, "espera": 12, "revision": 60, "reprocesar": True,
+                                   "evaluador": False, "candidatos": 7}), "actualizado_en": "2026-11-13T03:00:00Z"}
+    p = parametros(_cfg(), fila)
+    assert (p.envios_max, p.reintentos_max, p.reintento_horas, p.intervalo_s) == (8, 0, 12.0, 60.0)
+    assert p.reprocesar_marca == "2026-11-13T03:00:00Z" and p.de_ajustes
+    malo = {"valores": json.dumps({"envios": 99, "reintentos": "x", "espera": 0, "revision": 1, "reprocesar": "si"})}
+    p = parametros(_cfg(), malo)
+    assert (p.envios_max, p.reintentos_max, p.reintento_horas, p.intervalo_s, p.reprocesar_marca) == (5, 3, 24.0, 30.0, None)
+    assert parametros(_cfg(), {"valores": "no es json"}) == base
+
+
+def test_ajuste_reprocesar_pide_una_corrida_por_guardado(tmp_path):
+    from kerna_conector import __main__ as m
+    from kerna_conector.ajustes import LectorAjustes
+    from kerna_conector.solicitudes import SolicitudReintento
+    ajustes, reint = TablaFalsa(), TablaFalsa()
+    ajustes.filas["actual"] = {"valores": json.dumps({"reprocesar": True}), "actualizado_en": "2026-11-13T03:00:00Z"}
+    s, la, e = SolicitudReintento(reint), LectorAjustes(ajustes), est.EstadoSqlite(":memory:")
+    p = m.parametros(_cfg(), la.leer())
+    assert p.reprocesar_marca and not e.objeto_procesado("_ajustes", "reprocesar", p.reprocesar_marca)
+
+
+def test_estado_en_vivo_de_la_pasada(mundo):
+    from kerna_conector import __main__ as m
+    v, n, e, ref = _caso_agotado(mundo)
+    r = pasada(v, n, e)
+    vivo = m._vivo(e, r, m.parametros(_cfg(), None), False)
+    assert vivo["completado"] == 1 and vivo["en_revision_manual"] == 1 and vivo["resultado_desconocido"] == 0
+    assert vivo["intervalo_s"] == 30 and "reprocesar" in vivo["ajustes_aplicados"] and vivo["en_reintento"] is False

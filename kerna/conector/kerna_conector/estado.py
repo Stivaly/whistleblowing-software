@@ -97,6 +97,12 @@ class Estado(ABC):
     @abstractmethod
     def marcar_procesado(self, id_caso: str, tipo: str, clave: str, id_nota: Optional[str] = None) -> None: ...
     @abstractmethod
+    def fijar_procesado(self, id_caso: str, tipo: str, clave: str, id_nota: Optional[str] = None) -> None: ...
+    @abstractmethod
+    def contar_objetos(self, tipo: str, clave: str, id_nota: Optional[str] = None, prefijo_nota: bool = False) -> int: ...
+    @abstractmethod
+    def contar_estados(self) -> dict: ...
+    @abstractmethod
     def tomar_cerrojo(self, nombre: str, dueno: str, ahora: float, ttl_s: float) -> bool: ...
     @abstractmethod
     def soltar_cerrojo(self, nombre: str, dueno: str) -> None: ...
@@ -170,6 +176,27 @@ class _EstadoSql(Estado):
         self._ejecutar("INSERT INTO objeto_procesado (id_caso, tipo, clave, id_nota, procesado_en) "
                        "VALUES (?, ?, ?, ?, ?) ON CONFLICT (id_caso, tipo, clave) DO NOTHING",
                        (id_caso, tipo, clave, id_nota, _iso()))
+
+    def fijar_procesado(self, id_caso: str, tipo: str, clave: str, id_nota: Optional[str] = None) -> None:
+        """Como `marcar_procesado`, pero reemplaza el valor si ya existía (p. ej. el último resultado de un caso)."""
+        self._ejecutar("INSERT INTO objeto_procesado (id_caso, tipo, clave, id_nota, procesado_en) "
+                       "VALUES (?, ?, ?, ?, ?) ON CONFLICT (id_caso, tipo, clave) "
+                       "DO UPDATE SET id_nota = excluded.id_nota, procesado_en = excluded.procesado_en",
+                       (id_caso, tipo, clave, id_nota, _iso()))
+
+    def contar_objetos(self, tipo: str, clave: str, id_nota: Optional[str] = None, prefijo_nota: bool = False) -> int:
+        """Cantidad de casos con (tipo, clave); `id_nota` filtra por valor (o por prefijo con `prefijo_nota`)."""
+        sql, par = "SELECT COUNT(*) FROM objeto_procesado WHERE tipo = ? AND clave = ?", [tipo, clave]
+        if id_nota is not None:
+            sql += " AND id_nota LIKE ?" if prefijo_nota else " AND id_nota = ?"
+            par.append(id_nota + "%" if prefijo_nota else id_nota)
+        fila = self._uno(sql, tuple(par))
+        return int(fila[0]) if fila else 0
+
+    def contar_estados(self) -> dict:
+        """{estado: cantidad} de `correspondencia_caso`."""
+        return {f[0]: int(f[1]) for f in self._ejecutar(
+            "SELECT estado, COUNT(*) FROM correspondencia_caso GROUP BY estado", lectura=True)}
 
     def tomar_cerrojo(self, nombre: str, dueno: str, ahora: float, ttl_s: float) -> bool:
         self._ejecutar("INSERT INTO cerrojo (nombre, dueno, vence) VALUES (?, ?, ?) "

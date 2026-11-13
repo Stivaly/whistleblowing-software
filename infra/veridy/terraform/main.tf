@@ -291,5 +291,6 @@ resource "azurerm_container_group" "veridy" {
     azurerm_role_assignment.veridy_acr_pull,
     azurerm_role_assignment.veridy_kv_lectura,
     azurerm_role_assignment.veridy_encendido,
+    azurerm_role_assignment.veridy_kerna_tablas,
   ]
 }
