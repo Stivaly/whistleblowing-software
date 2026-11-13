@@ -101,7 +101,7 @@
     if (key === 'envivo') {
       const vv = $('[data-vivo]'), d = vv && vv.dataset.dato ? new Date(vv.dataset.dato) : null;
       const hora = d && !isNaN(d) ? d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) + ' (' + hace(Math.max(0, Math.round((Date.now() - d) / 1000))) + ')' : null;
-      xt = fallo ? 'No se pudo actualizar; se reintenta en un minuto.' : (hora ? 'Último dato: ' + hora + '. Puede tardar unos minutos.' : null);
+      xt = fallo ? 'No se pudo actualizar; se reintenta en un minuto.' : (hora ? 'Último dato recibido: ' + hora + '. Puede tardar unos minutos.' : null);
     }
     tt.textContent = (key === 'envivo' || key === 'neg_clientes') && xt ? xt : g.q;
     b.setAttribute('aria-describedby', 'tt'); tt.classList.add('on');

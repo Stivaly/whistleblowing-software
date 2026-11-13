@@ -74,3 +74,12 @@ def test_todos_los_tooltips_usados_existen_en_el_glosario():
         usados |= set(re.findall(r"tip\('(\w+)'", p.read_text()))
     usados |= set(re.findall(r'"g": "(\w+)"', (EST / "vistas.py").read_text()))
     assert usados - set(g) == set()
+
+
+def test_clases_nuevas_de_negocio_no_chocan_con_las_existentes():
+    html = (EST / "plantillas" / "negocio.html").read_text()
+    for c in ("cli-s", "cli-g", "cli-l", "cli-d", "pr-n", "py-g", "py-k", "py-d", "py-c"):
+        assert c in html
+        assert len(re.findall(r"\." + c + r"[{ ,.:>]", CSS)) >= 1 or c in ("cli-s", "cli-l", "py-c")
+    # los nombres viejos (cl-*, cn-n) ya usados por otras reglas del CSS no se reutilizan
+    assert not re.search(r'class="[^"]*\b(cl-[gldn]|cn-n)\b', html)
