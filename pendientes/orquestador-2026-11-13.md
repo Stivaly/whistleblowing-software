@@ -44,12 +44,22 @@ Lee primero:
 - Colores más vivos, como en el Resumen.
 - Rediseña con la identidad las tarjetas de borde izquierdo de color «Acierto con el artículo exacto 49,2 %», «Acierto con la ley 96,7 %» y «Pruebas automáticas pasadas 333/333». Ese estilo no corresponde a la identidad.
 - **Faltan logos o íconos en «Generar informe»**: revisa todos los `<use>` y las imágenes de esa vista y de los botones (Otro período, Excel, CSV aparecen sin ícono).
-- El PDF le encantó; no lo cambies salvo para colores. (La usuaria escribió «al reporte en PDF le falta solamente…» y no terminó la frase: anótalo como pregunta abierta en el resumen.)
+- El PDF le encantó y no le falta nada: no lo cambies salvo para colores.
 
 ### 5. Todo el front
 - Aplica la misma fluidez y movimiento del Resumen en todas las vistas.
 - Que los nombres de los indicadores se entiendan solos y que los «?» sean de una línea, en todo el front.
 - Antes de entregar, revisa a 1366 y a 1920 px de ancho.
+
+### 5b. Logos e íconos invisibles (revisión exhaustiva, prioridad alta)
+- Hay logos e íconos que no se ven, aunque su espacio está reservado: se nota el hueco donde deberían estar. Pasa en el panel y **también en la portada de Kerna**.
+- Encarga una revisión exhaustiva de todas las vistas, incluida la portada, a 390, 1366 y 1920 px. El agente debe:
+  - revisar cada `<use href>` contra los ids reales de cada sprite;
+  - revisar cada `<img>` o `background-image`: que cargue (no 404) y que no tenga `opacity` 0 ni tamaño 0;
+  - revisar que el color de trazo o relleno no coincida con el fondo;
+  - revisar que el `viewBox` sea correcto.
+- Debe escribir una prueba con navegador real que, en cada vista, recorra todos los íconos y logos y falle si alguno ocupa espacio pero no pinta píxeles. Por ejemplo, compara la captura del elemento contra un fondo plano.
+- Corrige todo lo que encuentre y audítalo en las capturas.
 
 ### 6. Botón de reintento
 - Debe abarcar **todas las denuncias que aún no tienen clasificación**: hoy cuenta solo una estimación de 7 días, a partir de la telemetría. El agente debe investigar cómo obtener la lista real de pendientes. Pistas: el estado de cada caso en el conector o en Veridy (notas del caso) y la tabla de revisión manual.
