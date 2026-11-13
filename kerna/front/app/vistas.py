@@ -31,7 +31,6 @@ ICONO_X = {"revision": "e-revision-citas", "tiempo": "e-revision-tiempo", "busqu
            "sin_normativa": "e-sin-normativa", "nucleo": "e-nucleo-no-disponible", "conector": "e-conector-en-proceso", "valorada": "e-valorada"}
 ESTADO_TXT = {"ok": "Bien", "warn": "Atención", "bad": "Problema", "na": "Sin datos"}
 PROV_ESTADO = {"operativo": "ok", "degradado": "warn", "caido": "bad", "sin_informacion": "na"}
-SIN_LEY_TXT = "Artículos sugeridos cuyo registro no trae el nombre de la ley"
 PROV_TXT = {"operativo": "Operativo", "degradado": "Degradado", "caido": "Caído", "sin_informacion": "Sin información"}
 GRAVEDAD = {"ok": 0, "na": 0, "warn": 1, "bad": 2}
 ETAPAS = {"anonimizacion": "Anonimizar", "clasificacion": "Clasificar el caso", "recuperacion": "Buscar en la ley",
@@ -237,9 +236,10 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     val = m["valoraciones"]
     nval = sum(val.values())
     vals = [{"t": t, "n": val[c], "p": pct(val[c], nval), "e": e} for c, t, e in (("util", "Útil", "ok"), ("no_util", "No útil", "bad"), ("ninguno_aplica", "Ninguno aplica", "warn"))]
-    leyes = sorted(m["leyes"], key=lambda x: -x["articulos"])[:6]
+    sin_ley = sum(x["articulos"] for x in m["leyes"] if x["norma"] == "Sin ley registrada")
+    leyes = sorted((x for x in m["leyes"] if x["norma"] != "Sin ley registrada"), key=lambda x: -x["articulos"])[:6]
     mx_ley = max((x["articulos"] for x in leyes), default=1) or 1
-    leyes_v = [{"n": inf.ley_corta(x["norma"]), "full": SIN_LEY_TXT if x["norma"] == "Sin ley registrada" else inf.nombre_ley(x["norma"]), "norma": x["norma"], "v": x["articulos"], "w": round(100 * x["articulos"] / mx_ley)} for x in leyes]
+    leyes_v = [{"n": inf.ley_corta(x["norma"]), "full": inf.nombre_ley(x["norma"]), "norma": x["norma"], "v": x["articulos"], "w": round(100 * x["articulos"] / mx_ley)} for x in leyes]
 
     # --- Proveedores
     provs = []
@@ -302,7 +302,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     }
     return {"dias": dias, "generado": int(ahora or time.time()), "kpis": k, "eg": {"e": e_gen, "t": titulo, "s": sub}, "salud": salud, "modos": filas_modo,
             "sug_pct": sug_pct, "e_sug": e_sug, "total": tot, "rapidez": rap, "etapas": et, "aciertos": aciertos, "meta_recall": f.dec_corto(meta_rec * 100, 1),
-            "valoraciones": vals, "n_val": nval, "leyes": leyes_v, "proveedores": provs, "costo": costo_v, "graficos": graf, "con_recall": rec_glob is not None,
+            "valoraciones": vals, "n_val": nval, "leyes": leyes_v, "sin_ley": sin_ley, "proveedores": provs, "costo": costo_v, "graficos": graf, "con_recall": rec_glob is not None,
             "mapas": mp.dic()}
 
 

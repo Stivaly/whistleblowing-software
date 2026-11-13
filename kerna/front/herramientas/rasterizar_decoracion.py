@@ -40,11 +40,10 @@ def halo() -> str:
 
 
 def zona(c: str, sat1: str, sat2: str) -> str:
-    """Arcos orbitales de una banda del Resumen (esquina de la superficie tintada); estática."""
-    return ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 360' fill='none'>"
-            "<g stroke='#%s' stroke-opacity='.6' stroke-width='1.8' stroke-dasharray='.1 6' stroke-linecap='round'><circle cx='180' cy='180' r='78'/><circle cx='180' cy='180' r='124'/><circle cx='180' cy='180' r='170'/></g>"
-            "<circle cx='285' cy='92' r='7' fill='#%s' stroke='#%s' stroke-width='2'/><circle cx='92' cy='280' r='5' fill='#%s'/>"
-            "<circle cx='180' cy='180' r='30' stroke='#%s' stroke-opacity='.5' stroke-width='2'/></svg>" % (c, sat1, c, sat2, c))
+    """Arcos orbitales para las esquinas cortadas de una banda del Resumen (centro en la esquina); estática."""
+    return ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180' fill='none'>"
+            "<g stroke='#%s' stroke-opacity='.55' stroke-width='1.8' stroke-dasharray='.1 6' stroke-linecap='round'><circle cx='90' cy='90' r='40'/><circle cx='90' cy='90' r='62'/><circle cx='90' cy='90' r='84'/></g>"
+            "<circle cx='30.6' cy='149.4' r='6' fill='#%s' stroke='#%s' stroke-width='2'/><circle cx='149.4' cy='30.6' r='5' fill='#%s' stroke='#%s' stroke-width='1.5'/></svg>" % (c, sat1, c, sat2, c))
 
 
 ZONAS = {"pr": ("6E9A12", "CFFF5E", "47D985"), "kb": ("3B4FB4", "FFC93C", "8FA8FF"), "cm": ("0E8FAD", "B58CFF", "FFC93C"),
@@ -61,7 +60,7 @@ def main():
     trabajos = [  # nombre, svg, lado en px (2x del mayor tamaño de uso)
         ("guil", fuente("guil"), 288), ("guil-l", fuente("guil-l"), 640),
         ("ap-halo", halo(), 460), ("bg-orbitas", orbitas(), 1600), ("bg-roseta", roseta(), 1600),
-        *[("zona-" + k, zona(*v), 720) for k, v in ZONAS.items()],
+        *[("zona-" + k, zona(*v), 360) for k, v in ZONAS.items()],
         ("simbolo", (IMG / "simbolo.svg").read_text(), 192),
     ]
     with sync_playwright() as p:
