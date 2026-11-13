@@ -63,7 +63,7 @@ Lee primero:
 
 ### 6. Botón de reintento: que se vea y que reintente de verdad (prioridad alta)
 - **Hoy no se ve el botón.** Desde el pedido del 2026-11-12 21:00 el bloque muestra «Pedido en curso» y oculta el botón, porque nadie atiende el pedido.
-- **El botón debe verse siempre.** Si hay un pedido en curso, se muestra su estado al lado y el botón se puede volver a usar.
+- **El botón nunca desaparece.** Mientras hay un pedido en curso se muestra **deshabilitado, en gris**, con un estado claro, por ejemplo un ícono de la identidad que gira suave y el texto «Reintentando… espera» o «Pedido en curso». El tooltip dice desde cuándo y cuánto falta, si se sabe. Al terminar vuelve a su estado normal y muestra el resultado («271 reintentados · 230 con sugerencia»). La UX/UI manda sobre cualquier otra consideración.
 - **Al pulsarlo, Kerna debe volver a generar la sugerencia** de todas las denuncias que aún no la tienen: las 271 en revisión manual y cualquier otra sin clasificar. Obtén la lista real desde el estado de cada caso en el conector o en Veridy, no la estimación de 7 días.
 
 ### 7. Conector y las 271 denuncias en revisión manual
