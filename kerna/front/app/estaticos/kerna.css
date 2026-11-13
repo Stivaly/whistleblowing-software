@@ -1239,3 +1239,15 @@ html,body{max-width:100%}
 @media(min-width:1100px){.py-g{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) auto}}
 @media(max-width:599px){.kbs6 .kb{gap:6px;padding:2px 4px}:is(#zona,.zv) .bn,:is(#zona,.zv) .z-ly{padding-right:28px}}
 @media(min-width:900px){:is(#zona,.zv) .ley-b .ch-w{flex:0 1 340px}:is(#zona,.zv) .ley-b .ly-l{flex:1 1 440px}}
+
+/* v16 · Clientes en dos líneas por fila, proyección con etiquetas de máx. 2 líneas, Acierto por ley repartido, KPI con aire */
+@media(min-width:900px){
+  .cr{grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);grid-template-areas:"a n l" "a u m";gap:2px 20px}
+  .cr>svg.ani{grid-area:a}.cr-n{grid-area:n}.cr-l{grid-area:l;justify-self:end;align-self:center}
+  .cr-u{grid-area:u}.cr-m{grid-area:m}
+  .cr-n,.cr-u,.cr-m{white-space:nowrap}.cr-n span{margin-left:8px}.cr-n{display:flex;align-items:baseline;flex-wrap:wrap}
+}
+.py-l{letter-spacing:.04em;line-height:1.35}
+@media(min-width:1100px){.py-g{grid-template-columns:minmax(0,.85fr) minmax(0,1.25fr) auto}.py-k{gap:16px 24px}}
+@media(min-width:900px){:is(#zona,.zv) .ley-b .ly-l{flex:3 1 520px;justify-content:space-around}:is(#zona,.zv) .ley-b .ch-w{margin-left:0;flex:1 1 300px}}
+.kb-l{line-height:1.45;letter-spacing:.06em;margin-bottom:4px}

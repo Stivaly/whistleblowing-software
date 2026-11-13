@@ -24,7 +24,7 @@ def fuente(nombre: str) -> str:
     return (RAIZ / "herramientas/fuentes-decoracion" / (nombre + ".svg")).read_text()
 
 
-def orbitas() -> str:
+def orbitas() -> str:  # solo referencia: no se usa, bg-orbitas.webp no se regenera
     return ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 1200' fill='none'>"
             "<circle cx='600' cy='600' r='560' fill='none' stroke='#1C2A6B' stroke-opacity='.4' stroke-width='3' stroke-dasharray='.1 15' stroke-linecap='round'/>"
                         "<circle cx='600' cy='600' r='430' fill='none' stroke='#1C2A6B' stroke-opacity='.4' stroke-width='3' stroke-dasharray='.1 15' stroke-linecap='round'/></svg>")
@@ -61,9 +61,10 @@ def roseta() -> str:
 
 
 def main():
+    # bg-orbitas.webp (fondo de la portada) está retocado a mano (sin el satélite lima): este script NO lo regenera.
     trabajos = [  # nombre, svg, lado en px (2x del mayor tamaño de uso)
         ("guil", fuente("guil"), 288), ("guil-l", fuente("guil-l"), 640),
-        ("ap-halo", halo(), 460), ("bg-orbitas", orbitas(), 1600), ("bg-roseta", roseta(), 1600),
+        ("ap-halo", halo(), 460), ("bg-roseta", roseta(), 1600),
         *[("zona-" + k, zona(*v), 360) for k, v in ZONAS.items()],
         ("simbolo", (IMG / "simbolo.svg").read_text(), 192),
     ]
