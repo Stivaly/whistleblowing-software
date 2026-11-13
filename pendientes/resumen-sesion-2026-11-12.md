@@ -116,3 +116,6 @@ Tanda 15 (desplegado: 301ef5df9; previo f61fe44d8). Capturas `kerna/front/diseno
 - Ajustes: caché con vida de 24 h y refresco en segundo plano, precalentada al arrancar; al guardar se reemplaza el valor (`cache.poner`), un refresco viejo en curso no lo pisa.
 - TTFB a 1366 en caliente: Resumen 14-15, Informe 15-16, Negocio 13-15, Ajustes 18 ms; justo tras reiniciar: 51 / 42 / 37 / 35 ms. Una muestra de Resumen dio 290 ms (no se repitió en 3 corridas más). CPU en reposo: Ajustes 0,06 %, Resumen 0,01 %.
 - Pruebas: probar_iconos 0 fallos (1203 elementos), probar_movimiento sin fallas, probar_front bien; pytest del front 138 pasan. Contraste del texto «muted» sobre todas las tintas de banda ≥ 4,86:1.
+
+## Tanda 16 (2026-11-13)
+Último commit desplegado bueno antes de esta tanda: 301ef5df9. Si algo falla: `kerna/front/desplegar.sh --ref 301ef5df9`.
