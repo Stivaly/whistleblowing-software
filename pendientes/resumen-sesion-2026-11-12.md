@@ -145,3 +145,6 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
 **Falta:** el estado «en curso» del botón solo se vio con una respuesta simulada; los ajustes de IA los tiene que aplicar el núcleo (anotado para el otro agente); el mapa de calor del Resumen necesita 7 días de datos; el conector todavía cuenta 62 casos que ya no existen en Veridy; `conector_tag` y `kerna_tablas_cuenta` están solo en el `terraform.tfvars` local, que git ignora. `bg-orbitas.webp`, regenerado sin querer, está en la papelera y la versión buena quedó restaurada.
 
 **Necesita a la usuaria:** valor de la UF, plan B1, cuenta `kerna-e2e`, decidir si se cargan o evalúan los 150 relatos y revisar los renombres.
+
+## 2026-11-13 03:40 · pendientes reales en el Resumen
+Último desplegado bueno antes de este cambio: 88b7c98b7 (volver con `kerna/front/desplegar.sh --ref 88b7c98b7`).
