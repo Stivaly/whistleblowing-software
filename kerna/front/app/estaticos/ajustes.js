@@ -70,13 +70,13 @@
   };
   const VIVO = { proc: (v) => v.envios + ' casos por ronda, ' + v.reintentos + ' reintentos', ia: (v) => (v.evaluador ? 'Revisor encendido' : 'Revisor apagado') + ', ' + v.candidatos + ' artículos por caso', comp: (v) => 'Compartido con ' + (v.compartir.length || 'nadie') + ' equipos', plazos: (v) => v.maxresp + ' segundos para responder' };
   const CAP = { proc: (v) => v.envios + (v.envios === 1 ? ' caso' : ' casos') + ' por ronda · ' + (v.reintentos ? v.reintentos + (v.reintentos === 1 ? ' reintento' : ' reintentos') : 'sin reintentos'),
-    ia: (v) => (v.evaluador ? 'Revisor encendido · ' + v.candidatos + ' artículos' : 'Revisor apagado') + ' · ' + v.cadena.filter((m) => m.on).length + (v.cadena.filter((m) => m.on).length === 1 ? ' modelo' : ' modelos'),
+    ia: (v) => (v.evaluador ? 'Revisor activo · ' + v.candidatos + ' artículos' : 'Revisor apagado') + (v.cadena.filter((m) => m.on).length < 2 ? ' · ' + v.cadena.filter((m) => m.on).length + ' modelo' : ''),
     comp: () => '', plazos: (v) => 'Lento desde ' + v.maxresp + ' s · aviso tras ' + v.alerta + ' h' };
   const escenas = {};
   $$('[data-orb]').forEach((h) => { const g = h.dataset.orb; if (ESC[g]) escenas[g] = { host: h, up: ESC[g](h), cap: $('[data-cap]', h.parentNode) }; });
   function orbitas() { Object.keys(escenas).forEach((g) => { const e = escenas[g]; e.up(s); e.host.setAttribute('aria-label', VIVO[g](s)); if (e.cap) e.cap.textContent = CAP[g](s); }); }
   /* resalta en el panel lo que el control en foco o bajo el cursor modifica (solo opacity) */
-  const calor = (k, on) => { const g = k && $('[data-k="' + k + '"]') && $('[data-k="' + k + '"]').closest('[data-g]'); if (!g) return; const h = $('[data-orb]', g); if (on) h.dataset.hot = k; else delete h.dataset.hot; };
+  const calor = (k, on) => { const g = $('.ctl[data-k="' + k + '"]').closest('[data-g]'), h = $('[data-orb]', g); if (on && $('.hk[data-k="' + k + '"]', h)) h.dataset.hot = k; else delete h.dataset.hot; };
 
   /* ---------- estados: todo guardado / sin guardar / guardando / guardado / error ---------- */
   const chip = $('[data-estado]'), fch = $('[data-guardado]'), barra = $('[data-barra]'), form = barra;
