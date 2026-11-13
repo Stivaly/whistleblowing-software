@@ -252,3 +252,16 @@ def test_cargar_extra_casos_rechaza_ids_repetidos(tmp_path):
     f.write_text(json.dumps({"casos": [{"id": "A", "triage": "si"}, {"id": "A", "triage": "si"}]}))
     with pytest.raises(ValueError):
         r.cargar_extra_casos(f)
+
+
+def test_particion_prueba3_filtra_y_excluye_casos_no(tmp_path):
+    f = tmp_path / "sinteticas.json"
+    f.write_text(json.dumps({"casos": [
+        {"id": "SIN-0001", "triage": "si", "articulos_corregidos": ["207436-karin-art-2"], "ley_principal": "21.643", "particion": "prueba3"},
+        {"id": "SIN-0002", "triage": "no", "articulos_corregidos": [], "ley_principal": "ninguna", "particion": "prueba3"},
+        {"id": "SIN-0003", "triage": "control", "articulos_corregidos": [], "ley_principal": "ninguna", "particion": "prueba3"},
+    ]}))
+    casos, triage = r.cargar_extra_casos(f)
+    assert "prueba3" in r.PARTICIONES
+    assert [c["id"] for c in r.filtrar_por_triage(casos, triage, "prueba3")] == ["SIN-0001", "SIN-0003"]
+    assert r.filtrar_por_triage(casos, triage, "prueba2") == []

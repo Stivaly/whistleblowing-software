@@ -507,7 +507,7 @@ def registrar(res: dict, *, campo: str, dataset: bytes, articulos_corpus: int, c
     return entrada
 
 
-PARTICIONES = ("desarrollo", "prueba", "prueba2", "todas")
+PARTICIONES = ("desarrollo", "prueba", "prueba2", "prueba3", "todas")
 
 
 ETIQUETAS = ("original", "corregida")
@@ -602,7 +602,7 @@ def main(argv=None):
         if not triage_arg:
             triage_arg = "(extra-casos)"
             if args.particion == "todas":
-                args.particion = "prueba2"
+                args.particion = extra[0].get("particion", "prueba2") if extra else "prueba2"
             args.etiqueta = "corregida"          # los casos nuevos solo traen la etiqueta corregida
     if triage_arg:
         triage = json.loads(Path(args.triage).read_text()) if args.triage else {"casos": []}

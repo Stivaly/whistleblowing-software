@@ -108,3 +108,7 @@ Comandos:
 - **Sin aplicar en Azure:** el plan (`echo n | infra/aplicar.sh veridy`) reemplaza `azurerm_container_group.veridy`
   (datos en PostgreSQL y Azure Files no se pierden). Se preguntó a la usuaria: aplicar ahora y apagar la base a mano,
   o dejar la base arriba hasta el 27. Al 2026-11-12 Veridy estaba `Stopped` y PostgreSQL `Ready` (cobrando).
+
+## Actualización 2026-11-13 (B1)
+- prueba3 listo: `kerna/evaluacion/datos/denuncias_sinteticas_20261113_prueba3.json` (SIN-0001..SIN-0150; 80 si, 12 control, 58 no por norma fuera del corpus; 92 medibles). Comando de §5 con `--extra-casos <json> --particion prueba3`.
+- Retriever solo en prueba3: global 0,600; 21.643 0,787; 19.628 0,625; 20.393 0,059. Falta: cadena completa (evaluador + híbrida + revisor) en prueba3 y repetir en los demás sets. Detalle en `kerna/evaluacion/registro-pruebas.md`.
