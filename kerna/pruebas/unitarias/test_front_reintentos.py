@@ -109,7 +109,7 @@ def test_flujo_confirmar_pedir_y_doble_clic(cliente):
     r2 = cliente.post("/panel/reintentar", headers=H, data={"csrf": token()})
     assert r2.headers["location"] == "/panel?reintento=ya_solicitado"
     p = cliente.get("/panel?reintento=ya_solicitado", headers=H)
-    assert "Pedido en curso" in p.text and "Ya había un reintento pedido" in p.text and "Reintentar ahora" not in p.text
+    assert "Reintentando… espera" in p.text and "Ya había un reintento pedido" in p.text and "disabled" in p.text   # el botón sigue, en gris
 
 
 def test_panel_muestra_bloque_y_no_se_rompe_si_la_tabla_falla(cliente, monkeypatch):
@@ -142,3 +142,51 @@ def test_el_modal_y_el_enlace_de_reintentar(cliente):
     p = cliente.get("/panel", headers=H).text
     assert '<dialog id="dlg-rei"' in p and "data-dlg-ok" in p
     assert re.search(r'<a class="btn btn-pri" href="/panel/reintentar" data-reintentar>', p)   # sin JS sigue siendo un enlace a la confirmación
+
+
+AHORA = datetime(2026, 11, 13, 3, 30, tzinfo=timezone.utc)
+
+
+def test_boton_normal_nunca_desaparece_y_muestra_el_resultado():
+    vm = reintentos.vista_boton({"estado": "ninguna"}, AHORA)
+    assert vm["modo"] == "normal" and vm["texto"] == "Reintentar ahora" and "resultado" not in vm
+    vm = reintentos.vista_boton({"estado": "atendido", "reintentados": "99", "con_sugerencia": "74", "fin": "2026-11-13T03:00:00Z"}, AHORA)
+    assert vm["modo"] == "normal" and vm["resultado"] == "99 reintentados · 74 con sugerencia"
+    assert "incompleto" in reintentos.vista_boton({"estado": "atendido", "reintentados": 10, "con_sugerencia": 3, "incompleto": "true"}, AHORA)["resultado"]
+
+
+def test_boton_en_curso_gris_con_progreso_y_tooltip_con_desde_cuando_y_cuanto_falta():
+    s = {"estado": "en_curso", "inicio": "2026-11-13T03:10:00Z", "total": "99", "resueltos": "33", "eta_s": "600", "actualizado_en": "2026-11-13T03:29:50Z"}
+    vm = reintentos.vista_boton(s, AHORA)
+    assert vm["modo"] == "curso" and vm["texto"] == "Reintentando… espera" and vm["sub"] == "33 de 99" and vm["avance"] == 33
+    assert "13 nov 03:10 UTC" in vm["ayuda"] and "faltan unos 10 min" in vm["ayuda"] and "33 de 99" in vm["ayuda"] and not vm["detenido"]
+    assert "aún sin estimación" in reintentos.vista_boton({**s, "eta_s": "-1"}, AHORA)["ayuda"]
+    quieto = reintentos.vista_boton({**s, "actualizado_en": "2026-11-13T03:00:00Z"}, AHORA)
+    assert quieto["detenido"] and "puede estar detenido" in quieto["ayuda"]
+    sol = reintentos.vista_boton({"estado": "solicitado", "solicitado_en": "2026-11-13T03:25:00Z"}, AHORA)
+    assert sol["modo"] == "curso" and "hace 5 min" in sol["ayuda"] and "Veridy" in sol["ayuda"]
+
+
+def test_endpoint_de_estado_entrega_html_del_boton_y_hora_del_ultimo_dato(cliente):
+    assert cliente.get("/panel/reintentar/estado").status_code == 401
+    cliente.tabla.fila = {"estado": "en_curso", "inicio": "2026-11-13T03:10:00Z", "total": 10, "resueltos": 4, "actualizado_en": "2026-11-13T03:29:50Z"}
+    from app import cache
+    cache.vaciar()
+    j = cliente.get("/panel/reintentar/estado", headers=H).json()
+    assert j["modo"] == "curso" and "btn-off" in j["html"] and "disabled" in j["html"] and "Reintentando… espera" in j["html"] and "rei-sp" in j["html"]
+    assert j["fuente"] == "conector" and j["dato"] == "2026-11-13T03:29:50Z"                      # fila del conector: segundos de latencia, sin Log Analytics
+    cliente.tabla.fila = {"estado": "atendido", "reintentados": 5, "con_sugerencia": 3}
+    cache.vaciar()
+    j = cliente.get("/panel/reintentar/estado", headers=H).json()
+    assert j["modo"] == "normal" and "data-reintentar" in j["html"] and "5 reintentados · 3 con sugerencia" in j["html"]
+
+
+def test_en_vivo_lleva_la_hora_del_ultimo_dato_y_el_aviso_de_demora(cliente):
+    cliente.tabla.fila = {"estado": "ninguna", "actualizado_en": "2026-11-13T03:29:50Z"}
+    from app import cache, glosario
+    cache.vaciar()
+    p = cliente.get("/panel", headers=H).text
+    assert 'data-dato="2026-11-13T03:29:50Z"' in p and 'data-fuente="conector"' in p
+    g = glosario.glosario()["envivo"] if hasattr(glosario, "glosario") else None
+    from app.principal import _GLOS
+    assert "último dato recibido" in _GLOS["envivo"]["q"] and "unos minutos" in _GLOS["envivo"]["c"]

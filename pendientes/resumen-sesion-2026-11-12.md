@@ -84,3 +84,6 @@
 - Último commit desplegado bueno antes de este despliegue: d8e33044b (front; `/salud` 200).
 - Prueba nueva `kerna/operaciones/probar_iconos.sh` (portada y panel, 390/1366/1920 px). Sobre producción previa: ningún `<use>` roto ni imagen sin cargar; los botones Otro período, Excel y CSV ya se ven (los arregló la corrección del sprite XML). Sin falsos positivos: pulso animado de la portada, íconos en plegables cerrados y chips fuera del viewport.
 - Compartir: los satélites del panel azul muestran Analistas, Comité, Auditoría, Fiscalía (antes AN, CE, AU, FL).
+
+### Ajustes con movimiento, botón de reintento y «En vivo» (2026-11-13, agente de Ajustes)
+- Último commit desplegado bueno antes de este despliegue: 82e9839c7 (front; `/salud` 200). Si algo falla: `kerna/front/desplegar.sh --ref 82e9839c7`.

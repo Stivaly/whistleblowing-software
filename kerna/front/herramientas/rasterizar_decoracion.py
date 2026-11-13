@@ -27,8 +27,16 @@ def fuente(nombre: str) -> str:
 def orbitas() -> str:
     return ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 1200' fill='none'>"
             "<circle cx='600' cy='600' r='560' fill='none' stroke='#1C2A6B' stroke-opacity='.4' stroke-width='3' stroke-dasharray='.1 15' stroke-linecap='round'/>"
-            "<circle cx='1160' cy='600' r='12' fill='#CFFF5E' stroke='#1C2A6B' stroke-width='4'/>"
-            "<circle cx='600' cy='600' r='430' fill='none' stroke='#1C2A6B' stroke-opacity='.4' stroke-width='3' stroke-dasharray='.1 15' stroke-linecap='round'/></svg>")
+                        "<circle cx='600' cy='600' r='430' fill='none' stroke='#1C2A6B' stroke-opacity='.4' stroke-width='3' stroke-dasharray='.1 15' stroke-linecap='round'/></svg>")
+
+
+def halo() -> str:
+    """Halo de los paneles azules de Ajustes: dos órbitas punteadas con un satélite pequeño cada una; gira lento con CSS transform."""
+    return ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300' fill='none'>"
+            "<circle cx='150' cy='150' r='144' stroke='#fff' stroke-opacity='.32' stroke-width='1.6' stroke-dasharray='.1 7' stroke-linecap='round'/>"
+            "<circle cx='294' cy='150' r='4.5' fill='#CFFF5E'/>"
+            "<circle cx='150' cy='150' r='104' stroke='#fff' stroke-opacity='.26' stroke-width='1.6' stroke-dasharray='.1 7' stroke-linecap='round'/>"
+            "<circle cx='46' cy='150' r='3.5' fill='#fff' fill-opacity='.85'/></svg>")
 
 
 def roseta() -> str:
@@ -40,7 +48,7 @@ def roseta() -> str:
 def main():
     trabajos = [  # nombre, svg, lado en px (2x del mayor tamaño de uso)
         ("guil", fuente("guil"), 288), ("guil-l", fuente("guil-l"), 640),
-        ("bg-orbitas", orbitas(), 1600), ("bg-roseta", roseta(), 1600),
+        ("ap-halo", halo(), 460), ("bg-orbitas", orbitas(), 1600), ("bg-roseta", roseta(), 1600),
         ("simbolo", (IMG / "simbolo.svg").read_text(), 192),
     ]
     with sync_playwright() as p:

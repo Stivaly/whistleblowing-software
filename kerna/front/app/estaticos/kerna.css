@@ -1045,3 +1045,65 @@ html,body{max-width:100%}
 .as-1 .ap{height:112px;padding:4px}.as-1 .ap-svg{width:100%;max-width:480px;height:104px}
 @media(max-width:599px){.as-1 .ap{height:100px}.as-1 .ap-svg{height:96px}}
 @media(max-width:599px){#app .as-1 .as-ch.ctl{flex-wrap:wrap;overflow:visible;-webkit-mask-image:none;mask-image:none;scroll-snap-type:none}}
+
+/* v12 · Botón de reintento: nunca desaparece. En curso: gris, ícono de la identidad girando (compositor) y progreso con transform */
+.cola-a{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.rei-w{position:relative;display:inline-flex;flex-direction:column;gap:3px;cursor:help;border-radius:6px}
+.rei-w:focus-visible{outline:3px solid var(--brand-2);outline-offset:3px}
+.btn.btn-off,.btn.btn-off:hover{background:#E4E7F0;color:#4B5578;border-color:#C3C9DB;box-shadow:none;cursor:not-allowed;pointer-events:none;transform:none}
+.btn-off small{font:500 11.5px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.04em;color:#4B5578;padding-left:8px;border-left:1px solid #B5BCD2}
+.rei-sp{display:inline-flex;animation:spin 2.6s linear infinite;will-change:transform}
+.rei-sp k-st{--s:26px}
+.rei-bar{display:block;height:3px;background:#D5DBEC;overflow:hidden;border-radius:2px}
+.rei-bar b{display:block;height:100%;width:100%;background:var(--brand-2);transform-origin:left;transition:transform .8s var(--ease)}
+.rei-det .rei-bar b{background:var(--warn-bar)}
+.rei-r{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)}
+.rei-r b{display:block;font-weight:700;color:var(--ok)}.rei-r small{display:block;font-size:11.5px;color:var(--muted)}
+@media(prefers-reduced-motion:reduce){.rei-sp{animation:none}.rei-bar b{transition:none}}
+@media(max-width:599px){.cola-a .rei-w,.cola-a .rei-w .btn{width:100%}.cola-a .rei-w .btn{justify-content:center}}
+
+/* v12 · Ajustes: contenido a 1.440 px como máximo, paneles azules con movimiento (capas que giran en el compositor; satélites con transición de transform y opacity),
+   estados de guardado, insignias «Se aplica ya» y foco visible. Todo con prefers-reduced-motion. */
+.aj{max-width:1392px}
+.ap{display:grid;grid-auto-flow:row;align-content:center;justify-items:center;gap:2px}
+.ap::before{animation:rot 240s linear infinite;will-change:transform}
+.ap::after{content:"";position:absolute;left:50%;top:50%;width:230px;height:230px;margin:-115px 0 0 -115px;background:url(img/ap-halo.webp) center/contain no-repeat;opacity:.9;pointer-events:none;animation:rot 150s linear infinite reverse;will-change:transform}
+.ap-st{position:relative;z-index:1;width:120px;height:120px}
+.ap-l{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.ap-l1{animation:rot 110s linear infinite;will-change:transform}
+.ap-l2{animation:rot 70s linear infinite reverse;will-change:transform}
+.sg{transition:transform .75s var(--ease),opacity .45s ease}
+.hk{transition:opacity .3s ease}
+.ap-st[data-hot] .hk{opacity:.4}
+.ap-st[data-hot="envios"] [data-k="envios"],.ap-st[data-hot="reintentos"] [data-k="reintentos"],.ap-st[data-hot="reprocesar"] [data-k="reprocesar"],.ap-st[data-hot="evaluador"] [data-k="evaluador"],.ap-st[data-hot="candidatos"] [data-k="candidatos"],
+.ap-st[data-hot="cadena"] [data-k="cadena"],.ap-st[data-hot="compartir"] [data-k="compartir"],.ap-st[data-hot="maxresp"] [data-k="maxresp"],.ap-st[data-hot="alerta"] [data-k="alerta"]{opacity:1}
+.ap-st.ini .sg{transform:rotate(0deg)!important;opacity:0!important}.ap-st.ini .arc,.ap-st.ini .arc2{stroke-dasharray:0 100!important}
+.pulse-ring.on{transform-box:fill-box;transform-origin:center;animation:apP 2.6s ease-in-out infinite}
+@keyframes apP{50%{transform:scale(1.18);opacity:.35}}
+.team-on{fill:var(--lime);stroke:#fff;stroke-width:2;transform-box:fill-box;transform-origin:center;transition:transform .45s var(--ease),opacity .3s ease}
+.team{fill:transparent}
+.alink{transition:opacity .4s ease}
+.ap-c{position:relative;z-index:1;margin:0;max-width:100%;font:500 11px/1.3 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.03em;color:rgba(255,255,255,.92);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap-c:empty{display:none}
+.as-1 .ap-st{width:100%;max-width:480px;height:104px}
+@media(max-width:1023px){.ap-st{width:108px;height:108px}.ap-c{display:none}}
+@media(max-width:600px){.ap-st{width:84px;height:84px}}
+@media(max-width:599px){.ap-st{width:60px;height:60px}.as-1 .ap-st{width:100%;height:96px}.ap::after{width:150px;height:150px;margin:-75px 0 0 -75px}}
+@media(prefers-reduced-motion:reduce){.ap::before,.ap::after,.ap-l1,.ap-l2,.pulse-ring.on,.rei-sp{animation:none!important}.sg,.hk,.team-on,.alink,.arc,.arc2{transition:none!important}}
+.ap-b{display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font:600 11.5px/1.4 Inter,sans-serif;white-space:nowrap}
+.ap-b.ya{background:var(--ok-bg);color:var(--ok)}.ap-b.no{background:var(--na-bg);color:var(--na)}
+#app .ctl.dirty{background:linear-gradient(90deg,rgba(207,255,94,.3),transparent 55%)!important;box-shadow:inset 3px 0 0 var(--brand-2)}
+.ctl.dirty{padding-left:8px!important}
+.rst{display:inline-grid;place-items:center;width:24px;height:24px;margin-left:2px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--brand-2);cursor:pointer;vertical-align:middle}
+.rst:hover{background:var(--brand-soft)}.rst[hidden]{display:none}
+.rst k-ic{width:14px;height:14px}
+.chip.gir k-st{animation:spin 2.2s linear infinite}
+.ajs-barra{transition:background .25s ease}.ajs-barra.ok{background:var(--ok)}.ajs-barra.bad{background:var(--bad)}
+.ajs-m{display:inline-flex;align-items:center;gap:8px;font:600 14px Inter,sans-serif}
+.ajs-d{background:rgba(255,255,255,.15);color:#fff}.ajs-d:hover{background:rgba(255,255,255,.28)}.ajs-d[hidden]{display:none}
+.ajs-barra :focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+.btn-pri:disabled{opacity:.7;cursor:progress}
+@media(min-width:1024px){.ajs-barra{bottom:20px;left:calc(16rem + 24px);right:24px}}
+.seg button[aria-checked=true]{background:#fff;color:var(--brand);box-shadow:0 1px 3px rgba(15,23,54,.18)}
+.seg button:focus-visible{outline:3px solid var(--brand-2);outline-offset:1px}
+@media(prefers-reduced-motion:reduce){.chip.gir k-st{animation:none}}

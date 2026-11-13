@@ -75,5 +75,11 @@ def vaciar() -> None:
         _enproceso.clear()
 
 
+def marca(clave):
+    """Instante (epoch) del último cálculo guardado de la clave, o None."""
+    hit = _datos.get(clave)
+    return hit[0] if hit else None
+
+
 def invalidar(clave) -> None:
     _datos.pop(clave, None)

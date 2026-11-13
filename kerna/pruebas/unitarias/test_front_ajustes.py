@@ -53,7 +53,7 @@ def cli(monkeypatch):
 def test_ajustes_vista_y_menu(cli):
     assert cli.get("/panel/ajustes", follow_redirects=False).status_code == 303
     r = cli.get("/panel/ajustes", headers=H)
-    assert r.status_code == 200 and "Guardado, aún no aplicado" in r.text and "Casos por ronda" in r.text
+    assert r.status_code == 200 and "Valores recomendados" in r.text and "Casos por ronda" in r.text
     assert "Así queda" not in r.text and "Cada ronda envía" not in r.text and "orb-svg" not in r.text  # sin franjas narrativas ni órbitas decorativas
     assert "Valores recomendados" in r.text and "ejemplo" not in r.text.lower()
     assert 'href="/panel/ajustes"' in cli.get("/panel", headers=H).text
@@ -154,3 +154,31 @@ def test_ajustes_guardan_con_origen_https_y_base_http_detras_del_proxy(cli):
     proxy = {**H, "Host": sitio, "Origin": f"https://{sitio}", "X-Forwarded-Proto": "https", "X-Forwarded-Host": sitio, "Sec-Fetch-Site": "same-origin"}
     r = cli.post("/panel/ajustes", data={"valores": json.dumps({**ajustes.RECOMENDADO, "envios": 4}), "csrf": seguridad.token_csrf({})}, headers=proxy, follow_redirects=False)
     assert r.status_code == 303 and r.headers["location"].endswith("guardado=ok")
+
+
+def test_ajustes_dicen_cuales_se_aplican_ya_y_el_panel_tiene_capas_vivas(cli):
+    r = cli.get("/panel/ajustes", headers=H)
+    assert r.text.count("class=\"ap-b ya\"") == 1 and r.text.count("class=\"ap-b no\"") == 3          # Procesamiento lo lee el conector; el resto no
+    assert 'class="ap-st"' in r.text and "data-cap" in r.text and 'role="status"' in r.text and 'class="aj"' in r.text
+    assert all(it["ya"] == (it["k"] in ajustes.APLICA_YA) for g in ajustes.GRUPOS for it in g["items"])
+
+
+def test_guardar_por_fetch_devuelve_json_y_los_errores_no_son_redirecciones(cli):
+    import json as _json
+    from app import seguridad
+    tok = seguridad.token_csrf({}); hj = {**H, "Accept": "application/json", "Origin": "https://t"}
+    ok = cli.post("/panel/ajustes", headers=hj, data={"csrf": tok, "valores": _json.dumps({**ajustes.RECOMENDADO, "envios": 4})}, follow_redirects=False)
+    assert ok.status_code == 200 and ok.json()["estado"] == "ok" and ok.json()["guardado_en"] and ajustes.cargar(cli.tabla)["valores"]["envios"] == 4
+    assert cli.post("/panel/ajustes", headers=hj, data={"csrf": "malo", "valores": "{}"}, follow_redirects=False).json()["estado"] == "token"
+    inv = cli.post("/panel/ajustes", headers=hj, data={"csrf": tok, "valores": _json.dumps({**ajustes.RECOMENDADO, "envios": 99})}, follow_redirects=False)
+    assert inv.status_code == 400 and inv.json()["estado"] == "invalido"
+    sin = cli.post("/panel/ajustes", headers={**H, "Origin": "https://t"}, data={"csrf": tok, "valores": _json.dumps(ajustes.RECOMENDADO)}, follow_redirects=False)
+    assert sin.status_code == 303                                                                  # sin JavaScript sigue la redirección con aviso
+
+
+def test_el_javascript_de_ajustes_solo_anima_transform_y_opacity_en_los_satelites():
+    from pathlib import Path
+    css = (Path(__file__).resolve().parents[2] / "front/app/estaticos/kerna.css").read_text()
+    js = (Path(__file__).resolve().parents[2] / "front/app/estaticos/ajustes.js").read_text()
+    assert ".sg{transition:transform" in css and "prefers-reduced-motion:reduce){.ap::before" in css and "steps(" not in css[css.index("v12 · Ajustes"):]
+    assert "innerHTML = ORB" not in js and "ESC[g](h)" in js                                       # las escenas se crean una vez, no se redibujan

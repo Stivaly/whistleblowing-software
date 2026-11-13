@@ -1,8 +1,8 @@
 """Ajustes de Kerna (vista del panel): definición de los controles, valores recomendados y persistencia.
 
 Los valores se guardan en la tabla `ajustes` (Azure Table Storage del núcleo): una sola fila, PartitionKey "kerna" y RowKey
-"actual", con los valores en JSON y la fecha. Solo se escribe desde una sesión del panel con token CSRF. Hoy el núcleo y el conector
-todavía no leen esta tabla: la vista lo avisa.
+"actual", con los valores en JSON y la fecha. Solo se escribe desde una sesión del panel con token CSRF. El conector ya lee y aplica APLICA_YA (cada pasada, sin reiniciar; ver pendientes/contrato-reintento-conector.md);
+el núcleo y el panel aún no leen el resto, y la vista lo indica en cada fila.
 """
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ TABLA, PK, RK = "ajustes", "kerna", "actual"
 CADENA = ("azure", "gemini")
 MODELOS = {"azure": ("Azure OpenAI (gpt-5-nano)", ""), "gemini": ("Google Gemini", "")}
 EQUIPOS = (("analista", "Analistas de cumplimiento"), ("comite", "Comité de ética"), ("auditoria", "Auditoría interna"), ("legal", "Fiscalía legal"))
+APLICA_YA = ("envios", "reintentos", "espera", "revision", "reprocesar")  # los lee el conector desplegado; lo demás se guarda pero aún nadie lo aplica
 RECOMENDADO = {"envios": 5, "reintentos": 3, "espera": 24, "revision": 30, "reprocesar": False, "evaluador": True, "candidatos": 10,
                "cadena": [{"v": "azure", "on": True}, {"v": "gemini", "on": True}], "compartir": ["analista", "comite"], "maxresp": 15, "alerta": 6}
 
@@ -43,6 +44,9 @@ GRUPOS = [
         {"k": "maxresp", "t": "rg", "l": "Meta de respuesta", "d": "Más allá de esto, un caso se marca como lento.", "min": 5, "max": 60, "step": 5, "u": ("segundo", "segundos")},
         {"k": "alerta", "t": "sg", "l": "Avisar sin sugerencia tras", "d": "Se destaca en el panel.", "o": [{"v": v, "t": f"{v} h"} for v in (1, 6, 24)]}]},
 ]
+for _g in GRUPOS:
+    for _it in _g["items"]:
+        _it["ya"] = _it["k"] in APLICA_YA
 _ITEMS = {it["k"]: it for g in GRUPOS for it in g["items"]}
 
 

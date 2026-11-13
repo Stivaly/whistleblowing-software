@@ -39,6 +39,7 @@ Ninguna clave se ve ni se imprime: los scripts las leen de Key Vault por dentro.
 | Navegador | `kerna/operaciones/playwright.sh pdf \| modal [--confirmar] \| script <archivo.py>` |
 | Capturas y mediciones de vistas | `kerna/front/herramientas/medir_vistas.sh` |
 | Prueba de íconos y logos (falla si uno ocupa espacio y no pinta píxeles; portada y panel, 390/1366/1920 px) | `kerna/operaciones/probar_iconos.sh [anchos...]` |
+| Prueba de movimiento y CPU en reposo (órbitas, satélites, arco, teclado, botón de reintento, «En vivo»; solo lectura) | `kerna/operaciones/probar_movimiento.sh` |
 | Íconos, estáticos y rasterizados | `kerna/front/herramientas/{construir_identidad,construir_estaticos,construir_echarts,lamina_iconos,rasterizar_baldosas,rasterizar_decoracion}` |
 | Limpiar Docker (imágenes y caché, nunca volúmenes) | `infra/limpiar_docker.sh` |
 

@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.gzip import GZipMiddleware
 from fastapi.templating import Jinja2Templates
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi.responses import Response
 
@@ -132,8 +132,15 @@ def panel(request: Request, dias: int = 7):
     rei = None if isinstance(r["rei"], Exception) else r["rei"]
     V = _vista_resumen(m, dias, prov, rei) if m else None
     P = vistas.presentacion_resumen(V, rei, dias) if V else None
-    return plantillas.TemplateResponse(request, "panel.html", {"m": m, "V": V, "P": P, "error": error, "prov": prov, "rei": rei, "csrf": seguridad.token_csrf(request.cookies),
+    return plantillas.TemplateResponse(request, "panel.html", {"m": m, "V": V, "P": P, "error": error, "prov": prov, "rei": rei, "vb": reintentos.vista_boton(rei["s"] if rei else None), "vivo": _dato_en_vivo(dias), "csrf": seguridad.token_csrf(request.cookies),
                                                                "aviso": request.query_params.get("reintento"), "dias": dias})
+
+
+def _conector():
+    try:
+        return cache.obtener(("rei_c",), reintentos.estado_conector, 5)
+    except Exception:  # sin la fila o sin tabla: «En vivo» usa la telemetría
+        return None
 
 
 def _reintentos_ctx():
@@ -141,6 +148,29 @@ def _reintentos_ctx():
         return {"r": cache.obtener(("rei",), reintentos.resumen, 60), "s": cache.obtener(("rei_s",), reintentos.estado_solicitud, 5)}
     except Exception:  # sin telemetría o sin tabla: el bloque se oculta, el panel sigue
         return None
+
+
+def _dato_en_vivo(dias: int = 7) -> dict:
+    """Hora del último dato recibido: la fila `conector` (segundos de latencia) o, si no existe, la última consulta a la telemetría."""
+    c = _conector()
+    if c and c.get("actualizado_en"):
+        return {"dato": c["actualizado_en"], "fuente": "conector"}
+    t = cache.marca(("metricas", dias))
+    return {"dato": datetime.fromtimestamp(t, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if t else None, "fuente": "telemetria"}
+
+
+@app.get("/panel/reintentar/estado")
+def reintentar_estado(request: Request, dias: int = 7):
+    """Estado en vivo del botón de reintento y de «En vivo» (la página lo pide cada pocos segundos, sin recargar)."""
+    if not _permitido(request):
+        return JSONResponse({"estado": "sesion"}, status_code=401)
+    try:
+        s = cache.obtener(("rei_s",), reintentos.estado_solicitud, 3)
+    except Exception:
+        return JSONResponse({"estado": "error"}, status_code=502)
+    vm = reintentos.vista_boton(s)
+    return JSONResponse({"estado": s.get("estado", "ninguna"), **vm, "html": str(plantillas.get_template("_reintento_accion.html").module.accion(vm)), **_dato_en_vivo(dias)},
+                        headers={"Cache-Control": "no-store"})
 
 
 @app.get("/panel/reintentar", response_class=HTMLResponse)
@@ -350,20 +380,24 @@ def panel_ajustes(request: Request):
 
 @app.post("/panel/ajustes")
 def guardar_ajustes(request: Request, csrf: str = Form(""), valores: str = Form("")):
+    """Con fetch (Accept: application/json) responde {estado, guardado_en}; un envío normal recibe una redirección con aviso."""
+    js = _quiere_json(request)
     if not _permitido(request):
-        return RedirectResponse("/acceso", status_code=303)
+        return JSONResponse({"estado": "sesion"}, status_code=401) if js else RedirectResponse("/acceso", status_code=303)
+
+    def fin(estado, codigo=200, **extra):
+        return JSONResponse({"estado": estado, **extra}, status_code=codigo) if js else RedirectResponse(f"/panel/ajustes?guardado={estado}", status_code=303)
     if not _origen_ok(request):
-        return RedirectResponse("/panel/ajustes?guardado=origen", status_code=303)
+        return fin("origen", 403)
     if not seguridad.csrf_valido(request.cookies, csrf):
-        return RedirectResponse("/panel/ajustes?guardado=token", status_code=303)
+        return fin("token", 403)
     try:
         v = json.loads(valores)
         aj.validar(v)
     except (ValueError, TypeError, AttributeError):
-        return RedirectResponse("/panel/ajustes?guardado=invalido", status_code=303)
+        return fin("invalido", 400)
     try:
-        aj.guardar(v)
-        r = "ok"
+        g = aj.guardar(v)
+        return fin("ok", guardado_en=g["guardado_en"])
     except Exception:
-        r = "error"
-    return RedirectResponse(f"/panel/ajustes?guardado={r}", status_code=303)
+        return fin("error", 502)

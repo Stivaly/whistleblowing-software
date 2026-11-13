@@ -99,9 +99,10 @@
     ttFor = b;
     let xt = hh.getAttribute('x');
     if (key === 'envivo') {
-      const q = Math.round((Date.now() - ultimo) / 1000);
-      xt = fallo ? 'No se pudo actualizar la última vez; se vuelve a intentar en un minuto. Último dato bueno: ' + hace(q) + '.'
-        : 'Último dato: ' + hace(q) + '. Próxima actualización en unos ' + Math.max(1, 60 - q) + ' s.';
+      const q = Math.round((Date.now() - ultimo) / 1000), vv = $('[data-vivo]'), d = vv && vv.dataset.dato ? new Date(vv.dataset.dato) : null;
+      const hora = d && !isNaN(d) ? d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) + ' (' + hace(Math.max(0, Math.round((Date.now() - d) / 1000))) + ')' : null;
+      const de = vv && vv.dataset.fuente === 'conector' ? 'del conector de Veridy' : 'de la telemetría';
+      xt = (hora ? 'Último dato recibido: ' + hora + ', ' + de + '. ' : '') + (fallo ? 'No se pudo actualizar la última vez; se reintenta en un minuto.' : 'Esta pantalla se actualizó ' + hace(q) + '; la próxima en unos ' + Math.max(1, 60 - q) + ' s.');
     }
     tt.innerHTML = '<b>' + esc(g.t) + '</b>' + esc(g.q) + (g.l ? '<span class="l">' + esc(g.l) + '</span>' : '') + esc(g.c) + (xt ? '<span class="l">En este caso</span>' + esc(xt) : '');
     b.setAttribute('aria-describedby', 'tt'); tt.classList.add('on');
@@ -322,9 +323,10 @@
     const d = ok.closest('dialog'), caja = $('#rei'); ok.disabled = true;
     fetch('/panel/reintentar', { method: 'POST', credentials: 'same-origin', headers: { Accept: 'application/json' }, body: new URLSearchParams({ csrf: caja ? caja.dataset.csrf : '' }) })
       .then((r) => r.json().catch(() => ({ estado: 'error' }))).catch(() => ({ estado: 'error' }))
-      .then((r) => { const x = RES[r.estado] || RES.error, l = caja && $('.cola-l', caja);
-        if (l) { l.innerHTML = '<p class="cola-av s-' + x[1] + '" role="status">' + IC(x[0], 40) + '<span>' + x[2] + '</span></p>'; }
-        d.close(); ok.disabled = false; });
+      .then((r) => { const x = RES[r.estado] || RES.error;
+        if (caja) { let av = $('.cola-av', caja); if (!av) { av = document.createElement('p'); caja.insertBefore(av, $('.cola-l', caja)); }
+          av.className = 'cola-av s-' + x[1]; av.setAttribute('role', 'status'); av.innerHTML = IC(x[0], 40) + '<span>' + x[2] + '</span>'; }   // el botón no se toca: sigue el estado real
+        d.close(); ok.disabled = false; if (r.estado === 'solicitado' || r.estado === 'ya_solicitado') { ultEstado = 'normal'; clearTimeout(tEstado); estadoRei(); } });
   });
   /* ---------- En vivo: cada 60 s, con la pestaña visible, se pide de nuevo la vista y se reemplaza su zona (sin recargar ni perder el scroll) ---------- */
   let pulso = 0, cargando = false;
@@ -338,7 +340,7 @@
       if (r.redirected && r.url.includes('/acceso')) { location.href = '/acceso'; return; }
       if (!r.ok) throw new Error('vista');
       const doc = new DOMParser().parseFromString(await r.text(), 'text/html'), nz = doc.getElementById('zona'); if (!nz) throw new Error('zona');
-      soltar(z); z.innerHTML = nz.innerHTML;
+      soltar(z); z.innerHTML = nz.innerHTML; ultHtml = null;
       const nd = doc.getElementById('datos'); if (nd) { try { DATOS.graficos = JSON.parse(nd.textContent).graficos; } catch (_) { /* se conservan los anteriores */ } }
       graficos(DATOS.graficos);
       ultimo = Date.now(); fallo = false;
@@ -346,6 +348,27 @@
     } catch (_) { fallo = true; const vd = vdot(); if (vd) vd.style.background = css('--warn-bar'); }
     cargando = false;
   }
+  /* ---------- Estado del reintento y de «En vivo» sin recargar: sondeo liviano (JSON chico) cada 5 s con un pedido en curso, 20 s si no ---------- */
+  let ultEstado = null, ultHtml = null;
+  async function estadoRei() {
+    const v = $('[data-vivo]'); if (!v || document.hidden) return programar();
+    const dl = $('#dlg-rei'); if (dl && dl.open) return programar();
+    try {
+      const r = await fetch('/panel/reintentar/estado' + location.search, { credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'application/json' } });
+      if (r.status === 401) { location.href = '/acceso'; return; }
+      if (r.ok) {
+        const j = await r.json(), acc = $('[data-rei-acc]');
+        if (j.dato) { v.dataset.dato = j.dato; v.dataset.fuente = j.fuente; }
+        if (acc && j.html && j.html !== ultHtml) { acc.innerHTML = j.html; ultHtml = j.html; }
+        if (ultEstado === 'curso' && j.modo === 'normal') { cargando = false; refrescar(); }   // terminó: se actualizan los conteos de la cola
+        ultEstado = j.modo;
+      }
+    } catch (_) { /* se vuelve a intentar */ }
+    programar();
+  }
+  let tEstado = 0;
+  function programar() { clearTimeout(tEstado); tEstado = setTimeout(estadoRei, ultEstado === 'curso' ? 5000 : 20000); }
+  if ($('[data-vivo]')) { const a0 = $('[data-rei-acc]'); ultEstado = a0 && $('.rei-w', a0) ? 'curso' : 'normal'; programar(); }
   if ($('[data-vivo]')) {
     setInterval(refrescar, 60000);
     document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - ultimo > 60000) refrescar(); });

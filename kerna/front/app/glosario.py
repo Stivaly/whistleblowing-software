@@ -39,8 +39,9 @@ def glosario() -> dict:
                f"Sonnet 5.5, US$ {f.dec_corto(s[0], 0)} y {f.dec_corto(s[1], 0)}.")
     L = "Cómo leerlo"
     return {
-        "envivo": {"t": "En vivo", "q": "Los números se actualizan solos cada minuto, sin recargar la página.",
-                   "c": "Los datos pueden tardar unos minutos en llegar desde el registro de Kerna, así que lo último que ves puede tener un pequeño retraso.", "l": L},
+        "envivo": {"t": "En vivo", "q": "Se actualiza solo cada minuto y muestra la hora del último dato recibido.",
+                   "c": "Los datos de telemetría pueden tardar unos minutos en llegar: lo último que ves puede ir atrasado.", "l": L},
+        "reintento_estado": {"t": "Reintento en curso", "q": "Kerna está generando de nuevo las sugerencias pendientes; el botón vuelve cuando termina.", "c": "", "l": "Ahora"},
         "estado": {"t": "Estado general", "q": "Resumen de 5 segundos: junta la salud de los modelos, los proveedores, la calidad y la rapidez. Verde = todo bien, ámbar = atención, rojo = problema.",
                    "c": "Un solo indicador en rojo hace que el estado general sea «problema»; en ámbar, «atención».", "l": L},
         "salud_modelo": {"t": "Modelos de IA", "q": "Los modelos de lenguaje que redactan la sugerencia: uno principal y uno de respaldo.", "c": "Ámbar: a veces entra el respaldo. Rojo: muchos casos pasan a revisión manual.", "l": L},
@@ -91,7 +92,7 @@ def glosario() -> dict:
         "inf_rent": {"t": "Rentabilidad", "q": "Lo que queda de cada cliente después de servirlo, en UF, durante el período.", "c": "Verde: margen. Gris: costo de servir.", "l": L},
         "inf_incid": {"t": "Incidentes", "q": "Casos que pasaron a revisión manual y fallas de proveedores o modelos, con su motivo.", "c": "Muchas fallas del mismo proveedor suelen indicar un límite de uso o una caída.", "l": L},
         "inf_datos": {"t": "Datos", "q": "Todas las tablas del informe. Abre la que necesites.", "c": "También están completas en Excel y CSV.", "l": L},
-        "aj_estado": {"t": "Guardado, aún no aplicado", "q": "Kerna todavía no lee estos valores: sigue con su configuración actual hasta que lo haga.", "c": "", "l": ""},
+        "aj_estado": {"t": "¿Se aplica ya?", "q": "«Activo» lo usa el conector en su próxima ronda; «Aún no» queda guardado y se aplicará cuando Kerna lo lea.", "c": "", "l": ""},
         **_ajustes(L),
         "ingresos_uf": {"t": "Ingresos (UF)", "q": "Es la proyección del plan de negocio: lo que se espera facturar cada año, en UF, con los clientes esperados por año. Así, los 638 UF del año 1 salen de 5 clientes.", "c": "El año 0 es 2026, así que el año 1 es 2027. Para pasar las UF a pesos se usa una UF supuesta de {uf} pesos: es un valor configurable que falta confirmar con el valor oficial.".replace("{uf}", f.miles(par_uf())), "l": L},
     }

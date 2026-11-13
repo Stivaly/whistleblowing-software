@@ -2,7 +2,8 @@
 {% set seccion = 'ajustes' %}
 {% block datos %}<script type="application/json" id="ajustes-datos">{{ datos|tojson }}</script>{% endblock %}
 {% block vista %}
-<header class="bar"><div class="bar-t"><h1 class="h1">Ajustes</h1><span class="chip warn">{{ ic('e-contingencia-modelo', px=18, mini=True) }} Guardado, aún no aplicado</span>{{ tip('aj_estado') }}{% if guardado_en %}<span class="bar-p">{{ fecha_hora(guardado_en) }}</span>{% endif %}</div>
+<div class="aj">
+<header class="bar"><div class="bar-t"><h1 class="h1">Ajustes</h1><span class="chip ok" data-estado role="status" aria-live="polite">{{ ic('e-lista', px=18, mini=True) }}<span>{% if guardado_en %}Todo guardado{% else %}Valores recomendados{% endif %}</span></span>{{ tip('aj_estado') }}{% if guardado_en %}<span class="bar-p" data-guardado>{{ fecha_hora(guardado_en) }}</span>{% else %}<span class="bar-p" data-guardado></span>{% endif %}</div>
 <div class="bar-a"><button type="button" class="btn btn-sec" data-restaurar>{{ ic('rotate-ccw') }}<span>Valores recomendados</span></button></div></header>
 
 {% if aviso == 'ok' %}<p class="cola-av s-ok" role="status">{{ ic('e-valorada', px=40) }}<span>Ajustes guardados</span></p>
@@ -12,10 +13,10 @@
 
 <div class="as">
 {% for g in grupos %}<section class="as-s{% if g['items']|rejectattr('t', 'equalto', 'ch')|list|length == 0 %} as-1{% endif %}" aria-labelledby="g-{{ g.id }}" data-g="{{ g.id }}">
-<div class="ap"><svg class="ap-svg" viewBox="{{ '0 0 480 120' if g.id == 'comp' else '0 0 300 300' }}" role="img" data-orb="{{ g.id }}"></svg></div>
-<div class="as-r"><h2 id="g-{{ g.id }}" class="as-h">{{ ic(g.i, px=24) }}<span>{{ g.t }}</span>{% for it in g["items"] if it.t == 'ch' %}<span class="as-ch ctl" data-k="{{ it.k }}" data-t="ch" role="group" aria-labelledby="l-{{ it.k }}"><span id="l-{{ it.k }}" class="ct-n">{{ it.l }}</span>{{ tip(it.k) }}<span class="chip warn" data-cambiado hidden>{{ ic('pencil', px=14) }}</span>{% for o in it.o %}<button type="button" class="chip na" data-v="{{ o.v }}" aria-pressed="false">{{ ic('user', px=16) }}<span>{{ o.t }}</span></button>{% endfor %}</span>{% endfor %}</h2>
+<div class="ap"><div class="ap-st" data-orb="{{ g.id }}" role="img"></div><p class="ap-c" data-cap aria-hidden="true"></p></div>
+<div class="as-r"><h2 id="g-{{ g.id }}" class="as-h">{{ ic(g.i, px=24) }}<span>{{ g.t }}</span>{% set ya = g["items"]|selectattr("ya")|list|length == g["items"]|length %}<span class="ap-b {{ 'ya' if ya else 'no' }}" title="{{ 'El conector ya usa estos ajustes' if ya else 'Se guarda; aún no se aplica' }}">{{ 'Se aplica ya' if ya else 'Aún no se aplica' }}</span>{% for it in g["items"] if it.t == 'ch' %}<span class="as-ch ctl" data-k="{{ it.k }}" data-t="ch" role="group" aria-labelledby="l-{{ it.k }}"><span id="l-{{ it.k }}" class="ct-n">{{ it.l }}</span>{{ tip(it.k) }}<button type="button" class="rst" data-cambiado data-rst hidden title="Volver al valor recomendado" aria-label="Volver al valor recomendado: {{ it.l }}">{{ ic('rotate-ccw', px=14) }}</button>{% for o in it.o %}<button type="button" class="chip na" data-v="{{ o.v }}" aria-pressed="false">{{ ic('user', px=16) }}<span>{{ o.t }}</span></button>{% endfor %}</span>{% endfor %}</h2>
 <div class="gi">{% for it in g["items"] if it.t != 'ch' %}<div class="ctl{% if it.t == 'cd' %} ctl-w{% endif %}" data-k="{{ it.k }}" data-t="{{ it.t }}">
-<div class="ct-l"><span id="l-{{ it.k }}" class="ct-n">{{ it.l }}</span>{{ tip(it.k) }}<span class="chip warn" data-cambiado hidden>{{ ic('pencil', px=14) }}</span></div>
+<div class="ct-l"><span id="l-{{ it.k }}" class="ct-n">{{ it.l }}</span>{{ tip(it.k) }}<button type="button" class="rst" data-cambiado data-rst hidden title="Volver al valor recomendado" aria-label="Volver al valor recomendado: {{ it.l }}">{{ ic('rotate-ccw', px=14) }}</button></div>
 {% if it.t == 'sw' %}<div class="ct-c"><button type="button" role="switch" class="sw" aria-checked="false" aria-labelledby="l-{{ it.k }}"></button><span class="ct-v" data-swt></span></div>
 {% elif it.t == 'rg' %}<div class="ct-c"><span class="rg-w"><input type="range" class="range" min="{{ it.min }}" max="{{ it.max }}" step="{{ it.step or 1 }}" aria-labelledby="l-{{ it.k }}"{% if it.dep %} data-dep="{{ it.dep }}"{% endif %}><i class="rc" data-rc aria-hidden="true"></i></span><span class="ct-v" data-v></span></div>
 <p class="ct-av" data-av hidden>{{ ic('e-contingencia-modelo', px=18, mini=True) }}<span></span></p>
@@ -26,7 +27,8 @@
 
 <form method="post" action="/panel/ajustes" class="ajs-barra" data-barra hidden>
 <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="valores" value="">
-<span class="font-semibold text-sm flex items-center gap-2">{{ ic('pencil-line') }}<span data-ncambios></span></span>
-<span class="flex gap-2"><button type="button" class="btn" style="background:rgba(255,255,255,.15);color:#fff" data-descartar>Descartar</button><button type="submit" class="btn btn-pri">{{ ic('save') }}<span>Guardar</span></button></span></form>
+<span class="ajs-m" role="status" aria-live="polite">{{ ic('pencil-line') }}<span data-ncambios></span></span>
+<span class="flex gap-2"><button type="button" class="btn ajs-d" data-descartar>Descartar</button><button type="submit" class="btn btn-pri" data-guardar>{{ ic('save') }}<span>Guardar</span></button></span></form>
+</div>
 <script src="/estaticos/ajustes.js?v={{ ver }}" defer></script>
 {% endblock %}
