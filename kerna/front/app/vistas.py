@@ -894,7 +894,7 @@ def presentacion_negocio(V: dict, n: dict) -> dict:
     kp = {k["k"]: k for k in V["kpis"]}
     kb = [_kb(kp["neg_margen"]), _kb(kp["neg_costo"]), _kb(kp["neg_sug"]), _kb(kp["neg_adopcion_k"])]
     chips = [("p_van", "Ganancia a 5 años, valor de hoy", f.uf(p["van"], 0), "UF"), ("p_tir", "Rentabilidad anual del proyecto", f.dec_corto(p["tir_pct"], 1), "%"),
-             ("p_ind", "Retorno por cada UF invertida", f.dec(p["indice_rentabilidad"], 2), "UF"), ("p_rec", "Año en que se recupera la inversión", f"Año {p['recuperacion_anio']}", "")]
+             ("p_ind", "Retorno por cada UF invertida", f.dec(p["indice_rentabilidad"], 2), "UF"), ("p_rec", "Recuperas la inversión en", f"Año {p['recuperacion_anio']}", "")]
     cls = V["con_uso"]
     nc, ns = len(cls), len(V["sin_uso"])
     dona_c = _o.dona([{"n": "Con uso registrado", "v": nc, "txt": str(nc), "c": "verde"}, {"n": "Sin uso registrado", "v": ns, "txt": str(ns), "c": "amarillo"}],
