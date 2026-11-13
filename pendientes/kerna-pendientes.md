@@ -218,7 +218,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 - [x] **Alertas de Kerna** (2026-11-11, decidido: no se crean; entorno de prueba, basta el Workbook): `infra/terraform/observabilidad.tf` crea 4 reglas de consulta programada y un grupo de
       acción por correo solo si `correo_alertas` tiene valor en `terraform.tfvars`. Las reglas tienen costo mensual
       fijo (bajo, por regla), por eso no se crearon. El Workbook «Kerna AI: resultados» ya está aplicado.
-- [ ] **Cuenta de destinatario para pruebas e2e** (2026-11-11: decidido usar `kerna-e2e`; falta crearla, no hay credencial de admin disponible para los agentes) (bloquea que la capa e2e sea estable): hoy corren con `kerna-conector`
+- [x] **Cuenta de destinatario para pruebas e2e**: `kerna-e2e` ya está creada (clave en Key Vault `veridy-kerna-e2e-password`); pasar la capa e2e a esta cuenta (antes corrían con `kerna-conector`)
       y fallan de forma intermitente (de 0 a 8 de 22 según la corrida). Veridy cierra las sesiones anteriores de un
       usuario en cada ingreso y el conector reingresa cada ~95 s. Hace falta crear en Veridy un destinatario de
       pruebas con acceso a los casos sintéticos y pasar `VERIDY_USUARIO` / `VERIDY_PASSWORD`. Por lo mismo, nadie debe
@@ -263,7 +263,7 @@ https://claude.ai/code/artifact/f09070a4-0a25-42a1-85fc-9d75e55b0b71
 ## Decisiones de la usuaria (2026-11-12)
 - Mini o nano en el evaluador y mejoras de calidad del modelo: no hacer nada por ahora.
 - Números de causa en el anonimizador: los lleva otro agente; no tocarlos.
-- Cuenta `kerna-e2e`: sigue pendiente, la crea la usuaria más adelante.
+- Cuenta `kerna-e2e`: creada (clave en Key Vault `veridy-kerna-e2e-password`).
 - «Probar Kerna» en el front: publicar el front no requiere credencial; lo que falta es que el front pueda iniciar sesión en Veridy para enviar la denuncia. Opciones: secreto `front-demo` en Key Vault o reutilizar la credencial del conector. Pendiente de decisión.
 - `etl_incremental.py`: la usuaria preguntó por qué retirarlo. Motivo: copia la base SQLite local antigua de Veridy a Supabase (y tiene la contraseña escrita en el archivo); Veridy ya corre sobre PostgreSQL de Azure. Sin acción hasta que decida.
 
@@ -369,7 +369,7 @@ Pendiente:
 
 ## Front v3 (2026-11-12): informe en pestañas, rendimiento, íconos Núcleo
 - Hecho: informe en pestañas (KPI + veredicto + 2 a 3 gráficos por pestaña, tablas en «Datos» plegadas), PDF con KPI arriba y anexo de tablas, caché con refresco en segundo plano, ECharts propio en canvas, decoración en WebP, sprite de estados Núcleo, Ajustes sin texto narrativo. Detalle y métricas: `kerna/front/diseno-v2/rendimiento-y-iconos.md`.
-- Pendiente: App Service F1 no tiene Always On; tras 20 min sin uso el primer pedido tarda 10 a 20 s (arranque de Python) aunque luego el precalentado deja todo listo. Opciones: ping de salud programado cada 10 min (gratis, pero consume la cuota de CPU diaria de F1) o plan B1 (unos US$ 13 al mes). Decide la usuaria.
+- El front ya no se duerme: una Logic App de ping lo consulta cada 15 min (no se usa plan B1).
 - Pendiente: las fuentes pesan 118 KB (4 pesos de Inter y 2 de Unbounded); se pueden subsetear a los caracteres usados.
 - Pendiente: «Ajustes» se guardan pero Kerna aún no los lee (el aviso dice «Guardado, aún no aplicado»).
 - Pendiente: medir INP con interacción real (cambio de pestaña) en un navegador con GPU; en headless solo se midió carga, reposo y desplazamiento.

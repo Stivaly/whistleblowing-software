@@ -1271,4 +1271,13 @@ html,body{max-width:100%}
   .zv #p-calidad:not([hidden]){display:flex;flex-wrap:wrap;align-items:center;gap:8px 32px}.zv #p-calidad>.mk{width:100%}
   .zv #p-calidad .stt{margin:0;flex-direction:column;align-items:stretch;gap:8px;flex:0 1 auto}
 }
+/* Bandas del Informe: miden su contenido en escritorio, sin estirarse con la derecha vacía */
+@media(min-width:1000px){
+  .zv #p-calidad:not([hidden]),.zv #p-costo:not([hidden]){width:fit-content;max-width:100%}
+  .zv #p-rentabilidad:not([hidden]){max-width:1040px}
+}
+/* Móvil: cuatro anillos en 2×2 (no 3+1) */
+@media(max-width:599px){
+  .ly-l:has(>li:nth-child(4)){grid-template-columns:repeat(2,minmax(0,1fr));justify-items:center}
+}
 .fila-2 .ley-b{display:block}.fila-2 .ley-b .ly-l{flex:none}

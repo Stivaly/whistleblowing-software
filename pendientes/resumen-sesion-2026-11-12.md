@@ -23,7 +23,7 @@
 - Página de Ajustes real (App Configuration) — diseñada en la maqueta, sin implementar.
 - Anonimizador: faltan reglas (empresas, cargos, edades, salud, ubicaciones, direcciones) y excepciones a términos jurídicos; números de causa ¿se ocultan?
 - ~98 denuncias en revisión manual se reintentan solas (de a 5).
-- Cuenta `kerna-e2e` para pruebas e2e (la crea la usuaria).
+- Cuenta `kerna-e2e` para pruebas e2e: creada (clave en Key Vault `veridy-kerna-e2e-password`).
 - Cambiar `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` en `~/.claude/settings.json` (propuesto, sin aplicar).
 
 ## Maqueta v3 publicada
@@ -76,9 +76,9 @@
 
 **Sigue pendiente de ti:**
 - Valor de la UF (hoy se usan 40.000).
-- Subir al plan B1 (unos US$ 13 al mes) para evitar la espera de la primera visita.
+- El front ya no se duerme: Logic App de ping cada 15 min (sin plan B1).
 - Autorizar el despliegue del conector, para que el reintento manual se ejecute de verdad.
-- Crear la cuenta `kerna-e2e`.
+- Cuenta `kerna-e2e`: creada (clave en Key Vault `veridy-kerna-e2e-password`).
 
 ### Íconos y Compartir (2026-11-13, agente de íconos)
 - Último commit desplegado bueno antes de este despliegue: d8e33044b (front; `/salud` 200).
@@ -144,7 +144,7 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
 
 **Falta:** el estado «en curso» del botón solo se vio con una respuesta simulada; los ajustes de IA los tiene que aplicar el núcleo (anotado para el otro agente); el mapa de calor del Resumen necesita 7 días de datos; el conector todavía cuenta 62 casos que ya no existen en Veridy; `conector_tag` y `kerna_tablas_cuenta` están solo en el `terraform.tfvars` local, que git ignora. `bg-orbitas.webp`, regenerado sin querer, está en la papelera y la versión buena quedó restaurada.
 
-**Necesita a la usuaria:** valor de la UF, plan B1, cuenta `kerna-e2e`, decidir si se cargan o evalúan los 150 relatos y revisar los renombres.
+**Necesita a la usuaria:** valor de la UF, decidir si se cargan o evalúan los 150 relatos y revisar los renombres. (`kerna-e2e` ya creada; el front ya no se duerme.)
 
 ## 2026-11-13 03:40 · pendientes reales en el Resumen
 Último desplegado bueno antes de este cambio: 88b7c98b7 (volver con `kerna/front/desplegar.sh --ref 88b7c98b7`).
