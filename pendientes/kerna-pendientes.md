@@ -457,3 +457,12 @@ Si una tarea no tiene script, no la improvises con comandos sueltos: escribe un 
 
 ## Ajustes de IA que debe leer el núcleo (anotado 2026-11-13 por el agente del conector)
 El conector ya aplica `envios`, `reintentos`, `espera`, `revision` y `reprocesar` (ver `pendientes/contrato-reintento-conector.md`). Falta que el núcleo lea de la tabla `ajustes` (fila `kerna`/`actual`, JSON en `valores`) y aplique: `evaluador` (revisor automático de citas, bool), `candidatos` (artículos por caso, 3 a 20, depende de `evaluador`) y `cadena` (orden y activación de modelos: lista de `{v: azure|gemini, on: bool}`). Las llaves `compartir`, `maxresp` y `alerta` son del panel. Referencia: `kerna/front/app/ajustes.py` (`validar`).
+
+## Ajustes con movimiento, botón de reintento y «En vivo» (2026-11-13, agente de Ajustes)
+Hecho y desplegado (commits 7cb3fc2af a ff6732151): órbitas que giran (capas SVG y halo WebP `ap-halo.webp`, compositor), satélites y arco con transición, estados guardando/guardado/error con guardado por fetch, insignias «Se aplica ya» (solo Procesamiento) y «Aún no se aplica», restaurar por fila, teclado en selectores, `.aj` a 1.392 px; botón de reintento que nunca desaparece (`reintentos.vista_boton`, `_reintento_accion.html`, `/panel/reintentar/estado`); «En vivo» con hora del último dato (fila `conector`). Prueba: `kerna/operaciones/probar_movimiento.sh`.
+Falta (en orden):
+1. Los nombres de equipos en el panel de «Compartir» se ven a ~8 px a 1366 (el SVG de 480 de ancho se reduce a ~256): pasar los rótulos a HTML o usar un viewBox más angosto (`kerna/front/app/estaticos/ajustes.js`, escena `comp`).
+2. `maxresp`, `alerta` y `compartir` están marcados «Aún no se aplica» (supuesto, a confirmar): ningún componente los lee hoy (`kerna/front/app/ajustes.py`, `APLICA_YA`). Cuando el panel o el núcleo los use, agregarlos a `APLICA_YA`.
+3. Los ajustes de IA (`evaluador`, `candidatos`, `cadena`) siguen siendo del núcleo (ver sección anterior).
+4. El estado «en curso» del botón solo se verificó con respuesta simulada (no se pulsó el reintento real): comprobarlo cuando haya un pedido real.
+5. Arco de «Meta de respuesta»: anima `stroke-dasharray` (no solo transform/opacity) porque es una transición corta de un SVG de 120 px disparada por el control; no hay animación continua.
