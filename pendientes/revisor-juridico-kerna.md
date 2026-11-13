@@ -151,3 +151,14 @@ llama a modelos por API, no a Claude Code.
 - No rompe el recall y no veta esperados, pero condiciona el 86 % y casi no limpia los controles.
 - Siguiente palanca: el orden del evaluador (hit@70 ≈ 0,97) y afinar cuándo el revisor confirma.
 - Detalle: `kerna/evaluacion/registro/revisor-20261112*.json` y `kerna/evaluacion/triage-casos.md`.
+
+## 8. Decisiones sobre casos dudosos (2026-11-12)
+
+- **DEN-0098 (acoso de un artista callejero en el metro):** el veto del revisor a 18.575 art. 14 es **correcto** y se
+  cuenta como acierto. El art. 14 rige la relación interna de la Administración y sus funcionarios; aquí no hay
+  funcionario ni relación de servicio. Vetar con `naturaleza_distinta` es mejor que solo no sugerirlo: si el
+  evaluador lo deja pasar, el revisor es la última barrera y el auditor ve por qué se descartó.
+- **DEN-0110 (deepfakes escolares):** **sigue como control**. La Ley 19.628 excluye el tratamiento que hacen
+  personas naturales en sus actividades personales (art. 1), y los autores son estudiantes, no un responsable. Lo
+  aplicable es penal y de convivencia escolar, fuera del corpus. Si el revisor sugiere un artículo de datos
+  personales, se espera que lo condicione con alerta `fuera_de_corpus:penal`.

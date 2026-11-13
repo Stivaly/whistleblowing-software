@@ -215,6 +215,14 @@ def test_json_solo_modificados_por():
     assert [f["articulo"] for f in frags] == ["1"]
 
 
+def test_json_articulos_incluir_ademas_de_los_modificados():
+    cfg = {**CFG_J, "solo_modificados_por": 777, "version": None}
+    _, base = e.parsear(norma_json(), cfg)
+    _, frags = e.parsear(norma_json(), {**cfg, "articulos_incluir": ["1 transitorio", "1"]})
+    assert [f["articulo"] for f in base] == ["1"]
+    assert "1" in {f["articulo"] for f in frags} and len(frags) > len(base)
+
+
 def test_vigencia_anticipada_historica_y_diferida():
     from datetime import date
     antes, despues = date(2026, 10, 2), date(2026, 12, 1)

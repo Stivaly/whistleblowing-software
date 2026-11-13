@@ -30,6 +30,8 @@ Claves de leyes.json por entrada:
                     | "historica" (contexto: vigente=false)
   solo_modificados_por  (json) idNorma de una ley: extraer solo los artículos que
                     esa ley modificó o creó (según las notas de la BCN)
+  articulos_incluir (json, con solo_modificados_por) números de artículo que se extraen
+                    además de los modificados (p. ej. la definición de acoso en un estatuto)
   origen            texto libre: por qué está esta entrada (p. ej. "Ley 21.643")
   articulos_modificatorios / articulos_sustantivos: listas de números de
                     artículo para corregir a mano la clasificación automática
@@ -522,6 +524,7 @@ def parsear_json(datos: bytes, cfg: dict, hoy: date | None = None) -> tuple[dict
 
     solo_mod = cfg.get("solo_modificados_por")
     marca_mod = f"idNorma={solo_mod}&" if solo_mod else None
+    incluir = {_slug(str(a)) for a in cfg.get("articulos_incluir", [])}
 
     def modificadores(t: str) -> list[str]:
         return sorted(set(re.findall(r"navegar\?idNorma=(\d+)&", t)))
@@ -536,7 +539,7 @@ def parsear_json(datos: bytes, cfg: dict, hoy: date | None = None) -> tuple[dict
                 transitorio = en_transitorios or bool(_TRANSITORIO.search(num))
                 num = _TRANSITORIO.sub("", num).strip()
                 texto = _texto_html(t_html)
-                if texto and (marca_mod is None or marca_mod in t_html):
+                if texto and (marca_mod is None or marca_mod in t_html or _slug(num) in incluir):
                     arm.articulo(num=num, texto=texto, ruta=ruta, transitorio=transitorio,
                                  derogado=False, fecha_version="", id_parte=x.get("i", ""),
                                  contiene_ley=bool(hijos), modificado_por=modificadores(t_html))

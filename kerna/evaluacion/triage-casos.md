@@ -15,7 +15,7 @@ La etiqueta original no se sobrescribe; `recall_retriever.py --triage ... --etiq
 
 ## Estatutos públicos agregados al corpus (commit 62b8c6cda: Leyes 18.575, 18.834, 18.883, 18.695)
 
-El corpus solo trae los artículos que modificó la Ley Karin; faltan los que definen la prohibición de acoso (Ley 18.834 art. 84 letras l y m; Ley 18.883 art. 82 letras l y m) y la prescripción (18.834 art. 159). Pasan de `no` a `si`, con CT 2 ya no esperado (el CT no rige a funcionarios): DEN-0008 (18.883 123, 18.883 127), DEN-0009 (18.834 125, 18.834 121), DEN-0018 (18.883 123, 18.883 127), DEN-0021 (18.575 14), DEN-0022 (18.883 133, 18.883 135), DEN-0026 (18.883 123, 18.883 127). Carabineros y Ejército siguen `no` (DEN-0010, 0011, 0019, 0027): su norma no está en el corpus.
+El corpus solo trae los artículos que modificó la Ley Karin; faltan los que definen la prohibición de acoso (Ley 18.834 art. 84 letras l y m; Ley 18.883 art. 82 letras l y m) y la prescripción (18.834 art. 159). Los arts. 82, 84, 154, 155, 158 y 159 se cargaron el 2026-11-12 (`articulos_incluir`). Pasan de `no` a `si`, con CT 2 ya no esperado (el CT no rige a funcionarios): DEN-0008 (18.883 123, 18.883 127), DEN-0009 (18.834 125, 18.834 121), DEN-0018 (18.883 123, 18.883 127), DEN-0021 (18.575 14), DEN-0022 (18.883 133, 18.883 135), DEN-0026 (18.883 123, 18.883 127). Carabineros y Ejército siguen `no` (DEN-0010, 0011, 0019, 0027): su norma no está en el corpus.
 
 ## Conteos
 
@@ -150,3 +150,6 @@ En alcance: 55; con un solo artículo en la etiqueta corregida: 17.
 | DEN-0111 | fallo_judicial | desarrollo | control (alta) | - | - | - | Caso 'ninguna': sin artículo aplicable; sirve para medir falsos positivos. |
 | DEN-0112 | fallo_judicial | desarrollo | control (alta) | - | - | - | Caso 'ninguna': sin artículo aplicable; sirve para medir falsos positivos. |
 | DEN-0113 | fallo_judicial | desarrollo | control (alta) | - | - | - | Caso 'ninguna': sin artículo aplicable; sirve para medir falsos positivos. |
+
+
+Actualización 2026-11-12 (artículos de definición cargados): en `articulos_corregidos` se suma 18.834 arts. 84 y 159 a DEN-0009 (el texto los cita expresamente; confianza media -> alta) y 18.883 art. 82 a DEN-0026 (cita el art. 82 letra l; confianza media -> alta), DEN-0008 y DEN-0018 (acoso laboral con destitución; el texto no cita el 82; confianza sigue media). DEN-0021 (protocolo en un ministerio; 18.575 art. 14) y DEN-0022 (traslado preventivo; 18.883 arts. 133 y 135) no cambian: no discuten la definición. 18.575 arts. 52 y 64 no se cargaron (probidad e inhabilidades, sin definición de acoso). Recall@5 retriever solo: desarrollo 0,548 antes y después; prueba 0,467 sin cambios (ver registro-pruebas.md).
