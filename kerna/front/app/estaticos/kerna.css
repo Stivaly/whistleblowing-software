@@ -1268,6 +1268,6 @@ html,body{max-width:100%}
 @media(min-width:1000px){
   .fila-2{grid-template-columns:minmax(0,1fr) auto}.fila-2:has(>.z-ly:only-child){grid-template-columns:auto;justify-content:start}
   .fila-2>.bn{margin-bottom:12px}
-  .zv #p-calidad{display:flex;flex-wrap:wrap;align-items:center;gap:8px 32px}.zv #p-calidad>.mk{width:100%}
+  .zv #p-calidad:not([hidden]){display:flex;flex-wrap:wrap;align-items:center;gap:8px 32px}.zv #p-calidad>.mk{width:100%}
   .zv #p-calidad .stt{margin:0;flex-direction:column;align-items:stretch;gap:8px;flex:0 1 auto}
 }

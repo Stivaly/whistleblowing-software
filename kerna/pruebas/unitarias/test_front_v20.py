@@ -38,3 +38,8 @@ def test_acierto_por_ley_comparte_fila_y_no_trae_la_linea_suelta():
     p = (EST.parent / "plantillas" / "panel.html").read_text()
     assert 'class="fila-2"' in p and "sin ley identificada" not in p
     assert ".fila-2{display:grid" in (EST / "kerna.css").read_text()
+
+
+def test_la_pestana_calidad_oculta_sigue_oculta():
+    css = (EST / "kerna.css").read_text()
+    assert "#p-calidad:not([hidden]){display:flex" in css and "#p-calidad{display:flex" not in css
