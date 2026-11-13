@@ -1209,3 +1209,6 @@ html,body{max-width:100%}
 .cola>.mk k-tip{margin-left:4px}
 .zv .kbs6{padding-right:36px}
 .zv .tp .cch{max-width:960px}
+.zv .stt .stl{flex-wrap:nowrap;min-width:0}.zv .stl .stl-t{min-width:0}
+@media(max-width:599px){.zv .stt .stl{padding:8px 18px 8px 10px;gap:10px}.zv .stl svg.ani{width:48px;height:48px}}
+.pr-n .frase{font-size:clamp(20px,1.8vw,28px)}
