@@ -1,0 +1,102 @@
+{
+ "regla": "primero tras >= 20 min sin pedidos (o primero de la corrida) Y > 3 x mediana del resto o > Q3 + 3 x IQR",
+ "unidad": "ms",
+ "mediciones": {
+  "kerna/front/diseno-v2/capturas/prod10.json": {
+   "n_total": 8,
+   "n_excluidos": 0,
+   "excluidos": [],
+   "con_exclusion": {
+    "p50": 122.5,
+    "p95": 2667.250000000001
+   },
+   "sin_exclusion": {
+    "p50": 122.5,
+    "p95": 2667.250000000001
+   },
+   "estado": "sin datos para depurar; repetir con calentamiento",
+   "servidor": "App Service F1 del front (duerme)",
+   "nota": "TTFB, un valor por vista y ancho; sin marca de hora por pedido; el archivo no registra orden de visita real"
+  },
+  "kerna/front/diseno-v2/capturas/prod7-extra.json": {
+   "n_total": 12,
+   "n_excluidos": 0,
+   "excluidos": [],
+   "con_exclusion": {
+    "p50": 21.0,
+    "p95": 123.89999999999992
+   },
+   "sin_exclusion": {
+    "p50": 21.0,
+    "p95": 123.89999999999992
+   },
+   "estado": "sin datos para depurar; repetir con calentamiento",
+   "servidor": "App Service F1 del front (duerme)",
+   "nota": "TTFB, un valor por vista y ancho; sin marca de hora por pedido; el archivo no registra orden de visita real"
+  },
+  "kerna/front/diseno-v2/capturas/prod7.json": {
+   "n_total": 8,
+   "n_excluidos": 0,
+   "excluidos": [],
+   "con_exclusion": {
+    "p50": 27.0,
+    "p95": 139.20000000000002
+   },
+   "sin_exclusion": {
+    "p50": 27.0,
+    "p95": 139.20000000000002
+   },
+   "estado": "sin datos para depurar; repetir con calentamiento",
+   "servidor": "App Service F1 del front (duerme)",
+   "nota": "TTFB, un valor por vista y ancho; sin marca de hora por pedido; el archivo no registra orden de visita real"
+  },
+  "kerna/front/diseno-v2/capturas/prod8.json": {
+   "n_total": 8,
+   "n_excluidos": 0,
+   "excluidos": [],
+   "con_exclusion": {
+    "p50": 67.5,
+    "p95": 289.1500000000001
+   },
+   "sin_exclusion": {
+    "p50": 67.5,
+    "p95": 289.1500000000001
+   },
+   "estado": "sin datos para depurar; repetir con calentamiento",
+   "servidor": "App Service F1 del front (duerme)",
+   "nota": "TTFB, un valor por vista y ancho; sin marca de hora por pedido; el archivo no registra orden de visita real"
+  },
+  "kerna/front/diseno-v2/capturas/prod9-extra.json": {
+   "n_total": 12,
+   "n_excluidos": 0,
+   "excluidos": [],
+   "con_exclusion": {
+    "p50": 15.0,
+    "p95": 72.35
+   },
+   "sin_exclusion": {
+    "p50": 15.0,
+    "p95": 72.35
+   },
+   "estado": "sin datos para depurar; repetir con calentamiento",
+   "servidor": "App Service F1 del front (duerme)",
+   "nota": "TTFB, un valor por vista y ancho; sin marca de hora por pedido; el archivo no registra orden de visita real"
+  },
+  "kerna/front/diseno-v2/capturas/prod9.json": {
+   "n_total": 8,
+   "n_excluidos": 0,
+   "excluidos": [],
+   "con_exclusion": {
+    "p50": 22.5,
+    "p95": 198.25000000000006
+   },
+   "sin_exclusion": {
+    "p50": 22.5,
+    "p95": 198.25000000000006
+   },
+   "estado": "sin datos para depurar; repetir con calentamiento",
+   "servidor": "App Service F1 del front (duerme)",
+   "nota": "TTFB, un valor por vista y ancho; sin marca de hora por pedido; el archivo no registra orden de visita real"
+  }
+ }
+}
