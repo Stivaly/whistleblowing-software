@@ -38,6 +38,7 @@ Ninguna clave se ve ni se imprime: los scripts las leen de Key Vault por dentro.
 | Despertar o reiniciar el front antes de medir | `kerna/operaciones/despertar_front.sh [--reiniciar]` |
 | Navegador | `kerna/operaciones/playwright.sh pdf \| modal [--confirmar] \| script <archivo.py>` |
 | Capturas y mediciones de vistas | `kerna/front/herramientas/medir_vistas.sh` |
+| Verificar el botón de reintento (captura en curso y al terminar, tras `probar_front.sh --reintento`) | `kerna/operaciones/playwright.sh script kerna/operaciones/capturar_reintento.py` |
 | Medir la portada (alto, huecos, desborde) | `kerna/operaciones/playwright.sh script kerna/operaciones/medir_portada.py` |
 | Prueba de íconos y logos (falla si uno ocupa espacio y no pinta píxeles; portada y panel, 390/1366/1920 px) | `kerna/operaciones/probar_iconos.sh [anchos...]` |
 | Prueba de movimiento y CPU en reposo (órbitas, satélites, arco, teclado, botón de reintento, «En vivo»; solo lectura) | `kerna/operaciones/probar_movimiento.sh` |

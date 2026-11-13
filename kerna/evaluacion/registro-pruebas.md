@@ -69,3 +69,12 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 - 150 relatos `{"relato": ...}`, español con modismos variados, temas mixtos, ~15 % ambiguos y ~10 % sin falta, datos personales ficticios. Largo: mín. 92, mediana 1.090, máx. 2.179 caracteres.
 - Generado por un agente Sonnet sin contexto del proyecto (inspiración en foros públicos, sin copia literal). Primera versión rechazada (mediana 193 caracteres, plantillas).
 - No cargado en Veridy ni evaluado: lo decide la usuaria.
+
+## 2026-11-13 · Reconciliación del conector y verificación real del botón de reintento
+- Fecha: 2026-11-13 03:10-03:20 (-03) · Commit del conector: c6a17f85b (front en producción: 88b7c98b7, sin cambios).
+- Cambio: el conector marca como archivados (`objeto_procesado` `_archivo/ausente`, sin borrar filas) los casos de su estado que ya no existen en Veridy y los excluye de todos los conteos; si reaparecen se reactivan; una lista vacía de Veridy no archiva nada. La fila `conector` suma `archivados`. Pruebas: 68 del conector pasan (2 nuevas).
+- Despliegue: imagen `kerna-conector:c6a17f85b`, `conector_tag` en `terraform.tfvars`; plan de Terraform «1 a crear, 1 a destruir» = solo el grupo de contenedores ACI de Veridy; aplicado con `infra/aplicar.sh veridy -y`. Veridy estaba apagado y se encendió para la verificación.
+- Antes/después (fila `conector`): antes `completado` > `casos` (62 casos inexistentes contados); después casos 117, archivados 62, completado 116, `resultado_desconocido` 0.
+- Botón (pedido real con `probar_front.sh --reintento`, capturas con `capturar_reintento.py`): en curso, botón deshabilitado en gris (fondo rgb(228,231,240)), ícono con animación `spin`, tooltip «En curso desde 13 nov 06:15 UTC. Aún sin estimación de término.» (sin ETA porque la corrida fue corta); al terminar (06:19 UTC, ~4 min): «6 reintentados · 2 con sugerencia», botón normal. Revisión manual del conector: 5 antes, 3 después. Sin desborde horizontal a 390 y 1366.
+- Capturas: `kerna/front/diseno-v2/capturas/prod17-reintento-{curso,fin}-{m,d}.png`.
+- Observación: las cifras grandes del Resumen (425 → 430 denuncias, 299 → 300 en revisión manual) vienen de la telemetría acumulada (eventos), no del estado del conector; no coinciden con los 117 casos de Veridy. Anotado como pendiente del front.

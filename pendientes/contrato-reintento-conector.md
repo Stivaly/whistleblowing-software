@@ -54,3 +54,7 @@ Valores fuera de rango se ignoran (rige el del entorno). **No son del conector**
 ## Observaciones de la verificación (2026-11-13)
 - Desde la reconciliación, los conteos de la fila `conector` solo cuentan los casos que existen en Veridy: `completado` ya no supera a `casos` y `resultado_desconocido` no incluye casos borrados. Si Veridy devuelve una lista vacía se trata como fallo de lectura y no se archiva nada. (Antes de ello, 62 casos borrados inflaban los conteos.) El primer pedido real tomó 99 casos de 117 en Veridy y tardó 29 min (el núcleo atiende ~3 casos por minuto con 12 en vuelo).
 - Con Veridy apagado el conector no corre: un pedido queda en `solicitado` hasta que Veridy se encienda.
+
+## Verificación del botón (2026-11-13, conector c6a17f85b)
+- Pedido real: el bloque pasó a «Reintentando… espera» (botón gris deshabilitado, ícono girando, tooltip con inicio y «aún sin estimación» cuando `eta_s` es -1) y terminó en «6 reintentados · 2 con sugerencia». Detalle en `kerna/evaluacion/registro-pruebas.md`.
+- Pendiente del front: las cifras grandes del Resumen salen de la telemetría acumulada, no del estado del conector.
