@@ -114,12 +114,12 @@ def test_flujo_confirmar_pedir_y_doble_clic(cliente):
 
 def test_panel_muestra_bloque_y_no_se_rompe_si_la_tabla_falla(cliente, monkeypatch):
     p = cliente.get("/panel", headers=H)
-    assert "En espera" in p.text and "Reintentar ahora" in p.text and "Los modelos de IA no estaban disponibles" in p.text
+    assert "Estimado · en espera" in p.text and "Reintentar ahora" in p.text and "Los modelos de IA no estaban disponibles" in p.text
     monkeypatch.setattr(reintentos, "_tabla", lambda: (_ for _ in ()).throw(RuntimeError("sin acceso")))
     from app import cache
     cache.vaciar()  # la caché compartida guardó el resumen anterior
     p = cliente.get("/panel", headers=H)
-    assert p.status_code == 200 and "En espera" not in p.text
+    assert p.status_code == 200 and "· en espera" not in p.text
     assert cliente.post("/panel/reintentar", headers=H, data={"csrf": token()}).headers["location"] == "/panel?reintento=error"
 
 

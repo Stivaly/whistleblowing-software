@@ -67,6 +67,36 @@ def resumen(dias: int = 7, ejecutar=None, ahora=None) -> dict:
             "proximo_auto": proximo, "ultimo_reintento": str(ultimo) if ultimo else None}
 
 
+VIGENCIA_CONECTOR_S = 300  # contrato: el conector está caído si su fila lleva más de 5 min sin actualizarse
+
+
+def con_estado_real(r: dict | None, c: dict | None, ahora=None) -> dict | None:
+    """Lo pendiente HOY. Con la fila `conector` reciente sale de su estado real (casos de Veridy ya reconciliados);
+    si no existe o es vieja, queda la telemetría acumulada, marcada como estimación. `fuente` = conector | telemetria.
+    El conector no informa el motivo de cada caso en espera: con su estado el desglose es por situación (revisión manual, error), que sí suma el total."""
+    ahora = ahora or datetime.now(timezone.utc)
+    act = _fecha((c or {}).get("actualizado_en"))
+    fresca = bool(c and act and 0 <= (ahora - act).total_seconds() <= VIGENCIA_CONECTOR_S)
+    if not fresca:
+        if r is None:
+            return None
+        return {**r, "fuente": "telemetria", "conector_visto": (c or {}).get("actualizado_en")}
+    man, err = _num(c.get("en_revision_manual")), _num(c.get("error"))
+    motivos = [{"motivo": k, "texto": t, "casos": n, "se_reintenta": True} for k, t, n in (("revision_manual", "En revisión manual", man), ("error", "Con error al procesar", err)) if n]
+    casos, hecho = _num(c.get("casos")), _num(c.get("completado"))
+    return {"total": man + err, "reintentables": man + err, "motivos": motivos, "proximo_auto": None, "ultimo_reintento": (r or {}).get("ultimo_reintento"),
+            "fuente": "conector", "actualizado_en": c.get("actualizado_en"), "casos": casos, "con_sugerencia": max(0, hecho - man), "en_proceso": _num(c.get("nuevo")) + _num(c.get("pendiente"))}
+
+
+def ayuda_pendientes(r: dict, dias: int = 7, ahora=None) -> str:
+    """Texto del «?» del bloque: de dónde salen las cifras."""
+    ahora = ahora or datetime.now(timezone.utc)
+    if r.get("fuente") == "conector":
+        return f"Estado actual de los casos en Veridy, según el conector ({hace(r.get('actualizado_en'), ahora)}). No cuenta los ya resueltos."
+    visto = hace(r.get("conector_visto"), ahora)
+    return (f"Estimado con la telemetría de {dias} días: el estado actual del conector no está disponible" + (f" (último dato {visto})" if visto else "") + ". Puede incluir casos ya resueltos.")
+
+
 CAMPOS = ("estado", "solicitado_en", "atendido_en", "reintentados", "origen", "inicio", "fin", "total", "enviados", "resueltos", "con_sugerencia",
           "sin_sugerencia", "en_vuelo", "eta_s", "actualizado_en", "incompleto")
 

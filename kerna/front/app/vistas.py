@@ -254,10 +254,11 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     # --- Salud y estado general
     e_mod = "na" if not ntot else ("bad" if pct(modos.get("manual", 0), ntot) >= MANUAL_PROBLEMA_PCT else ("warn" if (modos.get("manual", 0) or modos.get("respaldo", 0) or modos.get("local", 0)) else "ok"))
     d_mod = ("Aún no hay casos en el período." if not ntot else
-             f"{pct(modos.get('oficial', 0), ntot)} de cada 100 casos los resolvió el modelo principal; {modos.get('respaldo', 0) + modos.get('local', 0)} con respaldo y {modos.get('manual', 0)} pasaron a revisión manual.")
+             f"En {dias} días, {pct(modos.get('oficial', 0), ntot)} de cada 100 casos los resolvió el modelo principal; {modos.get('respaldo', 0) + modos.get('local', 0)} con respaldo y {modos.get('manual', 0)} pasaron a revisión manual.")
     nrei = rei["r"]["reintentables"] if rei else None
     e_ven = "na" if nrei is None else ("warn" if nrei else "ok")
-    d_ven = "Sin datos del conector." if nrei is None else (f"{nrei} {'caso espera' if nrei == 1 else 'casos esperan'} reintento." if nrei else "No hay casos esperando reintento.")
+    est_ven = "" if not rei or rei["r"].get("fuente") == "conector" else " (estimado con la telemetría)"
+    d_ven = "Sin datos del conector." if nrei is None else (f"{nrei} {'caso espera' if nrei == 1 else 'casos esperan'} reintento{est_ven}." if nrei else f"No hay casos esperando reintento{est_ven}.")
     vo = next((p for p in provs if p["id"] == "voyage"), None)
     e_bus, d_bus = (vo["e"], vo["mensaje"]) if vo else ("na", "Sin información del proveedor.")
     salud = [{"k": "modelo", "n": "Modelos de IA", "i": "bot", "e": e_mod, "d": d_mod}, {"k": "conector", "n": "Enlace con Veridy", "i": "plug", "e": e_ven, "d": d_ven},
@@ -547,12 +548,12 @@ def informe(inf_: dict) -> list[dict]:
 TIPOS_DATO = {"DIRECCION": "Dirección", "GENERO": "Género", "UBICACION": "Ubicación", "N_CAUSA": "N.º de causa", "EMPRESA_INSTITUCION": "Empresa o institución",
               "CORREO": "Correo", "RUT": "RUT", "CARGO": "Cargo", "EDAD": "Edad", "FINANCIERO": "Dato financiero", "NACIONALIDAD": "Nacionalidad", "PERSONA": "Nombre de persona", "SALUD": "Salud"}
 PESTANAS = [  # id, título, ícono utilitario, glosario, KPI de la pestaña (etiqueta del informe, rótulo claro)
-    ("resumen", "Resumen", "layout-dashboard", "inf_resumen", [("Disponibilidad efectiva", "Casos con sugerencia sobre los válidos"), ("% de sugerencias valoradas útiles", "Sugerencias útiles según auditores"), ("Revisión manual", "Casos en revisión manual")]),
+    ("resumen", "Resumen", "layout-dashboard", "inf_resumen", [("Disponibilidad efectiva", "Casos con sugerencia sobre los válidos"), ("% de sugerencias valoradas útiles", "Sugerencias útiles según auditores"), ("Revisión manual", "Pasaron a revisión manual en el período")]),
     ("calidad", "Calidad", "target", "inf_calidad", [("Recall@5 por artículo (global)", "Acierto con el artículo exacto"), ("Recall por ley (global)", "Acierto con la ley"), ("Pruebas automáticas (unitarias): pasadas/total", "Pruebas automáticas pasadas")]),
     ("desempeno", "Rapidez", "timer", "inf_desempeno", [("Latencia P50 (ponderada por día)", "Tiempo típico de un caso"), ("Latencia P95 (máximo diario)", "Tiempo de 9 de cada 10 casos (peor día)"), ("Casos fuera del modo oficial", "Casos con modelo de respaldo o a mano")]),
     ("costo", "Costos", "coins", "inf_costo", [("Costo del período", "Costo del período"), ("Costo por denuncia", "Costo por denuncia"), ("Costo total mensual proyectado, 1.000 denuncias", "Costo mensual estimado, 1.000 denuncias")]),
     ("rentabilidad", "Rentabilidad", "wallet", "inf_rent", [("Ingreso del período", "Ingreso del período"), ("Margen operativo", "Ganancia sobre el ingreso"), ("Utilidad después de impuestos", "Ganancia final del período"), ("Retorno anual del proyecto", "Rentabilidad anual del proyecto")]),
-    ("incidentes", "Incidentes", "triangle-alert", "inf_incid", [("Casos en revisión manual", "Casos en revisión manual"), ("Eventos de falla de proveedor o modelo", "Fallas de proveedores o modelos")]),
+    ("incidentes", "Incidentes", "triangle-alert", "inf_incid", [("Casos en revisión manual", "Pasaron a revisión manual en el período"), ("Eventos de falla de proveedor o modelo", "Fallas de proveedores o modelos")]),
 ]
 
 
@@ -759,7 +760,7 @@ def informe_charts(inf_: dict) -> dict:
                                     "series": [{"n": "Costo de servir", "d": [r[5] for r in rc["filas"]], "c": "na"}, {"n": "Margen", "d": [r[6] for r in rc["filas"]], "c": "ok"}]})
     rv = T("revision")
     if rv and rv["filas"]:
-        out["incidentes"].append({"id": "g-rev", "t": "Revisión manual: motivos", "g": "inf_incid", "kind": "bar", "h": True, "unit": "", "cats": [str(r[0]).replace("_", " ").capitalize() for r in rv["filas"]],
+        out["incidentes"].append({"id": "g-rev", "t": "Revisión manual en el período: motivos", "g": "inf_incid", "kind": "bar", "h": True, "unit": "", "cats": [str(r[0]).replace("_", " ").capitalize() for r in rv["filas"]],
                                   "series": [{"n": "Casos", "d": [r[1] for r in rv["filas"]], "c": "bad"}]})
     fl = T("fallas")
     if fl and fl["filas"]:
@@ -779,6 +780,7 @@ from markupsafe import Markup as _M, escape as _e
 from . import orbital as _o
 
 MODO_CORTO = {"oficial": "Principal", "respaldo": "Respaldo", "local": "Modelo local", "manual": "Revisión manual"}
+MODO_PERIODO = {**MODO_CORTO, "manual": "Pasó a revisión manual"}  # el Resumen cuenta lo ocurrido en el período, no lo que sigue pendiente
 ETAPA_CORTA = {"anonimizacion": "Anonimizar", "clasificacion": "Clasificar", "recuperacion": "Buscar en la ley", "generacion": "Redactar", "validacion": "Verificar citas"}
 ICONO_KPI = {"casos": "denuncias", "calidad": "acierto", "tiempo": "tiempo", "costo_k": "costo", "neg_sug": "e-lista", "valoraciones": "e-valorada", "valoradas": "e-valorada",
              "neg_margen": "margen", "neg_costo": "costo", "neg_adopcion_k": "e-valorada", "neg_ingreso": "ingresos", "neg_utilidad": "utilidad"}
@@ -822,17 +824,19 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
     if not tot:
         frase = _M(f"Sin denuncias en estos {dias} días.")
     else:
-        pa = [_M(f"{_em(V['e_sug'], str(V['sug_pct']) + ' %')} recibió sugerencia.")]
-        if nrei:
-            pa.append(_M(f"{_em('warn', f.miles(nrei))} {'caso espera' if nrei == 1 else 'casos esperan'} reintento."))
+        pa = [_M(f"En {dias} días, {_em(V['e_sug'], str(V['sug_pct']) + ' %')} recibió sugerencia.")]
+        if rei:
+            est = rei["r"].get("fuente") != "conector"
+            pa.append(_M(f"{'Según la telemetría, ' if est else 'Ahora, '}{_em('warn', f.miles(nrei))} {'caso espera' if nrei == 1 else 'casos esperan'} reintento." if nrei
+                         else f"{'Según la telemetría, no' if est else 'Ahora no'} hay casos esperando reintento."))
         if prov_mal:
             pa.append(_M(f"{_em('bad', prov_mal[0]['nombre'])} está caído."))
         if V["eg"]["e"] == "ok":
             pa.append(_M("Todo dentro de las metas."))
         frase = _M(" ".join(pa))
     colores = {"oficial": "verde", "respaldo": "amarillo", "local": "cian", "manual": "coral"}
-    anillos = [{"n": MODO_CORTO[m["k"]], "v": m["n"], "txt": f.miles(m["n"]), "c": colores[m["k"]]} for m in V["modos"] if m["n"]]
-    diag = _o.diagrama_orbital(anillos, f.miles(tot), "denuncias", f"{f.miles(tot)} denuncias por modo") if tot else None
+    anillos = [{"n": MODO_PERIODO[m["k"]], "v": m["n"], "txt": f.miles(m["n"]), "c": colores[m["k"]]} for m in V["modos"] if m["n"]]
+    diag = _o.diagrama_orbital(anillos, f.miles(tot), "denuncias", f"{f.miles(tot)} denuncias en {dias} días por modo") if tot else None
     kb = []
     kp = {k["k"]: k for k in V["kpis"]}
     for key in ("calidad", "tiempo"):

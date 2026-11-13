@@ -144,10 +144,17 @@ def _conector():
 
 
 def _reintentos_ctx():
-    try:
-        return {"r": cache.obtener(("rei",), reintentos.resumen, 60), "s": cache.obtener(("rei_s",), reintentos.estado_solicitud, 5)}
-    except Exception:  # sin telemetría o sin tabla: el bloque se oculta, el panel sigue
+    """Pendientes: el estado real del conector manda; la telemetría solo si ese estado falta o es viejo. Sin ninguno de los dos, el bloque se oculta."""
+    def uno(clave, fn, ttl):
+        try:
+            return cache.obtener(clave, fn, ttl)
+        except Exception:
+            return None
+    r, s, c = uno(("rei",), reintentos.resumen, 60), uno(("rei_s",), reintentos.estado_solicitud, 5), _conector()
+    real = reintentos.con_estado_real(r, c)
+    if real is None or s is None:
         return None
+    return {"r": real, "s": s, "ayuda": reintentos.ayuda_pendientes(real)}
 
 
 def _dato_en_vivo(dias: int = 7) -> dict:
