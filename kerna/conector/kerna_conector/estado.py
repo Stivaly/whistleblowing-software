@@ -217,7 +217,7 @@ class _EstadoSql(Estado):
         El motivo es el que entregó el núcleo; sin motivo cuenta como `sin_motivo`."""
         filas = self._ejecutar(
             "SELECT id_nota, COUNT(*) FROM objeto_procesado WHERE tipo = 'resultado' AND clave = 'actual' "
-            "AND id_nota LIKE 'revision_manual%%' AND id_caso NOT IN (%s) GROUP BY id_nota" % _ARCHIVADOS, lectura=True)
+            "AND id_nota LIKE ? AND id_caso NOT IN (%s) GROUP BY id_nota" % _ARCHIVADOS, ("revision_manual%",), lectura=True)
         out: dict = {}
         for nota, n in filas:
             motivo = str(nota).partition("|")[2] or "sin_motivo"

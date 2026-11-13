@@ -714,6 +714,16 @@ def test_estado_en_vivo_publica_pendientes_por_motivo(mundo):
     assert e.contar_motivos_revision().get("validacion_fallida") == 1 and e.contar_motivos_revision().get("sin_motivo") == 1
 
 
+def test_sql_de_motivos_no_lleva_porcentaje_literal():
+    """PostgreSQL (psycopg) toma `%` como marcador: el patrón LIKE debe ir como parámetro."""
+    e = est.EstadoSqlite(":memory:")
+    vistas = []
+    original = e._ejecutar
+    e._ejecutar = lambda sql, params=(), lectura=False: (vistas.append(sql), original(sql, params, lectura))[1]
+    e.contar_motivos_revision()
+    assert vistas and all("%" not in q for q in vistas)
+
+
 def test_casos_que_ya_no_existen_en_veridy_se_archivan_y_no_cuentan(mundo):
     from kerna_conector import __main__ as m
     v, n, e, ref = _caso_agotado(mundo)
