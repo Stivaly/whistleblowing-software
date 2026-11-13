@@ -312,10 +312,10 @@ def a_pdf(inf: dict) -> bytes:
         if id_ == "calidad" and "leyes" in vis:
             return [P("Acierto por ley (la marca negra es la meta)", "h2"), po.AnillosLey(vis["leyes"]["items"], vis["leyes"]["meta"], ancho, k=1.7)], ("Recall@5",)
         if id_ == "desempeno" and "etapas" in vis:
-            return [P("El camino de una denuncia: 9 de cada 10 casos", "h2"), po.Camino(vis["etapas"], ancho, k=1.7)], ("P95 por etapa",)
+            return [P("El camino de una denuncia", "h2"), po.Camino(vis["etapas"], ancho, k=1.7)], ("P95 por etapa",)
         if id_ == "costo" and "tokens" in vis:
             t = vis["tokens"]
-            return [P("Costo por modelo (el arco es la parte de los tokens de cada uno)", "h2"), po.Orbital(t["anillos"], t["total"], t["unidad"], ancho, k=1.2)], ("Tokens totales",)
+            return [P("Costo por modelo (arco = parte de los tokens)", "h2"), po.Orbital(t["anillos"], t["total"], t["unidad"], ancho, k=1.2)], ("Tokens totales",)
         if id_ == "rentabilidad":
             r = []
             if "cascada" in vis:
@@ -326,7 +326,7 @@ def a_pdf(inf: dict) -> bytes:
         if id_ == "incidentes" and ("fallas" in vis or "motivos" in vis):
             r = []
             if "fallas" in vis:
-                r += [P("Fallas por proveedor (el tamaño es la cantidad de eventos)", "h2"), po.Camino(vis["fallas"], ancho, k=1.7)]
+                r += [P("Fallas por proveedor (tamaño = eventos)", "h2"), po.Camino(vis["fallas"], ancho, k=1.7)]
             if "motivos" in vis:
                 r += [P("Revisión manual por motivo", "h2")] + [P(f"{m}: {n}") for m, n in vis["motivos"]]
             return r, ("Revisión manual por motivo",)

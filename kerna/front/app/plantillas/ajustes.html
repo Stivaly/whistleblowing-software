@@ -28,7 +28,7 @@
 <form method="post" action="/panel/ajustes" class="ajs-barra" data-barra hidden>
 <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="valores" value="">
 <span class="ajs-m" role="status" aria-live="polite">{{ ic('pencil-line') }}<span data-ncambios></span></span>
-<span class="flex gap-2"><button type="button" class="btn ajs-d" data-descartar>Descartar</button><button type="submit" class="btn btn-pri" data-guardar>{{ ic('save') }}<span>Guardar</span></button></span></form>
+<span class="flex gap-2"><button type="button" class="btn ajs-d" data-descartar>Descartar</button><button type="submit" class="btn btn-pri" data-guardar>{{ ic('save') }}<span>Guardar</span></button></span></form><div class="ajs-esp" aria-hidden="true"></div>
 </div>
 <script src="/estaticos/ajustes.js?v={{ ver }}" defer></script>
 {% endblock %}

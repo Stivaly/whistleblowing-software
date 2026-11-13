@@ -81,7 +81,7 @@
 
   /* ---------- estados: todo guardado / sin guardar / guardando / guardado / error ---------- */
   const chip = $('[data-estado]'), fch = $('[data-guardado]'), barra = $('[data-barra]'), form = barra;
-  const MINI = (e) => '<k-st data-e="' + e + '" class="sm" style="--s:18px" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="/estaticos/identidad.svg#m-' + e + '"/></svg></k-st>';
+  const MINI = (e) => '<k-st data-e="' + e + '" class="sm" style="--s:18px" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="#m-' + e + '"/></svg></k-st>';
   const hora = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false }); };
   let estado = 'ok', tFin = 0;
   function estadoVista(e, txt) {
@@ -126,7 +126,7 @@
       const bt = $('.flex.items-center', row);
       [[-1, 'arrow-up', 'Subir: ', 'u'], [1, 'arrow-down', 'Bajar: ', 'd']].forEach(([d, ic, t, id]) => {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'cn-b'; b.dataset.id = m.v + id; b.setAttribute('aria-label', t + M[m.v][0]); b.disabled = i + d < 0 || i + d >= v.length;
-        b.innerHTML = '<k-ic n="' + ic + '" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="/estaticos/iconos.svg#' + ic + '"/></svg></k-ic>';
+        b.innerHTML = '<k-ic n="' + ic + '" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="#' + ic + '"/></svg></k-ic>';
         b.onclick = () => { const a = [...s.cadena]; [a[i], a[i + d]] = [a[i + d], a[i]]; s.cadena = a; c.dataset.foco = m.v + (b.disabled ? (id === 'u' ? 'd' : 'u') : id); pintar(); const f = $('[data-id="' + c.dataset.foco + '"]:not(:disabled)', c) || $('[data-id="' + m.v + (id === 'u' ? 'd' : 'u') + '"]', c); if (f) f.focus(); }; bt.appendChild(b);
       });
       const sw = document.createElement('button'); sw.type = 'button'; sw.setAttribute('role', 'switch'); sw.className = 'sw ml-1'; sw.dataset.id = m.v + 's'; sw.setAttribute('aria-checked', m.on); sw.setAttribute('aria-label', 'Usar ' + M[m.v][0]);

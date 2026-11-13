@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Prueba de íconos y logos con navegador real (Chromium del contenedor Playwright). Lanzador: probar_iconos.sh.
+"""Prueba de íconos y logos con navegador real (Chromium, Firefox y WebKit del contenedor Playwright (--nav=chromium,firefox para elegir)). Lanzador: probar_iconos.sh.
 Recorre la portada y cada vista del panel (Resumen, Negocio, Ajustes, Informe y sus pestañas, Datos) a 390, 1366 y 1920 px
 y FALLA (código 1) si un ícono o logo ocupa espacio pero no se ve. Revisa, por elemento visible:
-  - <svg>: cada <use href> apunta a un símbolo que existe en su sprite, con dibujo dentro y viewBox;
+  - <svg>: cada <use href> va a un símbolo de la propia página (los sprites externos fallan en Firefox) y apunta a un símbolo que existe en su sprite, con dibujo dentro y viewBox;
   - <img>: cargó (naturalWidth > 0), sin opacity 0;
   - background-image con url(): la imagen cargó;
   - píxeles: la captura del elemento no es plana (todos los píxeles iguales = vacío) con el fondo decorativo fijo oculto.
@@ -13,7 +13,10 @@ from playwright.sync_api import sync_playwright
 
 BASE = os.environ["FRONT_URL"].rstrip("/"); CLAVE = os.environ["FRONT_CLAVE"]
 SALIDA = "/out" if os.path.isdir("/out") else "."
-ANCHOS = [int(a) for a in sys.argv[1:]] or [390, 1366, 1920]
+ARGS = sys.argv[1:]
+NAVEGADORES = [a.split("=")[1].split(",") for a in ARGS if a.startswith("--nav=")]
+NAVEGADORES = NAVEGADORES[0] if NAVEGADORES else ["chromium", "firefox", "webkit"]
+ANCHOS = [int(a) for a in ARGS if a.isdigit()] or [390, 1366, 1920]
 PESTANAS = ["calidad", "desempeno", "costo", "rentabilidad", "incidentes", "datos"]
 VISTAS = [("portada", "/", None, False), ("resumen", "/panel", None, True), ("negocio", "/panel/negocio", None, True),
           ("ajustes", "/panel/ajustes", None, True), ("informe", "/panel/informe", "informe", True)]
@@ -38,7 +41,7 @@ JS_CAND = r"""async () => {
     for (const u of e.querySelectorAll('use')) {
       const h = u.getAttribute('href') || u.getAttribute('xlink:href') || ''; const [url, id] = h.split('#');
       if (!id) { prob.push('use sin id: ' + h); continue; }
-      let doc = document; if (url) { doc = await sprite(new URL(url, location.href).href); if (!doc) { prob.push('sprite no carga: ' + url); continue; } }
+      let doc = document; if (url) { prob.push('sprite externo (Firefox no lo resuelve siempre; el símbolo va dentro de la página): ' + h); doc = await sprite(new URL(url, location.href).href); if (!doc) { prob.push('sprite no carga: ' + url); continue; } }
       const sym = doc.getElementById(id);
       if (!sym) prob.push('símbolo inexistente: ' + h);
       else { if (!sym.querySelector('path,circle,rect,line,polyline,polygon,ellipse,use,g,image,text')) prob.push('símbolo vacío: ' + h);
@@ -98,10 +101,11 @@ def revisar(pg, pg_aux, etiqueta):
 def main():
     total, todos = 0, []
     with sync_playwright() as p:
-        nav = p.chromium.launch(); aux = nav.new_context().new_page(); aux.goto("about:blank")
+      for nombre_nav in NAVEGADORES:
+        nav = getattr(p, nombre_nav).launch(); aux = nav.new_context().new_page(); aux.goto("about:blank")
         for w in ANCHOS:
             ANCHO_ACTUAL[0] = w
-            ctx = nav.new_context(viewport={"width": w, "height": 850 if w > 600 else 800}, is_mobile=w < 600, has_touch=w < 600); pg = ctx.new_page()
+            ctx = nav.new_context(viewport={"width": w, "height": 850 if w > 600 else 800}, **({"is_mobile": w < 600} if nombre_nav != "firefox" else {}), has_touch=w < 600); pg = ctx.new_page()
             pg.goto(BASE + "/acceso"); pg.fill("input[name=clave]", CLAVE); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
             assert "/panel" in pg.url, f"el login no entró al panel ({pg.url})"
             for nom, ruta, tabs, _ in VISTAS:
@@ -110,10 +114,10 @@ def main():
                 for et, tab in hay:
                     if tab:
                         pg.evaluate("t => document.getElementById('t-'+t)?.click()", tab); pg.wait_for_timeout(1500)
-                    n, f = revisar(pg, aux, f"{et}@{w}")
+                    n, f = revisar(pg, aux, f"{nombre_nav[:2]}:{et}@{w}")
                     total += n; todos += f
-                    print(f"{et + '@' + str(w):28} {n:4} íconos/logos revisados, {len(f)} con falla", flush=True)
-                    if f: pg.screenshot(path=f"{SALIDA}/iconos-{et}-{w}.png", full_page=True)
+                    print(f"{nombre_nav[:2]}:{et + '@' + str(w):28} {n:4} íconos/logos revisados, {len(f)} con falla", flush=True)
+                    if f: pg.screenshot(path=f"{SALIDA}/iconos-{nombre_nav}-{et}-{w}.png", full_page=True)
             ctx.close()
         nav.close()
     json.dump(todos, open(f"{SALIDA}/iconos-fallos.json", "w"), ensure_ascii=False, indent=1)

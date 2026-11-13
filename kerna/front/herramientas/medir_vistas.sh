@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Uso: medir_vistas.sh <url_base> <prefijo_capturas|-> <salida.json> [anchos...]   (la clave se lee de Key Vault)
+# Uso: medir_vistas.sh <url_base> <prefijo_capturas|-> <salida.json> [anchos...] [--nav=chromium|firefox|webkit]   (la clave se lee de Key Vault)
 set -euo pipefail
 AQUI="$(cd "$(dirname "$0")" && pwd)"; BASE="$1"; PREF="$2"; SAL="$3"; shift 3
 CLAVE="$(az keyvault secret show --vault-name kv-kerna-dev-g6mzy -n front-clave-panel --query value -o tsv)"

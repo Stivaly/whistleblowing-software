@@ -1,4 +1,4 @@
-"""Lo pendiente del Resumen sale del estado real del conector (fila `conector`); la telemetría acumulada solo es el respaldo y se dice."""
+"""Lo pendiente del Resumen sale siempre del último estado real del conector (fila `conector`), con su hora; la telemetría solo si esa fila nunca existió."""
 import os
 import sys
 from datetime import datetime, timedelta, timezone
@@ -32,7 +32,7 @@ def test_con_fila_reciente_manda_el_estado_del_conector():
     assert [(m["texto"], m["casos"]) for m in r["motivos"]] == [("En revisión manual", 3), ("Con error al procesar", 1)]
     assert sum(m["casos"] for m in r["motivos"]) == r["total"]                 # el desglose siempre cuadra con el total
     assert r["con_sugerencia"] == 113 and "206" not in str(r) and "201" not in str(r)
-    assert "Estado actual de los casos en Veridy" in reintentos.ayuda_pendientes(r, 7, AHORA)
+    assert "Último estado del conector: 13 nov 06:19 UTC" in reintentos.ayuda_pendientes(r, 7, AHORA)
 
 
 def test_con_conteo_por_motivo_el_desglose_es_por_motivo_y_suma_el_total():
@@ -57,14 +57,17 @@ def test_sin_pendientes_reales_no_hereda_las_cifras_de_la_telemetria():
     assert r["fuente"] == "conector" and r["reintentables"] == 0 and r["motivos"] == []
 
 
-@pytest.mark.parametrize("c", [None, fila(seg=900), {"casos": 5}])
-def test_fila_ausente_o_vieja_usa_la_telemetria_y_lo_dice(c):
+def test_fila_vieja_sigue_siendo_el_estado_real_con_su_hora():
+    r = reintentos.con_estado_real(TELE, fila(seg=86400), AHORA)
+    assert r["fuente"] == "conector" and r["reintentables"] == 4 and "206" not in str(r)
+    assert "12 nov 06:20 UTC" in reintentos.ayuda_pendientes(r, 7, AHORA)
+
+
+@pytest.mark.parametrize("c", [None, {"casos": 5}])
+def test_sin_fila_del_conector_solo_queda_la_telemetria(c):
     r = reintentos.con_estado_real(TELE, c, AHORA)
     assert r["fuente"] == "telemetria" and r["reintentables"] == 206 and len(r["motivos"]) == 2
-    a = reintentos.ayuda_pendientes(r, 7, AHORA)
-    assert "Estimado con la telemetría" in a and "no está disponible" in a
-    if c and "actualizado_en" in c:
-        assert "hace 15 min" in a
+    assert reintentos.ayuda_pendientes(r, 7, AHORA) == "Aún sin estado del conector."
 
 
 def test_sin_telemetria_pero_con_conector_igual_hay_datos_reales():
@@ -82,13 +85,13 @@ def _V():
 def test_frase_distingue_periodo_de_ahora_y_no_contradice_el_bloque(monkeypatch):
     monkeypatch.setattr(vistas, "_kb", lambda *a, **k: {})
     V = _V(); V["kpis"] = [{"k": k} for k in ("calidad", "tiempo", "costo_k")]
-    for fuente, n, esperado in (("conector", 4, "Ahora, <em"), ("telemetria", 206, "Según la telemetría")):
+    for fuente, n, esperado in (("conector", 4, "<em"), ("telemetria", 206, "<em")):
         P = vistas.presentacion_resumen(V, {"r": {"reintentables": n, "fuente": fuente}}, 7)
         t = str(P["frase"])
         assert "En 7 días, <em" in t and "29 %" in t and esperado in t and f">{n}<" in t
-        assert "425 denuncias en 7 días por modo" in P["diag"] and "Pasó a revisión manual" in P["diag"]
+        assert "425 denuncias en 7 días por modo" in P["diag"] and "Revisión manual" in P["diag"]
     P = vistas.presentacion_resumen(V, {"r": {"reintentables": 0, "fuente": "conector"}}, 7)
-    assert "Ahora no hay casos esperando reintento" in str(P["frase"]) and "esperan reintento" not in str(P["frase"])
+    assert "Sin casos en espera" in str(P["frase"]) and "esperan reintento" not in str(P["frase"])
 
 
 @pytest.fixture
@@ -103,15 +106,15 @@ def cliente(monkeypatch):
     return TestClient(principal.app, follow_redirects=False), t
 
 
-def test_el_panel_usa_el_estado_real_y_marca_la_estimacion(cliente, monkeypatch):
+def test_el_panel_muestra_siempre_el_ultimo_estado_real(cliente, monkeypatch):
     c, t = cliente
     ahora = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     monkeypatch.setattr(reintentos, "estado_conector", lambda tabla=None: fila() | {"actualizado_en": ahora})
     p = c.get("/panel", headers=H).text
-    assert "Ahora · en espera" in p and "En revisión manual" in p and "Con error al procesar" in p and "201" not in p.split('id="rei"')[1].split("</section>")[0]
-    assert 'data-n="4"' in p and "Estado actual de los casos en Veridy" in p
+    assert "En espera" in p and "Estimado" not in p and "En revisión manual" in p and "Con error al procesar" in p and "201" not in p.split('id="rei"')[1].split("</section>")[0]
+    assert 'data-n="4"' in p and "Último estado del conector" in p
     from app import cache
     cache.vaciar()
-    monkeypatch.setattr(reintentos, "estado_conector", lambda tabla=None: None)
+    monkeypatch.setattr(reintentos, "estado_conector", lambda tabla=None: fila(seg=86400))
     p = c.get("/panel", headers=H).text
-    assert "Estimado · en espera" in p and "Los modelos de IA no estaban disponibles" in p and "Estimado con la telemetría" in p
+    assert 'data-n="4"' in p and "Estimado" not in p and "Los modelos de IA no estaban disponibles" not in p.split('id="rei"')[1].split("</section>")[0]

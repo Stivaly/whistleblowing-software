@@ -16,6 +16,7 @@ import json
 from pathlib import Path
 
 from . import consultas
+from .formato import fecha_hora
 
 TABLA = "reintentosmanuales"
 PK, RK = "kerna", "solicitud"
@@ -68,8 +69,6 @@ def resumen(dias: int = 7, ejecutar=None, ahora=None) -> dict:
             "proximo_auto": proximo, "ultimo_reintento": str(ultimo) if ultimo else None}
 
 
-VIGENCIA_CONECTOR_S = 300  # contrato: el conector está caído si su fila lleva más de 5 min sin actualizarse
-
 
 def _motivos_conector(crudo, total: int) -> list:
     """Desglose por motivo de la fila `conector` (JSON `pendientes_por_motivo`). [] si falta, es inválido o no suma el total."""
@@ -88,13 +87,11 @@ def _motivos_conector(crudo, total: int) -> list:
 
 
 def con_estado_real(r: dict | None, c: dict | None, ahora=None) -> dict | None:
-    """Lo pendiente HOY. Con la fila `conector` reciente sale de su estado real (casos de Veridy ya reconciliados);
-    si no existe o es vieja, queda la telemetría acumulada, marcada como estimación. `fuente` = conector | telemetria.
+    """Lo pendiente HOY: siempre el último estado real conocido de la fila `conector` (casos de Veridy ya reconciliados), con su hora;
+    nunca la estimación de la telemetría, que cuenta casos ya resueltos. Solo si el conector jamás escribió su fila queda la telemetría. `fuente` = conector | telemetria.
     El conector no informa el motivo de cada caso en espera: con `pendientes_por_motivo` el desglose es por motivo; sin él, por situación (revisión manual, error). Siempre suma el total."""
-    ahora = ahora or datetime.now(timezone.utc)
     act = _fecha((c or {}).get("actualizado_en"))
-    fresca = bool(c and act and 0 <= (ahora - act).total_seconds() <= VIGENCIA_CONECTOR_S)
-    if not fresca:
+    if not (c and act):
         if r is None:
             return None
         return {**r, "fuente": "telemetria", "conector_visto": (c or {}).get("actualizado_en")}
@@ -107,12 +104,10 @@ def con_estado_real(r: dict | None, c: dict | None, ahora=None) -> dict | None:
 
 
 def ayuda_pendientes(r: dict, dias: int = 7, ahora=None) -> str:
-    """Texto del «?» del bloque: de dónde salen las cifras."""
-    ahora = ahora or datetime.now(timezone.utc)
+    """Texto del «?» del bloque (una línea): estado del conector y su hora."""
     if r.get("fuente") == "conector":
-        return f"Estado actual de los casos en Veridy, según el conector ({hace(r.get('actualizado_en'), ahora)}). No cuenta los ya resueltos."
-    visto = hace(r.get("conector_visto"), ahora)
-    return (f"Estimado con la telemetría de {dias} días: el estado actual del conector no está disponible" + (f" (último dato {visto})" if visto else "") + ". Puede incluir casos ya resueltos.")
+        return f"Último estado del conector: {fecha_hora(r.get('actualizado_en'))}."
+    return "Aún sin estado del conector."
 
 
 CAMPOS = ("estado", "solicitado_en", "atendido_en", "reintentados", "origen", "inicio", "fin", "total", "enviados", "resueltos", "con_sugerencia",

@@ -14,6 +14,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi.responses import Response
 
 import json
+import re
 import time
 
 from . import ajustes as aj, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
@@ -31,6 +32,17 @@ _GLOS = glosario.glosario()
 plantillas.env.globals.update(
     glos=_GLOS, glosario_json=json.dumps(_GLOS, ensure_ascii=False).replace("</", "<\\/"), ICONO=vistas.ICONO, motivo_ico=vistas.motivo_ico, ESTADO_TXT=vistas.ESTADO_TXT,
     ver=int(max((p.stat().st_mtime for p in (BASE / "estaticos").glob("*.*")), default=0)))
+
+def _sprites() -> str:
+    """Íconos de la identidad y de Lucide dentro de cada página (<use href="#id">): los sprites externos no los resuelven todos los navegadores."""
+    partes = []
+    for n in ("identidad.svg", "iconos.svg"):
+        t = (BASE / "estaticos" / n).read_text(encoding="utf-8")
+        partes.append(re.sub(r"</?svg[^>]*>", "", t))
+    return '<svg id="sprites" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">' + "".join(partes) + "</svg>"
+
+
+plantillas.env.globals["sprites"] = _sprites()
 
 CABECERAS = {
     "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer", "X-Frame-Options": "DENY",
@@ -144,7 +156,7 @@ def _conector():
 
 
 def _reintentos_ctx():
-    """Pendientes: el estado real del conector manda; la telemetría solo si ese estado falta o es viejo. Sin ninguno de los dos, el bloque se oculta."""
+    """Pendientes: el último estado real del conector, con su hora; la telemetría solo si el conector nunca escribió su fila. Sin ninguno de los dos, el bloque se oculta."""
     def uno(clave, fn, ttl):
         try:
             return cache.obtener(clave, fn, ttl)

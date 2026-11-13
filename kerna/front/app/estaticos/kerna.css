@@ -1252,3 +1252,22 @@ html,body{max-width:100%}
 @media(min-width:900px){:is(#zona,.zv) .ley-b .ly-l{flex:3 1 520px;justify-content:space-around}:is(#zona,.zv) .ley-b .ch-w{margin-left:0;flex:1 1 300px}}
 .kb-l{line-height:1.45;letter-spacing:.06em;margin-bottom:4px}
 @media(min-width:768px){section.hero{padding-bottom:40px}}
+/* Ajustes: la barra fija reserva su espacio abajo, sus botones van centrados y parejos, y la cadena de modelos no lleva barra lateral en móvil */
+.ajs-esp{height:0}.ajs-barra[hidden]+.ajs-esp{display:none}.ajs-barra:not([hidden])+.ajs-esp{height:88px}
+@media(min-width:1024px){.ajs-barra:not([hidden])+.ajs-esp{height:56px}}
+.ajs-m k-n{--pi:#fff;--ac2:#fff;--sat:var(--lime)}
+.ajs-barra .btn{justify-content:center;text-align:center;padding:0 16px}
+.ajs-barra>.flex{gap:8px}
+@media(max-width:599px){.ajs-barra>.flex{width:100%}.ajs-barra .btn{flex:1 1 0;min-width:0}
+  #app .cn-row{border-left-width:1px}.cn-row+.cn-row::before{display:none}}
+/* Acierto por ley: mide lo que su contenido pide y comparte fila (Resumen: con El camino de una denuncia; Informe: con sus tres datos) */
+.fila-2{display:grid;grid-template-columns:minmax(0,1fr);gap:0 12px;align-items:stretch}
+:is(#zona,.zv) .z-ly .ly-l{gap:12px 20px;flex:0 1 auto;justify-content:flex-start}
+:is(#zona,.zv) .z-ly .ly-n em{display:none}:is(#zona,.zv) .z-ly .ly-n>span{display:block;font-weight:500;color:var(--muted)}
+:is(#zona,.zv) .z-ly .ly{justify-items:center;text-align:center}
+@media(min-width:1000px){
+  .fila-2{grid-template-columns:minmax(0,1fr) auto}.fila-2:has(>.z-ly:only-child){grid-template-columns:auto;justify-content:start}
+  .fila-2>.bn{margin-bottom:12px}
+  .zv #p-calidad{display:flex;flex-wrap:wrap;align-items:center;gap:8px 32px}.zv #p-calidad>.mk{width:100%}
+  .zv #p-calidad .stt{margin:0;flex-direction:column;align-items:stretch;gap:8px;flex:0 1 auto}
+}

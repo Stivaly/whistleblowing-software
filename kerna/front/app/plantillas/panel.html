@@ -6,7 +6,7 @@
 {% macro cola() %}{% if rei %}{% set n = rei.r.reintentables %}
 <div id="rei" class="cola{% if not n %} cola-o{% endif %}" data-csrf="{{ csrf }}" data-n="{{ n }}" aria-label="Casos en espera de reintento">
 {% if aviso %}<p class="cola-av s-{{ 'ok' if aviso == 'solicitado' else ('pro' if aviso == 'ya_solicitado' else 'bad') }}" role="status">{{ ic('e-lista' if aviso == 'solicitado' else ('e-conector-en-proceso' if aviso == 'ya_solicitado' else 'e-cadena-agotada'), px=40) }}<span>{% if aviso == 'solicitado' %}Pedido de reintento enviado{% elif aviso == 'ya_solicitado' %}Ya había un reintento pedido{% elif aviso in ('origen', 'token') %}No se pudo pedir el reintento. Recarga la página e inténtalo otra vez{% else %}No se pudo pedir el reintento. Inténtalo en un momento{% endif %}</span></p>{% endif %}
-<p class="mk">{{ 'Ahora' if rei.r.fuente == 'conector' else 'Estimado' }} · en espera{% if rei.r.proximo_auto %} · próximo reintento {{ fecha_hora(rei.r.proximo_auto) }}{% endif %}{{ tip('pendientes', rei.ayuda) }}</p>
+<p class="mk">En espera{{ tip('pendientes', rei.ayuda) }}</p>
 <div class="cola-l">
 {% if n %}{% for x in rei.r.motivos %}<span class="cola-m s-{{ 'warn' if x.se_reintenta else 'na' }}">{{ ic(motivo_ico(x.texto, x.se_reintenta), px=40) }}<b>{{ miles(x.casos) }}</b><span>{{ x.texto }}</span></span>{% endfor %}
 {% else %}<span class="cola-m s-ok">{{ ic('e-lista', px=40) }}<span>Sin casos en espera</span></span>{% endif %}
@@ -36,12 +36,14 @@
 
 <section class="bn z-kb kbs" aria-label="Indicadores clave">{% for k in P.kb %}{{ kb(k) }}{% endfor %}</section>
 
+<div class="fila-2">
 {% if P.camino %}<section class="bn z-cm" aria-label="Tiempo por etapa"><h2 class="mk">El camino de una denuncia{{ tip('etapas') }}<span class="mk-r">{{ P.camino_t }}</span></h2>{{ P.camino }}</section>{% endif %}
 
-{% if V.aciertos or V.leyes %}<section class="bn z-ly ley-b" aria-label="Acierto por ley"><h2 class="mk">Acierto por ley{{ tip('acierto_ley') }}<span class="mk-r">marca = meta de {{ V.meta_recall }} %</span></h2>
+{% if V.aciertos or V.leyes %}<section class="bn z-ly ley-b" aria-label="Acierto por ley"><h2 class="mk">Acierto por ley{{ tip('acierto_ley') }}<span class="mk-r">meta {{ V.meta_recall }} %</span></h2>
 <ul class="ly-l">{% for l in V.aciertos %}<li class="ly s-{{ l.e }}" title="{{ l.full }}">{{ ley_icono(l.full, 32) }}{{ anillo(l.w, l.e, V.meta_recall|replace(',', '.')|float, 64, l.v ~ '%') }}<span class="ly-n">{% set pn = l.n.split(' · ') %}{{ pn[0] }}{% if pn|length > 1 %}<em> · </em><span>{{ pn[1] }}</span>{% endif %}</span></li>{% endfor %}</ul>
-{% if V.leyes or V.sin_ley %}<div class="ch-w">{% if V.leyes %}<p class="mk">Artículos sugeridos por ley</p><ul class="ch-l" aria-label="Leyes más sugeridas">{% for l in V.leyes %}<li title="{{ l.full }}">{{ ley_icono(l.norma, 20) }}<span class="ly-n">{% set pn = l.n.split(' · ') %}{{ pn[0] }}{% if pn|length > 1 %}<em> · </em><span>{{ pn[1] }}</span>{% endif %}</span><b>{{ miles(l.v) }}</b></li>{% endfor %}</ul>{% endif %}{% if V.sin_ley %}<p class="ch-nota"><b>{{ miles(V.sin_ley) }}</b> artículos sugeridos sin ley identificada en el registro</p>{% endif %}</div>{% endif %}
+{% if V.leyes %}<div class="ch-w">{% if V.leyes %}<p class="mk">Artículos sugeridos por ley</p><ul class="ch-l" aria-label="Leyes más sugeridas">{% for l in V.leyes %}<li title="{{ l.full }}">{{ ley_icono(l.norma, 20) }}<span class="ly-n">{% set pn = l.n.split(' · ') %}{{ pn[0] }}{% if pn|length > 1 %}<em> · </em><span>{{ pn[1] }}</span>{% endif %}</span><b>{{ miles(l.v) }}</b></li>{% endfor %}</ul>{% endif %}</div>{% endif %}
 </section>{% endif %}
+</div>
 
 {% if P.hay_heat %}<section class="bn z-hm" aria-label="Cuándo llegan las denuncias"><h2 class="mk">Cuándo llegan las denuncias{{ tip('mapa') }}</h2><div id="ch-heat" class="cch" role="img" aria-label="Mapa de calor de denuncias por día de la semana y franja horaria"></div></section>{% endif %}
 {% endif %}

@@ -43,8 +43,8 @@ def test_negocio_nombres_que_se_entienden_solos(monkeypatch):
     visibles = re.sub(r"<script.*?</script>", "", h, flags=re.S)
     for viejo in VIEJOS:
         assert re.search(r">\s*" + re.escape(viejo) + r"\s*<", visibles) is None or viejo == "Margen operativo", viejo
-    for nuevo in ("Ganancia sobre el ingreso", "Costo de atender clientes", "Denuncias con sugerencia", "Sugerencias calificadas", "Ganancia a 5 años, valor de hoy",
-                  "Rentabilidad anual del proyecto", "Retorno por cada UF invertida", "Recuperas la inversión en"):
+    for nuevo in ("Ganancia sobre el ingreso", "Costo de atención", "Denuncias con sugerencia", "Sugerencias calificadas", "Ganancia a 5 años",
+                  "Rentabilidad anual", "Retorno por UF invertida", "Inversión recuperada en"):
         assert nuevo in h, nuevo
 
 

@@ -99,18 +99,18 @@ def icono(nombre: str, clave: str | None = None, px: int | None = None, mini: bo
     if nombre.startswith("e-"):
         e = escape(nombre[2:])
         st = f' style="--s:{px}px"' if px else ""
-        return Markup(f'<k-st data-e="{e}"{st}{" class=sm" if mini else ""} aria-hidden="true"><svg aria-hidden="true" focusable="false"><use{di} href="/estaticos/identidad.svg#{"m" if mini else "e"}-{e}"/></svg></k-st>')
+        return Markup(f'<k-st data-e="{e}"{st}{" class=sm" if mini else ""} aria-hidden="true"><svg aria-hidden="true" focusable="false"><use{di} href="#{"m" if mini else "e"}-{e}"/></svg></k-st>')
     if nombre in A_NUCLEO or nombre in set(A_NUCLEO.values()):
         st = f' style="--s:{px}px"' if px else ""
-        return Markup(f'<k-n{st} aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="/estaticos/identidad.svg#n-{A_NUCLEO.get(nombre, nombre)}"/></svg></k-n>')
-    return Markup(f'<k-ic n="{escape(nombre)}" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use{di} href="/estaticos/iconos.svg#{escape(nombre)}"/></svg></k-ic>')
+        return Markup(f'<k-n{st} aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="#n-{A_NUCLEO.get(nombre, nombre)}"/></svg></k-n>')
+    return Markup(f'<k-ic n="{escape(nombre)}" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use{di} href="#{escape(nombre)}"/></svg></k-ic>')
 
 
 def baldosa(estado: str, px: int = 96, etiqueta: str = "") -> Markup:
     """Baldosa grande de estado con corte de esquina (símbolo t-<estado>); `etiqueta` la rotula en JetBrains Mono."""
     e = escape(estado)
     et = f'<span class="ti-l">{escape(etiqueta)}</span>' if etiqueta else ""
-    return Markup(f'<span class="ti-w"><span class="ti" data-e="{e}" style="width:{px}px" aria-hidden="true"><svg viewBox="0 0 160 120" focusable="false"><use href="/estaticos/identidad.svg#t-{e}"/></svg></span>{et}</span>')
+    return Markup(f'<span class="ti-w"><span class="ti" data-e="{e}" style="width:{px}px" aria-hidden="true"><svg viewBox="0 0 160 120" focusable="false"><use href="#t-{e}"/></svg></span>{et}</span>')
 
 
 FUNCIONES = {"baldosa": baldosa, "barras_h": barras_h, "barras_v": barras_v, "ic": icono, "g_arc": g_arc, "g_tick": g_tick, "spark": spark, "spark_area": spark_area}

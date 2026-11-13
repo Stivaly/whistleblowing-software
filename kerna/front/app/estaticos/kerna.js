@@ -311,7 +311,7 @@
   })();
 
   /* ---------- Reintentar: diálogo modal nativo; el POST va por fetch con el token de la sesión y el resultado queda en el mismo bloque ---------- */
-  const IC = (e, px) => '<k-st data-e="' + e + '" style="--s:' + px + 'px"><svg aria-hidden="true" focusable="false"><use href="/estaticos/identidad.svg#e-' + e + '"/></svg></k-st>';
+  const IC = (e, px) => '<k-st data-e="' + e + '" style="--s:' + px + 'px"><svg aria-hidden="true" focusable="false"><use href="#e-' + e + '"/></svg></k-st>';
   const RES = { solicitado: ['lista', 'ok', 'Pedido enviado'], ya_solicitado: ['conector-en-proceso', 'pro', 'Ya había un reintento pedido'], token: ['cadena-agotada', 'bad', 'No se pudo pedir el reintento. Recarga la página e inténtalo otra vez'],
     origen: ['cadena-agotada', 'bad', 'No se pudo pedir el reintento. Recarga la página e inténtalo otra vez'], sesion: ['cadena-agotada', 'bad', 'La sesión terminó. Vuelve a entrar'], error: ['cadena-agotada', 'bad', 'No se pudo pedir el reintento. Inténtalo en un momento'] };
   document.addEventListener('click', (e) => {

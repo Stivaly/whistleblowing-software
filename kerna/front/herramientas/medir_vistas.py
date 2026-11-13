@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Mide y captura las vistas del panel en producción (Playwright, se ejecuta en la imagen oficial: ver medir_vistas.sh).
 Para cada vista y ancho: alto de página, desborde horizontal (scrollWidth > clientWidth) y los elementos que más sobresalen; TTFB, peso y CPU en reposo.
-Uso: medir_vistas.py <url_base> <clave> <prefijo_capturas|-> <salida.json> [anchos...]"""
+Uso: medir_vistas.py <url_base> <clave> <prefijo_capturas|-> <salida.json> [anchos...] [--nav=chromium|firefox|webkit]"""
 import json, sys, time
 from playwright.sync_api import sync_playwright
 base, clave, pref, salida = sys.argv[1:5]
-anchos = [int(a) for a in sys.argv[5:]] or [1366, 390]
+NAV = next((a.split("=")[1] for a in sys.argv[5:] if a.startswith("--nav=")), "chromium")
+anchos = [int(a) for a in sys.argv[5:] if a.isdigit()] or [1366, 390]
 VISTAS = [("resumen", "/panel", None), ("informe", "/panel/informe", "informe"), ("negocio", "/panel/negocio", None), ("ajustes", "/panel/ajustes", None)]
 PESTANAS = ["calidad", "desempeno", "costo", "rentabilidad", "incidentes", "datos"]
 JS_DESB = """() => { let st=document.getElementById("__ov"); if(!st){st=document.createElement("style");st.id="__ov";st.textContent="html,body{overflow-x:visible!important}.bgfx{display:none!important}";document.head.appendChild(st)} const de=document.documentElement, cw=de.clientWidth; const out=[];
@@ -13,9 +14,9 @@ JS_DESB = """() => { let st=document.getElementById("__ov"); if(!st){st=document
  out.sort((a,b)=>b[1]-a[1]); return {sw:de.scrollWidth, cw, h:de.scrollHeight, top:out.slice(0,6)}; }"""
 res = {}
 with sync_playwright() as p:
-    nav = p.chromium.launch()
+    nav = getattr(p, NAV).launch()
     for w in anchos:
-        ctx = nav.new_context(viewport={"width": w, "height": 850 if w > 600 else 800}, device_scale_factor=1, is_mobile=w < 600, has_touch=w < 600)
+        ctx = nav.new_context(viewport={"width": w, "height": 850 if w > 600 else 800}, device_scale_factor=1, has_touch=w < 600, **({} if NAV == "firefox" else {"is_mobile": w < 600}))
         pg = ctx.new_page()
         pg.goto(base + "/acceso"); pg.fill("input[name=clave]", clave); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
         for nom, ruta, tabs in VISTAS:

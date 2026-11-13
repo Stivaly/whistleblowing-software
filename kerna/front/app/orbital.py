@@ -37,7 +37,7 @@ def ley_icono(norma: str, px: int = 24) -> Markup:
     t = ley_tipo(norma)
     if not t:
         return Markup("")
-    return Markup(f'<span class="lx" data-l="{t}" style="--s:{px}px" aria-hidden="true"><svg focusable="false"><use href="/estaticos/identidad.svg#l-{t}"/></svg></span>')
+    return Markup(f'<span class="lx" data-l="{t}" style="--s:{px}px" aria-hidden="true"><svg focusable="false"><use href="#l-{t}"/></svg></span>')
 
 
 def _p(x: float) -> str:

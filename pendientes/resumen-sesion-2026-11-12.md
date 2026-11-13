@@ -155,3 +155,6 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
 - Front `4780c54cd` desplegado. Lo pendiente del Resumen sale del estado real del conector: 4 casos esperan reintento (antes mostraba 206, sacado de la telemetría acumulada). Si el estado tiene más de 5 minutos, vuelve a la telemetría con el rótulo «Estimado». Capturas `prod18*` (auditada `prod18resumen-d.png`).
 - Falta (menor, resuelto en la línea siguiente): que el conector entregue el motivo de cada caso pendiente. Supuesto a confirmar: el estado del conector cuenta como reciente si tiene menos de 5 minutos.
 - Conector `0e75d50c8` y front `e1e38e947`+ (HEAD de la tanda) desplegados: la fila `conector` trae `pendientes_por_motivo` y el Resumen vuelve al desglose por motivo con sus íconos (2 no pasó la revisión de calidad · 1 modelos no disponibles · 1 error; suma 4). Planes: solo reemplazo del ACI de Veridy. Primer intento `e1e38e947` tenía un `LIKE '…%'` que PostgreSQL leía como marcador (ProgrammingError en cada pasada); corregido en `0e75d50c8`. Capturas `prod19*` (auditada `prod19resumen-d.png`, `-m.png`); iconos, movimiento y front pasan. Último bueno anterior: `4780c54cd`.
+
+### Front tanda 2026-11-13 (A1-A5)
+- Último front bueno antes de esta tanda: `e1e38e947` (volver con `kerna/front/desplegar.sh --ref e1e38e947`).

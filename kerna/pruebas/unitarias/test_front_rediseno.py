@@ -77,9 +77,9 @@ def test_colores_de_estado_cumplen_contraste_AA():
 def test_icono_de_estado_usa_baldosa_y_lucide_solo_utilitario():
     c = TestClient(principal.app, base_url="https://t")
     t = c.get("/panel/ajustes", headers=H).text
-    assert "identidad.svg#e-contingencia-modelo" in t or "identidad.svg#n-" in t
+    assert 'href="#e-contingencia-modelo"' in t or 'href="#n-' in t
     for viejo in ("circle-check", "triangle-alert", "octagon-alert", "circle-minus"):
-        assert viejo not in re.sub(r"<symbol.*", "", t)
+        assert viejo not in re.sub(r"<svg id=\"sprites\".*?</svg>", "", t, flags=re.S)
 
 
 # ---- informe v2 --------------------------------------------------------------------------------------------------------
@@ -137,6 +137,7 @@ def test_decoracion_es_imagen_y_no_svg_con_datauri():
         assert (EST / "img" / f"{f}.webp").stat().st_size < 90_000
     c = TestClient(principal.app, base_url="https://t")
     t = c.get("/panel/ajustes", headers=H).text
+    t = re.sub(r'<svg id="sprites".*?</svg>', "", t, flags=re.S)   # los símbolos van dentro de la página; el resto no dibuja elipses
     assert "bg-orbitas.webp" in t and "bg-roseta.webp" in t and 'data-logo="mini"' not in t and "<ellipse" not in t
     assert "echarts" not in t  # Ajustes no carga gráficos
     assert "echarts.custom.min.js" in c.get("/panel/negocio", headers=H).text
@@ -268,9 +269,11 @@ def test_todo_use_apunta_a_un_id_que_existe(monkeypatch):
     paginas = [c.get(r, headers=H).text for r in ("/", "/panel", "/panel/negocio", "/panel/ajustes", "/panel/reintentar")]
     usados = set()
     for t in paginas:
-        usados |= set(re.findall(r'href="/estaticos/(identidad\.svg|iconos\.svg)(?:\?[^"#]*)?#([^"]+)"', t))
+        assert not re.search(r'href="/estaticos/[^"]*\.svg#', t), "sprite externo: Firefox no siempre lo resuelve"
+        usados |= {("pagina", i) for i in re.findall(r'<use[^>]*href="#([^"]+)"', t)}
     assert len(usados) > 15
-    faltan = sorted(f"{a}#{i}" for a, i in usados if i not in ids[a])
+    todos = ids["identidad.svg"] | ids["iconos.svg"]
+    faltan = sorted(f"{a}#{i}" for a, i in usados if i not in todos)
     assert faltan == []
     # los íconos que genera el servidor y los que arma el JS también existen
     for n in ("e-lista", "e-contingencia-modelo", "e-cadena-agotada", "e-sin-info", "l-karin", "l-datos", "l-penal", "t-lista"):
@@ -402,7 +405,7 @@ def test_datos_agrupa_las_tablas_por_seccion(monkeypatch, inf):
 
 def test_global_lleva_icono_como_las_leyes(inf):
     html = str(vistas.informe_vis(inf, {})["calidad"])
-    assert 'data-l="global"' in html and "identidad.svg#n-acierto" in html and html.count('class="lx"') == html.count('<li class="ly')
+    assert 'data-l="global"' in html and 'href="#n-acierto"' in html and html.count('class="lx"') == html.count('<li class="ly')
 
 
 def test_pdf_usa_las_visuales_orbitales_de_la_vista(inf):

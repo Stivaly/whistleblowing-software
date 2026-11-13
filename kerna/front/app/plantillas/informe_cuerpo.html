@@ -3,7 +3,7 @@
 <section class="bn z-kb kbs kbs6" aria-label="Indicadores clave">{% for k in V2.kb %}{{ kb(k) }}{% endfor %}</section>
 <div class="tabs2" role="tablist" aria-label="Secciones del informe">{% for p in V2.pestanas %}<button type="button" role="tab" id="t-{{ p.id }}" aria-controls="p-{{ p.id }}" aria-selected="{{ 'true' if loop.first else 'false' }}" tabindex="{{ 0 if loop.first else -1 }}"><span>{{ p.t }}</span></button>{% endfor %}<button type="button" role="tab" id="t-datos" aria-controls="p-datos" aria-selected="false" tabindex="-1" class="t-datos"><span>Datos</span></button></div>
 {% for p in V2.pestanas %}<section class="tp bn z-{{ {'calidad': 'ly', 'desempeno': 'cm', 'costo': 'hm', 'rentabilidad': 'pr', 'incidentes': 'co'}.get(p.id, 'cm') }}" role="tabpanel" id="p-{{ p.id }}" aria-labelledby="t-{{ p.id }}"{% if not loop.first %} hidden{% endif %}>
-{% if p.id == 'rentabilidad' %}{% if V2.hay_proy %}<p class="mk">Utilidad por año, según el plan de negocio{{ tip(p.g) }}</p><div id="g-proy" class="cch" role="img" aria-label="Utilidad por año"></div>{% else %}{{ vacio('Sin proyección') }}{% endif %}
+{% if p.id == 'rentabilidad' %}{% if V2.hay_proy %}<p class="mk">Utilidad por año{{ tip(p.g) }}</p><div id="g-proy" class="cch" role="img" aria-label="Utilidad por año"></div>{% else %}{{ vacio('Sin proyección') }}{% endif %}
 {% else %}{{ p.vis }}{% endif %}
 {% if p.stats %}<ul class="stt">{% for s in p.stats %}{% set e = s.e if s.e != 'n' else 'na' %}<li class="stl s-{{ e }}">{% if s.pct is not none %}{{ anillo(s.pct, e, None, 56, '') }}{% else %}{{ ic(ICONO[e], px=40) }}{% endif %}<span class="stl-t"><span>{{ s.l }}</span><b>{{ s.v }}{% if s.u %} <small>{{ s.u }}</small>{% endif %}</b></span></li>{% endfor %}</ul>{% endif %}
 </section>{% endfor %}
