@@ -151,4 +151,24 @@ def capacidad(uso: float, estado: str, px: int = 44) -> Markup:
     return Markup("".join(o))
 
 
-FUNCIONES = {"diagrama_orbital": diagrama_orbital, "camino": camino, "anillo": anillo, "capacidad": capacidad, "ley_icono": ley_icono, "ley_tipo": ley_tipo}
+def dona(segmentos: list[dict], centro: str, unidad: str, etiqueta: str = "", px: int = 132) -> Markup:
+    """Anillo de reparto con leyenda directa. segmentos: [{n: nombre, v: valor, txt: cifra de la leyenda, c: color de categoría}]; el centro lleva la cifra principal.
+    Estático (SVG del servidor): los arcos se separan con un pequeño hueco y empiezan en las 12 en punto."""
+    seg = [x for x in segmentos if x["v"] > 0]
+    tot = sum(x["v"] for x in seg) or 1
+    r, cx = 46.0, 60.0
+    c = 2 * math.pi * r
+    hueco = 3.0 if len(seg) > 1 else 0.0
+    o = [f'<svg class="dn" width="{px}" height="{px}" viewBox="0 0 120 120" role="img" aria-label="{escape(etiqueta or unidad)}: {escape(centro)}"><circle cx="{cx}" cy="{cx}" r="{r}" class="dn-b"/>']
+    acum, lg = 0.0, []
+    for x in segmentos:
+        if x["v"] > 0:
+            largo = max(c * x["v"] / tot - hueco, 1.5)
+            o.append(f'<circle cx="{cx}" cy="{cx}" r="{r}" class="dn-a" style="stroke:var(--c-{x["c"]});stroke-dasharray:{_p(largo)} {_p(c)};stroke-dashoffset:{_p(-acum)}" transform="rotate(-90 {cx} {cx})"/>')
+            acum += c * x["v"] / tot
+        lg.append(f'<li style="--c:var(--c-{x["c"]});--cb:var(--c-{x["c"]}-bg)"><i aria-hidden="true">{escape(x["txt"])}</i><span>{escape(x["n"])}</span></li>')
+    o.append(f'<text x="{cx}" y="{cx + 2}" class="dn-t" text-anchor="middle">{escape(centro)}</text><text x="{cx}" y="{cx + 17}" class="dn-u" text-anchor="middle">{escape(unidad)}</text></svg>')
+    return Markup(f'<div class="dn-w">{"".join(o)}<ul class="dn-lg">{"".join(lg)}</ul></div>')
+
+
+FUNCIONES = {"dona": dona, "diagrama_orbital": diagrama_orbital, "camino": camino, "anillo": anillo, "capacidad": capacidad, "ley_icono": ley_icono, "ley_tipo": ley_tipo}

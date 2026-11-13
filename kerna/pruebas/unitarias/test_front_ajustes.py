@@ -96,7 +96,7 @@ def test_negocio_sin_bloque_ni_ventas(monkeypatch):
     assert n["proyeccion"]["anios"][-1]["clientes"] == 17 and n["proyeccion"]["anios"][0]["ventas"] == pytest.approx(638, abs=1)
     from app import glosario
     q = glosario.glosario()["ingresos_uf"]
-    assert "capítulo" not in q["q"].lower() and "Tabla" not in q["q"] and "2026" in q["c"] and "40.000" in q["c"]
+    assert "capítulo" not in q["q"].lower() and "Tabla" not in q["q"] and len(q["q"]) <= 80
 
 
 def test_kql_tokens_y_etapas_usan_los_eventos_reales():

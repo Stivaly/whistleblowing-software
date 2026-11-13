@@ -121,7 +121,7 @@ def test_informe_con_cache_sale_completo(monkeypatch, inf):
     cache.vaciar()
     cache._datos[("informe", 30, None, None)] = (time.time(), inf)
     t = TestClient(principal.app, base_url="https://t").get("/panel/informe?dias=30", headers=H).text
-    assert "data-carga" not in t and 'class="bn kbs kbs6"' in t and 'id="inf-charts"' in t
+    assert "data-carga" not in t and 'class="bn z-kb kbs kbs6"' in t and 'id="inf-charts"' in t
 
 
 def test_informe_requiere_sesion():
@@ -375,7 +375,7 @@ def test_pdf_primera_pagina_con_veredicto_y_una_pagina_por_pestana(inf):
     from pypdf import PdfReader
     r = PdfReader(io.BytesIO(exportar.a_pdf(inf)))
     p1 = r.pages[0].extract_text()
-    assert "metas cumplidas" in p1 and "Acierto" in p1 and "Informe de gestión" in p1      # cabecera, veredicto y KPI en la página 1
+    assert "metas cumplidas" in p1 and "acertadas" in p1 and "Informe de gestión" in p1      # cabecera, veredicto y KPI en la página 1
     assert "meta 0,8" not in "".join(p.extract_text() for p in r.pages)
     assert len(r.pages) >= 3 and "Calidad" in r.pages[1].extract_text()
     assert (EST / "img" / "baldosa-lista.png").exists()

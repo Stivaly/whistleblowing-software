@@ -25,8 +25,8 @@ def test_contenido_de_las_vistas_con_ancho_maximo_1440_centrado():
 
 def test_bandas_tintadas_cumplen_contraste_aa():
     textos = {"ink": "#0F1736", "muted": "#4F5B85", "ok": "#17622E", "warn": "#8F5200", "bad": "#B42318", "brand": "#1C2A6B"}
-    zonas = re.findall(r"#zona \.z-(\w+)\{--z1:(#\w+);--z2:(#\w+);", CSS)
-    assert {z[0] for z in zonas} == {"pr", "kb", "cm", "ly", "hm"}
+    zonas = re.findall(r"\.z-(\w+)\{--z1:(#\w+);--z2:(#\w+);", CSS)
+    assert {z[0] for z in zonas} == {"pr", "kb", "cm", "ly", "hm", "co"}
     for z, a, b in zonas:
         for nombre, t in textos.items():
             assert _cr(t, a) >= 4.5 and _cr(t, b) >= 4.5, (z, nombre)

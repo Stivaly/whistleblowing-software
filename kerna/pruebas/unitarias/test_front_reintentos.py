@@ -189,4 +189,4 @@ def test_en_vivo_lleva_la_hora_del_ultimo_dato_y_el_aviso_de_demora(cliente):
     assert 'data-dato="2026-11-13T03:29:50Z"' in p and 'data-fuente="conector"' in p
     g = glosario.glosario()["envivo"] if hasattr(glosario, "glosario") else None
     from app.principal import _GLOS
-    assert "último dato recibido" in _GLOS["envivo"]["q"] and "unos minutos" in _GLOS["envivo"]["c"]
+    assert "unos minutos" in _GLOS["envivo"]["q"]

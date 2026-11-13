@@ -155,7 +155,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     else:
         e_a, va, et_a, x_a = "na", "—", "Sin datos", "Todavía no hay una medición de calidad guardada."
     z_a = [(0, meta_rec - RECALL_ALERTA, "bad"), (meta_rec - RECALL_ALERTA, meta_rec, "warn"), (meta_rec, 1, "ok")]
-    k.append({"k": "calidad", "i": "target", "l": "Acierto", "form": "gauge", "e": e_a, "p": "", "u": "%" if rec_glob is not None else "", "num": None if rec_glob is None else round(rec_glob * 100, 1),
+    k.append({"k": "calidad", "i": "target", "l": "Sugerencias acertadas", "form": "gauge", "e": e_a, "p": "", "u": "%" if rec_glob is not None else "", "num": None if rec_glob is None else round(rec_glob * 100, 1),
               "v": va, "f": rec_glob or 0, "zm": meta_rec, "zl": f.dec_corto(meta_rec * 100, 0), "z": zonas(z_a), "et": et_a, "tr": "", "te": "na", "ta": "minus", "x": x_a,
               "tick": graficos.g_tick(meta_rec)})
     # --- Respuesta (9 de cada 10 casos frente a la meta)
@@ -163,25 +163,25 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
         e_r = "ok" if p95_s <= META_P95_S else ("warn" if p95_s <= 2 * META_P95_S else "bad")
         mx_r = 3 * META_P95_S
         z_r = [(0, META_P95_S, "ok"), (META_P95_S, 2 * META_P95_S, "warn"), (2 * META_P95_S, mx_r, "bad")]
-        k.append({"k": "tiempo", "i": "timer", "l": "Respuesta", "form": "bullet", "e": e_r, "p": "", "u": "s", "num": round(p95_s, 1), "v": f.segundos(p95),
+        k.append({"k": "tiempo", "i": "timer", "l": "Tiempo de respuesta", "form": "bullet", "e": e_r, "p": "", "u": "s", "num": round(p95_s, 1), "v": f.segundos(p95),
                   "max": mx_r, "meta": META_P95_S, "metaT": f"meta {f.dec_corto(META_P95_S, 0)} s", "z": [{"a": a, "b": b, "e": e} for a, b, e in z_r],
                   "mx_txt": f"{f.dec_corto(mx_r, 0)} s", "pos": min(100, p95_s / mx_r * 100), "pos_meta": META_P95_S / mx_r * 100,
                   "et": "Dentro de la meta" if e_r == "ok" else "Sobre la meta", "tr": "", "te": "na", "ta": "minus",
                   "x": f"9 de cada 10 casos reciben su sugerencia en menos de {f.segundos(p95)} s (el peor día del período). La mitad, en {f.segundos(p50)} s. Meta: {f.dec_corto(META_P95_S, 0)} s."})
     else:
         e_r = "na"
-        k.append({"k": "tiempo", "i": "timer", "l": "Respuesta", "form": "bullet", "e": "na", "p": "", "u": "", "num": None, "v": "—", "max": 3 * META_P95_S,
+        k.append({"k": "tiempo", "i": "timer", "l": "Tiempo de respuesta", "form": "bullet", "e": "na", "p": "", "u": "", "num": None, "v": "—", "max": 3 * META_P95_S,
                   "meta": META_P95_S, "metaT": f"meta {f.dec_corto(META_P95_S, 0)} s", "z": [{"a": 0, "b": 1, "e": "na"}], "mx_txt": "", "pos": 0, "pos_meta": 33.3,
                   "et": "Sin datos", "tr": "", "te": "na", "ta": "minus", "x": "No hay solicitudes medidas en el período."})
     # --- Costo
     if costo:
         refs = sorted({x["ref"] for x in costo["modelos"]})
-        k.append({"k": "costo_k", "i": "coins", "l": "Costo", "form": "costo", "e": "na", "p": "US$", "u": "", "num": round(costo["total"], 2), "v": f.usd(costo["total"]),
+        k.append({"k": "costo_k", "i": "coins", "l": "Costo del período", "form": "costo", "e": "na", "p": "US$", "u": "", "num": round(costo["total"], 2), "v": f.usd(costo["total"]),
                   "et": "", "tr": "", "te": "na", "ta": "minus", "s": serie, "por_caso": f.usd(costo["por_caso"], 3),
                   "stack": [{"n": x["modelo"], "usd": f.usd(x["usd"]), "w": round(100 * x["usd"] / costo["total"], 1) if costo["total"] else 0} for x in costo["modelos"][:4]],  # sin meta de costo en la configuración: sin estado
                   "x": f"Costo por denuncia: US$ {f.usd(costo['por_caso'], 4)}. " + " · ".join(f"{x['modelo']} US$ {f.usd(x['usd'])}" for x in costo["modelos"]) + ". Precio de referencia: " + ", ".join(refs) + "."})
     else:
-        k.append({"k": "costo_k", "i": "coins", "l": "Costo", "form": "spark", "e": "na", "p": "", "u": "", "num": None, "v": "—", "et": "Sin datos", "tr": "", "te": "na",
+        k.append({"k": "costo_k", "i": "coins", "l": "Costo del período", "form": "spark", "e": "na", "p": "", "u": "", "num": None, "v": "—", "et": "Sin datos", "tr": "", "te": "na",
                   "ta": "minus", "s": serie, "x": "No hay tokens medidos en el período."})
     for x in k:
         key = x["k"]
@@ -331,22 +331,22 @@ def negocio(n: dict) -> dict:
          "dots": [{"e": c["riesgo"], "n": f"{c['nombre']}: " + ("sin datos de uso" if c["riesgo"] == "na" else (f"hace {c['dias_sin_uso']} días" if c["dias_sin_uso"] is not None else "sin uso"))} for c in cls],
          "et": f"{len(riesgo)} en riesgo" if riesgo else (f"{len(sin_dato)} sin datos de uso" if sin_dato else "Todos usan Kerna"),
          "x": f"{len(activos)} de {len(cls)} clientes usaron Kerna en los últimos {neg_mod.DIAS_RIESGO} días. Solo se mide el uso de Veridy; de los demás clientes se conocen el plan y la tarifa. Cada círculo es un cliente."},
-        {"k": "neg_denuncias_k", "i": "inbox", "l": "Denuncias", "form": "spark", "e": "ok" if t["denuncias"] else "na", "v": f.miles(t["denuncias"]), "u": f"en {n['dias']} días", "s": n["serie_total"],
+        {"k": "neg_denuncias_k", "i": "inbox", "l": "Denuncias recibidas", "form": "spark", "e": "ok" if t["denuncias"] else "na", "v": f.miles(t["denuncias"]), "u": f"en {n['dias']} días", "s": n["serie_total"],
          "et": "Con actividad" if t["denuncias"] else "Sin denuncias", "x": f"Se procesaron {f.miles(t['denuncias'])} denuncias entre todos los clientes en {n['dias']} días."},
-        {"k": "neg_ingreso", "i": "wallet", "l": "Ingreso", "form": "none", "e": "ok" if t["ingreso"] > 0 else "na", "v": f.uf(t["ingreso"]), "u": "UF", "et": "Tarifa anual por los días",
+        {"k": "neg_ingreso", "i": "wallet", "l": "Ingreso del período", "form": "none", "e": "ok" if t["ingreso"] > 0 else "na", "v": f.uf(t["ingreso"]), "u": "UF", "et": "Tarifa anual por los días",
          "x": f"Ingreso del período en UF: la tarifa anual de cada cliente, proporcional a los {n['dias']} días. Incluye las tarifas de los {len(cls)} clientes con contrato. 1 UF = {f.miles(n['uf_clp'])} pesos."},
-        {"k": "neg_costo", "i": "coins", "l": "Costo de servir", "form": "none", "e": "ok", "v": f.uf(t["costo_servir"]), "u": "UF", "et": f"{f.uf(t['costo_ia'], 3)} UF de IA",
+        {"k": "neg_costo", "i": "coins", "l": "Costo de atender clientes", "form": "none", "e": "ok", "v": f.uf(t["costo_servir"]), "u": "UF", "et": f"{f.uf(t['costo_ia'], 3)} UF de IA",
          "x": "Lo que cuesta atender a los clientes: inteligencia artificial (con tope por plan), infraestructura y soporte."},
-        {"k": "neg_margen", "i": "piggy-bank", "l": "Margen operativo", "form": "gauge", "e": e_mar, "v": f.dec_corto(mo, 0), "u": "%", "f": max(0, min(1, mo / 100)), "zm": .6, "zl": "60",
+        {"k": "neg_margen", "i": "piggy-bank", "l": "Ganancia sobre el ingreso", "form": "gauge", "e": e_mar, "v": f.dec_corto(mo, 0), "u": "%", "f": max(0, min(1, mo / 100)), "zm": .6, "zl": "60",
          "z": zonas([(0, .3, "bad"), (.3, .6, "warn"), (.6, 1, "ok")]), "tick": graficos.g_tick(.6), "et": "Alto" if e_mar == "ok" else ("Medio" if e_mar == "warn" else "Bajo"),
          "x": f"Lo que queda del ingreso ({f.uf(t['ingreso'])} UF) después de servir, pagar la parte de Veridy ({f.uf(t['participacion_veridy'])} UF) y los costos fijos ({f.uf(t['costos_fijos'])} UF): {f.uf(t['margen_operativo'])} UF."},
-        {"k": "neg_utilidad", "i": "landmark", "l": "Utilidad", "form": "none", "e": "ok" if t["utilidad"] > 0 else ("bad" if t["utilidad"] < 0 else "na"), "v": f.uf(t["utilidad"]), "u": "UF",
+        {"k": "neg_utilidad", "i": "landmark", "l": "Utilidad del período", "form": "none", "e": "ok" if t["utilidad"] > 0 else ("bad" if t["utilidad"] < 0 else "na"), "v": f.uf(t["utilidad"]), "u": "UF",
          "et": f"{f.dec_corto(t['margen_neto_pct'], 0)} % del ingreso", "x": "Después de depreciación, interés del crédito e impuesto de primera categoría."},
-        {"k": "neg_adopcion_k", "i": "thumbs-up", "l": "Valoradas", "form": "bullet", "e": e_val, "v": f.dec_corto(a["valoradas_pct"], 0), "u": "%", "max": 100, "meta": 50, "metaT": "meta 50 %",
+        {"k": "neg_adopcion_k", "i": "thumbs-up", "l": "Sugerencias calificadas", "form": "bullet", "e": e_val, "v": f.dec_corto(a["valoradas_pct"], 0), "u": "%", "max": 100, "meta": 50, "metaT": "meta 50 %",
          "z": [{"a": 0, "b": 30, "e": "bad"}, {"a": 30, "b": 50, "e": "warn"}, {"a": 50, "b": 100, "e": "ok"}], "mx_txt": "100 %", "pos": min(100, a["valoradas_pct"]), "pos_meta": 50,
          "et": "Bien" if e_val == "ok" else ("Pocas" if e_val == "warn" else "Muy pocas"),
          "x": f"{f.miles(a['valoradas'])} sugerencias fueron valoradas por una persona; {f.dec_corto(a['utiles_pct'], 0)} % de ellas resultaron útiles. Esperado: 50 % o más."},
-        {"k": "neg_sug", "i": "sparkles", "l": "Con sugerencia", "form": "none", "e": "ok" if a["con_sugerencia_pct"] >= SUG_OK else ("warn" if a["con_sugerencia_pct"] >= SUG_WARN else "bad"), "v": f.dec_corto(a["con_sugerencia_pct"], 1), "u": "%",
+        {"k": "neg_sug", "i": "sparkles", "l": "Denuncias con sugerencia", "form": "none", "e": "ok" if a["con_sugerencia_pct"] >= SUG_OK else ("warn" if a["con_sugerencia_pct"] >= SUG_WARN else "bad"), "v": f.dec_corto(a["con_sugerencia_pct"], 1), "u": "%",
          "et": "Dentro de lo esperado" if a["con_sugerencia_pct"] >= SUG_OK else "Bajo lo esperado", "x": "De cada 100 denuncias, cuántas terminaron con una sugerencia lista."},
     ]
     for x in k:
@@ -456,7 +456,7 @@ def informe_ejecutivo(inf_: dict) -> dict:
                           d_l=graficos.spark(serie), d_a=graficos.spark_area(serie), et="Llegando con normalidad" if casos else "Sin denuncias"))
     p_sug = kp.get("% con sugerencia")
     e_s = est("% con sugerencia")
-    cards.append(_tarjeta("neg_sug", "sparkles", "Con sugerencia", None if not casos else f.dec_corto(p_sug, 1), "%", e_s if casos else "na", "De cada 100 denuncias, cuántas terminaron con una sugerencia lista. Meta: 90 % o más.",
+    cards.append(_tarjeta("neg_sug", "sparkles", "Denuncias con sugerencia", None if not casos else f.dec_corto(p_sug, 1), "%", e_s if casos else "na", "De cada 100 denuncias, cuántas terminaron con una sugerencia lista. Meta: 90 % o más.",
                           form="gauge", f=(p_sug or 0) / 100, zm=.9, zl="90", z=zonas([(0, .7, "bad"), (.7, .9, "warn"), (.9, 1, "ok")]), tick=graficos.g_tick(.9),
                           et={"ok": "Dentro de lo esperado", "warn": "Bajo lo esperado", "bad": "Muy bajo", "na": "Sin datos"}[e_s if casos else "na"]))
     rc = kp.get("Recall@5 por artículo (global)")
@@ -467,7 +467,7 @@ def informe_ejecutivo(inf_: dict) -> dict:
                           tick=graficos.g_tick(meta_r), et={"ok": "Cumple la meta", "warn": "Cerca de la meta", "bad": "Bajo la meta", "na": "Sin datos"}[e_r]))
     pv = kp.get("% de sugerencias valoradas útiles")
     e_v = est("% de sugerencias valoradas útiles")
-    cards.append(_tarjeta("valoraciones", "thumbs-up", "Valoradas útiles", None if pv is None else f.dec_corto(pv, 0), "%" if pv is not None else "", e_v, "De las sugerencias valoradas por auditores, cuántas resultaron útiles. Esperado: 70 % o más.",
+    cards.append(_tarjeta("valoraciones", "thumbs-up", "Sugerencias útiles según auditores", None if pv is None else f.dec_corto(pv, 0), "%" if pv is not None else "", e_v, "De las sugerencias valoradas por auditores, cuántas resultaron útiles. Esperado: 70 % o más.",
                           form="bullet" if pv is not None else "none", max=100, meta=70, metaT="meta 70 %", z=[{"a": 0, "b": 50, "e": "bad"}, {"a": 50, "b": 70, "e": "warn"}, {"a": 70, "b": 100, "e": "ok"}], mx_txt="100 %", pos=min(100, pv or 0), pos_meta=70,
                           et={"ok": "Bien", "warn": "Atención", "bad": "Bajo", "na": "Sin valoraciones"}[e_v]))
     p95 = kp.get("Latencia P95 (máximo diario)")
@@ -549,10 +549,10 @@ TIPOS_DATO = {"DIRECCION": "Dirección", "GENERO": "Género", "UBICACION": "Ubic
 PESTANAS = [  # id, título, ícono utilitario, glosario, KPI de la pestaña (etiqueta del informe, rótulo claro)
     ("resumen", "Resumen", "layout-dashboard", "inf_resumen", [("Disponibilidad efectiva", "Casos con sugerencia sobre los válidos"), ("% de sugerencias valoradas útiles", "Sugerencias útiles según auditores"), ("Revisión manual", "Casos en revisión manual")]),
     ("calidad", "Calidad", "target", "inf_calidad", [("Recall@5 por artículo (global)", "Acierto con el artículo exacto"), ("Recall por ley (global)", "Acierto con la ley"), ("Pruebas automáticas (unitarias): pasadas/total", "Pruebas automáticas pasadas")]),
-    ("desempeno", "Rapidez", "timer", "inf_desempeno", [("Latencia P50 (ponderada por día)", "Caso típico"), ("Latencia P95 (máximo diario)", "9 de cada 10 casos, peor día"), ("Casos fuera del modo oficial", "Casos con el modelo de respaldo o a mano")]),
-    ("costo", "Costos", "coins", "inf_costo", [("Costo del período", "Costo del período"), ("Costo por denuncia", "Costo por denuncia"), ("Costo total mensual proyectado, 1.000 denuncias", "Costo mensual con 1.000 denuncias")]),
-    ("rentabilidad", "Rentabilidad", "wallet", "inf_rent", [("Ingreso del período", "Ingreso"), ("Margen operativo", "Margen operativo"), ("Utilidad después de impuestos", "Utilidad final"), ("Retorno anual del proyecto", "Retorno anual")]),
-    ("incidentes", "Incidentes", "triangle-alert", "inf_incid", [("Casos en revisión manual", "Casos en revisión manual"), ("Eventos de falla de proveedor o modelo", "Fallas de proveedor o modelo")]),
+    ("desempeno", "Rapidez", "timer", "inf_desempeno", [("Latencia P50 (ponderada por día)", "Tiempo típico de un caso"), ("Latencia P95 (máximo diario)", "Tiempo de 9 de cada 10 casos (peor día)"), ("Casos fuera del modo oficial", "Casos con modelo de respaldo o a mano")]),
+    ("costo", "Costos", "coins", "inf_costo", [("Costo del período", "Costo del período"), ("Costo por denuncia", "Costo por denuncia"), ("Costo total mensual proyectado, 1.000 denuncias", "Costo mensual estimado, 1.000 denuncias")]),
+    ("rentabilidad", "Rentabilidad", "wallet", "inf_rent", [("Ingreso del período", "Ingreso del período"), ("Margen operativo", "Ganancia sobre el ingreso"), ("Utilidad después de impuestos", "Ganancia final del período"), ("Retorno anual del proyecto", "Rentabilidad anual del proyecto")]),
+    ("incidentes", "Incidentes", "triangle-alert", "inf_incid", [("Casos en revisión manual", "Casos en revisión manual"), ("Eventos de falla de proveedor o modelo", "Fallas de proveedores o modelos")]),
 ]
 
 
@@ -575,6 +575,20 @@ def _tabla(inf_: dict, id_: str) -> dict | None:
     return next((t for s in inf_["secciones"] for t in s["tablas"] if t["id"] == id_), None)
 
 
+def _pct_stat(v, u) -> float | None:
+    """Porcentaje (0 a 100) de una cifra del informe para dibujar su anillo: «49,2» con «%» o «333/333»; None si no es una proporción."""
+    try:
+        t = str(v).strip()
+        if "/" in t:
+            a, b = (float(x.replace(".", "").replace(",", ".")) for x in t.split("/", 1))
+            return 100 * a / b if b else None
+        if str(u).strip() == "%":
+            return float(t.replace(".", "").replace(",", "."))
+    except ValueError:
+        return None
+    return None
+
+
 def informe_v2(inf_: dict) -> dict:
     ej = informe_ejecutivo(inf_)
     cd = _tabla(inf_, "casos_dia")
@@ -589,7 +603,7 @@ def informe_v2(inf_: dict) -> dict:
         "calidad": (s_rec, False, True, f"meta {f.dec_corto(100 * META_RECALL, 0)} % o más"), "valoraciones": ([], None, False, "meta 70 % o más"),
         "tiempo": (s_p95, True, False, f"meta {f.dec_corto(META_P95_S, 0)} s o menos"), "costo_k": ([], None, False, "según tokens y precios"),
     }
-    nombres = {"casos": "Denuncias recibidas", "neg_sug": "Con sugerencia", "calidad": "Acierto", "valoraciones": "Valoradas útiles", "tiempo": "Tiempo de respuesta", "costo_k": "Costo del período"}
+    nombres = {"casos": "Denuncias recibidas", "neg_sug": "Denuncias con sugerencia", "calidad": "Sugerencias acertadas", "valoraciones": "Sugerencias útiles según auditores", "tiempo": "Tiempo de respuesta", "costo_k": "Costo del período"}
     cards = []
     for c in ej["tarjetas"]:
         serie, menos, pts, meta = extra[c["k"]]
@@ -625,7 +639,7 @@ def informe_v2(inf_: dict) -> dict:
         for et, rot in items[:3]:
             k = kp.get(et)
             if k:
-                stats.append({"l": rot, "v": k["v"], "u": k["u"], "e": k["e"] or "n"})
+                stats.append({"l": rot, "v": k["v"], "u": k["u"], "e": k["e"] or "n", "pct": _pct_stat(k["v"], k["u"])})
         pestanas.append({"id": id_, "t": titulo, "i": ico, "g": g, "stats": stats, "vis": vis.get(id_)})
     kbs = [_kb(c) for c in cards]
     charts = informe_charts(inf_)
@@ -829,7 +843,7 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
     n_val = V["n_val"]
     util = vv.get("Útil", {}).get("p")
     e_v = "na" if not n_val else ("ok" if util >= 70 else ("warn" if util >= 50 else "bad"))
-    kb.append({"k": "valoradas", "g": "valoraciones", "ic": "e-valorada", "l": "Sugerencias útiles", "v": "—" if not n_val else str(util), "u": "" if not n_val else "%", "p": "", "e": e_v,
+    kb.append({"k": "valoradas", "g": "valoraciones", "ic": "e-valorada", "l": "Sugerencias útiles según auditores", "v": "—" if not n_val else str(util), "u": "" if not n_val else "%", "p": "", "e": e_v,
                "et": "Sin valoraciones" if not n_val else {"ok": "Bien", "warn": "Atención", "bad": "Bajo"}[e_v], "bar": None if not n_val else {"z": [{"w": 50, "e": "bad"}, {"w": 20, "e": "warn"}, {"w": 30, "e": "ok"}], "pos": util, "meta": 70, "t": "meta 70 %"},
                "sub": f"{f.miles(n_val)} valoradas por auditores" if n_val else "", "x": "De las sugerencias valoradas por auditores, cuántas resultaron útiles. Esperado: 70 % o más."})
     et = V["etapas"]
@@ -845,7 +859,7 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
 def cascada_negocio(t: dict, signo=None) -> dict:
     """Cascada del ingreso a la utilidad: barras con altura mínima visible (1,5 % del recorrido), valor como etiqueta y niveles para los conectores."""
     signo = signo or (lambda x: ("−" if x < 0 else "") + f.uf(abs(x)))
-    pasos = [("Ingreso", t["ingreso"], "ing"), ("Costo de servir", -t["costo_servir"], "des"), ("Parte de Veridy", -t["participacion_veridy"], "des"), ("Costos fijos", -t["costos_fijos"], "des"),
+    pasos = [("Ingreso", t["ingreso"], "ing"), ("Atender clientes", -t["costo_servir"], "des"), ("Parte de Veridy", -t["participacion_veridy"], "des"), ("Costos fijos", -t["costos_fijos"], "des"),
              ("Crédito y equipos", -(t["depreciacion"] + t["interes"]), "des"), ("Impuesto", -t["impuesto"], "des")]
     labels, vals, bp, sp_, bn, sn, cols, niv, run = [], [], [], [], [], [], [], [], 0.0
     pisos = []  # (índice, está sobre el cero): barras demasiado bajas para verse
@@ -879,10 +893,21 @@ def presentacion_negocio(V: dict, n: dict) -> dict:
     cascada = cascada_negocio(t, signo)
     kp = {k["k"]: k for k in V["kpis"]}
     kb = [_kb(kp["neg_margen"]), _kb(kp["neg_costo"]), _kb(kp["neg_sug"]), _kb(kp["neg_adopcion_k"])]
-    chips = [("Valor actual neto", f"{f.uf(p['van'], 0)} UF"), ("Retorno anual", f"{f.dec_corto(p['tir_pct'], 1)} %"), ("Índice de rentabilidad", f.dec(p["indice_rentabilidad"], 2)),
-             ("Se recupera en el año", str(p["recuperacion_anio"]))]
+    chips = [("p_van", "Ganancia a 5 años, en valor de hoy", f.uf(p["van"], 0), "UF"), ("p_tir", "Rentabilidad anual del proyecto", f.dec_corto(p["tir_pct"], 1), "%"),
+             ("p_ind", "Retorno por cada UF invertida", f.dec(p["indice_rentabilidad"], 2), "UF"), ("p_rec", "Año en que se recupera la inversión", f"Año {p['recuperacion_anio']}", "")]
     cls = V["con_uso"]
-    return {"frase": frase, "cascada": cascada, "kb": kb, "chips": chips, "n_con": len(cls), "n_sin": len(V["sin_uso"]), "e_gen": V["eg"]["e"]}
+    nc, ns = len(cls), len(V["sin_uso"])
+    dona_c = _o.dona([{"n": "Con uso registrado", "v": nc, "txt": str(nc), "c": "verde"}, {"n": "Sin uso registrado", "v": ns, "txt": str(ns), "c": "amarillo"}],
+                     str(nc + ns), "clientes" if nc + ns != 1 else "cliente", "Clientes con y sin uso") if nc + ns else None
+    an = p["anios"][-1] if p.get("anios") else None
+    dona_p = None
+    if an and an["ventas"] > 0:
+        util = max(0.0, min(an["utilidad"], an["ventas"]))
+        pu = round(100 * util / an["ventas"])
+        dona_p = _o.dona([{"n": "Utilidad", "v": util, "txt": f"{pu} %", "c": "azul"}, {"n": "Costos e impuestos", "v": an["ventas"] - util, "txt": f"{100 - pu} %", "c": "coral"}],
+                         f"{pu} %", "de utilidad", f"Reparto del ingreso de {an.get('calendario', '')}")
+    return {"frase": frase, "cascada": cascada, "kb": kb, "chips": chips, "n_con": nc, "n_sin": ns, "e_gen": V["eg"]["e"], "dona_c": dona_c, "dona_p": dona_p,
+            "anio_p": str(an.get("calendario", "")) if an else ""}
 
 
 def visuales_pdf(inf_: dict) -> dict:

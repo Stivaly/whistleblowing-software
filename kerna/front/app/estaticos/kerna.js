@@ -99,12 +99,11 @@
     ttFor = b;
     let xt = hh.getAttribute('x');
     if (key === 'envivo') {
-      const q = Math.round((Date.now() - ultimo) / 1000), vv = $('[data-vivo]'), d = vv && vv.dataset.dato ? new Date(vv.dataset.dato) : null;
+      const vv = $('[data-vivo]'), d = vv && vv.dataset.dato ? new Date(vv.dataset.dato) : null;
       const hora = d && !isNaN(d) ? d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) + ' (' + hace(Math.max(0, Math.round((Date.now() - d) / 1000))) + ')' : null;
-      const de = vv && vv.dataset.fuente === 'conector' ? 'del conector de Veridy' : 'de la telemetría';
-      xt = (hora ? 'Último dato recibido: ' + hora + ', ' + de + '. ' : '') + (fallo ? 'No se pudo actualizar la última vez; se reintenta en un minuto.' : 'Esta pantalla se actualizó ' + hace(q) + '; la próxima en unos ' + Math.max(1, 60 - q) + ' s.');
+      xt = fallo ? 'No se pudo actualizar; se reintenta en un minuto.' : (hora ? 'Último dato: ' + hora + '. Puede tardar unos minutos.' : null);
     }
-    tt.innerHTML = '<b>' + esc(g.t) + '</b>' + esc(g.q) + (g.l ? '<span class="l">' + esc(g.l) + '</span>' : '') + esc(g.c) + (xt ? '<span class="l">En este caso</span>' + esc(xt) : '');
+    tt.textContent = (key === 'envivo' || key === 'neg_clientes') && xt ? xt : g.q;
     b.setAttribute('aria-describedby', 'tt'); tt.classList.add('on');
     const r = b.getBoundingClientRect(), w = tt.offsetWidth, h = tt.offsetHeight;
     const x = Math.min(Math.max(12, r.left + r.width / 2 - w / 2), innerWidth - w - 12); let y = r.bottom + 8; if (y + h > innerHeight - 8) y = r.top - h - 8;
