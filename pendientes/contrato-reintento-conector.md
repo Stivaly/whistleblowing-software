@@ -35,7 +35,7 @@ Semántica: el conector ya no estima por 7 días. Toma la lista real desde su es
 
 Se reescribe al final de cada pasada (cada `intervalo_s`, 30 s por defecto; 10 s con una corrida en curso). Es la fuente inmediata para «En vivo»: latencia de segundos en vez de minutos.
 
-`actualizado_en` (hora del último dato; el conector está caído si tiene más de 5 min), `ultima_pasada` (`ok`, `con_errores`, `nucleo_caido`…), `casos` (casos en Veridy), `nuevo`, `pendiente` (esperando al núcleo), `error`, `completado` (con sugerencia publicada, incluidos los de revisión manual), `en_revision_manual` (completados cuya última sugerencia es revisión manual; los más antiguos se rellenan de a 20 por pasada, `resultado_desconocido` cuenta los que faltan), `nucleo_caido`, `enviados`/`sugerencias`/`errores` (de la última pasada), `en_reintento` (hay corrida), `intervalo_s`.
+`actualizado_en` (hora del último dato; el conector está caído si tiene más de 5 min), `ultima_pasada` (`ok`, `con_errores`, `nucleo_caido`…), `casos` (casos en Veridy), `archivados` (casos del estado que ya no existen en Veridy: se marcan, no se borran, y no entran en ningún otro conteo; si reaparecen se reactivan), `nuevo`, `pendiente` (esperando al núcleo), `error`, `completado` (con sugerencia publicada, incluidos los de revisión manual), `en_revision_manual` (completados cuya última sugerencia es revisión manual; los más antiguos se rellenan de a 20 por pasada, `resultado_desconocido` cuenta los que faltan), `nucleo_caido`, `enviados`/`sugerencias`/`errores` (de la última pasada), `en_reintento` (hay corrida), `intervalo_s`.
 
 ## Ajustes que el conector ya aplica
 
@@ -52,5 +52,5 @@ Lee la fila `ajustes`/`kerna`/`actual` en cada pasada (`ajustes_de_tabla` en la 
 Valores fuera de rango se ignoran (rige el del entorno). **No son del conector** (los aplica el núcleo, ver `kerna-pendientes.md`): `evaluador`, `candidatos`, `cadena`; `compartir`, `maxresp` y `alerta` son del panel.
 
 ## Observaciones de la verificación (2026-11-13)
-- Los conteos de la fila `conector` salen del estado del conector, que aún guarda casos que ya no existen en Veridy: `completado` puede superar a `casos`, y `resultado_desconocido` incluye esos casos. El primer pedido real tomó 99 casos de 117 en Veridy y tardó 29 min (el núcleo atiende ~3 casos por minuto con 12 en vuelo).
+- Desde la reconciliación, los conteos de la fila `conector` solo cuentan los casos que existen en Veridy: `completado` ya no supera a `casos` y `resultado_desconocido` no incluye casos borrados. Si Veridy devuelve una lista vacía se trata como fallo de lectura y no se archiva nada. (Antes de ello, 62 casos borrados inflaban los conteos.) El primer pedido real tomó 99 casos de 117 en Veridy y tardó 29 min (el núcleo atiende ~3 casos por minuto con 12 en vuelo).
 - Con Veridy apagado el conector no corre: un pedido queda en `solicitado` hasta que Veridy se encienda.

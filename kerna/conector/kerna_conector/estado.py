@@ -56,6 +56,11 @@ ESQUEMA = [
 NUEVO, PENDIENTE, COMPLETADO, ERROR = "nuevo", "pendiente", "completado", "error"
 
 
+# Marca de «ya no existe en Veridy» (objeto_procesado: tipo, clave; id_nota = «1» archivado, «0» reactivado)
+ARCHIVO = ("_archivo", "ausente")
+_ARCHIVADOS = "SELECT id_caso FROM objeto_procesado WHERE tipo = '_archivo' AND clave = 'ausente' AND id_nota = '1'"
+
+
 def _iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -102,6 +107,10 @@ class Estado(ABC):
     def contar_objetos(self, tipo: str, clave: str, id_nota: Optional[str] = None, prefijo_nota: bool = False) -> int: ...
     @abstractmethod
     def contar_estados(self) -> dict: ...
+    @abstractmethod
+    def archivar_ausentes(self, vigentes: set) -> tuple[int, int]: ...
+    @abstractmethod
+    def contar_archivados(self) -> int: ...
     @abstractmethod
     def tomar_cerrojo(self, nombre: str, dueno: str, ahora: float, ttl_s: float) -> bool: ...
     @abstractmethod
@@ -187,6 +196,8 @@ class _EstadoSql(Estado):
     def contar_objetos(self, tipo: str, clave: str, id_nota: Optional[str] = None, prefijo_nota: bool = False) -> int:
         """Cantidad de casos con (tipo, clave); `id_nota` filtra por valor (o por prefijo con `prefijo_nota`)."""
         sql, par = "SELECT COUNT(*) FROM objeto_procesado WHERE tipo = ? AND clave = ?", [tipo, clave]
+        if tipo != ARCHIVO[0]:
+            sql += " AND id_caso NOT IN (%s)" % _ARCHIVADOS
         if id_nota is not None:
             sql += " AND id_nota LIKE ?" if prefijo_nota else " AND id_nota = ?"
             par.append(id_nota + "%" if prefijo_nota else id_nota)
@@ -196,7 +207,28 @@ class _EstadoSql(Estado):
     def contar_estados(self) -> dict:
         """{estado: cantidad} de `correspondencia_caso`."""
         return {f[0]: int(f[1]) for f in self._ejecutar(
-            "SELECT estado, COUNT(*) FROM correspondencia_caso GROUP BY estado", lectura=True)}
+            "SELECT estado, COUNT(*) FROM correspondencia_caso WHERE id_caso NOT IN (%s) GROUP BY estado" % _ARCHIVADOS,
+            lectura=True)}
+
+    def _ids_archivados(self) -> set:
+        return {f[0] for f in self._ejecutar(_ARCHIVADOS, lectura=True)}
+
+    def archivar_ausentes(self, vigentes: set) -> tuple[int, int]:
+        """Reconcilia con Veridy: los casos del estado que ya no existen allí se marcan archivados (no se borra nada y
+        sus filas se conservan); los archivados que reaparecen se reactivan. Devuelve (archivados nuevos, reactivados)."""
+        archivados = self._ids_archivados()
+        nuevos = reactivados = 0
+        for (id_caso,) in self._ejecutar("SELECT id_caso FROM correspondencia_caso", lectura=True):
+            if id_caso not in vigentes and id_caso not in archivados:
+                self.fijar_procesado(id_caso, ARCHIVO[0], ARCHIVO[1], "1")
+                nuevos += 1
+            elif id_caso in vigentes and id_caso in archivados:
+                self.fijar_procesado(id_caso, ARCHIVO[0], ARCHIVO[1], "0")
+                reactivados += 1
+        return nuevos, reactivados
+
+    def contar_archivados(self) -> int:
+        return len(self._ids_archivados())
 
     def tomar_cerrojo(self, nombre: str, dueno: str, ahora: float, ttl_s: float) -> bool:
         self._ejecutar("INSERT INTO cerrojo (nombre, dueno, vence) VALUES (?, ?, ?) "

@@ -699,3 +699,33 @@ def test_estado_en_vivo_de_la_pasada(mundo):
     vivo = m._vivo(e, r, m.parametros(_cfg(), None), False)
     assert vivo["completado"] == 1 and vivo["en_revision_manual"] == 1 and vivo["resultado_desconocido"] == 0
     assert vivo["intervalo_s"] == 30 and "reprocesar" in vivo["ajustes_aplicados"] and vivo["en_reintento"] is False
+
+
+def test_casos_que_ya_no_existen_en_veridy_se_archivan_y_no_cuentan(mundo):
+    from kerna_conector import __main__ as m
+    v, n, e, ref = _caso_agotado(mundo)
+    v.agregar("fantasma", fecha="2026-10-02T00:00:00Z")
+    pasada(v, n, e)
+    assert sum(e.contar_estados().values()) == 2 and e.contar_archivados() == 0
+    del v.casos["fantasma"]  # el caso se borró en Veridy
+    r = pasada(v, n, e)
+    assert r.archivados == 1 and e.contar_archivados() == 1
+    assert e.obtener("fantasma") is not None  # la fila se conserva
+    vivo = m._vivo(e, r, m.parametros(_cfg(), None), False)
+    assert vivo["casos"] == 1 and vivo["archivados"] == 1
+    assert sum(e.contar_estados().values()) == 1 and "pendiente" not in e.contar_estados()
+    assert vivo["completado"] <= vivo["casos"] and vivo["resultado_desconocido"] == 0
+    assert pasada(v, n, e).archivados == 0  # idempotente
+
+
+def test_caso_archivado_que_reaparece_se_reactiva_y_lista_vacia_no_archiva(mundo):
+    v, n, e = mundo
+    v.agregar("c1")
+    pasada(v, n, e)
+    guardado = v.casos.pop("c1")
+    assert pasada(v, n, e).archivados == 0 and e.contar_archivados() == 0  # lista vacía = fallo de lectura
+    v.agregar("c2")
+    assert pasada(v, n, e).archivados == 1
+    v.casos["c1"] = guardado
+    r = pasada(v, n, e)
+    assert r.reactivados == 1 and e.contar_archivados() == 0

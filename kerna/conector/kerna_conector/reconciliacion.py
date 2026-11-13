@@ -41,6 +41,8 @@ class ResultadoPasada:
     errores: int = 0
     nucleo_caido: bool = False
     omitida: bool = False
+    archivados: int = 0         # casos del estado que ya no existen en Veridy (marcados, no borrados)
+    reactivados: int = 0
     resultado: str = "ok"
     manual_total: int = 0       # corrida manual: casos objetivo (más los que esperan turno)
     manual_fin: int = 0         # ya resueltos
@@ -580,6 +582,8 @@ def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "verid
         r = p.r
         casos = sorted(veridy.listar_casos(), key=lambda c: (str(c.get("creation_date") or ""), str(c.get("id"))))
         r.casos = len(casos)
+        if casos:  # una lista vacía se trata como fallo de lectura, no como «todo se borró»
+            r.archivados, r.reactivados = estado.archivar_ausentes({str(c.get("id")) for c in casos})
         for meta in casos:
             p.compartir(meta)
             try:
