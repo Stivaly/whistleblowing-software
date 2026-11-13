@@ -603,7 +603,7 @@ def informe_v2(inf_: dict) -> dict:
         "calidad": (s_rec, False, True, f"meta {f.dec_corto(100 * META_RECALL, 0)} % o más"), "valoraciones": ([], None, False, "meta 70 % o más"),
         "tiempo": (s_p95, True, False, f"meta {f.dec_corto(META_P95_S, 0)} s o menos"), "costo_k": ([], None, False, "según tokens y precios"),
     }
-    nombres = {"casos": "Denuncias recibidas", "neg_sug": "Denuncias con sugerencia", "calidad": "Sugerencias acertadas", "valoraciones": "Sugerencias útiles según auditores", "tiempo": "Tiempo de respuesta", "costo_k": "Costo del período"}
+    nombres = {"casos": "Denuncias recibidas", "neg_sug": "Denuncias con sugerencia", "calidad": "Sugerencias acertadas", "valoraciones": "Sugerencias útiles", "tiempo": "Tiempo de respuesta", "costo_k": "Costo del período"}
     cards = []
     for c in ej["tarjetas"]:
         serie, menos, pts, meta = extra[c["k"]]
@@ -851,7 +851,7 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
     sat = [{"n": ETAPA_CORTA.get(x["id"], x["n"]), "v": x["ms"], "txt": (x["s"] + " s"), "c": _o.COLOR_ETAPA.get(x["id"], "azul"), "hot": x["e"] == "bad" and x["ms"] == mx_ms} for x in et]
     camino = _o.camino(sat) if sat else None
     r = V["rapidez"]
-    resumen_t = f"caso típico {r['p50']} s · 9 de cada 10 en menos de {r['p95']} s · meta {r['meta']} s" if r["hay"] else ""
+    resumen_t = f"caso típico {r['p50']}\u00a0s · 9 de cada 10 en menos de {r['p95']}\u00a0s · meta {r['meta']}\u00a0s" if r["hay"] else ""
     return {"frase": frase, "diag": diag, "kb": kb, "camino": camino, "camino_t": resumen_t, "hay_heat": bool(V["graficos"].get("heat")) and len(V["graficos"]["casos"]["labels"]) >= 7,
             "hay_leyes": bool(V["aciertos"]), "dias_con_datos": len(V["graficos"]["casos"]["labels"])}
 

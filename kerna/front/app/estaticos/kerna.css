@@ -1159,14 +1159,14 @@ html,body{max-width:100%}
 
 /* v14 · Negocio, Informe y resto: mismo lenguaje de bandas del Resumen (.zv) */
 .zv .bn{--ok:#17622E}
-.pr-n{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:8px 32px;align-items:center}
-.pr-n .cch{height:210px;max-width:760px;margin-left:auto}
+.pr-n{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:8px 32px;align-items:center}
+.pr-n .cch{height:210px;max-width:860px;margin-left:auto}
 .pr-n .frase{font-size:clamp(20px,2.2vw,30px)}
 @media(max-width:899px){.pr-n{grid-template-columns:minmax(0,1fr)}.pr-n .cch{max-width:none;height:190px}}
-.cl-g{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 32px;align-items:start}
-.cl-d{padding-left:24px;border-left:2px dotted var(--line-strong)}
-.cl-d .mk{margin-bottom:8px}
-@media(max-width:899px){.cl-g{grid-template-columns:minmax(0,1fr)}.cl-d{padding:8px 0 0;border-left:0;border-top:2px dotted var(--line-strong)}}
+.cn-g{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 32px;align-items:start}
+.cn-d{padding-left:24px;border-left:2px dotted var(--line-strong)}
+.cn-d .mk{margin-bottom:8px}
+@media(max-width:899px){.cn-g{grid-template-columns:minmax(0,1fr)}.cn-d{padding:8px 0 0;border-left:0;border-top:2px dotted var(--line-strong)}}
 .dn-w{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .dn{display:block;flex:none;overflow:visible}
 .dn-b{fill:none;stroke:rgba(255,255,255,.7);stroke-width:14}
@@ -1198,7 +1198,7 @@ html,body{max-width:100%}
 .zv .stt{margin:14px 0 0;gap:12px}
 .zv .stl{display:inline-flex;align-items:center;gap:14px;padding:10px 24px 10px 14px;border:0;border-radius:0;background:rgba(255,255,255,.82);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));box-shadow:none}
 .zv .stl svg.ani{flex:none}
-.zv .stl .ani-b{stroke:var(--sb)}
+.zv .stl .ani-b{stroke:rgba(15,23,54,.12)}
 .zv .stl>k-st{flex:none}
 .stl-t{display:grid;gap:2px;font:500 11px/1.3 "JetBrains Mono",monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 .zv .stl .stl-t b{font:700 clamp(22px,2.2vw,28px)/1.1 Unbounded,Inter,sans-serif;letter-spacing:-.02em;color:var(--st)}
@@ -1207,3 +1207,5 @@ html,body{max-width:100%}
 /* el «?» de «En espera · próximo reintento…» va pegado al texto aunque este pase a dos líneas */
 .cola>.mk{display:block}
 .cola>.mk k-tip{margin-left:4px}
+.zv .kbs6{padding-right:36px}
+.zv .tp .cch{max-width:960px}

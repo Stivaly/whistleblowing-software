@@ -18,8 +18,8 @@
 
 <section class="bn z-kb kbs" aria-label="Indicadores de negocio">{% for k in P.kb %}{{ kb(k) }}{% endfor %}</section>
 
-<section class="bn z-ly cl-n" aria-label="Clientes"><h2 class="mk">Clientes{{ tip('neg_clientes') }}<span class="mk-r">{{ P.n_con }} con uso{% if P.n_sin %} · {{ P.n_sin }} sin uso registrado{% endif %}</span></h2>
-<div class="cl-g"><div class="cl-l">
+<section class="bn z-ly cn-n" aria-label="Clientes"><h2 class="mk">Clientes{{ tip('neg_clientes') }}<span class="mk-r">{{ P.n_con }} con uso{% if P.n_sin %} · {{ P.n_sin }} sin uso registrado{% endif %}</span></h2>
+<div class="cn-g"><div class="cn-l">
 {% for c in V.con_uso %}<div class="cr s-{{ c.e_uso }}">{{ capacidad(c.uso_plan, c.e_uso) }}
 <div class="cr-n"><b>{{ c.nombre }}</b><span>{{ c.plan_tipo }} · {{ miles(c.plan) }} casos al mes</span></div>
 <div class="cr-u"><b>{{ miles(c.tot) }}</b> denuncias · <b class="t-{{ c.e_uso }}">{{ c.uso_plan }} %</b> del plan</div>
@@ -27,7 +27,7 @@
 <div class="cr-l">{{ ic(ICONO[c.riesgo], px=20, mini=True) }}<span>{{ c.ult }}</span>{{ tip('neg_clientes', c.nota) }}</div></div>{% endfor %}
 {% if V.sin_uso %}<details class="sin-uso"><summary>{{ V.sin_uso|length }} con contrato, sin uso registrado</summary><ul>{% for c in V.sin_uso %}<li><b>{{ c.nombre }}</b><span>{{ c.plan_tipo }} · {{ miles(c.plan) }} casos al mes · {{ uf(c.tarifa_uf_anual, 0) }} UF al año</span></li>{% endfor %}</ul></details>{% endif %}
 </div>
-{% if P.dona_c %}<div class="cl-d"><p class="mk">Clientes con y sin uso{{ tip('neg_clientes_uso') }}</p>{{ P.dona_c }}</div>{% endif %}
+{% if P.dona_c %}<div class="cn-d"><p class="mk">Clientes con y sin uso{{ tip('neg_clientes_uso') }}</p>{{ P.dona_c }}</div>{% endif %}
 </div></section>
 
 <section class="bn z-cm py-n" aria-label="Proyección a 5 años"><h2 class="mk">Proyección a 5 años{{ tip('proyeccion') }}</h2>
