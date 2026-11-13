@@ -119,3 +119,8 @@ Tanda 15 (desplegado: 301ef5df9; previo f61fe44d8). Capturas `kerna/front/diseno
 
 ## Tanda 16 (2026-11-13)
 Último commit desplegado bueno antes de esta tanda: 301ef5df9. Si algo falla: `kerna/front/desplegar.sh --ref 301ef5df9`.
+Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png` y `prod16-portada-*.png` (m/d/d1920), `prod16.json`.
+- Negocio: fila de Veridy en dos líneas (nombre+plan+último uso arriba, cifras abajo), proyección con etiquetas de máx. 2 líneas («Ganancia a 5 años, valor de hoy», «Recuperas la inversión en»), KPI con más interlínea.
+- Resumen: «Acierto por ley» reparte el ancho (leyes flex 3, nota flex 1).
+- `rasterizar_decoracion.py` ya no genera `bg-orbitas.webp` (retocado a mano).
+- Portada 390/1366/1920: sin scroll horizontal, sin huecos > 16 px entre bloques (`kerna/operaciones/medir_portada.py`, vía `playwright.sh script`); menos aire bajo el héroe en escritorio. probar_iconos 0 fallos/1203; probar_movimiento y probar_front bien; pytest 138.
