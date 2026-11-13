@@ -61,9 +61,10 @@ Lee primero:
 - Debe escribir una prueba con navegador real que, en cada vista, recorra todos los íconos y logos y falle si alguno ocupa espacio pero no pinta píxeles. Por ejemplo, compara la captura del elemento contra un fondo plano.
 - Corrige todo lo que encuentre y audítalo en las capturas.
 
-### 6. Botón de reintento
-- Debe abarcar **todas las denuncias que aún no tienen clasificación**: hoy cuenta solo una estimación de 7 días, a partir de la telemetría. El agente debe investigar cómo obtener la lista real de pendientes. Pistas: el estado de cada caso en el conector o en Veridy (notas del caso) y la tabla de revisión manual.
-- El front debe mostrar el total real y reintentarlas todas.
+### 6. Botón de reintento: que se vea y que reintente de verdad (prioridad alta)
+- **Hoy no se ve el botón.** Desde el pedido del 2026-11-12 21:00 el bloque muestra «Pedido en curso» y oculta el botón, porque nadie atiende el pedido.
+- **El botón debe verse siempre.** Si hay un pedido en curso, se muestra su estado al lado y el botón se puede volver a usar.
+- **Al pulsarlo, Kerna debe volver a generar la sugerencia** de todas las denuncias que aún no la tienen: las 271 en revisión manual y cualquier otra sin clasificar. Obtén la lista real desde el estado de cada caso en el conector o en Veridy, no la estimación de 7 días.
 
 ### 7. Conector y las 271 denuncias en revisión manual
 - El reintento manual no se ejecuta porque el conector con soporte para `reintentosmanuales` **no está desplegado**. Para desplegarlo hay que recrear el grupo de contenedores de Veridy y dar un rol. Según `.claude/CLAUDE.md`, si el plan de Terraform reemplaza recursos hay que consultar a la usuaria.
