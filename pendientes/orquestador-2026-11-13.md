@@ -1,6 +1,6 @@
 # Encargo del orquestador (Opus), 2026-11-13 00:00
 
-Eres el orquestador. No editas código tú mismo: encargas el trabajo a agentes Sonnet 5.5 de esfuerzo medio (Agent con `model: sonnet`, `effort: medium`) y **siempre en primer plano** (`run_in_background: false`), porque en modo sin chat los agentes en segundo plano mueren al terminar la tanda. Auditas personalmente cada entrega mirando las capturas de producción y no aceptas nada que no cumpla. Iteras sin límite de tiempo hasta alcanzar el estándar más alto de UX/UI.
+Eres el orquestador. No editas código tú mismo: encargas el trabajo a agentes Sonnet 5.5 de esfuerzo medio (Agent con `model: sonnet`, `effort: medium`) y **siempre en primer plano** (`run_in_background: false`), porque en modo sin chat los agentes en segundo plano mueren al terminar la tanda. Auditas personalmente cada entrega mirando las capturas de producción y no aceptas nada que no cumpla. Iteras hasta alcanzar el estándar más alto de UX/UI. **Horario: trabajas de 00:00 a 06:00 del 2026-11-13.** Desde las 05:30 no empieces trabajo nuevo: cierra lo que esté en curso, despliega solo si las pruebas pasan, escribe el resumen y termina a las 06:00.
 
 Lee primero:
 - `.claude/CLAUDE.md`
@@ -66,10 +66,14 @@ Lee primero:
 - **El botón nunca desaparece.** Mientras hay un pedido en curso se muestra **deshabilitado, en gris**, con un estado claro, por ejemplo un ícono de la identidad que gira suave y el texto «Reintentando… espera» o «Pedido en curso». El tooltip dice desde cuándo y cuánto falta, si se sabe. Al terminar vuelve a su estado normal y muestra el resultado («271 reintentados · 230 con sugerencia»). La UX/UI manda sobre cualquier otra consideración.
 - **Al pulsarlo, Kerna debe volver a generar la sugerencia** de todas las denuncias que aún no la tienen: las 271 en revisión manual y cualquier otra sin clasificar. Obtén la lista real desde el estado de cada caso en el conector o en Veridy, no la estimación de 7 días.
 
-### 7. Conector y las 271 denuncias en revisión manual
-- El reintento manual no se ejecuta porque el conector con soporte para `reintentosmanuales` **no está desplegado**. Para desplegarlo hay que recrear el grupo de contenedores de Veridy y dar un rol. Según `.claude/CLAUDE.md`, si el plan de Terraform reemplaza recursos hay que consultar a la usuaria.
-- Prepara todo, revisa el plan con `echo n | infra/aplicar.sh veridy` y, si reemplaza el grupo, **no apliques**: deja el plan resumido en el resumen para que la usuaria lo autorice.
-- Si algo se puede hacer sin reemplazar recursos, hazlo.
+### 7. Conector: desplegarlo esta noche (autorizado por la usuaria)
+- La usuaria confirmó directamente en el chat (2026-11-12, cerca de las 23:00) que el despliegue del conector se hace esta noche, aunque recree el grupo de contenedores de Veridy y lo deje unos minutos sin servicio.
+- **Pasos:**
+  - Revisa el plan con `echo n | infra/aplicar.sh veridy`.
+  - Si solo crea o reemplaza el grupo de contenedores de Veridy (ACI) y agrega el rol, aplícalo con `infra/aplicar.sh veridy -y`.
+  - **Límite:** si el plan destruye la base PostgreSQL, el almacenamiento con datos o certificados, o el Key Vault, NO apliques y déjalo como único pendiente.
+- **Si Veridy está apagado**, enciéndelo según la regla 7 de «Reglas adicionales».
+- **Verificación:** pulsa «Reintentar» desde el front, confirma en el log del conector y en la telemetría que los casos se reprocesan y que baja el número en revisión manual, y regístralo en `kerna/evaluacion/registro-pruebas.md`.
 
 ### 8. Dataset sintético (pista aparte)
 Si las 271 no pueden reprocesarse, o hace falta más volumen, lanza un agente que genere denuncias sintéticas. **Ese agente no puede saber nada del contexto**: ni que son para un modelo, ni cómo se evaluarán, ni qué leyes, ni el país.
