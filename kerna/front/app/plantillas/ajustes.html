@@ -12,7 +12,7 @@
 
 <div class="as">
 {% for g in grupos %}<section class="as-s{% if g['items']|rejectattr('t', 'equalto', 'ch')|list|length == 0 %} as-1{% endif %}" aria-labelledby="g-{{ g.id }}" data-g="{{ g.id }}">
-<div class="ap"><svg class="ap-svg" viewBox="0 0 300 300" role="img" data-orb="{{ g.id }}"></svg></div>
+<div class="ap"><svg class="ap-svg" viewBox="{{ '0 0 480 120' if g.id == 'comp' else '0 0 300 300' }}" role="img" data-orb="{{ g.id }}"></svg></div>
 <div class="as-r"><h2 id="g-{{ g.id }}" class="as-h">{{ ic(g.i, px=24) }}<span>{{ g.t }}</span>{% for it in g["items"] if it.t == 'ch' %}<span class="as-ch ctl" data-k="{{ it.k }}" data-t="ch" role="group" aria-labelledby="l-{{ it.k }}"><span id="l-{{ it.k }}" class="ct-n">{{ it.l }}</span>{{ tip(it.k) }}<span class="chip warn" data-cambiado hidden>{{ ic('pencil', px=14) }}</span>{% for o in it.o %}<button type="button" class="chip na" data-v="{{ o.v }}" aria-pressed="false">{{ ic('user', px=16) }}<span>{{ o.t }}</span></button>{% endfor %}</span>{% endfor %}</h2>
 <div class="gi">{% for it in g["items"] if it.t != 'ch' %}<div class="ctl{% if it.t == 'cd' %} ctl-w{% endif %}" data-k="{{ it.k }}" data-t="{{ it.t }}">
 <div class="ct-l"><span id="l-{{ it.k }}" class="ct-n">{{ it.l }}</span>{{ tip(it.k) }}<span class="chip warn" data-cambiado hidden>{{ ic('pencil', px=14) }}</span></div>

@@ -439,3 +439,11 @@ def test_satelite_con_cifra_larga_crece_y_el_total_largo_se_achica():
     from app import orbital
     g = orbital.geometria_orbital([{"n": "a", "v": 3, "txt": "144 mil", "c": "azul"}, {"n": "b", "v": 1, "txt": "9", "c": "verde"}], "US$ 0,0347")
     assert g["anillos"][0]["rs"] > 12 and g["anillos"][1]["rs"] == 12 and g["fs"] < 17
+
+
+def test_compartir_muestra_nombres_completos_y_no_siglas():
+    js = (EST / "ajustes.js").read_text()
+    for sigla in ("'AN'", "'CE'", "'AU'", "'FL'"):
+        assert sigla not in js
+    for nombre in ("Analistas", "Comité", "Auditoría", "Fiscalía"):
+        assert nombre in js

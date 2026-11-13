@@ -1039,3 +1039,8 @@ html,body{max-width:100%}
 .dat-s>.dat-d{margin-left:8px}
 @media(max-width:599px){.dat-s>summary{min-height:36px;font-size:13.5px}}
 .lx[data-l="global"] k-n{display:block}@media(max-width:599px){.lx[data-l="global"] k-n{--s:18px!important}}
+
+/* v11 · Compartir: nombres completos de los equipos junto a cada satélite */
+.team-n{font:700 14px Inter,sans-serif;fill:rgba(255,255,255,.8);text-anchor:middle}.team-n.on{fill:#fff}
+.as-1 .ap{height:112px;padding:4px}.as-1 .ap-svg{width:100%;max-width:480px;height:104px}
+@media(max-width:599px){.as-1 .ap{height:100px}.as-1 .ap-svg{height:96px}}
