@@ -50,3 +50,7 @@ Lee la fila `ajustes`/`kerna`/`actual` en cada pasada (`ajustes_de_tabla` en la 
 | `reprocesar` (Reintentar los de revisión manual) | por cada guardado con el ajuste activo, el conector crea un pedido `origen=ajustes` y corre el reintento manual |
 
 Valores fuera de rango se ignoran (rige el del entorno). **No son del conector** (los aplica el núcleo, ver `kerna-pendientes.md`): `evaluador`, `candidatos`, `cadena`; `compartir`, `maxresp` y `alerta` son del panel.
+
+## Observaciones de la verificación (2026-11-13)
+- Los conteos de la fila `conector` salen del estado del conector, que aún guarda casos que ya no existen en Veridy: `completado` puede superar a `casos`, y `resultado_desconocido` incluye esos casos. El primer pedido real tomó 99 casos de 117 en Veridy y tardó 29 min (el núcleo atiende ~3 casos por minuto con 12 en vuelo).
+- Con Veridy apagado el conector no corre: un pedido queda en `solicitado` hasta que Veridy se encienda.

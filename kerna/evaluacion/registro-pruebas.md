@@ -34,6 +34,12 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 | 2026-10-19 06:35 | 14539bd15+cambios | recall@5, consulta = `resumen_parafraseado` | `recall_retriever.py --campo resumen_parafraseado` | (a) ley 0,967 global (19.628-21.719 0,974 · 20.393 0,917 · 21.643 1,000); (b) artículo 0,344 global sobre 61 casos (0,261 · 0,200 · 0,464). "ninguna": top-1 entre 0,131 y 0,363 | Primera corrida, 113 consultas embebidas de cero. Umbrales de 0,30 a 0,70: se bajaron a 0,15–0,55 porque los scores reales son menores. Antes del registro JSONL: se repite desde el cache para que quede registrada. |
 | 2026-10-19 06:3x | 14539bd15+cambios | mapeo de `articulos_candidatos` | `recall_retriever.py --solo-mapeo` | Corpus vigente en Qdrant: 144 artículos. Mapeables 61 de 91 (21.643: 28/29 · 19.628-21.719: 23/38 · 20.393: 10/24) | Igual que en la prueba local contra `pipeline_bcn/salida/`. Sin mapeo: citas sin "art." (p. ej. "Ley 21.719 (seguridad)") o fuera del corpus (CP, Ley 19.913, CT 485). |
 
+## Reintento manual del conector en producción (2026-11-13)
+
+| Fecha (UTC) | Commit | Medición | Comando | Resultado | Observaciones |
+| --- | --- | --- | --- | --- | --- |
+| 2026-11-13 03:12 a 03:41 | 987d2fe98 (imagen `kerna-conector:987d2fe98`) | corrida real del pedido `solicitado` desde 2026-11-12 21:00; parámetros: 12 casos en vuelo, pasadas cada 10 s con corrida, `KERNA_TABLAS_URL` hacia `stkernadevg6mzy` | `infra/aplicar.sh veridy -y`; `tablas.sh solicitud`; `veridy.sh logs conector`; `telemetria.sh reprocesos\|motivos\|resumen` | Lista real de 99 casos (sin sugerencia más revisión manual de cualquier motivo, de 117 casos en Veridy): 99 reintentados, 74 con sugerencia, 25 siguen en revisión manual (29 min, `incompleto=false`). Revisión manual en el estado en vivo del conector: 93 al inicio y 18 al cerrar; eventos `conector_reproceso` 6 a 81. | Telemetría de 7 días (antes de la corrida): 274 en revisión manual (176 `cadena_agotada`, 98 `tiempo_agotado`); la cifra de 271 incluye casos que ya no están en Veridy. 62 casos del estado del conector ya no existen en Veridy y no se pueden leer (`resultado_desconocido`). |
+
 ## Pruebas automatizadas (pytest, sin red)
 
 | Fecha (UTC) | Commit | Suite | Comando | Resultado |
