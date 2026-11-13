@@ -49,3 +49,4 @@ Revisa cada fila y, si apruebas, bórralo tú manualmente (`rm -r .papelera/...`
 
 - 2026-11-13 · kerna/front/app/estaticos/img/bg-orbitas.webp (versión regenerada por rasterizar_decoracion.sh, sin commitear) → .papelera/2026-11-13/kerna/front/app/estaticos/img/bg-orbitas.regenerado.webp · motivo: podía reintroducir el satélite quitado a mano de la portada; se restauró la versión commiteada.
 - 2026-11-13 · pendientes/orquestador-2026-11-13.md (versión 1, ya cumplida) → .papelera/2026-11-13/pendientes/orquestador-2026-11-13.v1.md · motivo: la usuaria pidió dejar en la página solo lo vigente; se reescribió.
+- 2026-11-13 · caso de Veridy (1, creado 2026-10-19, `sin_acceso` para la cuenta de servicio, 136 intentos) → no hay ruta de archivo: borrado en la base por `kerna/operaciones/borrar_casos_invalidos.sh --aplicar` · motivo: autorizado por la usuaria (A6); no se podía procesar. Los datos eran una denuncia de prueba sin comentarios ni archivos.

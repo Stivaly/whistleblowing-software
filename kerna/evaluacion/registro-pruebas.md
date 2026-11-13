@@ -78,3 +78,17 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 - Botón (pedido real con `probar_front.sh --reintento`, capturas con `capturar_reintento.py`): en curso, botón deshabilitado en gris (fondo rgb(228,231,240)), ícono con animación `spin`, tooltip «En curso desde 13 nov 06:15 UTC. Aún sin estimación de término.» (sin ETA porque la corrida fue corta); al terminar (06:19 UTC, ~4 min): «6 reintentados · 2 con sugerencia», botón normal. Revisión manual del conector: 5 antes, 3 después. Sin desborde horizontal a 390 y 1366.
 - Capturas: `kerna/front/diseno-v2/capturas/prod17-reintento-{curso,fin}-{m,d}.png`.
 - Observación: las cifras grandes del Resumen (425 → 430 denuncias, 299 → 300 en revisión manual) vienen de la telemetría acumulada (eventos), no del estado del conector; no coinciden con los 117 casos de Veridy. Anotado como pendiente del front.
+
+## 2026-11-13 · A6 reintento de todos los sin sugerencia y borrado de casos inválidos (commit base 3634f5606)
+- Lista real (estado del conector y Veridy encendido): 117 casos en Veridy, 116 con sugerencia publicada (la telemetría acumulada de 205 pendientes contaba eventos, no casos). Sin sugerencia: 4 (3 en revisión manual: `cadena_agotada` 1, `validacion_fallida` 2; 1 en `error`).
+- Reintento: pedido `solicitud` escrito con `tablas.sh escribir` (como el front); `total` 4, 3 con sugerencia, 1 sin sugerencia; duró unos 3 min.
+- Criterio «mal hecho» (`kerna/operaciones/veridy_borrar_invalidos.py`): tras el reintento sigue en `error` del conector por una causa permanente: `sin_acceso` (la cuenta de servicio no tiene acceso al caso: no se puede leer), `sin_texto` (relato vacío) o `ilegible_*`. No se borra por resultado del núcleo (revisión manual, cadena agotada, validación fallida) ni por errores transitorios.
+- El caso que quedó (creado 2026-10-19, abierto solo por la cuenta Auditor, sin comentarios ni archivos) llevaba 136 intentos fallidos con `sin_acceso`. `borrar_casos_invalidos.sh --aplicar`: 1 borrado (motivo `sin_acceso`); borrado en la base con la cascada de GlobaLeaks y entrada `delete_report` en el registro de auditoría. No hay credencial de administración ni acceso del receptor, por lo que la API oficial no era posible.
+- Antes/después: casos en Veridy 117 → 116; sin sugerencia 4 → 0 (3 recuperados con el reintento, 1 borrado); fila `conector` (1 min después): casos 116, completado 116, en_revision_manual 0, error 0, pendiente 0, `pendientes_por_motivo` `{}`, archivados 62 → 63 (el conector lo reconoció solo).
+- Telemetría (`telemetria.sh resumen 7`): cuenta eventos históricos (13 nov: 130 casos, 32 en revisión manual); no baja por borrar casos, es el acumulado de eventos y no el estado real.
+- Registro de conteos: `kerna/evaluacion/registro/borrar_casos_invalidos.log`.
+
+## 2026-11-13 · A8 cuenta kerna-e2e
+- `kerna/operaciones/crear_cuenta_e2e.sh`: usuario `kerna-e2e`, rol destinatario (`receiver`), sin permisos extra (no borra, no comparte, no redacta, no edita ajustes), sin avisos por correo, en el mismo canal que `kerna-conector`; clave de 40 caracteres en Key Vault `veridy-kerna-e2e-password`. Inicio de sesión verificado con el cliente del conector (correcto; la lista le muestra 116 casos).
+- Motivo del rol: las e2e solo leen casos y notas; el rol de administración no hace falta y daría permisos de más.
+
