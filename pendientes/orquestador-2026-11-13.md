@@ -1,28 +1,27 @@
-# Encargo del orquestador (Opus), 2026-11-13 00:00
+# Encargo del orquestador (Opus), 2026-11-13 desde las 10:30, 12 horas sin la usuaria
 
-Eres el orquestador. No editas código tú mismo: encargas el trabajo a agentes Sonnet 5.5 de esfuerzo medio (Agent con `model: sonnet`, `effort: medium`) y **siempre en primer plano** (`run_in_background: false`), porque en modo sin chat los agentes en segundo plano mueren al terminar la tanda. Auditas personalmente cada entrega mirando las capturas de producción y no aceptas nada que no cumpla. Iteras hasta alcanzar el estándar más alto de UX/UI. **Horario: trabajas de 00:00 a 06:00 del 2026-11-13.** Desde las 05:30 no empieces trabajo nuevo: cierra lo que esté en curso, despliega solo si las pruebas pasan, escribe el resumen y termina a las 06:00.
+Eres el orquestador. No editas código tú mismo: encargas a agentes **Sonnet 5.5 de esfuerzo medio** (Agent con `model: sonnet`, `effort: medium`), **siempre en primer plano** (`run_in_background: false`). **Tú eres el auditor y el responsable** de verificar todo lo que entregue Sonnet: capturas imagen por imagen, datos leídos de verdad, cifras comprobadas. Revisar por encima no cuenta como auditar.
 
-Lee primero:
-- `.claude/CLAUDE.md`
-- `kerna/front/diseno-v2/direccion-diseno.md`
-- la lámina `kerna/diseno/identidad-v3/lamina-comparativa.png`
-- la sección «Rediseño Núcleo» de `pendientes/kerna-pendientes.md`
-- `pendientes/resumen-sesion-2026-11-12.md`
-- tu memoria (MEMORY.md), sobre todo: optimizar no es quitar, UX en lenguaje simple, desplegar solo con script, relevo a 300k.
+Orden: **Parte A primero (todo), después Parte B, única y exclusivamente, hasta lograr la meta.** No pares mientras quede algo que se pueda hacer sin la usuaria. Si de verdad ya no queda nada, tienes autorización para detener el bucle de Continuo (escribe `[CONTINUO:TERMINADO]`).
+
+## Autonomía (dicho por la usuaria)
+- Cuando la usuaria ya dio una instrucción clara, se ejecuta con criterio propio. **No le mandes listas para aprobar ni le preguntes lo ya decidido.** Pregunta solo lo que de verdad no esté definido; si no, aplica un supuesto razonable y anótalo.
+- Texto: **menos, no más.** Nombres que se entiendan solos y «?» de una línea. Ningún cambio debe agregar frases.
 
 ## Reglas para cada agente (inclúyelas en cada encargo)
+- **Relevo:** máximo 300.000 tokens; hacia ~250.000 cierra, prueba, commitea, anota lo que falta (en orden, archivo y línea) y entrega. Luego agente nuevo, nunca retomar uno viejo.
+- **Despliegue del front:** solo `kerna/front/desplegar.sh --ref HEAD` con las pruebas pasando. Anotar antes el último commit bueno; si `/salud` falla o hay vistas rotas, volver con `--ref <bueno>`.
+- **Capturas:** reales de producción a 390, 1366 y 1920 px, **en Chromium y también en Firefox** (y WebKit si se puede) con el contenedor Playwright.
+- **Archivos:** nunca eliminar archivos del repo; mover a `.papelera/AAAA-MM-DD/<ruta>` y anotar en `pendientes/eliminaciones-pendientes.md`. (Excepción autorizada: punto A6, casos de Veridy.)
+- **Rama:** solo `feature/kerna-pipeline-azure`. `git add` con rutas explícitas, nunca `-A` ni `.`.
+- **Terraform:** `echo n | infra/aplicar.sh veridy|kerna` y luego `-y` si solo crea o reemplaza el grupo de contenedores o agrega recursos nuevos. Nunca destruir PostgreSQL, almacenamiento con datos, certificados ni Key Vault.
+- **Rendimiento:** TTFB < 100 ms en caliente, CPU en reposo < 1 %; animar solo `transform`/`opacity`, sin `steps()`.
+- **Contraste AA** (`kerna/diseno/identidad-v3/calcular_contraste_v3.py`); lima, amarillo y cian nunca como texto sobre claro.
+- **Veridy:** autorizado a encenderlo (`infra/veridy/veridy.sh encender`) cuando el trabajo lo necesite (A5, A6, A8, Parte B).
+- **Modelos:** ninguno corre en el host; por API o jobs de Azure. Nunca registrar ni persistir texto de denuncias.
 
-- **Relevo:** máximo 300.000 tokens. Hacia los ~250.000 cierra lo que tenga a medias, corre las pruebas, commitea, anota en pendientes lo que falta (en orden, con archivo y línea) y entrega. Después lanzas un agente nuevo; nunca retomas uno viejo.
-- **Despliegue:** solo con `kerna/front/desplegar.sh --ref HEAD`, y solo con las pruebas del front pasando.
-- **Capturas:** reales de producción a 390 y 1366 px, y también a 1920 px (la usuaria tiene pantalla muy ancha), con `kerna/front/herramientas/medir_vistas.sh` (Chromium del contenedor Playwright).
-- **Archivos:** nunca eliminar; mover a `.papelera/` y anotarlo.
-- **Rama:** solo `feature/kerna-pipeline-azure`.
-- **Fuera de alcance:** no tocar Terraform. El conector se toca solo según el punto 7.
-- **Rendimiento:** mantener el actual (TTFB < 100 ms, CPU en reposo < 1 %). La usuaria quiere que todo el panel se sienta tan fluido como el Resumen actual, **pero con movimiento**: animar solo `transform` y `opacity`, con capas rasterizadas para la decoración y SVG vivo solo en lo que reacciona; nada de `steps()` que se note a saltos.
-
-## Índice de scripts de operación (usar SIEMPRE estos; nunca comandos directos de az/curl/docker)
-
-Ninguna clave se ve ni se imprime: los scripts las leen de Key Vault por dentro. Se ejecutan desde la raíz del repo.
+## Índice de scripts de operación (usar SIEMPRE estos; nunca az/curl/docker sueltos ni ver claves)
+Si falta uno, crear un script de función fija en `kerna/operaciones/`, commitearlo y agregarlo aquí.
 
 | Para qué | Script |
 |---|---|
@@ -45,109 +44,49 @@ Ninguna clave se ve ni se imprime: los scripts las leen de Key Vault por dentro.
 | Íconos, estáticos y rasterizados | `kerna/front/herramientas/{construir_identidad,construir_estaticos,construir_echarts,lamina_iconos,rasterizar_baldosas,rasterizar_decoracion}` |
 | Limpiar Docker (imágenes y caché, nunca volúmenes) | `infra/limpiar_docker.sh` |
 
-Si una tarea no tiene script, no la improvises con comandos sueltos: escribe un script nuevo de función fija en `kerna/operaciones/`, commitéalo y agrégalo a este índice.
+## Parte A: lo que pidió la usuaria (2026-11-13, 09:30)
 
-## Lo que pidió la usuaria (2026-11-12, 22:30), por vista
+Estado de partida: front `e1e38e947` desplegado, conector `0e75d50c8` desplegado. Diseño de bandas tintadas, ancho 1.440 px y movimiento: aprobados («mucho mejor»), pero fallan los detalles.
 
-### 1. Ajustes (prioridad alta; el rediseño fue insuficiente)
-- **Los paneles azules no tienen ningún movimiento.** Deben moverse otra vez, fluidos y suaves: órbitas que giran lento, satélites que se desplazan al mover un control con una transición, el arco de «Meta de respuesta» que se anima. Todo optimizado como el Resumen.
-- **Rediseño de fondo, no solo compactar.** Audita Ajustes con el estándar más alto de UX/UI (jerarquía, agrupación, previsualización del efecto de cada ajuste, estados, accesibilidad, teclado, foco). Itera hasta que sea excelente.
-- El panel de «Compartir» muestra siglas cortadas («AN», «CE», «AU», «FL») y los íconos «?» desaparecieron en algunas filas; revisa ambas cosas.
+**A1. Íconos y logos invisibles en Firefox (prioridad alta).** En Firefox para Android no se ve casi ningún ícono, aunque su espacio está reservado:
+- Informe: botones Otro período, PDF, Excel, CSV; baldosa del veredicto; cuadrados vacíos en la banda de indicadores; íconos de ley sobre los anillos.
+- Resumen: íconos de los indicadores y de las leyes.
+- Ajustes: íconos de cada sección.
+Hallar la causa real (probable: sprites externos con `<use href="archivo.svg#id">`, `symbol` o `mask` que Firefox no resuelve igual). Ampliar `kerna/operaciones/probar_iconos.sh` para que corra **también en Firefox y WebKit**; debe fallar hoy y pasar después del arreglo. Las pruebas anteriores solo usaban Chromium: por eso dieron 0 fallos.
 
-### 2. Resumen (el diseño gusta mucho: NO cambiarlo más allá de esto)
-- **Distribución:** «no tener ninguna tarjeta» se tomó demasiado a pecho; no hay fondo y las divisiones casi no se ven. Delimitar las zonas con las formas de la identidad (núcleo y circunferencias), de forma ordenada; por ejemplo, superficies suaves con corte de esquina o arcos orbitales que enmarquen cada banda.
-- **Ancho máximo:** la pantalla de la usuaria es muy ancha y todo estirado se ve mal. Contenido de ~1.440 px, centrado o alineado con el menú.
-- **Color:** más viveza con la paleta de la identidad (lima, verde, azul, amarillo, naranja, coral, cian, violeta). Ojo: no solo en el código de estados. Busca ideas: fondos tintados por banda, satélites a color, degradados suaves de la identidad, acentos lima en el núcleo. Hoy se ve opaco.
-- **Proveedores (arriba a la derecha):** gustan el ícono y el lugar, pero no se entiende qué son. Que cada uno tenga su nombre y estado (por ejemplo «Azure · operativo») aprovechando el espacio libre de la barra.
+**A2. Ajustes en móvil.** La barra fija «N cambios sin guardar · Descartar · Guardar» tapa la última fila («Avisar sin sugerencia tras») y no deja bajar más: reservar espacio abajo mientras está visible. Los botones Descartar y Guardar se ven desalineados (texto corrido a la derecha). En «Compartir con» aparece una barra lima y azul a la izquierda que parece un error.
 
-### 3. Clientes y márgenes (Negocio)
-- El gráfico de barras (proyección) ocupa todo el ancho y se ve enorme. Usa 2 o 3 columnas: una para las barras y las otras para otra información útil.
-- «4 con contrato, sin uso registrado» puede ser un gráfico de torta o anillo (clientes con uso y sin uso, o por plan), en lugar de solo una línea.
-- Los **nombres de los indicadores no dicen qué son**: renómbralos para que se entiendan solos.
-- Las **explicaciones («?») son largas**: concretas y directas, de una línea.
-- La proyección a 5 años también está demasiado ancha.
+**A3. «Acierto por ley» (Resumen e Informe) no debe ocupar todo el ancho.** Hoy son tres anillos y una línea suelta a la derecha («329 artículos sugeridos sin ley identificada…»). Que la banda mida lo que su contenido pide y comparta fila con otra banda, o se compacte; quitar o reubicar esa línea. Criterio: ninguna banda estirada para mostrar poco.
 
-### 4. Informe de gestión
-- Colores más vivos, como en el Resumen.
-- Rediseña con la identidad las tarjetas de borde izquierdo de color «Acierto con el artículo exacto 49,2 %», «Acierto con la ley 96,7 %» y «Pruebas automáticas pasadas 333/333». Ese estilo no corresponde a la identidad.
-- **Faltan logos o íconos en «Generar informe»**: revisa todos los `<use>` y las imágenes de esa vista y de los botones (Otro período, Excel, CSV aparecen sin ícono).
-- El PDF le encantó y no le falta nada: no lo cambies salvo para colores.
+**A4. Menos texto en todo el front.** Se agregaron frases largas cuando se pidió lo contrario. Ejemplos a reducir: titular de 3 líneas «En 7 días, 30 % recibió sugerencia. Según la telemetría, 205 casos esperan reintento.»; «Estimado · En espera · Próximo reintento…»; «Pasó a revisión manual»; «Sugerencias útiles según auditores»; «Ganancia a 5 años, valor de hoy»; «329 artículos sugeridos sin ley…». Nombres cortos que se entiendan solos; «?» de una línea.
 
-### 5. Todo el front
-- Aplica la misma fluidez y movimiento del Resumen en todas las vistas.
-- Que los nombres de los indicadores se entiendan solos y que los «?» sean de una línea, en todo el front.
-- Antes de entregar, revisa a 1366 y a 1920 px de ancho.
+**A5. El Resumen nunca debe volver a la cifra inflada.** Hoy, si el estado del conector tiene más de 5 minutos (pasa siempre que el vigía apaga Veridy), el Resumen vuelve a la estimación de telemetría (205; 202/98/3). Mostrar siempre el **último estado real conocido** del conector (con su hora en el «?»), nunca la estimación inflada.
 
-### 5b. Logos e íconos invisibles (revisión exhaustiva, prioridad alta)
-- Hay logos e íconos que no se ven, aunque su espacio está reservado: se nota el hueco donde deberían estar. Pasa en el panel y **también en la portada de Kerna**.
-- Encarga una revisión exhaustiva de todas las vistas, incluida la portada, a 390, 1366 y 1920 px. El agente debe:
-  - revisar cada `<use href>` contra los ids reales de cada sprite;
-  - revisar cada `<img>` o `background-image`: que cargue (no 404) y que no tenga `opacity` 0 ni tamaño 0;
-  - revisar que el color de trazo o relleno no coincida con el fondo;
-  - revisar que el `viewBox` sea correcto.
-- Debe escribir una prueba con navegador real que, en cada vista, recorra todos los íconos y logos y falle si alguno ocupa espacio pero no pinta píxeles. Por ejemplo, compara la captura del elemento contra un fondo plano.
-- Corrige todo lo que encuentre y audítalo en las capturas.
+**A6. Reintentar TODOS los casos sin sugerencia y borrar de Veridy los que no sirven.** La usuaria pidió reintentar todas las denuncias sin sugerencia; quedaron sin hacerse. Con Veridy encendido:
+1. Obtener la lista real de casos de Veridy sin sugerencia y reintentarlos todos.
+2. Los que siguen sin sugerencia porque están mal hechos (no pueden generarla): **borrarlos de Veridy directamente.** Autorización explícita de la usuaria: no hay que mostrarle la lista ni pedir confirmación; no se pierde ningún dato útil. Hacerlo con un script de función fija en `kerna/operaciones/` (que registre cuántos y por qué, sin texto de denuncias).
+3. Verificar en el Resumen y en la telemetría que ya no quedan pendientes falsos. Registrar en `kerna/evaluacion/registro-pruebas.md`.
 
-### 6. Botón de reintento: que se vea y que reintente de verdad (prioridad alta)
-- **Hoy no se ve el botón.** Desde el pedido del 2026-11-12 21:00 el bloque muestra «Pedido en curso» y oculta el botón, porque nadie atiende el pedido.
-- **El botón nunca desaparece.** Mientras hay un pedido en curso se muestra **deshabilitado, en gris**, con un estado claro, por ejemplo un ícono de la identidad que gira suave y el texto «Reintentando… espera» o «Pedido en curso». El tooltip dice desde cuándo y cuánto falta, si se sabe. Al terminar vuelve a su estado normal y muestra el resultado («271 reintentados · 230 con sugerencia»). La UX/UI manda sobre cualquier otra consideración.
-- **Al pulsarlo, Kerna debe volver a generar la sugerencia** de todas las denuncias que aún no la tienen: las 271 en revisión manual y cualquier otra sin clasificar. Obtén la lista real desde el estado de cada caso en el conector o en Veridy, no la estimación de 7 días.
+**A7. No subir el plan del front: ping cada 15 minutos.** Crear algo liviano y barato en Azure (Azure Function con temporizador, Container Apps Job o Logic App, lo más barato) que visite la página del front cada 15 minutos para que el plan F1 no se duerma. Terraform en `infra/` (Kerna), aplicado con `infra/aplicar.sh kerna`. Verificar que la primera visita deja de ser lenta.
 
-### 7. Conector: desplegarlo esta noche (autorizado por la usuaria)
-- La usuaria confirmó directamente en el chat (2026-11-12, cerca de las 23:00) que el despliegue del conector se hace esta noche, aunque recree el grupo de contenedores de Veridy y lo deje unos minutos sin servicio.
-- **Pasos:**
-  - Revisa el plan con `echo n | infra/aplicar.sh veridy`.
-  - Si solo crea o reemplaza el grupo de contenedores de Veridy (ACI) y agrega el rol, aplícalo con `infra/aplicar.sh veridy -y`.
-  - **Límite:** si el plan destruye la base PostgreSQL, el almacenamiento con datos o certificados, o el Key Vault, NO apliques y déjalo como único pendiente.
-- **Si Veridy está apagado**, enciéndelo según la regla 7 de «Reglas adicionales».
-- **Verificación:** pulsa «Reintentar» desde el front, confirma en el log del conector y en la telemetría que los casos se reprocesan y que baja el número en revisión manual, y regístralo en `kerna/evaluacion/registro-pruebas.md`.
+**A8. Cuenta `kerna-e2e`.** Encender Veridy y crear la cuenta tú (no la usuaria), guardando la clave en Key Vault mediante un script; nunca imprimirla.
 
-### 8. Dataset sintético (pista aparte)
-Lanza un agente que genere más denuncias sintéticas. Otro agente ya está reuniendo denuncias públicas; esta pista solo **aporta más relatos**. **Ese agente no puede saber nada del contexto**: ni que son para un modelo, ni cómo se evaluarán, ni qué leyes, ni el país.
+**A9. Denuncias sintéticas: auditoría real.** `kerna/evaluacion/datos/denuncias_sinteticas_20261113.json` (150 relatos) **no fue auditado**. Revísalos tú, todos: realistas y específicos, sin plantillas ni patrones repetidos, variedad real de tema, tono y extensión, ~15 % ambiguos y ~10 % sin falta, datos personales ficticios y variados, sin textos copiados. Los que no cumplan se reemplazan con un agente nuevo (el encargo **no puede revelar el contexto**: ni modelo, ni evaluación, ni leyes, ni país) y se vuelven a auditar. Resguardar el resultado como archivo nuevo en `kerna/evaluacion/datos/` (fuera de git) sin modificar los existentes, y registrar la auditoría en `kerna/evaluacion/registro-pruebas.md`.
 
-Diseña tú un encargo muy cuidadoso que solo le pida crear un conjunto de relatos de denuncias laborales y corporativas realistas, en español neutro con modismos locales variados. Que busque situaciones reales en foros públicos (por ejemplo, Reddit) y las adapte a relatos de denuncia específicos, en primera persona y anonimizados. Debe tener variedad de:
-- temas (trato en el trabajo, acoso, discriminación, uso indebido de información personal, fraude, sobornos, conflictos de interés, seguridad, otros);
-- extensión, tono y nivel de detalle;
-- casos ambiguos y casos que no corresponden a ninguna falta;
-- datos personales ficticios inventados (nombres, documentos, correos, teléfonos), para probar el anonimizador.
+**A10. Ya decidido, no tocar:** UF en el valor actual (40.000); no subir a B1.
 
-Pide solo el relato: un JSON con una lista de objetos `{"relato": "..."}` y nada más, en una cantidad concreta (por ejemplo, 150). El agente se inspira en situaciones de foros públicos **sin copiar textos literales**, y todos los datos personales son inventados.
+Auditoría de la Parte A: capturas a 390/1366/1920 en Chromium **y Firefox**; ninguna banda estirada para poco contenido; nada de texto agregado; íconos visibles en ambos navegadores.
 
-Tú, el orquestador, guardas el resultado en `kerna/evaluacion/datos/` (fuera de git, como el dataset actual) y registras la generación en `kerna/evaluacion/registro-pruebas.md`. **Solo generar:** no las cargues en Veridy, no las pruebes ni las evalúes. Eso lo decide la usuaria con el otro agente. Guarda un archivo nuevo y no modifiques los datasets existentes.
+## Parte B: evaluación continua y mejora de modelos (después de la Parte A)
 
-## Auditoría (la haces tú, en cada entrega)
+Leer antes `pendientes/relevo-revisor-y-evaluacion-2026-11-12.md` (estado, sets, comandos, mediciones, siguientes pasos) y `pendientes/revisor-juridico-kerna.md`. Meta **obligatoria**: **recall@5 por artículo ≥ 0,80** (si no se cumple, no le aceptan el proyecto). Latencia no bloquea.
 
-Mira tú mismo las capturas, imagen por imagen, a 390, 1366 y 1920 px. Revisa:
-- la identidad (lámina);
-- que haya movimiento fluido en lo aprobado;
-- el color con viveza;
-- las zonas delimitadas con formas orbitales;
-- el ancho máximo;
-- que los nombres se entiendan solos y los «?» sean de una línea;
-- los íconos (ninguno vacío ni genérico);
-- que no haya huecos de más de 16 px;
-- que no haya scroll horizontal;
-- el rendimiento.
+1. **Etiquetar las sintéticas auditadas (A9)** como set aparte `prueba3` (vía `--extra-casos`, sin mezclar con desarrollo), con un agente que etiquete leyes y artículos del corpus y marque controles; tú auditas las etiquetas (muestra amplia, no por encima). Cargarlas en Veridy solo si la evaluación lo necesita.
+2. **Medir todo** con etiquetas corregidas y corpus 181: retriever solo y cadena completa (evaluador + híbrida + revisor, mejor configuración del relevo §2) en desarrollo, prueba, prueba2 y prueba3. Registrar cada medición (fecha, commit, comando, parámetros, resultado) en `kerna/evaluacion/registro-pruebas.md` y `kerna/evaluacion/registro/`.
+3. **Mejorar hasta ≥ 0,80**, en el orden del relevo §6: orden del evaluador (palanca principal; hit@70 ≈ 0,97), 20.393 (artículos de procedimiento sobre 1, 3, 4), partir arts. 82/84 por letra, criterios del revisor, más casos de desarrollo para ajustar. Cada cambio se mide en desarrollo y se confirma una vez en los sets de prueba (sin sobreajustar; los criterios del revisor se escriben sin mirar los casos de evaluación).
+4. **Investigar en fuentes serias** (papers de arXiv/ACL/SIGIR, documentación oficial de modelos y rerankers, benchmarks de recuperación jurídica como LegalBench-RAG, COLIEE, LePaRD), no cualquier página, qué más subiría el recall: rerankers cruzados, fine-tuning de embeddings con pares sintéticos, HyDE/expansión de consulta, descomposición por conductas, recuperación jerárquica ley→artículo, etiquetado de artículos con conductas, etc. Anotar fuentes y conclusión en `kerna/evaluacion/investigacion-recall.md` y probar las más prometedoras.
+5. Lo del núcleo lo hacen agentes Sonnet con estas reglas; despliegues del núcleo con los scripts del índice.
+6. Llevar los campos del revisor a la nota de Veridy cuando la cadena esté estable.
 
-Lo que no cumpla se lo encargas al agente siguiente. No te detengas mientras quede algo por mejorar que se pueda hacer sin la usuaria.
-
-## Modo de trabajo: auditor e iterativo
-
-- Sigue iterando (encargar, auditar, volver a encargar) hasta que **todo** lo que pidió la usuaria esté resuelto.
-- Si algo depende de una decisión suya, no te detengas: avanza con un **supuesto razonable**, aplícalo y anótalo como «supuesto, a confirmar». Ejemplos: el valor de la UF, la paleta concreta para dar viveza.
-- Deja para el final solo lo que de verdad requiere su autorización, como reemplazar recursos de Azure.
-
-## Reglas adicionales (autorizadas por la usuaria)
-
-1. **Convivencia con el otro agente:** otro agente trabaja en paralelo en los modelos, en la misma rama. Cada agente commitea **solo los archivos que tocó**, con `git add <rutas>` y nunca `git add -A` ni `git add .`. No toca `kerna/nucleo/` ni la evaluación de modelos. Antes de desplegar, confirma con `git status` que el despliegue es de un commit propio y que las pruebas del front pasan.
-2. **Volver atrás:** antes de cada despliegue, anota en el resumen el último commit desplegado que funcionaba bien. Si después de desplegar `/salud` no responde 200, o el panel muestra errores o vistas rotas, vuelve a ese commit de inmediato con `kerna/front/desplegar.sh --ref <commit bueno>`. Luego anota qué pasó.
-3. **Contraste:** con los colores más vivos, todo texto y cifra debe tener contraste AA: 4,5:1 para texto normal y 3:1 para cifras grandes y elementos gráficos. Verifícalo con `kerna/diseno/identidad-v3/calcular_contraste_v3.py`, o con un cálculo equivalente, sobre los pares realmente usados. La lima, el amarillo y el cian van como fondo o acento, nunca como color de texto sobre fondo claro.
-4. **Ajustes que funcionen de verdad:** hoy se guardan en la tabla `ajustes`, pero nadie los lee («Guardado, aún no aplicado»). Haz que el **conector** lea los que le corresponden: casos por ronda, reintentos automáticos, espera entre reintentos, frecuencia de revisión de Veridy y reintentar los de revisión manual. Agrega pruebas. Los ajustes de IA (revisor, artículos por caso, orden de modelos) son del núcleo, que maneja el otro agente: no lo toques. Déjalos anotados para él. El conector con este cambio se despliega junto con el del punto 7. Mientras no esté desplegado, la vista indica qué ajustes ya se aplican y cuáles no.
-5. **«En vivo»:** los datos de Log Analytics llegan con unos minutos de retraso. Que el indicador «En vivo» y su tooltip digan la verdad: hora del último dato recibido y un aviso de que puede tardar unos minutos. Si es viable sin tocar el núcleo, agrega una fuente más inmediata, por ejemplo el estado de los casos en el conector.
-6. **La maqueta ya no es referencia:** la guía vigente es `kerna/front/diseno-v2/direccion-diseno.md` más lo que está en producción. `kerna/front/diseno-v2/maqueta.html` quedó obsoleta: no se usa como fuente de diseño.
-7. **Veridy apagado:** el vigía lo apaga tras 60 minutos sin uso. Tienes autorización para encenderlo con `infra/veridy/veridy.sh encender` **solo si lo necesitas de verdad**, por ejemplo para probar el reintento con casos reales o verificar el conector. No lo enciendas por otras razones. Antes, comprueba su estado con `infra/veridy/veridy.sh estado`.
-8. **Mediciones:** el plan F1 duerme la aplicación tras unos 20 minutos sin uso. Antes de medir rendimiento haz una visita de calentamiento y descarta la primera medición. Si comparas, informa los dos valores, en frío y en caliente.
-
-## Al terminar
-
-Actualiza `pendientes/resumen-sesion-2026-11-12.md` con una sección «Orquestador 2026-11-13» que diga qué quedó, qué auditaste (con las rutas de las capturas), qué falta y qué necesita la autorización de la usuaria. Commitea.
+## Al terminar o cada ~3 horas
+Actualizar `pendientes/resumen-sesion-2026-11-12.md` (sección «Orquestador 2026-11-13, tanda de 12 h»): qué quedó, qué auditaste (rutas de capturas y archivos), mediciones de recall con fecha y commit, qué falta. Commitear solo tus archivos.
