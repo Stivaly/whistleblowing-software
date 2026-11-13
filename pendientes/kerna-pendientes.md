@@ -473,3 +473,9 @@ Falta (en orden):
 1. Movimiento de las bandas de Negocio e Informe: hoy aparecen con el fundido general (`[data-rv]`), igual que el Resumen; un escalonado por banda (`.zv>.bn`, solo `opacity`/`transform`) quedaría más fluido (`kerna/front/app/estaticos/kerna.css`, bloque v14 al final).
 2. Informe móvil: la banda de KPI de 6 indicadores usa 2 columnas; «Sugerencias útiles» queda en dos líneas (`kerna/front/app/plantillas/_macros.html`, macro `kb`).
 3. Ajustes: sus «?» ya son de una línea; el diseño no se tocó. Pendiente confirmar con la usuaria los nombres de las filas (`kerna/front/app/ajustes.py` línea 41 en adelante).
+
+## Tanda 15 (2026-11-13): pulido de bandas
+Hecho y desplegado (301ef5df9): ver `pendientes/resumen-sesion-2026-11-12.md`. Falta, en orden:
+1. Resumen, banda «Acierto por ley» a 1366: queda aire a la derecha de las leyes (`kerna/front/app/estaticos/kerna.css`, bloque v15 al final, regla `.ley-b`).
+2. Una muestra de TTFB de Resumen en caliente dio 290 ms una vez (el resto 14-15 ms): vigilar si se repite (`kerna/front/app/cache.py`, `obtener`).
+3. Proyección a 1366: etiquetas de las cifras en 3 líneas; acortarlas en `kerna/front/app/glosario.py` o `vistas.py` (chips, línea ~905).

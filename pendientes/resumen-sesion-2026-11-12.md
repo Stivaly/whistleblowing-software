@@ -104,3 +104,15 @@
 - «?»: todos de una línea (≤ 80 caracteres, sin «cómo leerlo»), tooltip `#tt` muestra solo `g.q` (en «En vivo» y en la nota de cada cliente, el texto propio). Prueba `test_los_tooltips_son_de_una_linea`.
 - Resumen móvil: el «?» de «En espera · próximo reintento…» queda junto al texto (`.cola>.mk{display:block}`).
 - Supuesto, a confirmar: el anillo de la proyección reparte el ingreso del último año entre utilidad y «costos e impuestos» (todo lo demás); el anillo de clientes separa clientes con y sin uso registrado.
+
+## Pulido de la banda de KPI (2026-11-13, tanda 15)
+Último commit desplegado bueno antes de esta tanda: 9eea6cad1.
+Segundo despliegue de la tanda: previo bueno f61fe44d8 (desplegado y sano).
+Tanda 15 (desplegado: 301ef5df9; previo f61fe44d8). Capturas `kerna/front/diseno-v2/capturas/prod15-*.png` y `prod15.json`.
+- KPI: el Informe usa 3×2 hasta 1799 px y 6 en fila desde 1800; la etiqueta es texto en línea y el «?» queda pegado a su última palabra (macro `kb`).
+- Decoración: arcos y satélites solo en el margen derecho de cada banda (arriba y abajo a la derecha, 56 px; 26 px en móvil); nada a la izquierda ni sobre texto.
+- Clientes (Negocio): anillo de 104 px y columnas centradas, sin huecos > 16 px. Proyección: cifras sin salto de línea.
+- Movimiento: escalonado por banda (`bnIn`, 70 ms por banda, solo opacity/transform, solo con `prefers-reduced-motion: no-preference`) en Resumen, Negocio e Informe.
+- Ajustes: caché con vida de 24 h y refresco en segundo plano, precalentada al arrancar; al guardar se reemplaza el valor (`cache.poner`), un refresco viejo en curso no lo pisa.
+- TTFB a 1366 en caliente: Resumen 14-15, Informe 15-16, Negocio 13-15, Ajustes 18 ms; justo tras reiniciar: 51 / 42 / 37 / 35 ms. Una muestra de Resumen dio 290 ms (no se repitió en 3 corridas más). CPU en reposo: Ajustes 0,06 %, Resumen 0,01 %.
+- Pruebas: probar_iconos 0 fallos (1203 elementos), probar_movimiento sin fallas, probar_front bien; pytest del front 138 pasan. Contraste del texto «muted» sobre todas las tintas de banda ≥ 4,86:1.
