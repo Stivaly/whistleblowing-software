@@ -89,3 +89,6 @@
 - Último commit desplegado bueno antes de este despliegue: 82e9839c7 (front; `/salud` 200). Si algo falla: `kerna/front/desplegar.sh --ref 82e9839c7`.
 - Desplegado: ff6732151 (7cb3fc2af, 1d8665ba0, 70531926b y los arreglos siguientes). 118 pruebas del front pasan; `probar_movimiento.sh` pasa (órbitas giran, satélites y arco con transición, teclado, CPU en reposo 0,07 % en Ajustes y 0,01 % en Resumen, sin animaciones con prefers-reduced-motion). Capturas `kerna/front/diseno-v2/capturas/prod12-*.png` (390, 1366, 1920).
 - Contraste AA verificado (chips «Se aplica ya» 4,75; botón gris 5,92; barras de guardado 5,37 y 6,57) y `calcular_contraste_v3.py` sin fallas.
+
+### Resumen y Ajustes v13 (2026-11-13, agente de Resumen)
+- Último commit desplegado bueno antes de este despliegue: ff6732151 (front). Si algo falla: `kerna/front/desplegar.sh --ref ff6732151`.

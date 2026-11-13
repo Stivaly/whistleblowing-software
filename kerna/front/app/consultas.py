@@ -81,7 +81,7 @@ def metricas(dias: int, ejecutar=None) -> dict:
     for f in crudo["modos"]:
         m = str(f["modo"]) if str(f["modo"]) in modos else "manual"
         modos[m] += int(f["solicitudes"])
-    leyes = [{"norma": str(f["norma"]) or "(sin nombre)", "articulos": int(f["articulos"])} for f in crudo["leyes"]]
+    leyes = [{"norma": str(f["norma"]) or "Sin ley registrada", "articulos": int(f["articulos"])} for f in crudo["leyes"]]
     val = {"util": 0, "no_util": 0, "ninguno_aplica": 0}
     for f in crudo["valoraciones"]:
         if f["valoracion"] in val:

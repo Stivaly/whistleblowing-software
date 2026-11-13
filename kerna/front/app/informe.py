@@ -342,7 +342,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
         costo["notas"].append("Embeddings: sin precio verificado para " + (", ".join(desc[:4]) or "ninguno") + "; Anthropic no ofrece embeddings y su costo queda fuera.")
 
     # ---- 5. Cobertura normativa ------------------------------------------------------------------------------
-    ley_rows = [[nombre_ley(f["norma"]) or "(sin nombre)", int(_n(f["articulos"]))] for f in crudo["leyes"]]
+    ley_rows = [[nombre_ley(f["norma"]) or "Sin ley registrada", int(_n(f["articulos"]))] for f in crudo["leyes"]]
     cob = {"id": "cobertura", "titulo": "Cobertura normativa",
            "justificacion": "Indica qué normas conoce Kerna y cuáles sugiere realmente; permite detectar leyes del corpus que nunca se usan.",
            "kpis": [{"etiqueta": "Artículos vigentes en el corpus", "valor": (evaluacion or {}).get("corpus_articulos"), "unidad": "artículos", "fuente": "kerna/evaluacion/registro/recall_retriever.jsonl (colección normativa_cl, vigente=true)"},

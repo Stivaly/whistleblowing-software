@@ -49,12 +49,13 @@
         C.forEach((g, i) => poner(g, i * 360 / nc + 9, v.evaluador && i < v.candidatos)); poner(sE, 40, v.evaluador); poner(sA, 200, a); poner(sB, 120, b); };
     },
     comp(h) {
-      const l1 = capa(h, 'ap-l1', '0 0 480 120', '50% 40%'), l2 = capa(h, 'ap-l2', '0 0 480 120', '50% 40%'), st = capa(h, 'ap-s', '0 0 480 120');
-      el('circle', { class: 'ao', cx: 240, cy: 48, r: 22 }, l1); el('circle', { class: 'ao', cx: 240, cy: 48, r: 34, style: 'opacity:.55' }, l2);
-      const eq = [['analista', 'Analistas', 60], ['comite', 'Comité', 160], ['auditoria', 'Auditoría', 320], ['legal', 'Fiscalía', 420]];
-      const T = eq.map(([k, t, x]) => { const ln = el('line', { class: 'alink', x1: 240, y1: 48, x2: x, y2: 48 }, st), c0 = el('circle', { class: 'team', cx: x, cy: 48, r: 24 }, st);
-        const c1 = el('circle', { class: 'team-on hk', 'data-k': 'compartir', cx: x, cy: 48, r: 24 }, st), tx = el('text', { class: 'team-n', x, y: 102 }, st); tx.textContent = t; return { k, ln, c1, tx }; });
-      nucleo(st, 240, 48, 14);
+      const W = 280, CY = 28, l1 = capa(h, 'ap-l1', '0 0 280 78', '50% 36%'), l2 = capa(h, 'ap-l2', '0 0 280 78', '50% 36%'), st = capa(h, 'ap-s', '0 0 280 78');
+      el('circle', { class: 'ao', cx: 140, cy: CY, r: 22 }, l1); el('circle', { class: 'ao', cx: 140, cy: CY, r: 32, style: 'opacity:.55' }, l2);
+      const eq = [['analista', 'Analistas', 30], ['comite', 'Comité', 82], ['auditoria', 'Auditoría', 198], ['legal', 'Fiscalía', 250]];
+      const eqh = document.createElement('div'); eqh.className = 'ap-eq'; eqh.setAttribute('aria-hidden', 'true'); h.appendChild(eqh);
+      const T = eq.map(([k, t, x]) => { const ln = el('line', { class: 'alink', x1: 140, y1: CY, x2: x, y2: CY }, st); el('circle', { class: 'team', cx: x, cy: CY, r: 17 }, st);
+        const c1 = el('circle', { class: 'team-on hk', 'data-k': 'compartir', cx: x, cy: CY, r: 17 }, st), tx = document.createElement('span'); tx.style.left = (x / W * 100) + '%'; tx.textContent = t; eqh.appendChild(tx); return { k, ln, c1, tx }; });
+      nucleo(st, 140, CY, 12);
       return (v) => T.forEach((o) => { const on = v.compartir.includes(o.k); o.ln.style.opacity = on ? '1' : '0'; o.c1.style.opacity = on ? '1' : '0'; o.c1.style.transform = on ? 'scale(1)' : 'scale(.4)'; o.tx.classList.toggle('on', on); });
     },
     plazos(h) {
