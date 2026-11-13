@@ -284,3 +284,45 @@ def test_extras_de_fusion_protegen_los_primeros_candidatos_densos():
                        .recuperar("licencia médica cotizaciones"))
     assert {"dat", "aco"} <= set(ids(prot)) and len(ids(prot)) == 3 and ({"lic", "cot"} & set(ids(prot)))
     assert Config().hibrida_extras == 0 and Config.desde_entorno({"KERNA_HIBRIDA_EXTRAS": "15"}).hibrida_extras == 15
+
+
+# ---- experimento de enriquecimiento (KERNA_ENR_*): BM25 con enriquecimiento, factor de rol, literales deduplicados
+class QdrantEnr(Qdrant):
+    def __init__(self, densas, extra, **kw):
+        super().__init__(densas, **kw)
+        self.extra = extra
+
+    async def buscar(self, col, vector, k):
+        return [pl(i, puntaje=0.9 - 0.1 * n, **self.extra.get(i, {})) for n, i in enumerate(self.densas[int(vector[0])])][:k]
+
+    async def fragmentos_vigentes(self, col):
+        return [pl(i, **self.extra.get(i, {})) for i in DOCS]
+
+
+def test_bm25_con_enriquecimiento_concatenado_encuentra_hechos_que_el_texto_no_dice():
+    q = QdrantEnr([["dat"]], {"cam": {"enriquecimiento": "el jefe me grababa en el baño con una webcam"}})
+    sin = asyncio.run(ret(q, hibrida=True, top_k=5).recuperar("webcam"))
+    con = asyncio.run(ret(q, hibrida=True, top_k=5, enr_bm25="concat").recuperar("webcam"))
+    aparte = asyncio.run(ret(q, hibrida=True, top_k=5, enr_bm25="aparte").recuperar("webcam"))
+    assert "cam" not in ids(sin) and "cam" in ids(con) and "cam" in ids(aparte)
+
+
+def test_factor_de_rol_baja_procedimiento_y_sancion():
+    q = QdrantEnr([["lic", "cot", "dat"]], {"lic": {"rol": "procedimiento"}, "cot": {"rol": "sustantivo"}})
+    assert ids(asyncio.run(ret(q, hibrida=True, top_k=3).recuperar("x")))[0] == "lic"
+    assert ids(asyncio.run(ret(q, hibrida=True, top_k=3, rol_factor=0.5).recuperar("x")))[0] == "cot"
+
+
+def test_literales_se_deduplican_por_articulo():
+    q = QdrantEnr([["lic", "cot", "dat", "aco"]], {i: {"literal": "a", "articulo_id": "A1"} for i in ("lic", "cot")})
+    r = asyncio.run(ret(q, hibrida=True, top_k=4).recuperar("x"))
+    assert ids(r)[:3] == ["lic", "dat", "aco"] and "cot" not in ids(r)
+
+
+def test_lista_densa_aparte_agrega_candidatos():
+    class Q2(QdrantEnr):
+        async def buscar(self, col, vector, k):
+            return [pl("aco", puntaje=0.8)] if col == "aparte" else await super().buscar(col, vector, k)
+    q = Q2([["dat", "cam", "lic"]], {})
+    assert "aco" not in ids(asyncio.run(ret(q, top_k=3, hibrida=True).recuperar("zzz")))
+    assert "aco" in ids(asyncio.run(ret(q, top_k=3, hibrida=True, coleccion_aparte="aparte", peso_aparte=3).recuperar("zzz")))

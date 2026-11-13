@@ -84,7 +84,8 @@ def construir(c: Config, modelo: str):
                     rerank_modelo=c.rerank_modelo, rerank_candidatos=c.rerank_candidatos, hibrida=c.hibrida,
                     hibrida_profundidad=c.hibrida_profundidad, hibrida_stemming=c.hibrida_stemming,
                     multiquery_relato=c.multiquery_relato, peso_relato=c.multiquery_peso_relato,
-                    extras_fusion=c.hibrida_extras)
+                    extras_fusion=c.hibrida_extras, enr_bm25=c.enr_bm25,
+                    coleccion_aparte=c.enr_coleccion_aparte, peso_aparte=c.enr_peso_aparte, rol_factor=c.enr_rol_factor)
     alm = AlmacenMemoria()
     return alm, Orquestador(c, alm, enr, ret, time.time)
 

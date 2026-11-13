@@ -35,6 +35,7 @@ TRIAGE = AQUI / "datos" / "triage_casos.json"
 EXTRA = {"prueba2": AQUI / "datos" / "denuncias_nuevas_20261112.json",
          "prueba3": AQUI / "datos" / "denuncias_sinteticas_20261113_prueba3.json"}
 SETS = ("desarrollo", "prueba", "prueba2", "prueba3")
+OPCIONES = {"coleccion": None, "dedup": False}   # --coleccion / --dedup-literales (experimento de enriquecimiento)
 
 
 def hit(lista: list[str], esperados: set[str], k: int) -> float:
@@ -78,7 +79,7 @@ def agrupar(filas: list[dict], campos: list[str]) -> dict:
 def medir_retriever(nombre: str, casos: list[dict], corpus: set[str]) -> tuple[dict, dict]:
     textos = [rr.texto_consulta(c["caso"], "texto_original") for c in casos]
     vectores = rr.embeber(textos)
-    tops = rr.buscar(vectores, k=max(PROFUNDIDADES))
+    tops = rr.buscar(vectores, k=max(PROFUNDIDADES), coleccion=OPCIONES["coleccion"], dedup_literales=OPCIONES["dedup"])
     filas, ranking = [], []
     for c, top in zip(casos, tops):
         ids = [t["fragmento_id"] for t in top]
@@ -148,11 +149,15 @@ def main(argv=None) -> int:
     ap.add_argument("--set", action="append", default=[], metavar="NOMBRE=casos.json",
                     help="salida de correr_revisor.py de ese set (repetible)")
     ap.add_argument("--salida", type=Path, required=True)
+    ap.add_argument("--coleccion", help="colección del retriever solo (por defecto normativa_cl)")
+    ap.add_argument("--dedup-literales", action="store_true", help="un literal por artículo partido (colecciones _p/_pe)")
     a = ap.parse_args(argv)
+    OPCIONES.update(coleccion=a.coleccion, dedup=a.dedup_literales)
     cadenas = dict(s.split("=", 1) for s in a.set)
-    corpus = rr.articulos_vigentes()
+    corpus = rr.articulos_vigentes(a.coleccion)
     res = {"fecha": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "commit": _commit(),
-           "corpus_articulos": len(corpus), "profundidades": list(PROFUNDIDADES),
+           "corpus_articulos": len(corpus), "coleccion": a.coleccion or rr.embed_sync.COLECCION,
+           "dedup_literales": a.dedup_literales, "profundidades": list(PROFUNDIDADES),
            "comando": "medir_base_b2.py " + " ".join(argv if argv is not None else sys.argv[1:]), "sets": {}}
     for nombre in SETS:
         casos = casos_set(nombre, corpus)

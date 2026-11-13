@@ -107,7 +107,9 @@ def crear_app(config: Config | None = None, almacen: Almacen | None = None, prov
                           reranker_local=_reranker_local(config, proveedores), hibrida=config.hibrida,
                           hibrida_profundidad=config.hibrida_profundidad, hibrida_stemming=config.hibrida_stemming,
                           multiquery_relato=config.multiquery_relato, peso_relato=config.multiquery_peso_relato,
-                          extras_fusion=config.hibrida_extras)
+                          extras_fusion=config.hibrida_extras, enr_bm25=config.enr_bm25,
+                          coleccion_aparte=config.enr_coleccion_aparte, peso_aparte=config.enr_peso_aparte,
+                          rol_factor=config.enr_rol_factor)
     orquestador = Orquestador(config, almacen, enrutador, retriever, reloj)
 
     app = FastAPI(title="Kerna AI núcleo", version=VERSION)

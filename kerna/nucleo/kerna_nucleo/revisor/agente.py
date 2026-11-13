@@ -189,9 +189,11 @@ class ResultadoRevisor:
 
 
 class Revisor:
-    def __init__(self, generar):
-        """`generar(sistema, usuario, esquema, validar, inicio)` -> Resultado del enrutador (datos, tokens)."""
+    def __init__(self, generar, causales_inactivas=()):
+        """`generar(sistema, usuario, esquema, validar, inicio)` -> Resultado del enrutador (datos, tokens).
+        `causales_inactivas` (KERNA_REVISOR_SIN_CAUSALES, solo evaluación): un veto con esa causal baja a «condiciona»."""
         self._generar = generar
+        self._causales_inactivas = frozenset(causales_inactivas)
 
     async def _llamar(self, sistema, usuario, esquema, inicio, res: ResultadoRevisor):
         ultimo = None
@@ -250,6 +252,8 @@ class Revisor:
                 if causal is not None:
                     res.descartados_id += 1
                 causal = None
+            if dictamen == "veta" and causal in self._causales_inactivas:
+                hechos = []                          # causal desactivada por configuración: se trata como veto sin respaldo
             if dictamen == "veta" and not (causal and hechos):
                 # Anotar antes que eliminar: un veto sin causal cerrada o sin hecho que lo sustente es solo una duda.
                 if causal and CONDICION_DE_CAUSAL[causal] not in condiciones:

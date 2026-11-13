@@ -42,6 +42,11 @@ class Config:
     multiquery_max: int = 6
     multiquery_relato: bool = True  # conservar la consulta del relato completo junto a las conductas
     multiquery_peso_relato: float = 1.0
+    enr_bm25: str = ""             # KERNA_ENR_BM25 (experimento enriquecimiento): "" | "concat" | "aparte" | "ambos"
+    enr_coleccion_aparte: str = "" # KERNA_ENR_COLECCION_APARTE: colección con vectores del enriquecimiento solo (lista densa extra)
+    enr_peso_aparte: float = 1.0   # KERNA_ENR_PESO_APARTE: peso en la fusión de las listas «aparte»
+    enr_rol_factor: float = 1.0    # KERNA_ENR_ROL_FACTOR: multiplica el puntaje de fusión de artículos de rol procedimiento/sancion (1 = apagado)
+    revisor_sin_causales: tuple = ()  # KERNA_REVISOR_SIN_CAUSALES: causales de veto que el revisor no aplica (solo evaluación; vacío = todas)
     revisor: bool = False          # KERNA_REVISOR: revisor jurídico (confirma/condiciona/veta) tras la validación de citas
     concurrencia: int = 2
     umbral_similitud: float = 0.0
@@ -80,6 +85,11 @@ class Config:
         c.evaluador = e.get("KERNA_EVALUADOR", "").strip().lower() in ("1", "true", "si", "sí", "on")
         c.evaluador_candidatos = int(e.get("KERNA_EVALUADOR_CANDIDATOS", c.evaluador_candidatos))
         c.evaluador_variante = e.get("KERNA_EVALUADOR_VARIANTE", c.evaluador_variante)
+        c.enr_bm25 = e.get("KERNA_ENR_BM25", "").strip().lower()
+        c.enr_coleccion_aparte = e.get("KERNA_ENR_COLECCION_APARTE", "").strip()
+        c.enr_peso_aparte = float(e.get("KERNA_ENR_PESO_APARTE", c.enr_peso_aparte))
+        c.enr_rol_factor = float(e.get("KERNA_ENR_ROL_FACTOR", c.enr_rol_factor))
+        c.revisor_sin_causales = tuple(x.strip() for x in e.get("KERNA_REVISOR_SIN_CAUSALES", "").split(",") if x.strip())
         c.revisor = e.get("KERNA_REVISOR", "").strip().lower() in ("1", "true", "si", "sí", "on")
         _si = ("1", "true", "si", "sí", "on")
         c.hibrida = e.get("KERNA_HIBRIDA", "").strip().lower() in _si

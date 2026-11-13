@@ -35,7 +35,8 @@ class Retriever:
                  rerank_modelo: str = "", rerank_candidatos: int = 30, reranker_local=None,
                  hibrida: bool = False, hibrida_profundidad: int = 100, hibrida_stemming: bool = True,
                  k_rrf: int = RRF_K, multiquery_relato: bool = True, peso_relato: float = 1.0,
-                 extras_fusion: int = 0):
+                 extras_fusion: int = 0, enr_bm25: str = "", coleccion_aparte: str = "", peso_aparte: float = 1.0,
+                 rol_factor: float = 1.0):
         self._reranker_local = reranker_local
         self._voyage, self._qdrant, self._local = voyage, qdrant, local
         self.coleccion, self.embedding, self.top_k, self.umbral = coleccion, embedding, top_k, umbral
@@ -50,6 +51,13 @@ class Retriever:
         # extras_fusion > 0: los k - extras primeros de la densa del relato quedan siempre entre los candidatos y la
         # fusión aporta hasta `extras` nuevos (la fusión pura desplaza candidatos densos que el evaluador necesita).
         self.extras_fusion = extras_fusion
+        # Experimento de enriquecimiento (colección con campos `enriquecimiento`, `rol`, `articulo_id`, `literal`):
+        # texto del BM25 ("concat" suma el enriquecimiento al texto; "aparte" agrega un índice solo del enriquecimiento;
+        # "ambos"), lista densa extra de una colección con los vectores del enriquecimiento solo, y factor de
+        # puntaje para los artículos de rol procedimiento/sanción. Todo apagado por defecto.
+        self.enr_bm25, self.coleccion_aparte, self.peso_aparte, self.rol_factor = (
+            enr_bm25, coleccion_aparte, peso_aparte, rol_factor)
+        self._indice_enr: IndiceBM25 | None = None
         self._indice: tuple[int, IndiceBM25, dict[str, dict]] | None = None   # (version_corpus, índice, payloads)
         self._cerrojo_indice = asyncio.Lock()
 
@@ -110,6 +118,11 @@ class Retriever:
         version = await self._qdrant.version_corpus(self.coleccion)
         densas = [self._armar(p, "nube", self.embedding, self.coleccion, version, 0, limite=prof).fragmentos
                   for p in resultados]
+        aparte: list[list[dict]] = []
+        if self.coleccion_aparte:
+            res_a = await asyncio.gather(*[self._qdrant.buscar(self.coleccion_aparte, v, prof) for v in vectores])
+            aparte = [self._armar(p, "nube", self.embedding, self.coleccion_aparte, version, 0, limite=prof).fragmentos
+                      for p in res_a]
         indice = await self._indice_lexico(version) if self.hibrida else None
         docs: dict[str, dict] = {}
         rankings: list[list[str]] = []
@@ -121,19 +134,39 @@ class Retriever:
             rankings.append([f["fragmento_id"] for f in densas[i]])
             if indice:
                 rankings.append([ident for ident, _ in indice[1].buscar(t, prof)])
+                if self._indice_enr is not None:
+                    rankings.append([ident for ident, _ in self._indice_enr.buscar(t, prof)])
+                    pesos.append(pesos_t[i] * self.peso_aparte)
+            if aparte:
+                for f in aparte[i]:
+                    docs.setdefault(f["fragmento_id"], f)
+                rankings.append([f["fragmento_id"] for f in aparte[i]])
+                pesos.append(pesos_t[i] * self.peso_aparte)
         coseno: dict[str, float] = {}
         for lista in densas:
             for f in lista:
                 coseno[f["fragmento_id"]] = max(coseno.get(f["fragmento_id"], 0.0), float(f.get("puntaje", 0)))
         frags = []
         fusion = rrf(rankings, self.k_rrf, pesos)
+        if self.rol_factor != 1.0:
+            def _rol(i):
+                return ((docs.get(i) or (indice[2].get(i) if indice else None)) or {}).get("rol", "")
+            fusion = sorted(((i, p * (self.rol_factor if _rol(i) in ("procedimiento", "sancion") else 1.0))
+                             for i, p in fusion), key=lambda x: -x[1])
         if 0 < self.extras_fusion < k and relato and densas:
             fijos = {f["fragmento_id"] for f in densas[0][: k - self.extras_fusion]}
             nuevos = [i for i, _ in fusion if i not in fijos][: self.extras_fusion]
             fusion = [x for x in fusion if x[0] in fijos or x[0] in set(nuevos)]
-        for ident, p_rrf in fusion[:k]:
+        vistos: set[str] = set()
+        for ident, p_rrf in fusion:
+            if len(frags) >= k:
+                break
             base = docs.get(ident) or (indice[2].get(ident) if indice else None)
             if base:
+                if base.get("literal"):      # fragmentos por literal: un solo literal (el mejor) por artículo
+                    if base.get("articulo_id") in vistos:
+                        continue
+                    vistos.add(base.get("articulo_id"))
                 frags.append(dict(base, vigente=True, puntaje=coseno.get(ident, 0.0), puntaje_rrf=p_rrf))
         mejor = max((f["puntaje"] for f in frags), default=0.0)
         return Recuperacion(frags, "nube", self.embedding, self.coleccion, version, mejor, tokens)
@@ -150,7 +183,12 @@ class Retriever:
                     return None
                 docs = {p["fragmento_id"]: dict(p) for p in puntos
                         if p.get("vigente") is not False and p.get("tipo") != "meta" and p.get("fragmento_id")}
-                indice = IndiceBM25(((i, d.get("texto") or "") for i, d in docs.items()), stemming=self.hibrida_stemming)
+                concat = self.enr_bm25 in ("concat", "ambos")
+                indice = IndiceBM25(((i, (d.get("texto") or "") + (" " + d.get("enriquecimiento", "") if concat else ""))
+                                     for i, d in docs.items()), stemming=self.hibrida_stemming)
+                self._indice_enr = (IndiceBM25(((i, d.get("enriquecimiento") or "") for i, d in docs.items()),
+                                               stemming=self.hibrida_stemming)
+                                    if self.enr_bm25 in ("aparte", "ambos") else None)
                 self._indice = (version, indice, docs)
             return self._indice
 

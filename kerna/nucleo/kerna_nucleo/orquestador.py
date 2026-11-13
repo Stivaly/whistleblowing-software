@@ -205,7 +205,7 @@ class Orquestador:
         items = [{"fragmento": ac["fragmento"], "confianza": ac["confianza"]} for ac in aceptados]
         with telemetria.etapa("revision", **base) as a:
             try:
-                r = await Revisor(self.enrutador.generar).revisar(limpio, items, inicio,
+                r = await Revisor(self.enrutador.generar, getattr(self.config, "revisor_sin_causales", ())).revisar(limpio, items, inicio,
                                                                  perfil=getattr(perfil, "texto", "") or "")
             except PlazoAgotado:
                 r = None

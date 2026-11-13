@@ -359,3 +359,10 @@ def test_con_multiquery_el_revisor_recibe_el_perfil_y_sin_el_no():
     assert "Análisis previo" in enr.usuarios_rev[0] and "cohecho a funcionario público" in enr.usuarios_rev[0]
     enr, _, _ = orquestar([resp(rev())])           # sin multiquery no hay perfil: el revisor recibe ""
     assert "Análisis previo" not in enr.usuarios_rev[0]
+
+
+def test_causal_desactivada_por_configuracion_baja_el_veto_a_condiciona():
+    gen = Falso(resp(rev(dictamen="veta", causal="falta_sujeto_exigido", conf=0.9)))
+    r = asyncio.run(Revisor(gen, ("falta_sujeto_exigido",)).revisar(DENUNCIA, items(L20393), 0.0))
+    d = r.dictamenes["l20393-3"]
+    assert d["dictamen"] == "condiciona" and d["causal_veto"] is None and d["veto_degradado"] and r.vetados == 0

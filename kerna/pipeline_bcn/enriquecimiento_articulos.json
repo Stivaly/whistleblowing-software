@@ -1,0 +1,2495 @@
+{
+ "fecha": "2026-11-13",
+ "modelo": "gpt-5-mini",
+ "prompt_sha": "88ded75f7273",
+ "articulos": {
+  "1008668-art-1": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La empresa en la que trabajo fue acusada de cometer fraude financiero en operaciones comerciales.",
+    "Una sociedad fue señalada por apoyar o facilitar actos con motivaciones terroristas.",
+    "Una compañía vendió o traficó armas sin los permisos requeridos y fue investigada por eso.",
+    "La empresa afronta investigación penal y podría recibir multas o sanciones por conductas atribuidas a su actividad."
+   ]
+  },
+  "1008668-art-10": {
+   "rol": "sancion",
+   "hechos": [
+    "La empresa fue declarada responsable penalmente y el tribunal la dejó fuera de poder contratar con organismos del Estado.",
+    "Nos notificaron que, tras una condena por un crimen, nos prohibieron permanentemente celebrar contratos con el Estado por la agravante que se aplicó.",
+    "La compañía repitió conductas delictivas y, por esa reiteración, le impusieron la inhabilitación para contratar con el Estado.",
+    "Tras un fallo penal, el tribunal impuso una inhabilitación temporal para contratar con entidades públicas conforme a las reglas aplicables a estas sanciones."
+   ]
+  },
+  "1008668-art-11": {
+   "rol": "sancion",
+   "hechos": [
+    "Una empresa deja de recibir subsidios y créditos fiscales que recibía del Estado.",
+    "Una entidad queda prohibida de postular a fondos concursables y programas de financiamiento por algunos años.",
+    "Se le niegan al negocio subvenciones y beneficios estatales por medidas asociadas a actividades específicas.",
+    "Aunque la empresa no tenga beneficios fiscales en el momento de la condena, le prohíben recibirlos igual por un tiempo.",
+    "La prohibición se aplica por un período que va desde uno hasta cinco años."
+   ]
+  },
+  "1008668-art-11-bis": {
+   "rol": "sancion",
+   "hechos": [
+    "el tribunal determina que la empresa no tiene o tiene un sistema de prevención de delitos gravemente insuficiente y ordena vigilancia sobre ella",
+    "la empresa debe entregar al supervisor toda la información que le pida para revisar y mejorar su sistema de prevención",
+    "un supervisor designado da instrucciones obligatorias sobre cómo debe funcionar el sistema de prevención y la empresa las debe acatar",
+    "el supervisor exige entrar y revisar las instalaciones y locales de la empresa para verificar el cumplimiento del sistema",
+    "la empresa paga la remuneración del supervisor, que solo rinde cuentas por el cumplimiento de su encargo"
+   ]
+  },
+  "1008668-art-12": {
+   "rol": "sancion",
+   "hechos": [
+    "Me dijeron que la multa se calculó multiplicando un número de días-multa por un valor que fijó el tribunal.",
+    "La empresa recibió una multa y me explicaron que cada día-multa no puede valer menos de 5 ni más de 5.000 unidades tributarias mensuales.",
+    "Nos notificaron que la multa mínima fue de 2 días-multa y que no puede exceder de 400 días-multa.",
+    "Nos informaron que, aunque ya nos habían aplicado otras multas por el mismo hecho, el total de multas no puede superar 600 días-multa.",
+    "En un caso nos dijeron que no pudieron comisar las ganancias porque ya se habían repartido entre los socios, así que la multa se fijó hasta por un porcentaje de las ventas o hasta el doble de las ganancias obtenidas"
+   ]
+  },
+  "1008668-art-13": {
+   "rol": "sancion",
+   "hechos": [
+    "Mi empresa fue condenada y le obligaron a publicar un extracto de la sentencia.",
+    "Tuve que leer en el Diario Oficial una síntesis que explicaba por qué condenaron a la sociedad.",
+    "Vi en un diario de circulación nacional un extracto que reproducía los fundamentos de la condena contra la empresa.",
+    "La publicación y su costo los tuvo que pagar la propia persona jurídica condenada."
+   ]
+  },
+  "1008668-art-14": {
+   "rol": "sancion",
+   "hechos": [
+    "La empresa fue cerrada por una sanción penal y dejó de existir como compañía.",
+    "La empresa perdió los descuentos y exenciones fiscales que tenía y quedó prohibida de recibirlos durante años.",
+    "La empresa recibió una multa elevada calculada en días-multa.",
+    "La empresa quedó impedida de celebrar contratos con el Estado.",
+    "La empresa quedó bajo supervisión externa y control por parte de autoridades.",
+    "La empresa tuvo que entregar o perder los bienes y dinero obtenidos por el delito y además se publicó un extracto de la condena."
+   ]
+  },
+  "1008668-art-15": {
+   "rol": "sancion",
+   "hechos": [
+    "El tribunal siempre obliga a una empresa a pagar una multa cuando ha cometido el delito.",
+    "Juzgan cuánto influyó que la empresa no tuviera un sistema para prevenir delitos.",
+    "Pagan atención a cuánto dinero estuvo involucrado en la comisión del ilícito.",
+    "Consideran el tamaño y la actividad habitual de la empresa al decidir otras penas.",
+    "Evalúan el alcance del daño causado y, si la empresa presta un servicio público, el efecto social y económico de la pena."
+   ]
+  },
+  "1008668-art-16": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Cuando un tribunal tiene que establecer la duración o grado de una pena para una empresa pero no procede la extinción de ella.",
+    "Cuando el juez debe fijar la cuantía de una multa para una persona jurídica y necesita un criterio para elegir un monto dentro de un rango.",
+    "Cuando existen factores agravantes o atenuantes que justifican aumentar o disminuir la pena dentro del marco permitido.",
+    "Cuando se determina la multa y corresponde aplicar además las reglas especiales que regulan cómo calcular o ajustar las multas."
+   ]
+  },
+  "1008668-art-17": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Un tribunal ordenó cerrar una empresa y nombró a alguien encargado de liquidarla.",
+    "La persona designada está cobrando deudas y haciendo pagos a los acreedores de la empresa disuelta.",
+    "Quedaron bienes de la sociedad que deben repartirse entre los socios según su participación.",
+    "Se vendió todo el negocio como una unidad en una subasta pública porque el tribunal estimó que convenía al interés social."
+   ]
+  },
+  "1008668-art-17-bis": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Quiero postular a una licitación pública y necesito saber desde cuándo opera una inhabilitación que pesa sobre mi empresa.",
+    "Un tribunal dictó la inhabilitación y quiero saber si ya puedo volver a contratar con el Estado o debo esperar la resolución definitiva.",
+    "Me informaron que el tribunal comunicará la sanción a la entidad encargada de compras del Estado y quiero confirmar que esa comunicación ya se hizo.",
+    "Busco en el registro público si la empresa aparece como inhabilitada para contratar con el Estado antes de firmar un contrato público."
+   ]
+  },
+  "1008668-art-17-quater": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Mi empresa fue condenada y nos citaron a una audiencia para nombrar a alguien que nos supervise.",
+    "Nos notificaron que un supervisor tiene instrucciones sobre qué debe vigilar y cuáles son sus límites.",
+    "El supervisor nos dio órdenes que no cumplimos y nos dijeron que podían retener bienes mientras dure el incumplimiento.",
+    "El supervisor pidió al tribunal que reemplazara a los directores por incumplimientos graves y nos avisaron que podrían nombrar a un administrador provisional.",
+    "Quiero saber qué requisitos debe tener la persona que va a ser asignada como supervisor y cómo se fija su remuneración."
+   ]
+  },
+  "1008668-art-17-quinquies": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Mi empresa fue condenada a pagar una multa y temo que pagar todo al contado la dejaría sin dinero para operar.",
+    "Necesitamos saber si el tribunal puede permitir que paguemos la multa en cuotas porque así no cesaría el giro del negocio.",
+    "Quiero presentar que el pago en un solo acto afectaría el interés social y pedir plazos más largos.",
+    "Me ordenaron una multa y desconozco hasta cuándo puedo fraccionar los pagos.",
+    "El tribunal autorizó cuotas para otra empresa y quiero entender en qué casos se concede esa excepción."
+   ]
+  },
+  "1008668-art-17-ter": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El tribunal dictó una sentencia que impone pérdida de beneficios fiscales y la empresa espera que se haga efectiva.",
+    "El tribunal envía la comunicación al Ministerio de Hacienda para que quede registrada.",
+    "El tribunal comunica también a la Subsecretaría de Desarrollo Regional y Administrativo para que se anote en los registros que administran.",
+    "La empresa o persona afectada ya no aparece en los listados que las municipalidades usan para otorgar beneficios fiscales.",
+    "Una municipalidad consulta el registro central antes de conceder un beneficio y verifica la anotación enviada por el tribunal."
+   ]
+  },
+  "1008668-art-18": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Una empresa cambia su estructura o se fusiona y no se sabe quién debe pagar la multa impuesta.",
+    "Una organización sin fines de lucro se disuelve y sus bienes pasan a una persona que ahora enfrenta reclamaciones por sanciones.",
+    "Los dueños transfieren la mayoría de los activos a otra sociedad poco antes o después de una condena, aparentemente para evitar las consecuencias.",
+    "Se liquida una sociedad con fines de lucro y los socios reciben las propiedades; surge la duda sobre si deben responder por las penas."
+   ]
+  },
+  "1008668-art-18-bis": {
+   "rol": "sancion",
+   "hechos": [
+    "Una empresa vendió sus máquinas a otra empresa y luego fue condenada pero no tiene bienes para pagar la multa.",
+    "El dueño trasladó la propiedad de un vehículo a un tercero antes del juicio y luego la empresa fue sentenciada y no alcanza el comiso.",
+    "Me vendieron una bodega de la empresa responsable cuando ya existían indicios fuertes de condena y después me piden cubrir la multa.",
+    "Tras la condena, la sociedad ya no tiene activos porque los había transferido a un comprador que sabía del riesgo de sanción."
+   ]
+  },
+  "1008668-art-19": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Mi empresa cerró y quiero saber si con eso se termina la responsabilidad penal de la sociedad.",
+    "La sociedad fue absorbida por otra y me pregunto si ya no puede ser condenada por delitos cometidos antes.",
+    "La compañía se transformó a otro tipo jurídico y quiero saber si eso borra su responsabilidad penal pasada.",
+    "La sociedad se disolvió pero luego se intentó dictar una condena: me pregunto si la disolución impide la condena."
+   ]
+  },
+  "1008668-art-19-bis": {
+   "rol": "sancion",
+   "hechos": [
+    "La empresa obtuvo dinero por un delito y el Estado lo quita para quedarse con esas ganancias.",
+    "Una sociedad recibió como aporte dinero proveniente de un ilícito y se lo decomisan.",
+    "Los dueños vendieron activos y repartieron entre socios unas ganancias que resultaron ser de origen ilícito.",
+    "Quieren quitarle a la empresa las utilidades obtenidas por un hecho ilegal aunque no haya condena penal aún.",
+    "La empresa puede usar el monto distribuido entre accionistas para calcular la multa que debe pagar."
+   ]
+  },
+  "1008668-art-2": {
+   "rol": "vigencia",
+   "hechos": [
+    "Mi sociedad anónima privada fue acusada de un delito y quiero saber si la empresa puede ser responsabilizada penalmente.",
+    "Una empresa estatal cometió una irregularidad y las autoridades están evaluando si la institución como tal puede recibir sanciones penales.",
+    "Un partido político realizó acciones ilícitas y alguien pregunta si el partido puede ser penalmente responsable.",
+    "Una universidad pública incurrió en conductas delictivas y surge la duda sobre la responsabilidad penal de la casa de estudios.",
+    "Una organización religiosa pública fue involucrada en un ilícito y se discute si la persona jurídica religiosa puede ser responsabilizada penalmente."
+   ]
+  },
+  "1008668-art-20": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El fiscal investigando un delito descubre indicios de que una empresa también pudo haber participado y amplía la pesquisa para incluir a la empresa.",
+    "Una persona presenta una denuncia que lleva a iniciar una investigación sobre la responsabilidad penal de una sociedad.",
+    "Una víctima presenta una querella para que se investigue y eventualmente se impute a una persona jurídica.",
+    "Un vecino de la misma provincia presenta una querella por hechos que afectan la función pública para que se investigue a una empresa.",
+    "Se inicia una investigación por delitos que podrían causar graves consecuencias sociales o económicas y se incorpora a la persona jurídica en la pesquisa."
+   ]
+  },
+  "1008668-art-20-bis": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El fiscal abre una investigación contra una empresa y pide que se imponga supervisión sobre ella mientras dura el proceso.",
+    "La empresa no tiene o tiene un sistema de prevención de delitos claramente insuficiente y el fiscal sostiene que hace falta supervisión para evitar que se cometan nuevos delitos internamente.",
+    "El tribunal debe verificar si se cumplen los requisitos procesales respecto de una persona natural vinculada al hecho antes de aceptar la medida.",
+    "Se plantea cómo se tramita y ejecuta esa solicitud de supervisión y qué reglas del Código Procesal Penal se aplican cuando la ley no lo regula expresamente."
+   ]
+  },
+  "1008668-art-21": {
+   "rol": "procedimiento",
+   "hechos": [
+    "No está regulado un trámite en la ley y hay que decidir qué reglas procesales aplicar a la empresa.",
+    "Un representante de la empresa quiere ejercer derechos o garantías en un proceso penal.",
+    "Surge la duda de si una norma del Código Procesal Penal es compatible con la naturaleza de una persona jurídica.",
+    "Hay que aplicar reglas específicas enumeradas del Código Procesal Penal a una empresa imputada y saber quién puede ejercerlas."
+   ]
+  },
+  "1008668-art-22": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El fiscal decide iniciar formalmente un procedimiento contra una empresa y pide que citen a su representante legal ante el juez.",
+    "Antes de citar a la empresa, ya se solicitó una audiencia de formalización contra la persona natural que podría implicar a la empresa.",
+    "Se presentó un requerimiento por el procedimiento simplificado respecto de la persona natural vinculada a la empresa, y ahora se quiere formalizar al ente colectivo.",
+    "La solicitud del fiscal incluye la identificación del representante legal de la persona jurídica para que sea citado."
+   ]
+  },
+  "1008668-art-23": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me citaron a una audiencia y el representante legal de la empresa no se presentó sin dar una razón.",
+    "El tribunal ordenó detener al representante para que asista a la audiencia y la hicieron al día siguiente.",
+    "No se pudo encontrar al representante y el fiscal pidió que un defensor público represente a la empresa en la audiencia.",
+    "Quedó una investigación contra el representante por el mismo hecho y dejó de representarnos; el tribunal pidió que la empresa nombre otro representante.",
+    "La empresa decidió en algún momento contratar a un abogado de su confianza para que la represente en el juicio."
+   ]
+  },
+  "1008668-art-24": {
+   "rol": "procedimiento",
+   "hechos": [
+    "el fiscal me dice que podría dejar sin efecto la causa, pero la empresa sigue procesada",
+    "pensé que podían negociar y evitar el juicio para la sociedad, pero me informan que no procede",
+    "preguntaron si se puede acordar no ejercer acción penal contra la empresa y les dijeron que no",
+    "la defensa quería obtener una salida procesal para la persona jurídica y se le negó por regla aplicable"
+   ]
+  },
+  "1008668-art-25": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Mi empresa está imputada y el juez propone suspender el proceso mientras cumplimos ciertas condiciones en vez de seguir con el juicio.",
+    "Nos dijeron que no podemos acceder a la suspensión porque ya había otra suspensión vigente contra la sociedad.",
+    "El juez fijó un plazo de varios meses durante el cual debemos informar periódicamente nuestras cuentas a una institución señalada.",
+    "El fiscal propuso que, como condición, la empresa pague una suma a beneficio fiscal y el juez lo aceptó.",
+    "Nos ordenaron implementar un programa de cumplimiento para aplicar el modelo de organización, administración y supervisión."
+   ]
+  },
+  "1008668-art-26": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El fiscal pide aplicar penas por un delito simple en su grado mínimo contra una empresa y se pregunta si se tramita por el procedimiento simplificado.",
+    "El fiscal acusa a una empresa solicitando penas correspondientes a crímenes o a delitos simples en grado medio y se consulta si debe ir a juicio oral.",
+    "El fiscal presenta acusación contra una persona natural y una persona jurídica al mismo tiempo y se duda cuál procedimiento seguir.",
+    "Un abogado quiere saber si puede usar el procedimiento monitorio para la responsabilidad penal de una empresa (le informan que no procede).",
+    "Se discute qué regla aplica cuando la acusación mezcla penas de distinto grado entre la persona natural y la jurídica."
+   ]
+  },
+  "1008668-art-27": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El fiscal pide que se juzgue rápido a la empresa por un delito simple y anuncian que usarán el procedimiento abreviado.",
+    "Queremos saber si el tribunal puede dar una pena más dura que la que pidió el fiscal.",
+    "Se tramita el caso siguiendo las reglas del procedimiento penal ordinario que aplican para determinar responsabilidad y sanciones.",
+    "El fiscal solicita imponer una o varias penas por un simple delito y el caso entra en este procedimiento abreviado."
+   ]
+  },
+  "1008668-art-28": {
+   "rol": "sustantivo",
+   "hechos": [
+    "mi empresa está acusada de un delito y no tenemos dinero para contratar un abogado",
+    "la asociación que presido enfrenta un proceso penal y no podemos procurarnos defensa por medios propios",
+    "una sociedad extranjera sin representación local necesita defensa en Chile y no tiene recursos para pagarla",
+    "la firma fue citada a juicio penal y nadie dentro de la entidad puede hacerse cargo de su defensa"
+   ]
+  },
+  "1008668-art-29": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Mi empresa fue declarada culpable por un delito menor y el juez decidió posponer la condena por un tiempo según el tamaño y ventas de la compañía.",
+    "Se trataba de una empresa estatal cuyo servicio no podía interrumpirse, y el juez aplazó la pena aunque fuera más grave.",
+    "Pasó el plazo fijado y nadie volvió a acusar a la empresa, y la sentencia fue dejada sin efecto y el caso cerrado definitivamente.",
+    "Quedó claro que aunque la condena se suspendiera, la compañía seguía debiendo responder por daños y perjuicios a terceros.",
+    "El tribunal decidió quitar del beneficio la medida de comiso, aunque mantuvo la suspensión de la pena principal."
+   ]
+  },
+  "1008668-art-3": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Un gerente comete un delito mientras contrata proveedores en nombre de la empresa.",
+    "Un trabajador que gestiona trámites ante clientes comete una conducta ilícita en el ejercicio de sus funciones.",
+    "Un asesor externo que actúa para la empresa ante terceros comete un delito aprovechando su gestión.",
+    "Una empresa relacionada que presta servicios y no tiene autonomía operativa comete un ilícito en la gestión de asuntos comunes.",
+    "Un empleado roba exclusivamente a la propia empresa (hecho que excluye la aplicación de esta norma)."
+   ]
+  },
+  "1008668-art-4": {
+   "rol": "sustantivo",
+   "hechos": [
+    "no existían protocolos para identificar dónde podrían ocurrir delitos en las actividades de la empresa",
+    "los trabajadores no sabían cómo denunciar conductas sospechosas porque no había canales seguros",
+    "las sanciones internas no estaban previstas ni comunicadas y nadie fue sancionado por incumplimientos",
+    "no se asignó a nadie responsable de supervisar las medidas de prevención ni se le entregaron recursos para hacerlo",
+    "la empresa nunca encargó evaluaciones externas ni actualizó sus medidas tras revisiones"
+   ]
+  },
+  "1008668-art-5": {
+   "rol": "sustantivo",
+   "hechos": [
+    "El jefe que cometió el fraude quedó sin sentencia y la empresa igual fue investigada por lo ocurrido",
+    "La persona que organizó una conducta ilícita ya no fue acusada porque su responsabilidad se extinguió, pero la empresa enfrenta cargos",
+    "No se pudo identificar quién dentro de la compañía ejecutó el acto ilegal y aun así la empresa es responsabilizada",
+    "La investigación contra el trabajador principal no pudo seguirse adelante, pero la empresa igualmente es sancionada por el mismo hecho"
+   ]
+  },
+  "1008668-art-6": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La empresa informa a las autoridades sobre un hecho punible antes de saber que hay una investigación en su contra.",
+    "Los representantes legales entregan antecedentes que ayudan a aclarar lo ocurrido durante la investigación.",
+    "La organización nombra a una persona encargada de prevenir delitos con independencia y recursos propios.",
+    "Antes de que la investigación se formalice, la empresa cambia sus procedimientos para evitar que vuelva a ocurrir el mismo tipo de delito."
+   ]
+  },
+  "1008668-art-7": {
+   "rol": "sancion",
+   "hechos": [
+    "La empresa fue condenada por un delito hace cinco años y ahora cometen otro parecido.",
+    "Un empleado cometió un delito y la falta de controles de la empresa facilitó que lo hiciera.",
+    "La compañía ya tenía una sentencia penal previa y vuelve a estar involucrada en un nuevo hecho punible."
+   ]
+  },
+  "1008668-art-8": {
+   "rol": "sancion",
+   "hechos": [
+    "La empresa es condenada y la autoridad ordena su cierre definitivo.",
+    "La compañía queda impedida de firmar contratos con organismos públicos.",
+    "La entidad pierde exenciones o beneficios tributarios que antes recibía.",
+    "La empresa pasa a estar bajo vigilancia de un organismo por un periodo determinado.",
+    "Se impone una multa económica que la empresa debe pagar.",
+    "La justicia ordena confiscar bienes relacionados con el hecho y publican un resumen de la condena en medios."
+   ]
+  },
+  "1008668-art-9": {
+   "rol": "sancion",
+   "hechos": [
+    "La empresa fue condenada por un crimen grave y el tribunal cree que puede volver a cometer delitos similares.",
+    "Una sociedad dedicada a actividades ilícitas ha repetido conductas delictivas en distintas ocasiones.",
+    "Se comprobara que un delito cometido por la persona jurídica tuvo una circunstancia agravante que permite pedir su eliminación definitiva.",
+    "El juez valora que, por cómo funciona la empresa, existe riesgo de reiteración delictiva y decide imponer una pena severa.",
+    "Una compañía pública o una entidad que presta un servicio esencial no puede ser disuelta aunque hubiera responsabilidad penal, porque su interrupción causaría graves consecuencias sociales o económicas."
+   ]
+  },
+  "1200096-art-6": {
+   "rol": "procedimiento",
+   "hechos": [
+    "La mutual me pide la cantidad de denuncias por acoso que se presentaron en mi empresa en los últimos seis meses y qué medidas tomamos.",
+    "El organismo administrador solicita a mi empleador información sobre una denuncia laboral y la empresa debe entregarla.",
+    "La Superintendencia publica cómo debemos registrar y reportar los casos, y la empresa necesita seguir esas directrices.",
+    "Cada seis meses la mutual envía a la Superintendencia un resumen de las denuncias y las acciones tomadas.",
+    "En enero y en julio, la Superintendencia remite un informe con los datos consolidados al Ministerio y al Consejo Superior Laboral."
+   ]
+  },
+  "1200096-art-t-primero": {
+   "rol": "vigencia",
+   "hechos": [
+    "Quiero saber desde cuándo empieza a regir la nueva ley en mi trabajo.",
+    "El empleador pregunta cuánto tiempo tiene para ajustarse y aplicar los cambios de la ley.",
+    "Una autoridad debe preparar una norma de carácter general y un reglamento antes de que la ley entre en vigencia.",
+    "Un trabajador se pregunta si puede reclamar ahora o debe esperar a que se publique el reglamento y la norma general."
+   ]
+  },
+  "1200096-art-t-segundo": {
+   "rol": "vigencia",
+   "hechos": [
+    "Presenté una denuncia por acoso en mi trabajo antes de que la nueva ley empezara a regir y quiero saber qué normas se aplican.",
+    "La investigación interna contra un jefe ya estaba en curso cuando entró la nueva ley y no sé si cambió el procedimiento.",
+    "Me notificaron que se reabriría una investigación que comencé antes de la ley y pregunto si tengo nuevos derechos.",
+    "La empresa inició medidas disciplinarias después de publicada la ley, pero yo había denunciado antes de su vigencia y no sé si esas medidas deben ajustarse a la nueva norma."
+   ]
+  },
+  "1209272-art-t-cuarto": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El Presidente propone un grupo de consejeros meses antes de que la ley comience a regir.",
+    "El Senado no responde a la propuesta dentro del plazo y la gente quiere saber si eso significa que los consejeros quedan nombrados.",
+    "En la primera sesión del Consejo elegido, deben designar entre ellos a un Presidente y un Vicepresidente.",
+    "Se identifican tres consejeros con duraciones distintas en el cargo para escalonar los mandatos (uno por dos años, otro por cuatro y otro por seis).",
+    "Antes de que la ley entre en vigencia, el Consejo sólo puede actuar en ciertas funciones limitadas y algunas instrucciones sólo obligan desde que la ley comienza a regir.",
+    "Los estatutos de la Agencia deben ser enviados al Presidente dentro de los noventa días siguientes al nombramiento, y quienes formaron parte de la comisión asesora ministerial mencionada no pueden ser nombrados en el primer Consejo."
+   ]
+  },
+  "1209272-art-t-octavo": {
+   "rol": "vigencia",
+   "hechos": [
+    "Mi servicio debe implementar nuevas medidas y quiero saber quién paga los costos el primer año.",
+    "Necesitamos saber de dónde sale el dinero si en el ministerio no alcanza el presupuesto inicial.",
+    "Quiero confirmar si los gastos continuos después del primer año estarán incluidos en la Ley de Presupuestos.",
+    "Me piden planificar recursos para el segundo año y quiero saber si habrá financiamiento específico.",
+    "En la primera ejecución hay una falta de fondos y quiero saber si el Tesoro puede cubrir lo que falta."
+   ]
+  },
+  "1209272-art-t-primero": {
+   "rol": "vigencia",
+   "hechos": [
+    "Quiero saber desde qué fecha empiezan a regir los cambios en la ley de protección de datos.",
+    "La empresa necesita saber cuándo debe aplicar las nuevas reglas para adaptar sus sistemas.",
+    "Un consumidor pregunta si puede hacer valer un derecho nuevo antes de cierta fecha.",
+    "Un funcionario público necesita saber desde cuándo atender solicitudes bajo las nuevas normas."
+   ]
+  },
+  "1209272-art-t-quinto": {
+   "rol": "sustantivo",
+   "hechos": [
+    "En mi servicio público nombraron a un empleado ya contratado como delegado de protección de datos.",
+    "En la municipalidad quisieron contratar a un consultor externo para ser encargado de prevención y no lo aceptaron.",
+    "Me dijeron que crearían un nuevo puesto para el delegado y en cambio asignaron a alguien que ya trabajaba ahí.",
+    "En la repartición decidieron que quien ocupe el cargo debe ser alguien de la dotación actual, no un contratado por proyecto."
+   ]
+  },
+  "1209272-art-t-segundo": {
+   "rol": "procedimiento",
+   "hechos": [
+    "La autoridad aún no ha dictado los reglamentos y quiero saber cuánto tiempo queda para que lo hagan.",
+    "Necesito saber hasta cuándo pueden demorarse en publicar el reglamento general tras la nueva ley.",
+    "La norma específica del artículo 26 depende de un informe de la Agencia y me preguntan cuándo empieza a correr el plazo para esa norma.",
+    "Quiero saber si el plazo para dictar el reglamento del artículo 26 comienza desde la publicación de la ley o desde que la Agencia entregue su informe."
+   ]
+  },
+  "1209272-art-t-septimo": {
+   "rol": "procedimiento",
+   "hechos": [
+    "la municipalidad aún no tiene políticas internas sobre tratamiento de datos y quieren saber hasta cuándo pueden dictarlas",
+    "un organismo público está planificando su reglamento y necesita saber el plazo para publicarlo",
+    "un funcionario pregunta desde qué fecha deben aplicar las nuevas normas internas sobre datos",
+    "una persona espera que una institución publique instrucciones sobre protección de datos y quiere saber cuándo estarán disponibles"
+   ]
+  },
+  "1209272-art-t-sexto": {
+   "rol": "sancion",
+   "hechos": [
+    "Durante el primer año tras la entrada en vigor, mi pequeña empresa compartió datos de clientes sin seguir bien el procedimiento y la autoridad nos mandó una amonestación por escrito.",
+    "Una pyme registró mal información de usuarios y la agencia le informó por escrito de la gravedad de lo ocurrido y de qué medidas atenuantes o agravantes había.",
+    "En los primeros doce meses, un comercio de menor tamaño usó datos para publicidad sin consentimiento y recibió una amonestación firmada por la Agencia, que además registró esa sanción.",
+    "Una microempresa informó a empleados que se habían filtrado datos y la autoridad anotó la conducta infractora y las circunstancias en un documento oficial.",
+    "Una empresa calificada como de menor tamaño fue advertida por escrito sobre una infracción de datos y luego esa amonestación quedó registrada conforme a la normativa."
+   ]
+  },
+  "1209272-art-t-tercero": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Me pregunto hasta cuándo deben borrar el registro antiguo antes de que empiece a regir la nueva norma.",
+    "Vi que el servicio estatal tiene que eliminar un banco de datos en un plazo antes de que cambie la ley.",
+    "Trabajo en la entidad y debo organizar el calendario para eliminar ese registro dentro del tiempo indicado.",
+    "Quiero saber si mis datos que estaban en ese registro serán borrados antes de que entren las modificaciones en vigor."
+   ]
+  },
+  "141599-2026-12-01-art-1": {
+   "rol": "vigencia",
+   "hechos": [
+    "la empresa donde trabajo guarda y usa los datos de los clientes para marketing",
+    "una municipalidad pidió mi información para un trámite y quiero saber si deben seguir esta ley",
+    "un diario publicó fotos y datos en una columna de opinión y quiero saber si esto está regulado por la ley",
+    "mi vecino compartió en redes los números de teléfono de un grupo de amigos que organizaban una fiesta",
+    "una persona me pasó la lista de contactos de su teléfono para organizar una reunión privada"
+   ]
+  },
+  "141599-2026-12-01-art-1-bis": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Una empresa con domicilio en Chile procesa datos personales de sus clientes.",
+    "Un encargado ubicado en el extranjero realiza operaciones de datos por encargo de una empresa chilena.",
+    "Una página web o tienda online extranjera ofrece productos a personas que viven en Chile.",
+    "Una aplicación creada fuera de Chile rastrea y perfila el comportamiento de usuarios que están en el país.",
+    "Una entidad extranjera que no está establecida en Chile tiene un contrato que la somete a la ley chilena para el tratamiento de datos."
+   ]
+  },
+  "141599-2026-12-01-art-10": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Quiero pedirle a la empresa que corrija un dato mío y necesito saber cómo y ante quién hacerlo.",
+    "Una empresa extranjera que presta servicios aquí debe indicar un correo de contacto en la Agencia para que yo pueda ejercer mis derechos.",
+    "Intenté borrar mis datos y me dijeron que el trámite debía ser gratis.",
+    "Solicité acceso a mis datos varias veces en el mismo trimestre y la empresa me informó que podría cobrarme por las repeticiones.",
+    "La compañía no tiene una herramienta en su web para que yo pueda ejercer mis derechos de forma rápida y sencilla.",
+    "Necesito saber que la autoridad (la Agencia) supervise que mis derechos como titular se respeten y se cumplan."
+   ]
+  },
+  "141599-2026-12-01-art-11": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Quiero que una empresa corrija mi dirección de contacto y no sé cómo pedirlo ni dónde enviarlo.",
+    "Hice un reclamo por correo y no me han respondido en más de treinta días, y quiero saber qué puedo hacer.",
+    "Solicité que no usen mis datos para publicidad y pedí que los bloquearan temporalmente mientras resuelven, pero no tengo confirmación.",
+    "Me respondieron que mi solicitud fue denegada y necesito saber dónde reclamar esa decisión.",
+    "Presenté una petición por correo electrónico y quiero que me confirmen que la recibieron y cuál fue la respuesta.",
+    "Necesito que la empresa informe a otras compañías a las que les entregaron mis datos sobre una corrección que solicitaron que hagan"
+   ]
+  },
+  "141599-2026-12-01-art-12": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me pidieron que marcara una casilla para que usaran mis datos antes de contratar un servicio.",
+    "Una empresa me dijo que si no daba mi consentimiento no podía usar el producto, aunque no lo necesitaban para prestarme el servicio.",
+    "Di mi autorización por correo electrónico y luego hice clic en un enlace para revocarla, esperando que dejaran de usar mis datos.",
+    "Un apoderado firmó un formulario aceptando el uso de mis datos y yo no sabía si tenía facultades para hacerlo.",
+    "Una tienda afirma que tiene mi consentimiento para enviar promociones y yo les pedí que demostraran cuándo y cómo lo otorgué.",
+    "Tuve que hacer una declaración clara y afirmativa para autorizar el uso de mis datos y quiero que sólo los usen para esa finalidad específica."
+   ]
+  },
+  "141599-2026-12-01-art-13": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me cobraron una deuda y la empresa pasó mi información a una base para ver si debo dinero.",
+    "Mi empleador pidió datos míos porque decía que la ley lo exigía para un trámite público.",
+    "Firmé un contrato y la otra parte trató mis datos para cumplir las obligaciones del contrato.",
+    "Una empresa usó mis datos para defenderse en un juicio sin pedirme permiso.",
+    "Quise que me informaran por qué estaban usando mis datos y la entidad respondió que lo hacía por un interés legítimo."
+   ]
+  },
+  "141599-2026-12-01-art-14": {
+   "rol": "sustantivo",
+   "hechos": [
+    "me pidieron datos personales y no me explicaron por qué los iban a usar",
+    "solicité que me dijeran de dónde obtuvieron mis datos y no me contestaron",
+    "me pidieron documentos para una posible contratación y después siguieron guardándolos aunque no hubo contrato",
+    "una empresa extranjera que me ofreció un servicio no dejó un correo de contacto para reclamar"
+   ]
+  },
+  "141599-2026-12-01-art-14-bis": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Mi empresa guarda y maneja mis datos personales y no los puede contar a otros sin mi permiso",
+    "Un ex trabajador se va de la empresa y sigue viendo información personal que antes manejaba",
+    "Alguien tomó datos que estaban en internet, los organizó y ahora los usa como una base nueva y privada",
+    "Me piden mis datos y exijo que me digan de dónde los obtuvieron",
+    "Una institución pública solicita información y la empresa la entrega porque la ley se lo exige"
+   ]
+  },
+  "141599-2026-12-01-art-14-quater": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La empresa instaló un sistema nuevo sin configurar restricciones y empezó a recolectar más datos de los necesarios.",
+    "Un servicio en línea guarda por defecto todos los campos del formulario aunque muchos no sean imprescindibles para la prestación.",
+    "Un organismo diseñó un tratamiento de datos sin considerar medidas técnicas para reducir riesgos antes de activarlo.",
+    "Un responsable conserva datos personales indefinidamente porque la configuración por defecto no elimina información después de terminado el propósito.",
+    "Un sitio web permite el acceso amplio a datos sensibles porque no implementó controles desde el diseño del sistema."
+   ]
+  },
+  "141599-2026-12-01-art-14-quinquies": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La empresa que guarda datos sensibles no aplica cifrado ni seudonimización y los datos quedan legibles en sus sistemas.",
+    "Un ataque informático deja fuera de servicio los sistemas y no se puede acceder a los expedientes de clientes.",
+    "Se pierde una copia de seguridad y no hay proceso para restaurar rápidamente los datos afectados.",
+    "La autoridad o un cliente reclama por una filtración y la empresa debe demostrar qué medidas de seguridad tenía implementadas."
+   ]
+  },
+  "141599-2026-12-01-art-14-septies": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Soy dueño de una pequeña empresa y no sé qué medidas de seguridad debo aplicar según el tamaño y la actividad.",
+    "Trabajo en una clínica y quiero saber qué estándares mínimos rigen para datos de salud frente a otros datos personales.",
+    "Tengo una startup que procesa muchos datos y necesito saber qué requisitos me exigirá la autoridad según el volumen y finalidad de tratamiento.",
+    "Soy una persona natural que trata datos en mi negocio y no sé si se me aplican las mismas condiciones que a una sociedad.",
+    "Quiero saber cuándo y dónde la Agencia publicará las instrucciones que fijan las medidas diferenciadas que debo cumplir."
+   ]
+  },
+  "141599-2026-12-01-art-14-sexies": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Se pierden archivos con datos personales por un error en un backup y la empresa no sabe si informarlo.",
+    "Un sistema fue hackeado y accesaron registros con datos de clientes.",
+    "Se envían por accidente datos de empleados a un correo equivocado y hay riesgo para su seguridad.",
+    "Se filtran fotos y datos sensibles de menores atendidos por una institución.",
+    "Una entidad detecta que se divulgaron números de cuentas y transacciones de clientes."
+   ]
+  },
+  "141599-2026-12-01-art-14-ter": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Entré al sitio web de una empresa y no encontré información sobre cómo manejan mis datos",
+    "Quise saber quién responde por mis datos y no había nombre ni contacto claro en la página",
+    "Me pidieron mis datos y no supe por cuánto tiempo los iban a conservar",
+    "Vi que hicieron decisiones automáticas sobre mi solicitud y no explicaban cómo funcionaban",
+    "Un servicio me transfirió datos a otro país y no informaron si ese país protege mis datos"
+   ],
+   "literales": {
+    "a": [
+     "La empresa publica en su web su política de datos con fecha y versión para saber qué reglas aplican"
+    ],
+    "b": [
+     "En la página aparece quién es el responsable y su representante legal",
+     "Mostraron el nombre de la persona encargada de prevención de datos cuando existe"
+    ],
+    "c": [
+     "Encontré el domicilio postal y un correo para enviar solicitudes",
+     "Había un formulario de contacto en la web para notificar reclamos sobre mis datos"
+    ],
+    "d": [
+     "La organización indica que trata datos de clientes y empleados y qué tipos de datos son",
+     "Informan a quiénes pueden ceder los datos y para qué finalidades los usan",
+     "Explican en qué se basa el tratamiento y, si es por intereses legítimos, cuáles son esos intereses"
+    ],
+    "e": [
+     "La entidad describe las medidas de seguridad que usa para proteger sus bases de datos"
+    ],
+    "f": [
+     "El sitio explica que puedo solicitar acceso, rectificación, supresión, oposición y portabilidad de mis datos"
+    ],
+    "g": [
+     "Indican que puedo recurrir ante la Agencia si mi solicitud es rechazada o no responden a tiempo"
+    ],
+    "h": [
+     "Informan que transfieren datos a otro país y si ese país tiene nivel adecuado de protección",
+     "Si el país no protege bien los datos, dicen si existen garantías para hacer la transferencia"
+    ],
+    "i": [
+     "La empresa señala el periodo durante el cual conservarán mis datos personales"
+    ],
+    "j": [
+     "Aparece la fuente de donde obtuvieron mis datos y si provienen de fuentes públicas"
+    ],
+    "k": [
+     "Cuando el tratamiento se basa en mi consentimiento, explican que puedo retirarlo en cualquier momento"
+    ],
+    "l": [
+     "Informan sobre decisiones automatizadas o perfiles y dan información sobre la lógica aplicada y sus consecuencias"
+    ]
+   }
+  },
+  "141599-2026-12-01-art-15": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Una empresa compartió mis datos con otra compañía sin que yo hubiera dado consentimiento para esa cesión.",
+    "Me están pidiendo un nuevo consentimiento para que mis datos sean cedidos a un tercero después de que ya me los solicitaron inicialmente.",
+    "Firmaron un contrato donde se indica que mis datos se cederán para ciertas finalidades y quiero saber qué datos y para qué se usan.",
+    "Recibí información de que otra entidad tiene mis datos porque una empresa con la que contraté se los envió.",
+    "Me dijeron que si no autorizo la cesión, no podrán ejecutar parte del contrato que tengo con la empresa."
+   ]
+  },
+  "141599-2026-12-01-art-15-bis": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La empresa contrató a una empresa externa para gestionar datos de clientes y esa empresa usó los datos para otro negocio sin permiso.",
+    "El proveedor contratado vendió o compartió los datos con terceros sin autorización expresa del responsable.",
+    "La empresa externa delegó parte del trabajo a otro proveedor sin tener una autorización escrita del cliente.",
+    "Después de terminar el servicio, el proveedor siguió conservando la base de datos en vez de devolverla o eliminarla.",
+    "Hubo una violación de seguridad en la empresa que procesa los datos y esa empresa no informó al responsable de datos del incidente inmediatamente."
+   ]
+  },
+  "141599-2026-12-01-art-15-ter": {
+   "rol": "sustantivo",
+   "hechos": [
+    "una empresa quiere usar un algoritmo que decide quién recibe o no un crédito sin intervención humana",
+    "una organización recopila datos de millones de usuarios para campañas publicitarias",
+    "instalan cámaras que registran continuamente lo que ocurre en una plaza pública",
+    "un hospital procesa historiales médicos sin el consentimiento explícito de las personas",
+    "una compañía pretende perfilar a personas para tomar decisiones que les afecten legalmente, como negarles servicios"
+   ]
+  },
+  "141599-2026-12-01-art-16": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me pidieron datos sensibles y sólo los podían tratar si yo di mi consentimiento expreso.",
+    "Una organización dijo que podía usar mis datos sin mi permiso por tener un interés legítimo y por ser una entidad sin fines de lucro.",
+    "Atendieron a una persona y usaron sus datos sensibles porque era necesario para salvar su vida o porque estaba incapacitada para consentir.",
+    "Se usaron mis datos sensibles para una demanda o defensa en tribunales sin haber pedido mi consentimiento.",
+    "En el trabajo me pidieron datos sensibles porque la empresa dijo que era necesario para cumplir obligaciones laborales o de seguridad social."
+   ],
+   "literales": {
+    "a": [
+     "Publicaron en redes mis opiniones religiosas y luego me usan esos datos porque estaban ya hechos públicos.",
+     "Al revelar en un foro mis datos de salud, una entidad los trató para los mismos fines para los que yo los publiqué."
+    ],
+    "b": [
+     "Una organización cultural sin fines de lucro trató datos sobre la afiliación religiosa de sus miembros para actividades internas sin pedir consentimiento.",
+     "Un sindicato procesó datos ideológicos solo de sus afiliados para cumplir sus actividades internas y aseguró no ceder esos datos a terceros."
+    ],
+    "c": [
+     "En una emergencia médica el hospital usó mis antecedentes de salud sin mi consentimiento porque era indispensable para salvarme.",
+     "Una persona estuvo inconsciente y el centro médico trató sus datos sensibles para atenderla y después le informaron de lo realizado."
+    ],
+    "d": [
+     "Mi historial médico fue usado como prueba para defenderme en un juicio sin que yo hubiera autorizado el tratamiento.",
+     "La entidad trató datos sensibles para preparar una demanda en un órgano administrativo en que se discute un derecho mío."
+    ],
+    "e": [
+     "La empresa me pidió información sobre salud para tramitar una licencia laboral y afirmó que lo hacía en el marco de la ley laboral.",
+     "La institución de seguridad social trató datos sensibles para cumplir sus obligaciones respecto de mis prestaciones."
+    ],
+    "f": [
+     "Una ley específica autorizó a una autoridad a procesar ciertos datos sensibles sin solicitar el consentimiento del titular."
+    ]
+   }
+  },
+  "141599-2026-12-01-art-16-bis": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Un médico comparte datos genéticos de un paciente con investigadores sin haber obtenido su autorización y sin base legal clara.",
+    "Una empresa exige tests médicos y guarda muestras biológicas de sus trabajadores en el depósito de la empresa.",
+    "Un investigador publica resultados de un estudio sobre perfiles metabólicos tras anonimizar la información recopilada.",
+    "Una autoridad de salud usa información de salud sin consentimiento durante una alerta sanitaria decretada.",
+    "Una persona presenta antecedentes médicos en un juicio y un abogado requiere su tratamiento para ejercer la defensa."
+   ],
+   "literales": {
+    "a": [
+     "Mi hijo quedó inconsciente y el hospital tuvo que revisar su historial genético para salvarle la vida.",
+     "Un adulto no podía firmar consentimiento y los médicos consultaron sus antecedentes de salud para tratarlo.",
+     "Tras superar la incapacidad, me llegó una carta explicando qué datos médicos me habían usado y qué se hizo con ellos."
+    ],
+    "b": [
+     "Durante una epidemia el ministerio recopiló y procesó datos de enfermos sin pedirles permiso.",
+     "En una alerta sanitaria se compartieron registros de diagnóstico entre centros de salud para coordinar la respuesta."
+    ],
+    "c": [
+     "Un equipo de investigación usó datos de salud para un estudio sobre una enfermedad común y luego publicó los resultados anonimizados.",
+     "Se emplearon perfiles proteómicos para desarrollar un nuevo insumo médico que no podía probarse de otra forma.",
+     "Un historiador consultó expedientes sanitarios anonimizados para un trabajo sobre salud pública del siglo pasado."
+    ],
+    "d": [
+     "Un abogado presentó historiales médicos como prueba en un juicio civil para defender a su cliente.",
+     "Una persona demandó por daños y su equipo jurídico trató sus datos de salud para preparar la demanda."
+    ],
+    "e": [
+     "La empresa realizó exámenes médicos periódicos para evaluar la capacidad laboral de sus empleados.",
+     "Un servicio de salud procesó datos para coordinar la atención y diagnóstico de pacientes.",
+     "En un programa de medicina preventiva se analizaron datos de salud para aplicar medidas sanitarias en una comunidad."
+    ],
+    "f": [
+     "Una ley autoriza expresamente que se procesen datos biológicos para un programa estatal específico y describe su finalidad."
+    ]
+   }
+  },
+  "141599-2026-12-01-art-16-quater": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Mi colegio subió fotos de mi hijo menor de 14 años en redes sin consultarnos.",
+    "Un sitio web pidió datos de mi hija de 15 años y no sé si ella puede darlos sola.",
+    "Un centro de salud quería registrar información sensible de mi sobrino de 15 años sin mi permiso.",
+    "La guardería guarda fichas con datos personales de los niños y no sé cómo los protegen.",
+    "Un profesor pidió contactos y datos de adolescentes y no hubo explicación sobre por qué los recababan."
+   ]
+  },
+  "141599-2026-12-01-art-16-quinquies": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Una universidad reúne fichas personales de estudiantes para una investigación histórica y las conserva por años.",
+    "Un servicio público procesa datos personales para estadísticas y los guarda indefinidamente para futuros estudios.",
+    "Una clínica privada usa historiales médicos en un estudio científico y debe identificar los riesgos antes de usarlos.",
+    "Una empresa realiza un análisis estadístico con datos de clientes y tiene que asegurar que solo se usen para ese estudio.",
+    "Un organismo que hizo una investigación quiere publicar los resultados pero primero debe anonimizar la información publicada."
+   ]
+  },
+  "141599-2026-12-01-art-16-sexies": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me guardan la ubicación de mi celular y no me dijeron para qué la usarían.",
+    "Una app registra por cuánto tiempo estuve en ciertos lugares sin avisarme cuánto tiempo conservarán esos datos.",
+    "La empresa comparte mi ubicación con otra empresa para funciones extra y nunca me informaron que lo harían.",
+    "Instalaron un servicio que usa mi ubicación y no me explicaron qué tipo de datos de localización recogen.",
+    "Me entregaron un servicio con características adicionales y no supe si mi ubicación sería cedida a terceros."
+   ]
+  },
+  "141599-2026-12-01-art-16-ter": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La empresa instaló un lector de huellas para fichar entrada y salida sin explicar qué sistema biométrico usan.",
+    "Me pidieron una foto de mi cara para entrar al edificio, pero no me dijeron para qué la usarían ni cuánto tiempo la guardarían.",
+    "Un banco me registró la voz para identificaciones telefónicas sin informarme cómo podía ejercer mis derechos sobre esos datos.",
+    "Me solicitaron el iris para acceder a un área restringida y no expliqué ni la finalidad ni el periodo de uso.",
+    "Tomaron mi huella digital argumentando una excepción para hacerlo sin mi consentimiento, pero no me entregaron la información específica que debía recibir."
+   ]
+  },
+  "141599-2026-12-01-art-17": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me pusieron en un boletín por un pagaré protestado y apareció mi nombre en bases de datos comerciales.",
+    "Salieron en internet datos de una deuda que contraje mientras estaba cesante.",
+    "Una entidad publicó que tenía cheques protestados aun cuando debía haberse borrado porque la deuda ya prescribió.",
+    "Tuve que llevar mi finiquito a la oficina del boletín para que dejaran de mostrar que estaba moroso.",
+    "Me rechazaron la solicitud de bloqueo aunque estaba recibiendo beneficios de cesantía que deberían impedir la publicación."
+   ]
+  },
+  "141599-2026-12-01-art-18": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Un banco sigue pasando datos sobre una deuda vieja aunque hayan pasado más de cinco años desde que la obligación venció.",
+    "Una empresa de cobranza sigue compartiendo información sobre un cliente después de que éste pagó la deuda.",
+    "Mi historial comercial sigue siendo comunicado por terceros a pesar de que la obligación se extinguió por otro medio legal.",
+    "Me solicitan información a un banco y se la entregan al tribunal porque hay un juicio en curso."
+   ]
+  },
+  "141599-2026-12-01-art-19": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Pagué una deuda y sigo figurando como moroso en un registro público.",
+    "El acreedor no avisó al registro público que yo pagué dentro de los siete días hábiles.",
+    "La base de datos no actualizó mi información dentro de tres días después de que se informó el pago.",
+    "El acreedor me dio un comprobante de pago y yo le pedí por escrito que no avisara porque yo haría la modificación directamente.",
+    "Una empresa que trata datos públicos bloqueó mi información porque no pudo actualizarla de inmediato."
+   ]
+  },
+  "141599-2026-12-01-art-2": {
+   "rol": "definicion",
+   "hechos": [
+    "Quiero saber qué se considera un dato personal para saber si pueden usar mi información.",
+    "Me preguntan cómo debo dar permiso para que usen mis datos y qué significa consentir.",
+    "Necesito entender qué derechos tengo para pedir copias, cambios o que borren mis datos.",
+    "Quiero saber cuándo los datos dejan de permitir identificarme porque los han anonimizado.",
+    "Me interesa saber qué es una base de datos y quién decide para qué se usan mis datos."
+   ]
+  },
+  "141599-2026-12-01-art-20": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La municipalidad procesa mis datos para tramitar una licencia que yo solicitó.",
+    "El registro civil utiliza mi información para actualizar mi acta de nacimiento sin pedirme permiso.",
+    "Una entidad pública utiliza mis datos para ejecutar un programa social del que soy beneficiario.",
+    "Una institución estatal comparte información interna sobre mi situación laboral para cumplir con un trámite administrativo.",
+    "Un organismo regulador archiva y consulta mis antecedentes para ejercer sus funciones de supervisión."
+   ]
+  },
+  "141599-2026-12-01-art-21": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La municipalidad me pide el mismo certificado que ya entregué a otra oficina pública",
+    "Un organismo tiene datos diferentes a los que figuran en la agencia de servicios sociales y me exigen aclararlo en cada trámite",
+    "Me piden llevar documentos en persona que ya están en el registro digital de otro organismo",
+    "Hice dos trámites iguales en distintos servicios y tuve que repetir la misma información varias veces",
+    "Un trámite se demora porque las instituciones no comparten ni verifican la misma información entre sí"
+   ]
+  },
+  "141599-2026-12-01-art-22": {
+   "rol": "sustantivo",
+   "hechos": [
+    "un servicio público me pidió los datos de otro servicio para realizar un trámite específico sin explicarme si los conservarían",
+    "mi municipalidad compartió mi información con otra entidad pública para evitar que yo tuviera que volver a presentar los mismos documentos",
+    "una institución pública me informó que usaría mis datos para otorgarme un beneficio y no los empleó para otros fines",
+    "vi que una entidad pública guardó mis datos por mucho tiempo después de entregar el servicio, sin darme una razón clara",
+    "un organismo público quiso compartir mis datos con una empresa privada y me pidieron mi consentimiento antes de hacerlo"
+   ]
+  },
+  "141599-2026-12-01-art-23": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Quiero pedir a un servicio público que me entreguen los datos que tienen sobre mí.",
+    "Solicité que borraran mis datos y el organismo me respondió que no me los puede suprimir por una investigación en curso.",
+    "Presenté una solicitud y el organismo nunca respondió, así que quiero reclamar ante la Agencia.",
+    "Quiero oponerme a un tratamiento específico de mis datos que me parece indebido.",
+    "Me dijeron que no puedo acceder a cierta información porque es secreta por ley."
+   ]
+  },
+  "141599-2026-12-01-art-24": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La policía pide a otro organismo datos sensibles para investigar un delito y compartirlos entre instituciones.",
+    "Un servicio de inteligencia usa información sobre amenazas a la seguridad nacional y la comparte con otras autoridades.",
+    "Durante una catástrofe declarada, varias oficinas públicas intercambian datos personales para coordinar la emergencia.",
+    "Una entidad pública entrega datos protegidos por secreto a otro órgano por obligación legal y espera que el receptor mantenga la reserva.",
+    "La agencia reguladora da orientaciones sobre cómo respetar garantías y principios al tratar datos en estos casos."
+   ]
+  },
+  "141599-2026-12-01-art-25": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Una entidad pública quiere usar información sobre una sanción de alguien para funciones que no están en su competencia.",
+    "Publican en línea datos sobre una multa o sanción que ya está prescrita o cumplida.",
+    "Un organismo mantiene un registro electrónico y piensa procesar masivamente los datos de infracciones.",
+    "Un funcionario público consulta y divulga datos de infracciones sin mantener secreto.",
+    "Un tribunal o un organismo público solicita información sobre una infracción para cumplir sus funciones y la recibe bajo reserva."
+   ]
+  },
+  "141599-2026-12-01-art-26": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Una municipalidad quiere compartir bases de datos con una empresa privada para un proyecto y necesita saber cómo hacerlo.",
+    "Una institución pública debe aplicar métodos para borrar o anonimizar datos sensibles antes de entregarlos a terceros.",
+    "Se espera que el Ministerio correspondiente publique reglas sobre cómo se pueden ceder datos entre organismos públicos y privados.",
+    "Se consulta si las normas del reglamento aplican a una cesión en la que participa un órgano que está regulado en otra parte de la misma ley."
+   ]
+  },
+  "141599-2026-12-01-art-27": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Mi empresa contrató a un proveedor extranjero y quiere enviarle los datos de clientes a la nube.",
+    "Firmé un formulario dando permiso expreso para que mis datos personales sean enviados a otra país para un trámite específico.",
+    "Un hospital requirió enviar información médica de un paciente a especialistas en otro país por una urgencia sanitaria.",
+    "Un tribunal pidió colaboración internacional y me dijeron que compartirían datos para la investigación.",
+    "Un banco debe enviar información a una entidad financiera fuera del país para ejecutar una operación bancaria."
+   ],
+   "literales": {
+    "a": [
+     "La empresa traslada bases de clientes a un proveedor establecido en un país que ofrece protección similar a la local.",
+     "Una entidad pública comparte registros administrativos con una oficina extranjera que está bajo su propio ordenamiento jurídico.",
+     "Un servicio en línea aloja datos en servidores ubicados en un país que garantiza niveles adecuados de protección."
+    ],
+    "b": [
+     "Una compañía firma contratos con cláusulas que obligan al receptor extranjero a proteger los datos.",
+     "Una empresa matriz y su filial en otro país aplican normas corporativas vinculantes para manejar datos transferidos.",
+     "Se acuerdan cláusulas contractuales entre responsables para garantizar la seguridad de los datos importados."
+    ],
+    "c": [
+     "Una empresa y su proveedor en el extranjero se certifican en un modelo de cumplimiento para poder intercambiar datos.",
+     "Se adopta un mecanismo de certificación que demuestra garantías adecuadas antes de enviar información fuera del país."
+    ],
+    "d": [
+     "Un organismo público intercambia información con una agencia extranjera en virtud de un convenio de cooperación.",
+     "La superintendencia comparte datos con su par internacional para fines de supervisión."
+    ],
+    "e": [
+     "Una ley expresa autoriza a una entidad pública a transferir datos personales al extranjero para una finalidad concreta.",
+     "Un mandato legal permite a una empresa enviar datos fuera del país para cumplir una obligación específica establecida por ley."
+    ],
+    "f": [
+     "Un juez pide información a una autoridad extranjera y se envían datos para colaborar en un proceso judicial internacional.",
+     "Se solicita cooperación judicial a otro país y se remiten antecedentes personales como parte de la colaboración."
+    ],
+    "g": [
+     "Se envían datos a un proveedor extranjero para ejecutar un contrato que firmé con una empresa.",
+     "Antes de contratar un servicio internacional, compartí mis datos para las gestiones previas al contrato."
+    ],
+    "h": [
+     "Un hospital transmite datos clínicos a especialistas en otro país para diagnosticar una enfermedad urgente.",
+     "Se comparten antecedentes de salud con un centro extranjero para continuar un tratamiento médico inmediato."
+    ]
+   }
+  },
+  "141599-2026-12-01-art-28": {
+   "rol": "sustantivo",
+   "hechos": [
+    "mi empresa quiere enviar una base de clientes a una filial en otro país",
+    "la autoridad pública publicó en su sitio web una lista y modelos de cláusulas para transferir datos",
+    "transferimos datos a otra empresa del mismo grupo y ahora nos piden acreditar que aplicamos las mismas políticas",
+    "tuvimos que pedir autorización porque el país receptor no estaba en la lista de países adecuados",
+    "la autoridad nos exige demostrar que la transferencia se hizo conforme a las reglas y garantías exigidas"
+   ]
+  },
+  "141599-2026-12-01-art-29": {
+   "rol": "procedimiento",
+   "hechos": [
+    "una empresa anuncia que enviará listas de clientes a un servidor en el extranjero y recibe una revisión de la autoridad",
+    "la agencia revisa los mecanismos de transferencia internacional usados por una clínica y hace recomendaciones para proteger los datos",
+    "un sitio web que envía datos de usuarios fuera del país recibe medidas conservativas mientras se evalúa su cumplimiento",
+    "la autoridad decide suspender temporalmente el envío de datos de una compañía a otro país hasta que corrija deficiencias",
+    "una entidad recibe instrucciones de la agencia tras una fiscalización sobre sus transferencias internacionales de información"
+   ]
+  },
+  "141599-2026-12-01-art-3": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me pidieron datos personales sin que me explicaran para qué los usarían.",
+    "Me guardaron archivos con información mía durante años sin que me dijeran por cuánto tiempo la conservarían.",
+    "Una empresa compartió mis datos con otra sin avisarme ni pedirme permiso.",
+    "Noté que mis datos en un registro estaban desactualizados y causaron un problema en un trámite.",
+    "Vi que empleados sin autorización accedían a información personal de clientes.",
+    "Quise saber qué información tenía una institución sobre mí y no me dieron acceso ni explicación."
+   ],
+   "literales": {
+    "a": [
+     "Me solicitaron datos sin decirme por qué y no pude verificar que el uso fuera lícito.",
+     "Una entidad me trató datos de forma engañosa, por ejemplo diciendo otro propósito.",
+     "Un responsable no pudo demostrar que tenía permiso válido para usar mis datos."
+    ],
+    "b": [
+     "Me pidieron datos para una encuesta y luego los usaron para enviar publicidad distinta a lo informado.",
+     "Firmé un contrato y usaron mis datos para fines ajenos a lo acordado sin consultarme.",
+     "Quisieron cambiar el uso de mis datos y me pidieron volver a aceptar el consentimiento."
+    ],
+    "c": [
+     "Me pidieron más información de la necesaria para contratar un servicio.",
+     "Descubrí que conservaban mis datos mucho después de terminar la relación con la empresa.",
+     "Quisieron seguir usando mis datos para un nuevo fin sin autorización ni ley que lo permitiera."
+    ],
+    "d": [
+     "En una base de datos mi dirección estaba equivocada y eso causó que no me llegara una notificación.",
+     "Me llamaron con información antigua sobre mi situación laboral que ya no era correcta.",
+     "Un formulario recogió información incompleta que impidió un trámite."
+    ],
+    "e": [
+     "La empresa no asumió responsabilidad cuando se filtraron datos que había entregado.",
+     "Intenté reclamar y la organización no cumplió sus obligaciones respecto de mis datos.",
+     "Un responsable no implementó los deberes que la ley exige para proteger los datos."
+    ],
+    "f": [
+     "Un sitio web perdió una base de datos por un ataque y mis datos quedaron expuestos.",
+     "Me di cuenta de que no habían medidas para impedir que terceros descargaran información personal.",
+     "Un trabajador pudo exportar archivos con datos sin controles de seguridad adecuados."
+    ],
+    "g": [
+     "Quise saber qué datos tenían y qué políticas aplicaban y no me facilitaron la información.",
+     "No encontré en la institución ninguna política clara sobre cómo trataban los datos personales.",
+     "Me entregaron información confusa sobre mis derechos y no pude ejercerlos por falta de claridad."
+    ],
+    "h": [
+     "Un exempleado siguió usando y divulgando datos que conoció en trabajo anterior.",
+     "En la oficina no exigían confidencialidad y varios empleados comentaban datos personales de clientes.",
+     "Después de terminar la relación laboral, el excolaborador siguió teniendo acceso a información privada sin guardar secreto."
+    ]
+   }
+  },
+  "141599-2026-12-01-art-30": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Quiero reclamar porque una empresa usó mis datos personales y no sé ante quién hacerlo.",
+    "Necesito saber quién vigila que se respeten mis derechos a la privacidad y a la protección de datos.",
+    "Descubrí que una entidad trató mis datos sin mi consentimiento y quiero que alguien fiscalice esa conducta.",
+    "Me pregunto dónde tendrá su sede la entidad que protege los datos y si tendrá oficinas en otras ciudades."
+   ]
+  },
+  "141599-2026-12-01-art-30-bis": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Me piden que entregue información personal porque la Agencia me requirió documentos para una fiscalización.",
+    "Quiero reclamar porque una empresa usó mis datos y presenté una solicitud a la Agencia para que lo revise.",
+    "La Agencia publicó un borrador de normas en su página web y pude enviar mi observación durante la consulta pública.",
+    "Me citaron a declarar en un procedimiento porque trabajé en la empresa que manejó datos relacionados con el caso.",
+    "La Agencia anunció un convenio con una entidad extranjera y me interesa saber cómo afectará el tratamiento de mis datos."
+   ],
+   "literales": {
+    "a": [
+     "La Agencia publica en su web una instrucción sobre cómo deben tratarse los datos y la gente puede opinar.",
+     "Una empresa ajusta sus procedimientos tras una norma obligatoria que regula el tratamiento de datos.",
+     "Se hace una consulta pública antes de que una instrucción entre en vigor."
+    ],
+    "b": [
+     "La Agencia interpreta una disposición de la ley y explica cómo aplicarla a un sitio web que procesa datos.",
+     "Un organismo público solicita aclaración administrativa sobre el alcance de una obligación de protección de datos."
+    ],
+    "c": [
+     "La Agencia solicita libros y archivos de una empresa que procesa datos para revisar si cumple la ley.",
+     "Un inspector pide antecedentes y contratos a quien trata datos personales para verificar sus prácticas."
+    ],
+    "d": [
+     "La Agencia cita al gerente de una empresa a declarar por posibles incumplimientos en el manejo de datos.",
+     "Me piden que dé una declaración porque trabajé en el área que trató datos en un caso investigado."
+    ],
+    "e": [
+     "La Agencia impone una sanción a una entidad que trató datos personales en forma indebida.",
+     "Una empresa recibe una multa por infringir las normas que dictó la Agencia sobre protección de datos."
+    ],
+    "f": [
+     "Presento un reclamo ante la Agencia porque una empresa no respetó mis derechos sobre mis datos.",
+     "La Agencia resuelve una solicitud de acceso o rectificación presentada por un titular de datos."
+    ],
+    "g": [
+     "La Agencia lanza una campaña informativa para que la gente sepa cómo proteger sus datos personales.",
+     "Asisto a una charla divulgada por la Agencia sobre derechos de privacidad."
+    ],
+    "h": [
+     "La Agencia propone una mejora legal al Congreso para proteger mejor los datos personales.",
+     "Se sugiere una nueva norma al Presidente para regular el uso de información personal."
+    ],
+    "i": [
+     "El Congreso pide asistencia técnica a la Agencia para diseñar normas internas sobre tratamiento de datos.",
+     "Un tribunal consulta a la Agencia sobre cómo deben tratarse datos en un procedimiento judicial."
+    ],
+    "j": [
+     "Un servicio público coordina con la Agencia para implementar políticas de protección de datos en sus sistemas.",
+     "La Agencia colabora con otros órganos públicos para diseñar buenas prácticas de tratamiento de datos."
+    ],
+    "k": [
+     "La Agencia firma un convenio con una entidad extranjera para intercambio de buenas prácticas sobre datos.",
+     "Se suscribe un acuerdo de cooperación con una empresa privada para proyectos de protección de datos."
+    ],
+    "l": [
+     "La Agencia participa en actividades de organismos internacionales sobre protección de datos.",
+     "Recibe cooperación técnica de un organismo internacional para mejorar sus políticas."
+    ],
+    "m": [
+     "La Agencia certifica el programa de cumplimiento de una empresa que procesa datos personales.",
+     "Se inscribe un modelo de prevención de infracciones en el Registro Nacional de Sanciones y Cumplimiento."
+    ],
+    "n": [
+     "La Agencia ejerce otras funciones que la ley le asigne en el futuro.",
+     "Se le encomiendan nuevas atribuciones relacionadas con el tratamiento de datos personales."
+    ]
+   }
+  },
+  "141599-2026-12-01-art-30-nonies": {
+   "rol": "procedimiento",
+   "hechos": [
+    "La Agencia necesita que alguien firme contratos y la empresa quiere saber quién puede hacerlo.",
+    "Hay una disputa sobre un empleado de la Agencia y se pregunta quién puede sancionarlo o despedirlo.",
+    "Quieren saber quién convoca y organiza las reuniones del consejo y decide los temas a tratar.",
+    "Necesitan saber quién representa a la Agencia en una demanda o frente a otra institución.",
+    "Se pretende delegar una tarea a un funcionario y no está claro quién puede autorizarlo."
+   ]
+  },
+  "141599-2026-12-01-art-30-octies": {
+   "rol": "procedimiento",
+   "hechos": [
+    "quiero saber quién fija las normas de funcionamiento de la Agencia",
+    "la Agencia decidió cambiar sus normas y no sé quién las debe proponer",
+    "me pregunto quién aprueba oficialmente los estatutos y sus modificaciones",
+    "necesito saber qué tipo de acto emanará la aprobación de los estatutos"
+   ]
+  },
+  "141599-2026-12-01-art-30-quater": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El Presidente propone tres personas para integrar el consejo y necesita que el Senado las apruebe por dos tercios.",
+    "Un consejero quiere postular a un nuevo periodo pero descubre que no puede ser designado nuevamente.",
+    "El presidente del consejo convoca una sesión extraordinaria porque dos consejeros lo solicitaron por escrito y exige que se haga dentro de dos días hábiles.",
+    "Hay empate en una votación del consejo y el presidente debe desempatar, o lo hace el vicepresidente si el presidente está ausente.",
+    "Un candidato a consejero se presenta y le preguntan si tiene dedicación exclusiva para asumir el cargo."
+   ]
+  },
+  "141599-2026-12-01-art-30-quinquies": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Estoy trabajando como consejero y además presto servicios en una empresa privada.",
+    "Soy consejero y también tengo un cargo de dirección en un partido político.",
+    "Mi pareja es propietaria de una empresa que se dedica a recolectar y vender bases de datos.",
+    "Fui condenado por un delito relacionado con la función pública y quiero saber si puedo ser consejero.",
+    "Me sancionaron por una infracción grave en el tratamiento de datos hace tres años y quiero postular."
+   ]
+  },
+  "141599-2026-12-01-art-30-septies": {
+   "rol": "sustantivo",
+   "hechos": [
+    "El presidente del Consejo Directivo de la Agencia recibe el sueldo equivalente al de un subsecretario.",
+    "Un consejero del organismo cobra una remuneración menor que la del presidente.",
+    "Se ajusta el pago mensual de quienes integran el Consejo Directivo según su cargo.",
+    "Se determina cuál es la base para calcular el sueldo de los consejeros en relación con el presidente."
+   ]
+  },
+  "141599-2026-12-01-art-30-sexies": {
+   "rol": "sustantivo",
+   "hechos": [
+    "un consejero que no asiste ni cumple sus funciones y deja tareas sin hacer",
+    "un consejero que insulta y humilla a otras personas del órgano en reuniones públicas",
+    "un consejero que renuncia y presenta su dimisión ante el Presidente de la República",
+    "un consejero cuyo periodo de nombramiento llega a su fin y debe dejar el cargo",
+    "un consejero que decide postularse para alcalde o diputado",
+    "un consejero que, después de ser nombrado, adquiere una incompatibilidad que le impide seguir en el cargo"
+   ]
+  },
+  "141599-2026-12-01-art-30-ter": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Los directores de la agencia aprobaron nuevas reglas internas para cómo se atienden las consultas de personas.",
+    "La agencia publicó una circular que obliga a sus unidades a seguir un procedimiento nuevo.",
+    "La agencia presentó una propuesta de cambio de ley al Presidente.",
+    "La agencia preparó y entregó un informe público sobre lo que hizo el año pasado dentro de los primeros cuatro meses del año.",
+    "La dirección decidió comprar y vender equipos y contratar servicios para la agencia."
+   ]
+  },
+  "141599-2026-12-01-art-31": {
+   "rol": "procedimiento",
+   "hechos": [
+    "La Agencia está por dictar una instrucción general que puede afectar las competencias del Consejo para la Transparencia y remite todos los antecedentes pidiéndole un informe.",
+    "El Consejo para la Transparencia recibe el requerimiento y debe responder dentro de treinta días corridos desde que lo recibió.",
+    "La Agencia toma en cuenta la opinión del Consejo y la expresa en la motivación de la instrucción que dicta.",
+    "Si pasan más de treinta días sin recibir el informe, la Agencia procede conforme al inciso segundo del artículo 38 de la ley N° 19.880.",
+    "En sentido inverso, el Consejo para la Transparencia remite antecedentes a la Agencia cuando su instrucción general afecta ámbitos de competencia de ésta, y la Agencia tiene treinta días para evacuar el informe."
+   ]
+  },
+  "141599-2026-12-01-art-32": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me contrataron para trabajar en la Agencia y me dijeron que mi relación laboral era como cualquier otro contrato de trabajo.",
+    "En mi contrato hubo una cláusula que decía que debía cumplir las normas de probidad y evitar conflictos de interés.",
+    "Vieron un concurso público para elegir al director de la Agencia y la terna venía de un consejo externo.",
+    "Un consejero fue demandado por actos realizados en el cargo y la Agencia le proporcionó defensa jurídica.",
+    "A un funcionario no le dieron defensa porque su conducta produjo su cesación por mala conducta.",
+    "La Contraloría vino a fiscalizar las cuentas y el personal de la Agencia, pero las resoluciones internas no necesitaron toma de razón."
+   ]
+  },
+  "141599-2026-12-01-art-32-bis": {
+   "rol": "definicion",
+   "hechos": [
+    "La Agencia recibe cada año una partida en el presupuesto para financiarse.",
+    "La Agencia acepta un donativo de muebles sin necesidad de trámites judiciales.",
+    "Un inmueble es transferido a la Agencia y pasa a ser de su patrimonio.",
+    "La Agencia acepta una herencia, declarándola con beneficio de inventario.",
+    "La Agencia recibe recursos de cooperación internacional para sus proyectos."
+   ]
+  },
+  "141599-2026-12-01-art-33": {
+   "rol": "sancion",
+   "hechos": [
+    "Mi empresa usó mis datos para algo distinto a lo que autorizaron y no me avisaron",
+    "Una institución pública compartió mi información personal sin respetar las reglas y sin mi permiso",
+    "Me negaron el acceso para corregir mis datos cuando pedí que los revisaran",
+    "Una compañía guardó datos sensibles que no necesitaba y los trató sin medidas acorde a la ley"
+   ]
+  },
+  "141599-2026-12-01-art-34": {
+   "rol": "sancion",
+   "hechos": [
+    "una empresa usa mis datos para fines distintos a los que me dijeron y no me pidió autorización",
+    "una entidad publica información personal mía sin protegerla y se filtran datos confidenciales",
+    "me negaron el acceso para rectificar información errónea sobre mí y no corrigieron nada",
+    "una organización comparte mis datos con terceros sin respetar las reglas sobre su tratamiento",
+    "un responsable trató mis datos vulnerando los principios de la ley y no asumió ninguna medida para remediarlo"
+   ]
+  },
+  "141599-2026-12-01-art-34-bis": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La empresa no explicó qué datos recoge ni para qué los usa en su sitio web.",
+    "No hay ningún correo ni dirección donde contactar a la persona que administra los datos de la compañía.",
+    "No me respondieron mi solicitud para acceder a mis datos dentro del plazo establecido.",
+    "La entidad no informó a la Agencia cuando debió hacerlo según la normativa.",
+    "La organización no siguió una instrucción general de la autoridad sobre manejo de datos y no está en los supuestos más graves."
+   ]
+  },
+  "141599-2026-12-01-art-34-quater": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Una empresa usa mis datos para un fin distinto al que acepté.",
+    "Me pasan información sensible mía sin permiso y se expone mi intimidad.",
+    "Una entidad no reporta una brecha de seguridad y mis datos quedan expuestos sin que me avisen.",
+    "Me transfieren mis datos al extranjero sabiendo que no cumple la ley.",
+    "Me registran con información falsa en un sistema oficial que controla infracciones.",
+    "Una resolución que me permite acceder o borrar mis datos no es cumplida por el responsable."
+   ]
+  },
+  "141599-2026-12-01-art-34-ter": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me recopilaron información personal sin que yo lo autorizara.",
+    "Alguien le pasó mis datos a otra empresa para un propósito distinto al que me dijeron.",
+    "Quise acceder y corregir mis datos y me negaron o demoraron la respuesta sin justificación."
+   ],
+   "literales": {
+    "a": [
+     "Me tomaron fotos y usaron mi nombre sin pedirme permiso para eso.",
+     "Me solicitaron datos para un trámite y luego los ocuparon para otra cosa que no me dijeron."
+    ],
+    "b": [
+     "Una empresa vendió mi lista de contactos a otra sin preguntarme.",
+     "Me cedieron mi información a un tercero para un fin distinto al que autorizaron."
+    ],
+    "c": [
+     "Me pidieron datos que no tenían relación con el servicio que ofrecían.",
+     "En un formulario me solicitaron información excesiva que no era necesaria para lo solicitado."
+    ],
+    "d": [
+     "Mantuvieron en su base datos con mi dirección antigua y me enviaron notificaciones equivocadas.",
+     "Usaron información mía que estaba desactualizada y por eso me perjudicaron."
+    ],
+    "e": [
+     "Me bloquearon el acceso a mi expediente y no me dejaron ver ni corregir mis datos.",
+     "Me negaron la posibilidad de solicitar que eliminen cierta información personal."
+    ],
+    "f": [
+     "Solicité que suspendieran temporalmente el uso de mis datos y nunca respondieron.",
+     "Pidieron el bloqueo temporal de datos y recibí una respuesta fuera del plazo sin motivo."
+    ],
+    "g": [
+     "Recopilaron datos de un menor sin cumplir las reglas especiales para niños.",
+     "Usaron información de adolescentes sin las garantías que exige la ley para menores."
+    ],
+    "h": [
+     "Una organización política trató datos de sus asociados sin los requisitos que le aplican.",
+     "Un grupo cultural manejó información de socios sin cumplir las condiciones exigidas para esa ONG."
+    ],
+    "i": [
+     "Un trabajador reveló información confidencial de un cliente a terceros.",
+     "Se filtró información reservada que debía mantenerse en secreto."
+    ],
+    "j": [
+     "No aplicaron las medidas de seguridad necesarias y se expuso una base de datos.",
+     "Manejó la información sin las protecciones técnicas que exige el tratamiento seguro."
+    ],
+    "k": [
+     "No informaron ni registraron cuando hubo una brecha de seguridad con datos personales.",
+     "Omitieron dejar constancia de un incidente donde se vulneraron las medidas de seguridad."
+    ],
+    "l": [
+     "Usaron datos históricos sin resguardar su calidad y seguridad para un estudio público.",
+     "En una investigación pública no aseguraron debidamente la protección de la información utilizada."
+    ],
+    "m": [
+     "Enviaron información personal fuera del país sin respetar las condiciones legales.",
+     "Hicieron transferencias internacionales de datos contrarias a las normas aplicables."
+    ],
+    "n": [
+     "No acataron una orden directa de la autoridad sobre cómo tratar ciertos datos.",
+     "Ignoraron un requerimiento específico de la Agencia relativo a una vulneración de datos."
+    ]
+   }
+  },
+  "141599-2026-12-01-art-35": {
+   "rol": "sancion",
+   "hechos": [
+    "Me multaron por no proteger datos y recibí una amonestación o multa pequeña.",
+    "Me aplicaron una multa mayor por una infracción más grave en el manejo de información.",
+    "La autoridad me indicó que debía corregir lo que estaba mal en 60 días o me aumentarían la multa un 50%.",
+    "Me sancionaron otra vez por la misma falta y me aumentaron la multa hasta tres veces.",
+    "Mi empresa, que no es pequeña, recibió una multa muy alta vinculada a un porcentaje de sus ingresos por reincidir en faltas graves."
+   ]
+  },
+  "141599-2026-12-01-art-36": {
+   "rol": "sancion",
+   "hechos": [
+    "La empresa devolvió el acceso a datos y ofreció compensaciones a las personas afectadas tras una filtración.",
+    "El responsable entregó documentos y testimonios a la Agencia cuando investigaron una denuncia.",
+    "Una organización reconoció ante la Agencia que había cometido la infracción y explicó qué medidas tomó para detenerla.",
+    "Una empresa nunca había sido sancionada antes por temas de datos personales.",
+    "Una compañía vulneró repetidamente las reglas y siguió cometiendo la misma falta durante meses poniendo en riesgo la privacidad de las personas."
+   ]
+  },
+  "141599-2026-12-01-art-37": {
+   "rol": "sancion",
+   "hechos": [
+    "La autoridad multa a una empresa por una filtración de datos personales masiva.",
+    "Una tienda usó datos de clientes para obtener ganancias sin su consentimiento y recibe sanción.",
+    "Un organismo repite la misma infracción varias veces y la Agencia considera sanciones anteriores.",
+    "La multa se fija mayor porque la información afectó a niños y niñas.",
+    "La resolución de la Agencia quedó firme y el infractor debe pagar en diez días hábiles y presentar el comprobante."
+   ]
+  },
+  "141599-2026-12-01-art-38": {
+   "rol": "sancion",
+   "hechos": [
+    "Una empresa recibe varias multas por infracciones gravísimas en menos de dos años y la autoridad decide suspender sus operaciones de tratamiento de datos por hasta treinta días.",
+    "La suspensión se aplica solo a las actividades de tratamiento y la empresa mantiene el almacenamiento de los datos pero no puede seguir procesándolos.",
+    "Durante la suspensión, la empresa tiene que implementar cambios exigidos por la resolución para cumplir la normativa.",
+    "La empresa no cumple lo ordenado y la autoridad prorroga la suspensión en periodos sucesivos de hasta treinta días hasta que cumpla.",
+    "La autoridad avisa a la entidad reguladora correspondiente cuando la suspensión afecta a una entidad supervisada, para proteger los derechos de sus usuarios."
+   ]
+  },
+  "141599-2026-12-01-art-39": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La empresa que fue multada por usar sin permiso datos de clientes aparece en un registro público.",
+    "Quiero revisar si un proveedor fue sancionado antes de contratarlo y lo busco en un listado en línea y gratuito.",
+    "Una compañía que implementó un modelo de prevención certificado aparece registrada como que tiene ese modelo vigente.",
+    "Se publica qué conducta fue sancionada y por qué se agravó o atenuó la responsabilidad de la empresa.",
+    "Las anotaciones sobre sanciones permanecen visibles en el registro durante cinco años desde que se anotaron."
+   ]
+  },
+  "141599-2026-12-01-art-4": {
+   "rol": "sustantivo",
+   "hechos": [
+    "quiero ver qué información tiene una empresa sobre mí y pedir copia de esos datos",
+    "detecté que mis datos personales están equivocados y quiero que los corrijan",
+    "pedí que borren mis datos de una base porque ya no quiero que me contacten",
+    "mi familiar falleció y nosotros, como herederos, intentamos ejercer sus derechos sobre sus datos",
+    "intenté acceder a los datos del fallecido pero descubrimos que él había prohibido ese acceso en vida"
+   ]
+  },
+  "141599-2026-12-01-art-40": {
+   "rol": "procedimiento",
+   "hechos": [
+    "quisiera demandar por uso indebido de mis datos pero pasó mucho tiempo desde que ocurrió el hecho",
+    "una empresa siguió tratando datos personales durante años y no sé desde cuándo empieza a contar el plazo para reclamar",
+    "me notificaron que iniciaron un procedimiento administrativo y quiero saber si eso afecta el tiempo para presentar mi denuncia",
+    "me multaron por una infracción y necesito saber cuánto tiempo tengo para que la multa deje de poder exigirse"
+   ]
+  },
+  "141599-2026-12-01-art-41": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Me negaron el acceso a mis datos y quiero que la Agencia revise la negativa.",
+    "Hice una solicitud y nadie respondió dentro del plazo, y ahora quiero reclamar.",
+    "Necesito saber cuánto tiempo tarda la Agencia en resolver mi reclamo y qué pasos siguen."
+   ],
+   "literales": {
+    "a": [
+     "Quiero presentar por escrito mi reclamo porque me respondieron en forma negativa.",
+     "No contestaron mi solicitud dentro del plazo y quiero hacerlo por correo electrónico.",
+     "Adjunto todas las pruebas y dejo una dirección para recibir notificaciones."
+    ],
+    "b": [
+     "Pido que se suspenda el uso de mis datos mientras la Agencia decide el reclamo.",
+     "Solicito la suspensión sólo porque tengo razones fundadas para temer un daño.",
+     "La Agencia oye antes al responsable antes de suspender el tratamiento."
+    ],
+    "c": [
+     "Presenté el reclamo y quiero que la Agencia revise si cumple los requisitos en diez días.",
+     "No me avisaron si mi reclamo fue aceptado y quiero que se entienda acogido por silencio.",
+     "Me notificaron que no lo acogen a trámite y quiero que expliquen por qué."
+    ],
+    "d": [
+     "La Agencia me dijo que notificó al responsable y éste tiene treinta días para responder.",
+     "El responsable me respondió tarde y pidió prórroga para contestar el reclamo.",
+     "Recibí una notificación por correo electrónico del responsable con sus antecedentes."
+    ],
+    "e": [
+     "Pasaron los plazos y la Agencia abrió un periodo probatorio porque hay puntos controvertidos.",
+     "Quiero presentar pruebas durante el término probatorio de diez días hábiles.",
+     "La Agencia decidió abrir pruebas sólo sobre hechos sustanciales y controvertidos."
+    ],
+    "f": [
+     "El responsable aceptó mi reclamo y remitió documentos que lo acreditan.",
+     "Me notificaron que puedo ejercer mis derechos en diez días tras el allanamiento del responsable.",
+     "La Agencia archivó el caso después de aplicar una sanción al responsable."
+    ],
+    "g": [
+     "La Agencia me pidió informes adicionales para resolver el reclamo.",
+     "Me citaron a una audiencia para intentar un acuerdo entre las partes.",
+     "Me dijeron que las opiniones de los funcionarios en la audiencia no impiden que sigan con el caso."
+    ],
+    "h": [
+     "Me informaron que la Agencia dictó una resolución fundamentada sobre mi reclamo.",
+     "Quiero saber que el procedimiento no puede durar más de seis meses.",
+     "Exijo que la resolución explique las razones de fondo."
+    ],
+    "i": [
+     "Quiero impugnar judicialmente la resolución de la Agencia dentro de quince días hábiles.",
+     "Busco información sobre el procedimiento para recurrir a la justicia tras la notificación.",
+     "Me notificaron que puedo iniciar la impugnación conforme al artículo referido."
+    ]
+   }
+  },
+  "141599-2026-12-01-art-42": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Quiero saber quién inicia y dirige una investigación cuando reclaman uso indebido de mis datos.",
+    "Me pregunto cuánto tiempo tengo para responder si la Agencia me acusa de infringir la ley de datos.",
+    "Necesito saber qué pruebas puede pedir la Agencia y cómo se valoran durante un procedimiento sancionatorio.",
+    "Quiero saber qué contiene la resolución final y cómo puedo impugnarla si no estoy conforme.",
+    "Me preocupa que un expediente tarde mucho y quiero saber cuánto tiempo puede durar en total."
+   ],
+   "literales": {
+    "a": [
+     "La Agencia asume la instrucción del proceso sancionatorio cuando se detecta una infracción.",
+     "Un funcionario de la Agencia dirige la investigación administrativa contra quien trate datos.",
+     "Un procedimiento sancionatorio solo se tramita a través de la Agencia competente."
+    ],
+    "b": [
+     "La Agencia inicia el procedimiento por oficio tras una fiscalización.",
+     "La Agencia abre el procedimiento tras una reclamación que presenta un titular de datos y debe certificar su recepción.",
+     "Al iniciarse el expediente, la Agencia designa al funcionario responsable de instruirlo."
+    ],
+    "c": [
+     "La Agencia envía una formulación de cargos que describe hechos que podrían ser infracción.",
+     "La formulación de cargos enumera qué principios u obligaciones se habrían vulnerado.",
+     "La formulación incluye las normas presuntamente infringidas y antecedentes que la sustentan."
+    ],
+    "d": [
+     "La Agencia notifica la formulación de cargos al domicilio postal o correo electrónico del responsable.",
+     "Se pueden usar otros medios electrónicos equivalentes indicados previamente para notificar la formulación de cargos."
+    ],
+    "e": [
+     "El responsable de datos dispone de quince días hábiles para presentar sus descargos tras la notificación.",
+     "En sus descargos, el responsable puede aportar todos los antecedentes que estime pertinentes para defenderse.",
+     "Al presentar descargos, el responsable debe indicar una dirección de correo electrónico para futuras notificaciones."
+    ],
+    "f": [
+     "Tras recibir los descargos o vencido el plazo, la Agencia puede abrir un término probatorio de diez días si hay asuntos controvertidos.",
+     "Ese término probatorio se activa solo cuando existen hechos sustanciales, pertinentes y controvertidos.",
+     "Durante esos diez días se pueden producir diligencias para acreditar los hechos en disputa."
+    ],
+    "g": [
+     "La Agencia debe admitir las medidas probatorias solicitadas por el responsable si son pertinentes y necesarias.",
+     "Si la Agencia rechaza una petición probatoria, debe justificar esa decisión.",
+     "El responsable puede pedir diligencias probatorias en sus descargos para respaldar su defensa."
+    ],
+    "h": [
+     "Los hechos pueden acreditarse con cualquier medio de prueba admisible en derecho.",
+     "Las pruebas se valoran según las reglas de la sana crítica.",
+     "No hay exclusión de tipos de prueba; se valoran en conjunto."
+    ],
+    "i": [
+     "La Agencia puede solicitar antecedentes o informes a terceros que ayuden a resolver el caso.",
+     "La Agencia tiene amplias facultades para requerir documentación relevante del investigado.",
+     "La Agencia puede pedir informes a organismos o personas que tengan información sobre la investigación."
+    ],
+    "j": [
+     "La resolución final debe estar fundada y resolver todas las cuestiones del expediente.",
+     "Si se declara la infracción, la resolución pondera circunstancias agravantes o atenuantes y aplica la sanción correspondiente.",
+     "La resolución debe pronunciarse sobre todas las alegaciones y defensas presentadas por el responsable."
+    ],
+    "k": [
+     "La resolución que impone sanción debe indicar los recursos administrativos y judiciales disponibles y sus plazos.",
+     "La resolución debe señalar los órganos ante los que procede reclamar y cómo interponer los recursos.",
+     "La resolución de la Agencia que decide el procedimiento puede ser reclamada judicialmente conforme a la ley."
+    ],
+    "l": [
+     "El procedimiento administrativo no puede durar más de seis meses en total.",
+     "Si han pasado más de seis meses desde la certificación de la reclamación sin resolución, el interesado puede presentar un reclamo de ilegalidad.",
+     "El límite de seis meses rige desde la certificación mencionada en la apertura por reclamo."
+    ]
+   }
+  },
+  "141599-2026-12-01-art-43": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Quiero impugnar una resolución de la Agencia y necesito saber dónde presentar el reclamo y en qué plazo.",
+    "Me notificaron la resolución y no sé qué información debe contener mi escrito para que no lo declaren inadmisible.",
+    "Temo que la ejecución del acto me cause un daño grave y quiero saber si puedo pedir que no se ejecute mientras se resuelve el reclamo.",
+    "Me pregunto cuánto tiempo tiene la Agencia para informar al tribunal después de presentada la reclamación.",
+    "Necesito saber si el tribunal puede admitir pruebas y cómo se tramitan antes de decidir.",
+    "Si la Corte acoge mi reclamo, quiero saber qué remedios puede ordenar contra la resolución impugnada."
+   ],
+   "literales": {
+    "a": [
+     "Necesito indicar exactamente cuál es la resolución que reclamo y explicar qué norma se infringió.",
+     "Quiero detallar cómo se produjo la infracción en mi caso.",
+     "Pretendo explicar por qué el acto me causa un agravio concreto."
+    ],
+    "b": [
+     "Presenté mi escrito pero me avisaron que puede ser declarado inadmisible por falta de requisitos.",
+     "Pido que se ordene que no se ejecute la resolución porque su ejecución me causaría un daño irreparable."
+    ],
+    "c": [
+     "Presenté el reclamo y quiero saber cuánto tiempo tiene la Corte para pedir informe a la Agencia.",
+     "Me preocupa que la Agencia tarde en responder el informe requerido por la Corte."
+    ],
+    "d": [
+     "Me notificaron que la Corte puede abrir un término de prueba y quiero saber qué pruebas puedo presentar.",
+     "No sé si la ausencia de la Agencia implica que la Corte dará por evacuado el traslado en rebeldía y qué sigue."
+    ],
+    "e": [
+     "Quiero saber qué significa que la vista del asunto tenga preferencia para incluirse en la tabla.",
+     "Me interesa cuándo se traerán los autos en relación tras el término de prueba."
+    ],
+    "f": [
+     "Si la Corte acoge mi reclamo, quiero que se rectifique el acto y se dicte una nueva resolución.",
+     "Busco que el tribunal confirme que existió agravio y ordene las correcciones correspondientes."
+    ],
+    "g": [
+     "Impugno una resolución que impuso una sanción y quiero saber si la Corte puede revocar la sanción.",
+     "Necesito saber si la Corte puede establecer o desechar la comisión de la infracción en el procedimiento sancionatorio."
+    ],
+    "h": [
+     "Tengo dudas sobre qué normas procesales se aplican cuando el artículo no regula un aspecto del procedimiento.",
+     "Quiero saber si se aplican las reglas del Código Orgánico de Tribunales o del Código de Procedimiento Civil en lo no previsto."
+    ]
+   }
+  },
+  "141599-2026-12-01-art-44": {
+   "rol": "sancion",
+   "hechos": [
+    "El jefe superior no exige que su servicio trate los datos según las normas y se filtran datos personales.",
+    "La Agencia ordena medidas para corregir una conducta y el órgano público no las adopta.",
+    "Un órgano público trata datos sensibles de forma indebida y el jefe superior recibe multa y suspensión.",
+    "La Agencia determina una infracción y aplica una sanción que luego se publica en la web del órgano y de la Agencia."
+   ]
+  },
+  "141599-2026-12-01-art-45": {
+   "rol": "procedimiento",
+   "hechos": [
+    "La autoridad de protección de datos solicita a la Contraloría que investigue a un funcionario público por filtrar información personal.",
+    "En un procedimiento administrativo se determina que hay responsabilidad individual de un trabajador del órgano público y se inicia una investigación sumaria para aclararlo.",
+    "Se está tramitando un expediente administrativo y la Contraloría asume la investigación sobre posibles faltas de funcionarios.",
+    "Tras una investigación se decide sancionar a un funcionario conforme al régimen disciplinario aplicable.",
+    "Si la falta del funcionario se califica como de máxima gravedad, se la trata como una contravención grave a la probidad administrativa."
+   ]
+  },
+  "141599-2026-12-01-art-46": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Un funcionario público revela antecedentes de salud de una persona a colegas sin que sea necesario para el cargo.",
+    "Un empleado del organismo comparte información sobre sanciones administrativas de alguien en una reunión informal.",
+    "Un funcionario usa datos personales obtenidos en su trabajo para favorecer a un familiar o amigo.",
+    "Un funcionario publica en redes sociales datos sensibles que conoció por su cargo.",
+    "Un organismo público entrega datos a otro y los empleados del receptor los usan para fines distintos a los de la obligación legal que motivó la entrega."
+   ]
+  },
+  "141599-2026-12-01-art-47": {
+   "rol": "sustantivo",
+   "hechos": [
+    "una empresa usa mis datos personales contrariando los principios de tratamiento y yo sufro un perjuicio económico",
+    "mis datos se publican o se manejan de forma indebida y eso me causa daño moral",
+    "la Agencia resolvió a mi favor y quiero reclamar indemnización por los daños sufridos",
+    "presenté un reclamo de ilegalidad y ahora que la sentencia está firme quiero exigir que me indemnicen"
+   ]
+  },
+  "141599-2026-12-01-art-48": {
+   "rol": "sustantivo",
+   "hechos": [
+    "mi empleador no puso controles y se difundieron datos de los trabajadores",
+    "una municipalidad no tomó medidas y se filtró información de los vecinos",
+    "una clínica no implementó acciones preventivas y se compartieron historiales médicos sin autorización"
+   ]
+  },
+  "141599-2026-12-01-art-49": {
+   "rol": "sustantivo",
+   "hechos": [
+    "mi empresa nombró a una persona encargada de velar por el manejo de los datos",
+    "me pidieron que siguiera un protocolo específico para evitar filtrar información de clientes",
+    "la compañía incluyó en mi contrato una obligación de cumplir las normas internas de protección de datos",
+    "hay un canal interno para reportar problemas con el tratamiento de datos",
+    "existen sanciones internas si alguien no respeta las reglas sobre datos"
+   ],
+   "literales": {
+    "a": [
+     "la empresa designó oficialmente a alguien como responsable de la protección de datos",
+     "me presentaron al delegado de protección de datos en una reunión general"
+    ],
+    "b": [
+     "me informaron que el delegado puede revisar sistemas y pedir cambios",
+     "el delegado tiene acceso a la información necesaria para supervisar el cumplimiento"
+    ],
+    "c": [
+     "la entidad hizo un inventario del tipo de datos que guarda de clientes",
+     "se identificó qué bases de datos se usan y quiénes son los titulares de esos datos"
+    ],
+    "d": [
+     "se detectaron procesos internos donde es más probable que ocurra una fuga de datos",
+     "se señalaron actividades puntuales, como campañas masivas, que aumentan el riesgo de infracciones"
+    ],
+    "e": [
+     "me entregaron procedimientos para ejecutar mi trabajo sin exponer datos personales",
+     "hay reglas claras para programar tareas que impliquen acceso a información sensible"
+    ],
+    "f": [
+     "existe un mecanismo para reportar internamente incumplimientos relacionados con datos",
+     "la empresa explicó cómo se reportaría a la autoridad en caso de una situación grave"
+    ],
+    "g": [
+     "se establecieron sanciones internas para quienes no respeten el programa de cumplimiento",
+     "hay procedimientos para denunciar y sancionar a empleados que vulneren las normas"
+    ]
+   }
+  },
+  "141599-2026-12-01-art-5": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Quiero pedir a una empresa que me confirme si tiene mis datos y me los muestre.",
+    "Descubrí que una entidad me contactó y quiero saber de dónde obtuvo mi información.",
+    "Me preocupa por qué usan mis datos y quiero conocer para qué fines los tratan.",
+    "Sospecho que mis datos fueron enviados a terceros y quiero saber a quiénes.",
+    "Quiero saber por cuánto tiempo mantendrán mis datos almacenados."
+   ]
+  },
+  "141599-2026-12-01-art-50": {
+   "rol": "sustantivo",
+   "hechos": [
+    "la empresa nombró a una persona para encargarse de la protección de datos",
+    "un funcionario que conoció datos confidenciales los divulgó y fue sancionado",
+    "el dueño de una pequeña empresa asumió personalmente las funciones de delegado",
+    "no me dieron con quién hablar y quiero que el delegado responda sobre mis datos",
+    "la empresa no entregó al delegado recursos para hacer su trabajo"
+   ],
+   "literales": {
+    "a": [
+     "me llamaron para que me expliquen qué dice la regla sobre el uso de mis datos",
+     "el delegado tuvo que asesorar a un departamento sobre cómo tratar datos de clientes"
+    ],
+    "b": [
+     "el delegado participó en la elaboración de la política interna sobre datos",
+     "le pidieron promover nuevas normas internas de protección de datos"
+    ],
+    "c": [
+     "el delegado verificó si se estaban cumpliendo las normas de tratamiento de datos",
+     "se le pidió supervisar que la política interna fuera aplicada correctamente"
+    ],
+    "d": [
+     "organizó capacitación continua para quienes manejan datos en la empresa",
+     "impartió talleres para empleados sobre manejo seguro de información personal"
+    ],
+    "e": [
+     "ayudó a identificar riesgos en el tratamiento de datos de clientes",
+     "recomendó medidas para evitar filtraciones de información personal"
+    ],
+    "f": [
+     "presentó un plan anual de trabajo sobre protección de datos",
+     "rindió cuenta de los resultados de su plan anual"
+    ],
+    "g": [
+     "respondió las solicitudes que hicimos sobre el acceso a nuestros datos",
+     "atendió consultas de titulares sobre cómo se usan sus datos"
+    ],
+    "h": [
+     "actuó como punto de contacto cuando la autoridad lo necesitó",
+     "cooperó con la agencia en requerimientos sobre tratamiento de datos"
+    ]
+   }
+  },
+  "141599-2026-12-01-art-51": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Mi empresa quiere que alguien diga oficialmente que nuestro modelo de prevención cumple con la ley.",
+    "Necesito saber quién inscribe a mi institución en el registro de sanciones y cumplimiento cuando tiene esa certificación.",
+    "Quiero saber qué requisitos y pasos se deben seguir para implementar y certificar un modelo de prevención.",
+    "Pregunté qué organismo supervisa que el modelo de prevención siga cumpliendo con lo exigido.",
+    "Me interesa saber qué normas detalla el reglamento sobre cómo se hará la certificación y supervisión."
+   ]
+  },
+  "141599-2026-12-01-art-52": {
+   "rol": "vigencia",
+   "hechos": [
+    "Quiero saber cuánto dura el certificado que me dio la Agencia para manejar datos.",
+    "Pregunto qué pasa si dejo de trabajar y si mi certificado sigue siendo válido.",
+    "Necesito entender si el certificado sigue vigente después de que una empresa cierre o se disuelva."
+   ]
+  },
+  "141599-2026-12-01-art-53": {
+   "rol": "sustantivo",
+   "hechos": [
+    "La Agencia me pide documentos para verificar que cumplimos con las normas y no se los entregamos alegando secreto",
+    "Nos solicitaron información y entregamos solo parte de los datos, faltando antecedentes importantes",
+    "Enviamos datos erróneos por error y la Agencia lo detecta",
+    "La Agencia revoca la certificación porque no cumplimos con lo requerido",
+    "Queremos pedir otra vez la certificación pero nos exigen demostrar que arreglamos el problema que motivó la revocación"
+   ]
+  },
+  "141599-2026-12-01-art-54": {
+   "rol": "sustantivo",
+   "hechos": [
+    "en el tribunal guardan y consultan mis datos personales dentro de un expediente sin pedirme mi consentimiento",
+    "el Ministerio Público recopila información sobre mí mientras investiga un caso",
+    "el Servicio Electoral actualiza mi información en el registro para un proceso electoral",
+    "una oficina del Congreso procesa datos personales para cumplir una comisión o función interna",
+    "los funcionarios que manejan mis datos deben mantenerlos en secreto y pueden ser sancionados si no lo hacen"
+   ]
+  },
+  "141599-2026-12-01-art-55": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Quiero pedir que eliminen mis datos a un organismo del Estado y no sé ante quién hacerlo.",
+    "Un organismo como la Contraloría negó mi solicitud sobre mis datos y me perjudicó, y quiero reclamar a un tribunal.",
+    "Necesito saber si puedo presentar un reclamo en la Corte de Apelaciones porque una entidad pública me negó un derecho relacionado con mis datos.",
+    "Me preocupa que el Congreso o un tribunal estén tratando mis datos sin respetar los principios de la ley y quiero que adopten medidas internas de control."
+   ]
+  },
+  "141599-2026-12-01-art-6": {
+   "rol": "sustantivo",
+   "hechos": [
+    "En el registro de mi empresa figura una dirección antigua y los avisos me llegan a donde ya no vivo",
+    "Un banco guarda un historial que dice que tengo una deuda que ya pagué y eso me niega un crédito",
+    "En el expediente médico aparece una alergia que ya no tengo y me prescriben medicamentos innecesarios",
+    "Un sitio web muestra mi nombre mal escrito y me atribuye trabajos que no hice",
+    "Una base de datos me identifica como tenido antecedentes penales, cuando nunca fui condenado"
+   ]
+  },
+  "141599-2026-12-01-art-7": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Una empresa conserva datos que ya no son necesarios para el servicio que prestó.",
+    "Revocaron mi consentimiento para recibir publicidad y la empresa sigue usando mis datos.",
+    "Descubrí que mis datos se obtuvieron sin mi permiso y siguen almacenados.",
+    "Mis datos son antiguos y ya no reflejan mi situación actual.",
+    "Un juez ordenó que borren mis datos y la entidad debe hacerlo.",
+    "Me opuse al tratamiento de mis datos y no existe otra base legal para seguir usándolos."
+   ]
+  },
+  "141599-2026-12-01-art-8": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me siguen enviando publicidad aunque pedí que dejaran de usar mis datos.",
+    "Una empresa hace perfiles con mi información para decidir qué ofertas enviarme.",
+    "Descubrí que usaron datos públicos sobre mí para contactarme con fines comerciales.",
+    "Quiero oponerme porque una compañía dice que trata mis datos por sus intereses y no quiero que lo hagan.",
+    "Me entero de que me procesan datos para marketing directo y quiero que paren."
+   ]
+  },
+  "141599-2026-12-01-art-8-bis": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me rechazaron un crédito por una decisión tomada automáticamente sin que nadie lo revisara.",
+    "Una empresa me negó un empleo tras un análisis algorítmico de mi perfil en línea.",
+    "Un servicio cambió las condiciones de mi contrato por una decisión automatizada que me afectó significativamente."
+   ]
+  },
+  "141599-2026-12-01-art-8-ter": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Solicité que corrigieran datos personales erróneos y pedí que dejaran de tratarlos hasta que me respondieran.",
+    "Pedí que eliminaran mis datos y pedí además que se suspendiera cualquier uso mientras se tramita la solicitud.",
+    "Me opuse al uso de mis datos por parte de una empresa y pedí que paralizaran cualquier operación de tratamiento hasta que resolvieran.",
+    "Quise optar por que mis datos fueran bloqueados en lugar de borrados en una situación cubierta por la ley.",
+    "Me dijeron que aunque suspendieran el tratamiento, igual guardarían mis datos en sus archivos."
+   ]
+  },
+  "141599-2026-12-01-art-9": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Pedí a una empresa que me envíe todo lo que sabe de mí en un archivo para llevármelo a otra compañía.",
+    "Quise que mi banco transfiriera mis datos directamente a una fintech y me dijeron que no podían hacerlo por ser complicado.",
+    "La plataforma en línea no me explicó cómo obtener mis datos ni qué formato tendría el archivo.",
+    "Solicité que mis datos se trasladaran a otro servicio y, al mismo tiempo, que los borraran de la primera empresa.",
+    "Me ofrecieron mis datos solo en papel y con trabas que demoraron mucho el trámite."
+   ]
+  },
+  "141599-2026-12-01-art-t-1": {
+   "rol": "vigencia",
+   "hechos": [
+    "Quiero saber desde cuándo debo aplicar las nuevas reglas de protección de datos tras su publicación.",
+    "Mi empresa necesita saber cuánto tiempo tenemos para adaptar nuestros sistemas después que la ley fue publicada.",
+    "Pregunto si ya puedo exigir el cumplimiento de todas las disposiciones o si hay un plazo para que entren en vigor.",
+    "Me interesa saber si una determinada obligación de la ley rige inmediatamente o si hay un periodo de espera tras su publicación."
+   ]
+  },
+  "141599-2026-12-01-art-t-2": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Mis datos personales están en un registro que existía antes de esta ley y quiero saber si puedo hacer valer derechos sobre ellos.",
+    "Quiero acceder a la información que una base de datos antigua tiene sobre mí para ver qué contiene.",
+    "Pido que corrijan un dato que fue ingresado en un banco de datos creado antes de la vigencia de la ley.",
+    "Solicito que eliminen información mía que figura en un registro anterior a la entrada en vigencia de la presente ley.",
+    "Deseo ejercer algún derecho que la ley me otorga respecto de datos que fueron registrados con anterioridad a su vigencia."
+   ]
+  },
+  "141599-2026-12-01-art-t-3": {
+   "rol": "vigencia",
+   "hechos": [
+    "Quiero saber si las reglas antiguas del boletín de deudas siguen rigiendo después de la nueva ley.",
+    "Mi nombre apareció en el boletín y no sé si puedo usar la ley nueva para exigir cambios.",
+    "La empresa que publica el boletín sigue usando los trámites de 1928 y no sé si está obligada a cambiarlos.",
+    "Un banco me dice que actúa según el decreto viejo; quiero saber si eso choca con la nueva ley."
+   ]
+  },
+  "191865-karin-art-13": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Un funcionario publica decisiones sin explicar por qué se tomó esa resolución",
+    "Se ocultan o no se facilitan los trámites y requisitos para acceder a un servicio público",
+    "Un trabajador sufre burlas y comentarios sexuales en su lugar de trabajo",
+    "Un jefe agrede verbalmente y nadie toma medidas para evitar que siga pasando",
+    "La oficina no investiga denuncias de acoso ni sanciona a quienes las cometen"
+   ]
+  },
+  "191865-karin-art-14": {
+   "rol": "sustantivo",
+   "hechos": [
+    "En la oficina hay comentarios y conductas que molestan a varias personas y no existe un protocolo para prevenirlo.",
+    "No se hacen capacitaciones ni se informa al personal sobre cómo identificar y prevenir el acoso o la violencia laboral.",
+    "Durante una investigación se filtraron datos personales de la persona denunciada y de la denunciante.",
+    "La jefatura nunca comunica los canales para denunciar ni cómo acceder a prestaciones de seguridad social relacionadas con el incidente.",
+    "Se necesita asistencia externa especializada para evaluar riesgos psicosociales y no se sabe si corresponde pedirla."
+   ]
+  },
+  "191865-karin-art-46": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me despidieron por bajo rendimiento sin que constara en mis calificaciones ni hubo una investigación previa",
+    "Me asignaron a tareas que no corresponden al empleo para el que fui designado",
+    "Me enviaron de comisión de servicio al extranjero por un periodo corto",
+    "Presenté mi renuncia y necesito que la acepten para cesar en el cargo",
+    "Abrieron un sumario administrativo en mi contra y quiero que el procedimiento sea confidencial, rápido y con perspectiva de género"
+   ]
+  },
+  "191865-karin-art-62": {
+   "rol": "sustantivo",
+   "hechos": [
+    "mi colega vendió información confidencial que tenía por su trabajo para que un amigo obtuviera un negocio",
+    "el jefe presionó a un proveedor para que contratara a su hermano",
+    "una funcionaria usó el auto del servicio para un viaje personal",
+    "me pidieron un regalo a cambio de acelerar un trámite",
+    "una persona me acosó sexualmente en la oficina"
+   ],
+   "literales": {
+    "1": [
+     "un funcionario entregó datos confidenciales de un proyecto a un conocido para que invirtiera",
+     "compartieron información privilegiada de licitaciones con terceros para obtener lucro"
+    ],
+    "2": [
+     "un superior llamó a un proveedor para obligarlo a contratar a un allegado",
+     "una autoridad presionó a alguien para que favoreciera a su empresa"
+    ],
+    "3": [
+     "emplearon fondos de la institución para pagar compras personales",
+     "se utilizó material del organismo para beneficio privado"
+    ],
+    "4": [
+     "se hizo trabajo particular durante la jornada usando el computador de la oficina",
+     "se destinó personal del servicio a tareas privadas de un funcionario"
+    ],
+    "5": [
+     "un empleado solicitó un obsequio a cambio de agilizar un trámite",
+     "aceptaron entradas a un evento por favores relacionados con el cargo"
+    ],
+    "6": [
+     "un funcionario participó en la evaluación de un contrato donde su hijo era postor",
+     "no se apartó de una decisión administrativa que afectaba a su cónyuge"
+    ],
+    "7": [
+     "se adjudicó un contrato sin realizar la licitación pública que correspondía",
+     "el organismo evitó la convocatoria pública exigida por la ley"
+    ],
+    "8": [
+     "no atendieron trámites esenciales provocando demoras graves en el servicio",
+     "se ignoraron procedimientos legales que impedían el ejercicio de derechos de usuarios"
+    ],
+    "9": [
+     "presentaron una denuncia falsa contra un compañero para perjudicarlo",
+     "difundieron acusaciones sin pruebas sabiendo que eran falsas"
+    ],
+    "10": [
+     "una trabajadora sufrió comentarios sexuales y tocamientos en el lugar de trabajo",
+     "un funcionario fue objeto de burlas y actos de violencia laboral en su oficina"
+    ]
+   }
+  },
+  "207436-karin-art-154": {
+   "rol": "sustantivo",
+   "hechos": [
+    "En mi trabajo no existe un horario claro y nunca dijeron a qué hora debo empezar o terminar.",
+    "Me descontaron plata por llegar tarde sin que me explicaran qué pasa con los descansos o cómo se calculan las remuneraciones.",
+    "Quise reclamar por acoso y no supe a quién dirigirme dentro de la empresa porque no hay cargos designados para recibir reclamos.",
+    "Trabajan personas con discapacidad y no hay medidas de accesibilidad ni ajustes razonables en el lugar.",
+    "Me aplicaron una sanción disciplinaria sin que exista un procedimiento ni me hayan dado la respuesta por escrito.",
+    "Presenté un reclamo por una infracción relacionada con mi contrato y no recibí una respuesta del empleador en el plazo que me indicaron."
+   ],
+   "literales": {
+    "1": [
+     "No sé a qué hora empieza mi turno porque no está informado en el reglamento.",
+     "Me cambiaron de turno y nadie informó las nuevas horas de inicio y término.",
+     "Trabajo por equipos y no indican el horario de cada equipo."
+    ],
+    "2": [
+     "No me dejan tomar mi descanso en el horario que me dijeron al contratarme.",
+     "Me quitan minutos de descanso sin avisar.",
+     "No hay un horario claro para los descansos en mi faena."
+    ],
+    "3": [
+     "No entiendo qué pagos extras incluye mi sueldo porque no están descritos.",
+     "Me pagaron distinto al acordado y no hay claridad sobre los tipos de remuneraciones.",
+     "Quiero saber si me corresponde un bono y no está en el reglamento."
+    ],
+    "4": [
+     "No me informaron el día ni el lugar donde pagarán mi sueldo.",
+     "Me pagaron a destiempo y nadie explica cuál es la fecha de pago.",
+     "Cambian el lugar de pago sin avisar a los trabajadores."
+    ],
+    "5": [
+     "Me exigieron tareas que me prohibieron hacer en el reglamento.",
+     "Me gritaron y me trataron de manera contraria a las prohibiciones establecidas.",
+     "Me obligaron a realizar actividades fuera de mis obligaciones sin que estén claras las prohibiciones."
+    ],
+    "6": [
+     "Quise hacer un reclamo y no supe a quién dirigirme dentro de la empresa.",
+     "En la empresa grande nadie explicó las funciones y cargos para presentar sugerencias.",
+     "Me entregaron una queja y me dijeron que la persona responsable no existe en el registro."
+    ],
+    "7": [
+     "Me asignaron faenas peligrosas siendo menor o por mi género sin normas especiales.",
+     "No adaptaron el puesto de trabajo a mis necesidades por discapacidad.",
+     "No aplican medidas para prevenir el acoso hacia trabajadores con discapacidad."
+    ],
+    "8": [
+     "Me pidieron acreditar cumplimiento de la obligación escolar siendo menor y no revisaron los documentos.",
+     "No hubo verificación de mi cédula de identidad ni del servicio militar cuando fue necesario.",
+     "La empresa exige papeles previsionales pero no especifica cómo comprobarlos."
+    ],
+    "9": [
+     "No se siguen las normas de higiene y seguridad que me exigieron al entrar.",
+     "Falta capacitación sobre prevención y no hay instrucciones claras en el lugar.",
+     "No hay señalización ni protocolos de seguridad en mi puesto."
+    ],
+    "10": [
+     "Me aplicaron una sanción que no es amonestación ni multa, sino algo distinto.",
+     "Me pusieron una multa mayor al porcentaje permitido sobre mi remuneración diaria.",
+     "Recibí una sanción escrita que excede lo que permite el reglamento."
+    ],
+    "11": [
+     "Me sancionaron sin seguir ningún procedimiento establecido.",
+     "No se me informó cómo se aplicó la sanción ni pude defenderme.",
+     "La empresa no respetó los pasos del procedimiento antes de imponer la multa."
+    ],
+    "12": [
+     "Denuncié acoso sexual y la empresa no aplicó el protocolo de prevención ni me dijo las medidas de resguardo.",
+     "Hubo violencia en el trabajo y no se me informó el procedimiento a seguir según el reglamento.",
+     "Se adoptaron sanciones sin considerar las medidas de protección para los involucrados."
+    ],
+    "13": [
+     "Hice un reclamo por una infracción y no recibí la respuesta por escrito.",
+     "Mi reclamo por vulneración del artículo mencionado no fue fundado ni documentado por el empleador.",
+     "El empleador tardó más de treinta días en darme una respuesta a mi reclamo."
+    ]
+   }
+  },
+  "207436-karin-art-154-bis": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me contrataron y nadie me explicó qué pasa si veo o sufro acoso en el trabajo.",
+    "Mi empresa no tiene un reglamento interno, y al firmar el contrato no me entregaron por escrito las medidas para proteger a las personas involucradas en denuncias.",
+    "Una compañera fue acosada y desconozco qué sanciones aplicarán porque no me informaron el procedimiento de investigación.",
+    "Quieren que firme el contrato pero no me han mostrado cómo investigan ni castigan conductas de acoso o violencia laboral"
+   ]
+  },
+  "207436-karin-art-154-ter": {
+   "rol": "sustantivo",
+   "hechos": [
+    "mi jefe contó a otros detalles médicos que le di en confianza",
+    "recibí un aviso de que mis datos personales fueron enviados a terceros sin mi permiso",
+    "publicaron en el grupo de la empresa mi número de teléfono y mi dirección",
+    "compartieron el monto de mi remuneración con compañeros sin preguntarme"
+   ]
+  },
+  "207436-karin-art-2": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me rechazaron en una oferta de trabajo porque tengo cáncer.",
+    "Un compañero me insulta y humilla frente a otros en la oficina hasta hacerme sentir incapaz de trabajar.",
+    "Un cliente me agrede verbalmente y me amenaza mientras atiendo en la tienda.",
+    "En la publicación de un empleo piden específicamente no contratar a personas de determinada edad o identidad de género.",
+    "La empresa exige un certificado bancario para contratarme, aunque yo no voy a manejar fondos."
+   ]
+  },
+  "207436-karin-art-211-a": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Mi empleador no adoptó ni implementó medidas contra el acoso y la violencia en el trabajo.",
+    "La empresa nunca puso a disposición un protocolo que explique qué se hará si alguien denuncia acoso.",
+    "No nos informaron ni capacitaron sobre los riesgos de acoso ni sobre qué medidas de prevención existen.",
+    "Durante una investigación mi privacidad y honra no fueron resguardadas y todo quedó difundido en el lugar de trabajo.",
+    "La empresa no comunica qué canales de denuncia tiene ni las instancias estatales a las que puedo acudir.",
+    "No se ha evaluado el riesgo psicosocial con perspectiva de género en mi lugar de trabajo."
+   ]
+  },
+  "207436-karin-art-211-b": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Presento una denuncia interna por acoso y quiero que la investigación sea confidencial para no afectar mi trabajo.",
+    "La investigación de una falta laboral se alarga y quiero saber que tendrá rapidez en su tramitación.",
+    "Creo que la persona que investiga está parcializada y quiero que el proceso sea imparcial.",
+    "Quiero que en la investigación se considere cómo afecta la situación a mujeres y hombres de forma distinta.",
+    "Pregunto qué directrices debe seguir el empleador o el inspector en una investigación y si habrá un reglamento que lo aclare."
+   ]
+  },
+  "207436-karin-art-211-b-bis": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Me acosan sexualmente en el trabajo y quiero denunciarlo pero prefiero decirlo en persona en vez de escribirlo.",
+    "Digo la denuncia en la empresa y la persona que me escucha no hace un acta ni me la hace firmar.",
+    "Tras denunciar, el agresor sigue compartiendo el mismo espacio de trabajo y nadie me separa ni me cambian el turno.",
+    "La empresa no me ofrece ayuda psicológica inmediata después de la denuncia.",
+    "Denuncio ante la Inspección del Trabajo y espero que pidan al empleador que tome medidas en los dos días hábiles siguientes."
+   ]
+  },
+  "207436-karin-art-211-c": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Presenté una denuncia de acoso directamente en mi lugar de trabajo y no supe si la empresa la remitió afuera.",
+    "La empresa inició una investigación interna sobre una queja y la hizo por escrito manteniendo todo en reserva.",
+    "La investigación interna tardó más de un mes y no recibí respuesta de la autoridad laboral.",
+    "El empleador nombró a un compañero con formación en género para conducir la indagación interna.",
+    "Denuncié conductas graves y quería saber qué medidas correctivas iba a tomar el empleador tras la investigación."
+   ]
+  },
+  "207436-karin-art-211-d": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Tras terminar una investigación de la Inspección del Trabajo, me avisaron que había un informe con conclusiones y me lo comunicaron a mí como denunciado.",
+    "La persona que presentó la denuncia recibió las observaciones y conclusiones que la Inspección dejó por escrito.",
+    "El empleador fue notificado de las conclusiones de la investigación realizada por la Inspección del Trabajo.",
+    "La Inspección detectó durante sus facultades que había una vulneración de derechos fundamentales y aplicó un procedimiento especial previsto para esos casos, con una salvedad para ciertas conductas.",
+    "Cuando la inspección encuentra una vulneración grave de derechos básicos, se activa un trámite distinto al ordinario, salvo una excepción que aplica en algunos supuestos concretos."
+   ]
+  },
+  "207436-karin-art-211-e": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Presenté una denuncia por acoso y la empresa recibió el informe pero pasaron más de quince días sin que me informaran medidas.",
+    "La empresa aplicó una sanción tras una investigación y me comunicaron la decisión dentro del plazo.",
+    "Me despidieron tras un informe de investigación y quiero impugnar el despido ante el tribunal aportando pruebas para rebatir lo que dijo el informe.",
+    "La empresa no me explicó cómo denunciar los hechos ante las autoridades penales después de mi denuncia por acoso sexual.",
+    "Recibí la notificación de una sanción y necesito saber si la gravedad de los hechos se consignó en el informe para justificar un despido."
+   ]
+  },
+  "236392-karin-art-119": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me anotaron una falta en la hoja de vida por no cumplir con mis funciones.",
+    "Me abrieron un sumario administrativo por una supuesta infracción a mis deberes.",
+    "Me notificaron que me aplicarían una medida disciplinaria por una conducta imputada.",
+    "La investigación que me hicieron no respetó la confidencialidad ni la perspectiva de género."
+   ]
+  },
+  "236392-karin-art-12": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Una persona que no tiene ciudadanía ni permiso de residencia solicita un puesto público y se le niega el ingreso.",
+    "Alguien que no completó la educación requerida para un cargo no puede ingresar a la Administración.",
+    "Un candidato con problemas de salud que le impiden realizar las funciones del cargo es rechazado.",
+    "Una persona que fue separada de un cargo público por mala calificación intenta postular antes de cinco años.",
+    "Alguien con una condena por un delito grave intenta ingresar a la Administración y se le impide hacerlo.",
+    "Una persona con discapacidad que terminó sus estudios en educación especial solicita un cargo que exige licencia de enseñanza media."
+   ]
+  },
+  "236392-karin-art-121": {
+   "rol": "sancion",
+   "hechos": [
+    "Me llamaron la atención públicamente y me dejaron una censura en el expediente por conducta inapropiada.",
+    "Me aplicaron una multa por una falta administrativa relacionada con mis funciones.",
+    "Me suspendieron del empleo por un mes por no cumplir procedimientos internos.",
+    "Me destituyeron del cargo tras una investigación por graves incumplimientos.",
+    "Colaboré con los investigadores para identificar a los responsables y eso se consideró al aplicar la sanción.",
+    "Fui denunciante pero también participé en los hechos; me informaron que mi colaboración redujo la sanción pero me inhabilitaron para volver a ingresar al Estado por un periodo."
+   ]
+  },
+  "236392-karin-art-125": {
+   "rol": "sancion",
+   "hechos": [
+    "Me despidieron porque me fui de la institución varios días sin justificarlo.",
+    "Me condenaron por un delito y me dijeron que eso podía terminar mis servicios.",
+    "Denunciaron a un compañero con acusaciones falsas para perjudicarlo y lo destituyeron.",
+    "Acosé a alguien que hizo una denuncia y por eso me apartaron del cargo.",
+    "Incumplí reglas de probidad muy graves y me pusieron término de contrato."
+   ]
+  },
+  "236392-karin-art-126": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El jefe ordena una investigación para comprobar hechos y ver quiénes fueron responsables.",
+    "Presentan una denuncia que la autoridad considera grave y la rechazan; la persona denunciadora recibe pronto una notificación fundada.",
+    "Tratan de notificarme en mi casa y en el trabajo y no me encuentran; luego me llega una carta certificada indicando que ya fui notificado.",
+    "Me dicen que la investigación será verbal, que levantaron un acta con lo declarado y que no puede durar más de cinco días.",
+    "Me formularon cargos y me dieron dos días para responder desde que me notificaron.",
+    "Me pidieron que aportara pruebas y me dieron un plazo corto (hasta tres días) para rendirlas; luego el investigador hizo un informe y la autoridad resolvió rápido, con posibilidad de pedir reposición o apelar en plazos muy breves."
+   ]
+  },
+  "236392-karin-art-129": {
+   "rol": "procedimiento",
+   "hechos": [
+    "La institución decide abrir una investigación interna y nombra a la persona que va a investigar el asunto.",
+    "Quieren que investigue alguien de igual o mayor rango que la persona señalada en la denuncia.",
+    "En casos de acoso o violencia de género, piden preferentemente que la persona investigadora tenga formación en esos temas.",
+    "Yo, como afectada, quiero aportar pruebas, ver lo que se investiga desde que se formulan cargos y recibir notificaciones para poder reclamar.",
+    "Se designó a un investigador pero luego apareció un superior implicado; igual siguió a cargo de la investigación hasta que la cerraron."
+   ]
+  },
+  "236392-karin-art-136": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me suspendieron de mis funciones mientras investigaban una falta.",
+    "Me trasladaron temporalmente a otro cargo dentro de la misma institución y en la misma ciudad.",
+    "Denunciaron a un compañero por hechos graves y a la persona denunciante la separaron físicamente del acusado y le ofrecieron atención psicológica temprana.",
+    "Me descontaron el cincuenta por ciento de mis remuneraciones durante la suspensión preventiva.",
+    "Me notificaron personalmente y por escrito que el sumario había sido sobreseído y por eso terminó la medida.",
+    "Aunque el fiscal propuso la destitución, me mantuvieron suspendido hasta que se resolviera el sumario o los recursos."
+   ]
+  },
+  "236392-karin-art-137": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El fiscal propone cerrar una investigación y remite los antecedentes al superior de la institución para que decida.",
+    "El superior rechaza la propuesta del fiscal y ordena que la investigación se complete en un plazo breve.",
+    "Durante la investigación, el sumario se mantiene reservado hasta que se formulen cargos, y después deja de ser secreto para el investigado y su defensor.",
+    "El fiscal propone el sobreseimiento, la autoridad lo aprueba y se notifica al denunciante que presentó los hechos.",
+    "El denunciante recibe la notificación y quiere reclamar ante la Contraloría dentro del plazo señalado tras haber tomado conocimiento."
+   ]
+  },
+  "236392-karin-art-140": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Me entregaron el dictamen y mi jefe tiene cinco días para decidir si me absuelve o me sanciona.",
+    "La autoridad pidió que se hicieran diligencias adicionales y me dijeron que podía haber más cargos por eso.",
+    "Me notificaron cargos nuevos y me dieron tres días para presentar mis observaciones.",
+    "Me notificaron una sanción por hechos que no estaban en los cargos iniciales (lo que no debería ocurrir).",
+    "Denuncié una conducta grave y la autoridad me notificó la resolución dentro de cinco días; puedo reclamar ante la Contraloría en veinte días desde que supe de la resolución."
+   ]
+  },
+  "236392-karin-art-143": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Se vencen los plazos para investigar un sumario y la investigación no está concluida ni afinada.",
+    "La autoridad que ordenó el sumario no ha tomado medidas para agilizarlo tras el vencimiento de los plazos.",
+    "No se ha determinado quién fue el fiscal responsable del retraso en el sumario.",
+    "En un caso de incumplimiento de las prohibiciones señaladas en el artículo 84 letras l) o m), no se han cumplido los plazos para resolver el sumario y hay que adoptar medidas en un plazo breve."
+   ]
+  },
+  "236392-karin-art-158": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Un funcionario cometió una falta administrativa y quieren saber si todavía pueden iniciar un sumario cuatro años después.",
+    "Detectaron una irregularidad ocurrida hace cinco años y preguntan si ya no pueden sancionarla por haber pasado el plazo.",
+    "Se descubrió que un acto administrativo puede ser delito y quieren saber si la investigación disciplinaria sigue abierta mientras exista la acción penal.",
+    "La investigación penal por hechos del funcionario lleva varios años y quieren confirmar si la sanción disciplinaria queda sujeta al mismo plazo que la causa penal.",
+    "Hallaron pruebas de una conducta de hace más de cuatro años pero existe una denuncia penal en curso y consultan si aún pueden aplicar medidas disciplinarias."
+   ]
+  },
+  "236392-karin-art-159": {
+   "rol": "procedimiento",
+   "hechos": [
+    "un funcionario comete una nueva falta mientras hay una investigación previa abierta",
+    "la administración formula cargos formales contra un empleado y la investigación queda en curso",
+    "la investigación administrativa queda paralizada y no avanza durante más de dos años",
+    "al funcionario le realizan dos calificaciones sucesivas sin imponerle ninguna sanción",
+    "se quiere saber si el tiempo de prescripción dejó de contarse por una paralización larga del proceso"
+   ]
+  },
+  "236392-karin-art-84": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me pidieron usar mi cargo para representar a la institución en algo que no me corresponde",
+    "Un compañero aceptó regalos de un proveedor a cambio de favores en el trabajo",
+    "Un jefe demoró y pidió papeles innecesarios para tramitar una licencia que correspondía",
+    "Vi a un funcionario usar las oficinas y el personal en actividades personales fuera del horario",
+    "Un trabajador fue objeto de burlas y comentarios que afectaron su dignidad en el lugar de trabajo"
+   ],
+   "literales": {
+    "a": [
+     "Un funcionario asume funciones o firma actos que no le fueron atribuidos",
+     "Alguien se presenta como representante de la institución sin tener delegación"
+    ],
+    "b": [
+     "Un funcionario decide sobre un contrato donde participa su familiar cercano",
+     "Un trabajador interviene en un trámite que beneficia a su cónyuge"
+    ],
+    "c": [
+     "Un empleado inicia una demanda civil que va contra la institución sin relación directa con su interés personal",
+     "Alguien ejerce una acción civil contra la institución por un asunto propio que no le atañe directamente"
+    ],
+    "d": [
+     "Un testigo declara sobre hechos que conoció por su trabajo sin avisar a su jefe",
+     "Un perito aporta información de causas que conoció en sus funciones sin informar a su superior"
+    ],
+    "e": [
+     "Un funcionario retrasa intencionalmente la resolución de solicitudes que le ingresan",
+     "Se exige documentación que no corresponde para demorar un trámite"
+    ],
+    "f": [
+     "Un empleado pide o acepta regalos de un proveedor para favorecerlo en licitaciones",
+     "Alguien recibe promesas de ventajas personales a cambio de decisiones administrativas"
+    ],
+    "g": [
+     "Un trabajador usa computadoras y archivos del organismo para un emprendimiento privado",
+     "Se emplea personal de la institución en tareas fuera de las funciones oficiales"
+    ],
+    "h": [
+     "Un funcionario organiza actos políticos dentro de oficinas del Estado usando recursos institucionales",
+     "Se utiliza el cargo para promover una candidatura privada dentro de la institución"
+    ],
+    "i": [
+     "Un funcionario organiza una paralización parcial dentro de una repartición",
+     "Alguien participa en la retención indebida de bienes o personas en la oficina"
+    ],
+    "j": [
+     "Un trabajador rompe equipos o destruye material de trabajo de la institución",
+     "Se dañan herramientas o insumos provocando pérdida de valor"
+    ],
+    "k": [
+     "Alguien impulsa la destrucción de instalaciones públicas o privadas del servicio",
+     "Participan en actos que inutilizan dependencias del organismo"
+    ],
+    "l": [
+     "Un funcionario hace comentarios sexuales no deseados hacia una compañera en su puesto",
+     "Se discrimina a un trabajador por razones arbitrarias que humillan su dignidad"
+    ],
+    "m": [
+     "Un superior ejerce conductas persistentes que generan temor o menoscabo en un empleado",
+     "Se realizan actos que constituyen acoso laboral reiterado hacia un funcionario"
+    ]
+   }
+  },
+  "236392-karin-art-90": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me dispararon mientras hacía mi turno y quiero que mi institución me defienda y persiga a quien me atacó.",
+    "Un usuario me acusó en redes de un delito relacionado con mi trabajo y quiero que la institución demande por calumnias e injurias.",
+    "Mi jefe superior fue quien sufrió una agresión por su labor y me informaron que la denuncia la presentó el Ministro.",
+    "Me insultaron y difamaron por actuaciones que hice en servicio y quiero que la institución inicie acciones civiles y penales.",
+    "Fui agredida físicamente en funciones y la autoridad debe evaluar si abre una investigación administrativa de oficio."
+   ]
+  },
+  "251693-karin-art-60": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me enteré de que perdí la calidad de ciudadano y por eso no puedo seguir como alcalde.",
+    "Me ofrecieron un cargo que me hace incompatible y ya no puedo ejercer como alcalde.",
+    "Varios concejales pidieron mi remoción porque no pagué cotizaciones y descuidé funciones importantes.",
+    "Presenté mi renuncia al cargo por motivos personales y espero que el concejo la acepte.",
+    "Renuncié para postular a otro cargo de elección popular y me dijeron que no necesitan aprobar mi renuncia."
+   ]
+  },
+  "251693-karin-art-76": {
+   "rol": "sustantivo",
+   "hechos": [
+    "El concejal desarrolla una enfermedad física o mental que le impide desempeñar sus funciones.",
+    "El concejal presenta su renuncia para asumir o postular a otro cargo de elección popular.",
+    "El concejal falta a más del 25% de las sesiones ordinarias en un año sin justificar esas inasistencias.",
+    "Surge una incompatibilidad o inhabilidad nueva que le impide continuar en el cargo.",
+    "Se comprueba que el concejal incurrió en una falta grave a la probidad o en notable abandono de deberes."
+   ]
+  },
+  "251693-karin-art-77": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El alcalde solicita al tribunal electoral regional que declare que un concejal tiene una causal de inhabilidad.",
+    "Un concejal pide al tribunal electoral que se pronuncie sobre la inhabilidad de otro concejal.",
+    "Un concejal se entera de que podría estar afectado por una causal de inhabilidad y debe informar de inmediato que tiene ese conocimiento.",
+    "Se ejecuta una sentencia judicial que declara la existencia de una causal y la persona cesa en su cargo una vez que la sentencia está firme.",
+    "Un concejal es removido por una causal específica y, tras la remoción, se le aplica la inhabilidad que corresponde según la normativa vigente."
+   ]
+  },
+  "251693-karin-art-89": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Mi marido tiene un contrato con la municipalidad y yo soy concejal; me piden votar el proyecto que aprueba ese contrato.",
+    "Mi hermano postuló a un cargo municipal y en la sesión se va a decidir su nombramiento.",
+    "El concejal fue grabado recibiendo un pago por un negocio que afecta a su familia y la municipalidad investiga responsabilidad penal.",
+    "Un concejal pretender intervenir en la votación sobre un permiso de construcción que beneficiará económicamente a su padre.",
+    "Me quieren aplicar el régimen interno de funcionarios a un concejal por una falta administrativa, pero él reclama que esas normas no le aplican."
+   ]
+  },
+  "30256-karin-art-10": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me piden ser ciudadano para postular al municipio.",
+    "Me exigen haber cumplido la ley de reclutamiento si corresponde.",
+    "Me hacen exámenes médicos para verificar que mi salud sea compatible con el puesto.",
+    "Me solicitan tener la enseñanza requerida o un título técnico o profesional según el cargo.",
+    "Me niegan el ingreso porque tenía una sanción o mala calificación en un puesto público anterior y no han pasado cinco años."
+   ]
+  },
+  "30256-karin-art-118": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Un empleado no cumple sus deberes y lo anotan con una falta en su hoja de vida",
+    "Un trabajador municipal recibe una medida disciplinaria tras una investigación sobre su conducta",
+    "Se inicia una indagación interna para acreditar una falta y debe respetarse la confidencialidad",
+    "La investigación se tramita rápidamente y se exige imparcialidad en el proceso",
+    "Si la infracción es del alcalde, su responsabilidad se tramita conforme a la norma que regula a los alcaldes"
+   ]
+  },
+  "30256-karin-art-120": {
+   "rol": "sancion",
+   "hechos": [
+    "Me aplicaron una multa o una sanción disciplinaria por una falta en mi municipalidad.",
+    "Colaboré con la investigación y me dijeron que mi cooperación podría reducir la sanción o ser considerada atenuante.",
+    "Me destituyeron del empleo por una falta grave y me informaron que la destitución es una de las medidas posibles.",
+    "Denuncié hechos en los que yo participé y me avisaron que, por colaborar, la inhabilitación para volver a trabajar en la administración será de tres años.",
+    "Soy autoridad de elección popular y me comunicaron que la circunstancia de cooperación no me puede ser aplicada como atenuante."
+   ]
+  },
+  "30256-karin-art-123": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Un funcionario dejó de asistir al municipalidad varios días seguidos sin avisar ni presentar una justificación.",
+    "Se cometieron actos que dañaron gravemente la probidad administrativa del servicio.",
+    "Alguien fue condenado por un delito y ello afectó su continuidad en el cargo.",
+    "Una persona presentó una denuncia sabiendo que era falsa para perjudicar a un compañero.",
+    "Se hostigó a una testigo o denunciante para intimidarla y afectar su estabilidad laboral o su vida."
+   ]
+  },
+  "30256-karin-art-124": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El alcalde decide investigar a un funcionario por una queja y anuncia una investigación sumaria.",
+    "No me pudieron notificar en mi casa ni en el trabajo por dos días y me llegó una carta certificada notificándome de la investigación.",
+    "Me citaron a declarar en una investigación verbal y me pidieron firmar el acta de lo que dije.",
+    "Tras la investigación me formularon cargos y me dieron solo dos días para responder.",
+    "El investigador me pidió pruebas y me dio un plazo corto para aportarlas y luego entregó un informe al alcalde.",
+    "El informe de la investigación llegó al alcalde y resolvió en dos días, y me notificaron que podía presentar reposición en dos días."
+   ]
+  },
+  "30256-karin-art-126": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El alcalde ordena abrir una investigación interna porque los hechos denunciados parecen graves.",
+    "Si la persona denunciada o quien presentó la denuncia es el alcalde, un concejal o una jefatura que depende directamente del alcalde, se debe informar a la Contraloría en un plazo de tres días hábiles.",
+    "La Contraloría toma a su cargo la instrucción del sumario cuando corresponde, en lugar del municipio.",
+    "Si se determina que el alcalde actuó culpablemente, esa determinación debe constar expresamente en la resolución del sumario.",
+    "Como concejal me avisaron que debo atenerme a las normas que proceden respecto a esta materia al conocer estos hechos."
+   ]
+  },
+  "30256-karin-art-127": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El alcalde ordena una investigación interna y nombra a la persona que la dirigirá.",
+    "Se inicia un sumario por denuncias de acoso y se busca que quien investigue tenga formación en género o acoso.",
+    "Una víctima quiere aportar pruebas y ser notificada desde que se formulan cargos para poder recurrir decisiones.",
+    "Se nombra como fiscal a alguien que depende directamente de la persona investigada y debe seguir el procedimiento hasta su cierre.",
+    "Se designa a un fiscal de menor jerarquía y surge la consulta sobre si puede continuar si existe relación de dependencia directa."
+   ]
+  },
+  "30256-karin-art-133": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Me pidieron que entregara antecedentes y tuve que colaborar con el fiscal de la investigación interna.",
+    "Presenté una denuncia por conductas graves y me separaron físicamente del denunciado y me ofrecieron atención psicológica temprana.",
+    "La investigación interna debía cerrarse en veinte días y me dijeron que al término se formularían cargos o se pediría el sobreseimiento.",
+    "Hubo diligencias pendientes por causas de fuerza mayor y me informaron que el alcalde podía extender el plazo de instrucción hasta sesenta días.",
+    "Me comunicaron que durante el procedimiento disciplinario las medidas de protección quedarían vigentes hasta que el sumario se concluya."
+   ]
+  },
+  "30256-karin-art-135": {
+   "rol": "procedimiento",
+   "hechos": [
+    "La fiscal propuso archivar el sumario y enviaron todo al alcalde para que decidiera.",
+    "El alcalde rechazó archivar la causa y dijo que la investigación debía completarse en cinco días.",
+    "El alcalde aprobó archivar la investigación y a los pocos días me notificaron que podía reclamar ante la Contraloría.",
+    "El sumario estuvo secreto hasta que se formularon cargos, y entonces mi abogado y yo pudimos acceder a los antecedentes."
+   ]
+  },
+  "30256-karin-art-138": {
+   "rol": "procedimiento",
+   "hechos": [
+    "El fiscal presentó el informe y ahora el alcalde tiene que resolver rápido sobre el caso.",
+    "El alcalde ordenó que se hagan diligencias nuevas o que se corrijan errores en el trámite y fijó un plazo para ello.",
+    "Me notificaron una sanción disciplinaria por hechos que sí estaban incluidos en los cargos.",
+    "Si aparecen cargos nuevos por las diligencias ordenadas, me notificaron y me dieron pocos días para presentar observaciones.",
+    "La persona que denunció fue informada de la resolución sobre ciertos hechos y ahora puede reclamar ante la Contraloría en un plazo determinado."
+   ]
+  },
+  "30256-karin-art-141": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Se vencieron los plazos del sumario y la investigación aún no está afinada ni resuelta.",
+    "El alcalde que ordenó el sumario no lo ha revisado ni ha adoptado medidas para agilizarlo.",
+    "Se vencieron los plazos del sumario y corresponde que el alcalde determine si el fiscal del sumario tuvo responsabilidad en la demora.",
+    "Hay un sumario por incumplimiento de prohibiciones referidas en el artículo 82 letras l) o m) y, tras vencerse los plazos, el alcalde debe tomar medidas rápidamente.",
+    "El plazo extraordinario para que el alcalde adopte las medidas en esos casos especiales es de veinte días desde que vencieron los plazos de instrucción."
+   ]
+  },
+  "30256-karin-art-154": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Un funcionario cometió una falta y la municipalidad quiere sancionarlo pero han pasado tres años desde el hecho.",
+    "Descubren una omisión administrativa años después y preguntan si aún pueden iniciar un sumario.",
+    "El funcionario habría cometido conductas que podrían ser delito y la fiscalía ya inició investigación penal.",
+    "La municipalidad intenta cerrar un caso disciplinario mientras existe un proceso penal en curso por los mismos hechos."
+   ]
+  },
+  "30256-karin-art-155": {
+   "rol": "procedimiento",
+   "hechos": [
+    "Me acusan de una falta antigua y mientras eso no se resuelva vuelvo a repetir la misma conducta.",
+    "Me notifican cargos formales en un sumario y quiero saber desde cuándo se detiene el conteo del plazo.",
+    "Un sumario quedó detenido por más de dos años y me pregunto si el tiempo pendiente para sancionarme sigue corriendo.",
+    "Me evaluaron dos veces en el trabajo sin imponer ninguna sanción y quiero saber si eso afecta el plazo para iniciar acciones disciplinarias.",
+    "Un proceso de investigación interna estuvo paralizado por años y quiero saber si la prescripción quedó interrumpida o siguió corriendo."
+   ]
+  },
+  "30256-karin-art-82": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Mi jefe decidió firmar un contrato que no le correspondía sin que nadie se lo hubiese autorizado.",
+    "Un funcionario usó el correo y las horas de trabajo para vender productos por su cuenta.",
+    "Vi a un trabajador pedir dinero a un vecino a cambio de agilizar un trámite municipal.",
+    "Un empleado filtró información reservada del municipio para favorecer a un familiar.",
+    "Un funcionario organizó a sus compañeros para dejar de trabajar y presionar por demandas internas."
+   ],
+   "literales": {
+    "a": [
+     "Un encargado firma permisos municipales que no le fueron delegados.",
+     "Un funcionario asume representación legal del municipio sin facultades para ello."
+    ],
+    "b": [
+     "Un empleado interviene en la adjudicación de un contrato en beneficio de su hermano.",
+     "Un funcionario participa en la resolución de un caso donde su cónyuge tiene interés económico."
+    ],
+    "c": [
+     "Un trabajador municipal demanda a la municipalidad en asuntos que afectan solo a terceros.",
+     "Un funcionario presenta una demanda contra la institución por un derecho personal reconocido."
+    ],
+    "d": [
+     "Un funcionario testifica en un juicio sobre documentos internos que conoció en su trabajo sin avisar a su jefe.",
+     "Un empleado actúa como perito en un proceso sobre hechos que conoció en su cargo sin comunicarlo."
+    ],
+    "e": [
+     "Un funcionario retrasa la resolución de una solicitud hasta que el solicitante pague una coima.",
+     "Un empleado pide papeles no requeridos para completar un trámite y así dilatarlo."
+    ],
+    "f": [
+     "Un inspector pide dinero a un vecino para no cursar una multa.",
+     "Un funcionario acepta regalos de una empresa que busca contratos con la municipalidad."
+    ],
+    "g": [
+     "Un empleado usa computadoras del municipio para llevar su negocio personal durante la jornada.",
+     "Un funcionario utiliza hojas de cálculo internas para beneficio privado."
+    ],
+    "h": [
+     "Un funcionario usa la sala municipal para un mitin político privado durante la jornada.",
+     "Un empleado promociona una campaña política aprovechando su cargo en la municipalidad."
+    ],
+    "i": [
+     "Un trabajador organiza una huelga dentro de la municipalidad interrumpiendo servicios.",
+     "Un funcionario dirige una paralización parcial del área donde trabaja para presionar demandas."
+    ],
+    "j": [
+     "Un empleado destruye herramientas del taller municipal por enojo con su superior.",
+     "Un funcionario rompe equipos de oficina que son propiedad de la municipalidad."
+    ],
+    "k": [
+     "Un grupo incita a vandalizar una instalación pública y algunos empleados participan.",
+     "Un funcionario anima a terceros a inutilizar luminarias públicas."
+    ],
+    "l": [
+     "Un trabajador insulta y humilla a otro en el puesto de trabajo de forma degradante.",
+     "Un empleado realiza comentarios sexuales no deseados a una compañera en la oficina."
+    ],
+    "m": [
+     "Un superior somete a un subordinado a labores denigrantes de forma sistemática.",
+     "Un funcionario obliga a un compañero a realizar tareas fuera de sus funciones por intimidación constante."
+    ]
+   }
+  },
+  "30256-karin-art-88": {
+   "rol": "sustantivo",
+   "hechos": [
+    "Me agredieron mientras cumplía mi turno y quiero que la municipalidad persiga a quien me atacó.",
+    "La misma persona me insultó y difundió mentiras sobre mí por mi trabajo y quiero que me defiendan y presenten denuncias.",
+    "El alcalde fue quien sufrió amenazas y presentó la denuncia en nombre del municipio.",
+    "Soy funcionario y pedí por escrito que la municipalidad denuncie a quien me injurió, pero no sé si lo harán.",
+    "Hubo una agresión física a un funcionario y la autoridad debe decidir si inicia una investigación administrativa de oficio."
+   ]
+  }
+ }
+}

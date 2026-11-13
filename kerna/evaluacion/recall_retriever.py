@@ -224,18 +224,28 @@ def articulos_vigentes(coleccion: str | None = None) -> set[str]:
 
 
 def buscar(vectores: list[list[float]], k: int = TOP_BUSQUEDA, lote: int = 32,
-           coleccion: str | None = None) -> list[list[dict]]:
-    """Top-k vigente por consulta: [{"fragmento_id", "id_norma", "score"}, ...]."""
+           coleccion: str | None = None, dedup_literales: bool = False) -> list[list[dict]]:
+    """Top-k vigente por consulta: [{"fragmento_id", "id_norma", "score"}, ...]. Con `dedup_literales` (colecciones del
+    experimento de enriquecimiento) un artículo partido por literal ocupa un solo lugar: el de su mejor literal."""
     col = coleccion or embed_sync.COLECCION
     resultados = []
+    limite = k * 4 if dedup_literales else k
     for i in range(0, len(vectores), lote):
-        busquedas = [{"vector": v, "limit": k, "filter": _FILTRO_VIGENTE,
-                      "with_payload": ["fragmento_id", "id_norma"]} for v in vectores[i:i + lote]]
+        busquedas = [{"vector": v, "limit": limite, "filter": _FILTRO_VIGENTE,
+                      "with_payload": ["fragmento_id", "id_norma", "literal"]} for v in vectores[i:i + lote]]
         out = qdrant(f"/collections/{col}/points/search/batch",
                                 {"searches": busquedas}, method="POST")["result"]
-        resultados += [[{"fragmento_id": p["payload"]["fragmento_id"],
-                         "id_norma": p["payload"]["id_norma"], "score": p["score"]} for p in r]
-                       for r in out]
+        for r in out:
+            vistos, lista = set(), []
+            for p in r:
+                a = articulo_de(p["payload"]["fragmento_id"])
+                if dedup_literales and p["payload"].get("literal"):
+                    if a in vistos:
+                        continue
+                    vistos.add(a)
+                lista.append({"fragmento_id": p["payload"]["fragmento_id"],
+                              "id_norma": p["payload"]["id_norma"], "score": p["score"]})
+            resultados.append(lista[:k])
     return resultados
 
 
@@ -581,6 +591,8 @@ def main(argv=None):
     ap.add_argument("--extra-casos", metavar="JSON",
                     help="casos nuevos con triage incrustado (datos/denuncias_nuevas_*.json): se suman al dataset y a "
                          "--triage; sin --triage se miden solo ellos (partición 'prueba2')")
+    ap.add_argument("--dedup-literales", action="store_true",
+                    help="colecciones del experimento de enriquecimiento: un literal (el mejor) por artículo partido")
     ap.add_argument("--solo-mapeo", action="store_true",
                     help="solo cuenta los casos con artículos mapeables (sin proveedor de embeddings)")
     args = ap.parse_args(argv)
@@ -654,7 +666,7 @@ def main(argv=None):
                 guardadas[clave] = lat
                 LATENCIAS.write_text(json.dumps(guardadas))
             origen_lat = f"{len(lat)} consultas sueltas"
-    tops = buscar(vectores, coleccion=cfg["coleccion"])
+    tops = buscar(vectores, coleccion=cfg["coleccion"], dedup_literales=args.dedup_literales)
     res = evaluar(casos, tops, articulos_corpus, args.mapeo)
     imprimir(res, args.campo)
     p95 = percentil(lat, 95)
@@ -673,7 +685,7 @@ def main(argv=None):
               casos=len(casos), duracion_s=time.monotonic() - inicio,
               parametros={"modelo": cfg["modelo"], "proveedor": cfg["proveedor"], "dims": cfg["dims"],
                           "coleccion": cfg["coleccion"], "modelo_consulta": cfg["modelo_consulta"],
-                          "mapeo": args.mapeo, "vectores_consulta": args.vectores_consulta,
+                          "mapeo": args.mapeo, "vectores_consulta": args.vectores_consulta, "dedup_literales": args.dedup_literales,
                           **({"triage": Path(args.triage).name if args.triage else triage_arg,
                               "particion": args.particion, "etiqueta": args.etiqueta,
                               **({"extra_casos": Path(args.extra_casos).name} if args.extra_casos else {})}
