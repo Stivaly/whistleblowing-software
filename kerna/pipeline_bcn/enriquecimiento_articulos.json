@@ -1,15 +1,29 @@
 {
  "fecha": "2026-11-13",
  "modelo": "gpt-5-mini",
- "prompt_sha": "88ded75f7273",
+ "prompt_sha": "309b85c84de1",
  "articulos": {
   "1008668-art-1": {
    "rol": "sustantivo",
+   "manual": true,
    "hechos": [
-    "La empresa en la que trabajo fue acusada de cometer fraude financiero en operaciones comerciales.",
-    "Una sociedad fue señalada por apoyar o facilitar actos con motivaciones terroristas.",
-    "Una compañía vendió o traficó armas sin los permisos requeridos y fue investigada por eso.",
-    "La empresa afronta investigación penal y podría recibir multas o sanciones por conductas atribuidas a su actividad."
+    "Un ejecutivo o trabajador de la empresa pagó una coima o soborno a un funcionario público chileno para obtener una licitación, un permiso o un trato favorable.",
+    "La empresa sobornó a un funcionario público de otro país para ganar un contrato en el extranjero.",
+    "Dinero de origen ilícito (narcotráfico, estafas, robos) pasó por la empresa o se hizo pasar por ingresos legítimos: lavado de activos.",
+    "La empresa o su gente financió, con plata o recursos, a un grupo terrorista o a un acto terrorista.",
+    "Alguien de la empresa compró, vendió o guardó especies robadas o de origen ilegal a sabiendas: receptación.",
+    "Un gerente o director se favoreció en un negocio de la empresa en que tenía interés propio o de un familiar sin avisar ni pedir autorización: negociación incompatible.",
+    "Un proveedor o un trabajador recibió o pagó dinero o beneficios para elegir a un proveedor o cliente privado en perjuicio de la empresa competidora: corrupción entre particulares.",
+    "Un administrador o gerente manejó mal el patrimonio de la empresa o de un tercero para beneficiarse y causó pérdidas: administración desleal.",
+    "Un trabajador se quedó con dinero o bienes que le entregaron en custodia o administración y no los devolvió: apropiación indebida.",
+    "La empresa evadió impuestos con facturas falsas, ocultó ingresos o engañó al fisco: delito tributario o fraude al fisco.",
+    "Se falsificaron balances, contratos o documentos de la empresa, o se defraudó a bancos, socios o inversionistas: delito económico, estafa o fraude.",
+    "La empresa contaminó un río, el suelo o el mar, o extrajo agua, pesca o madera ilegalmente: delitos económicos medioambientales.",
+    "Hubo uso de información privilegiada, manipulación de precios o engaño al mercado de valores o a un banco.",
+    "La empresa o sus trabajadores importaron, tuvieron o traficaron armas sin autorización: delitos de control de armas.",
+    "La empresa participó en trata de personas o tráfico de migrantes, o explotó a trabajadores o personas en condiciones de esclavitud o trabajo forzado.",
+    "La empresa robó madera o comercializó madera robada: delitos de robo y receptación de madera.",
+    "Una persona jurídica quiere saber si responde penalmente por delitos que cometió un trabajador, gerente o prestador de servicios, y qué sanciones y procedimiento rigen."
    ]
   },
   "1008668-art-10": {
@@ -44,11 +58,11 @@
   "1008668-art-12": {
    "rol": "sancion",
    "hechos": [
-    "Me dijeron que la multa se calculó multiplicando un número de días-multa por un valor que fijó el tribunal.",
-    "La empresa recibió una multa y me explicaron que cada día-multa no puede valer menos de 5 ni más de 5.000 unidades tributarias mensuales.",
-    "Nos notificaron que la multa mínima fue de 2 días-multa y que no puede exceder de 400 días-multa.",
-    "Nos informaron que, aunque ya nos habían aplicado otras multas por el mismo hecho, el total de multas no puede superar 600 días-multa.",
-    "En un caso nos dijeron que no pudieron comisar las ganancias porque ya se habían repartido entre los socios, así que la multa se fijó hasta por un porcentaje de las ventas o hasta el doble de las ganancias obtenidas"
+    "La empresa es condenada y el juez calcula la multa en días-multa, fijando el valor de cada día para convertirlo a dinero.",
+    "Me imponen una multa a la empresa pero el juez no puede poner un valor del día-multa menor que un mínimo ni mayor que un máximo establecidos.",
+    "La multa total que me quieren imponer no puede pasar de un límite conjunto aun cuando se acumulen varias multas por el mismo hecho.",
+    "Si las ganancias obtenidas por el delito ya fueron repartidas entre los socios que no sabían que eran ilícitas, el tribunal puede fijar la multa hasta por un porcentaje de las ventas de la línea de productos afectada o hasta el doble de las ganancias obtenidas, siempre que eso resulte en una suma mayor que la multa máxima ordinaria.",
+    "Si la empresa ya pagó una multa que no constituye pena por el mismo hecho, ese pago se descuenta de la multa que se imponga ahora, y viceversa."
    ]
   },
   "1008668-art-13": {
@@ -168,11 +182,11 @@
   "1008668-art-19-bis": {
    "rol": "sancion",
    "hechos": [
-    "La empresa obtuvo dinero por un delito y el Estado lo quita para quedarse con esas ganancias.",
-    "Una sociedad recibió como aporte dinero proveniente de un ilícito y se lo decomisan.",
-    "Los dueños vendieron activos y repartieron entre socios unas ganancias que resultaron ser de origen ilícito.",
-    "Quieren quitarle a la empresa las utilidades obtenidas por un hecho ilegal aunque no haya condena penal aún.",
-    "La empresa puede usar el monto distribuido entre accionistas para calcular la multa que debe pagar."
+    "La empresa mantiene ganancias que provienen de un hecho ilícito que constituye un delito.",
+    "Se aplican reglas de decomiso aunque no exista condena cuando concurren los requisitos señalados en otra norma sobre delitos económicos.",
+    "La persona jurídica recibió la ganancia como aporte al patrimonio social y se pretende decomisar ese aporte.",
+    "Las ganancias fueron distribuidas entre socios o accionistas que no sabían que el dinero tenía origen ilícito.",
+    "Aunque no se pueda decomisar lo ya repartido a socios sin conocimiento, esa suma repartida puede servir para fijar la multa que debe pagar la empresa."
    ]
   },
   "1008668-art-2": {
@@ -291,22 +305,31 @@
   },
   "1008668-art-3": {
    "rol": "sustantivo",
+   "manual": true,
    "hechos": [
-    "Un gerente comete un delito mientras contrata proveedores en nombre de la empresa.",
-    "Un trabajador que gestiona trámites ante clientes comete una conducta ilícita en el ejercicio de sus funciones.",
-    "Un asesor externo que actúa para la empresa ante terceros comete un delito aprovechando su gestión.",
-    "Una empresa relacionada que presta servicios y no tiene autonomía operativa comete un ilícito en la gestión de asuntos comunes.",
-    "Un empleado roba exclusivamente a la propia empresa (hecho que excluye la aplicación de esta norma)."
+    "Un trabajador, gerente o director cometió un delito (soborno, lavado de dinero, estafa, financiamiento del terrorismo) en el marco de su trabajo y la empresa no tenía un sistema efectivo para prevenirlo.",
+    "Un asesor, contratista o prestador de servicios que gestiona asuntos de la empresa ante terceros pagó una coima a un funcionario público.",
+    "Un trabajador de una empresa filial o relacionada cometió un delito y la empresa matriz no controlaba ni supervisaba a esa filial.",
+    "El delito se cometió en el contexto de la actividad de la empresa y su comisión fue favorecida porque nadie controlaba, supervisaba ni prevenía conductas delictivas.",
+    "La empresa pagó sobornos a funcionarios públicos nacionales o extranjeros, o lavó activos, o corrompió a privados, y no había modelo de prevención de delitos implementado.",
+    "Alguien de la empresa se apropió de dinero o administró desleal el patrimonio de un tercero y la empresa nunca implementó controles.",
+    "El delito se cometió solo contra la propia empresa (por ejemplo un empleado le robó a ella): ahí la empresa no responde penalmente.",
+    "La empresa tiene un modelo de prevención solo en el papel, nunca se aplicó, y un delito se cometió igual: responsabilidad por falta de implementación efectiva."
    ]
   },
   "1008668-art-4": {
    "rol": "sustantivo",
+   "manual": true,
    "hechos": [
-    "no existían protocolos para identificar dónde podrían ocurrir delitos en las actividades de la empresa",
-    "los trabajadores no sabían cómo denunciar conductas sospechosas porque no había canales seguros",
-    "las sanciones internas no estaban previstas ni comunicadas y nadie fue sancionado por incumplimientos",
-    "no se asignó a nadie responsable de supervisar las medidas de prevención ni se le entregaron recursos para hacerlo",
-    "la empresa nunca encargó evaluaciones externas ni actualizó sus medidas tras revisiones"
+    "La empresa no tiene un sistema para prevenir delitos como soborno, lavado de activos, financiamiento del terrorismo, receptación, corrupción entre privados o administración desleal.",
+    "La empresa no ha identificado qué actividades o procesos la exponen a cometer delitos (pagos a funcionarios, compras, donaciones, contratos con terceros).",
+    "No existe un protocolo o procedimiento escrito para prevenir y detectar conductas delictivas en la empresa, ni sanciones internas para quien lo incumpla.",
+    "La empresa no tiene un canal seguro de denuncias, o no protege a quien denuncia irregularidades, soborno o fraudes internos.",
+    "Las reglas internas contra el delito no se comunicaron a los trabajadores ni están en los contratos de trabajo o de prestación de servicios, incluidos los ejecutivos.",
+    "La empresa no designó un encargado de prevención de delitos con independencia, recursos, facultades de supervisión y acceso directo a la administración.",
+    "No se hacen evaluaciones periódicas externas del modelo de prevención de delitos ni se actualiza.",
+    "Un trabajador denunció por el canal interno de denuncias un soborno o lavado de dinero y la empresa no lo investigó.",
+    "Una empresa quiere saber si su modelo de prevención de delitos la exime de responsabilidad penal cuando un empleado cometió cohecho, lavado de activos o financió terrorismo."
    ]
   },
   "1008668-art-5": {
@@ -321,10 +344,10 @@
   "1008668-art-6": {
    "rol": "sustantivo",
    "hechos": [
-    "La empresa informa a las autoridades sobre un hecho punible antes de saber que hay una investigación en su contra.",
-    "Los representantes legales entregan antecedentes que ayudan a aclarar lo ocurrido durante la investigación.",
-    "La organización nombra a una persona encargada de prevenir delitos con independencia y recursos propios.",
-    "Antes de que la investigación se formalice, la empresa cambia sus procedimientos para evitar que vuelva a ocurrir el mismo tipo de delito."
+    "Se da una situación que encaja con lo previsto en el número 7° del artículo 11 del Código Penal.",
+    "Los representantes legales de la empresa informan a las autoridades sobre el hecho punible antes de saber que la investigación va dirigida contra la empresa.",
+    "Los representantes de la empresa aportan antecedentes que ayudan a establecer los hechos investigados durante la investigación o el procedimiento judicial.",
+    "La empresa, antes de que se formalice la investigación en su contra, designa un encargado de prevención con autonomía acreditada y pone en marcha medidas de prevención y supervisión adecuadas a su tamaño, actividad y complejidad."
    ]
   },
   "1008668-art-7": {
@@ -780,11 +803,12 @@
   "141599-2026-12-01-art-17": {
    "rol": "sustantivo",
    "hechos": [
-    "Me pusieron en un boletín por un pagaré protestado y apareció mi nombre en bases de datos comerciales.",
-    "Salieron en internet datos de una deuda que contraje mientras estaba cesante.",
-    "Una entidad publicó que tenía cheques protestados aun cuando debía haberse borrado porque la deuda ya prescribió.",
-    "Tuve que llevar mi finiquito a la oficina del boletín para que dejaran de mostrar que estaba moroso.",
-    "Me rechazaron la solicitud de bloqueo aunque estaba recibiendo beneficios de cesantía que deberían impedir la publicación."
+    "Mi banco comunicó que tenía un cheque protestado por falta de fondos a una base de datos comercial.",
+    "Me llegaron anotaciones en un boletín comercial por una deuda de servicios públicos, aunque esas deudas no pueden comunicarse según la norma.",
+    "Quedé cesante y la administradora de mi seguro de cesantía envió mis datos al Boletín de Informaciones Comerciales para que bloquearan mis morosidades mientras duraran los beneficios.",
+    "No estoy incorporado al seguro de cesantía y tuve que llevar mi finiquito al Boletín para pedir que bloquearan la información por tres meses.",
+    "Una deuda que ya está prescrita sigue apareciendo en una base de datos y la empresa responsable no la eliminó automáticamente.",
+    "Una base de datos señaló expresamente que yo estaba beneficiado por esta ley cuando no deberían indicar eso bajo ninguna circunstancia."
    ]
   },
   "141599-2026-12-01-art-18": {
@@ -839,11 +863,12 @@
   "141599-2026-12-01-art-22": {
    "rol": "sustantivo",
    "hechos": [
-    "un servicio público me pidió los datos de otro servicio para realizar un trámite específico sin explicarme si los conservarían",
-    "mi municipalidad compartió mi información con otra entidad pública para evitar que yo tuviera que volver a presentar los mismos documentos",
-    "una institución pública me informó que usaría mis datos para otorgarme un beneficio y no los empleó para otros fines",
-    "vi que una entidad pública guardó mis datos por mucho tiempo después de entregar el servicio, sin darme una razón clara",
-    "un organismo público quiso compartir mis datos con una empresa privada y me pidieron mi consentimiento antes de hacerlo"
+    "Una municipalidad comparte mi información con otro servicio público porque ambas necesitan esos datos para cumplir sus funciones.",
+    "Me piden los mismos papeles en dos oficinas distintas y las instituciones se transfieren mis datos para evitar que repita trámites.",
+    "Un organismo público conserva mis datos más tiempo para atender un reclamo que presenté contra una decisión administrativa.",
+    "Un servicio público quiere enviar mis datos a una empresa privada y me solicitan mi consentimiento para hacerlo.",
+    "Solicité información pública y me indican que para comunicar mis datos deben contar con mi consentimiento en la oportunidad que establece la ley de transparencia.",
+    "Vi en la web de un organismo la lista de convenios que tiene con otros entes y privados sobre cesión de datos"
    ]
   },
   "141599-2026-12-01-art-23": {
@@ -1700,11 +1725,11 @@
   "141599-2026-12-01-art-54": {
    "rol": "sustantivo",
    "hechos": [
-    "en el tribunal guardan y consultan mis datos personales dentro de un expediente sin pedirme mi consentimiento",
-    "el Ministerio Público recopila información sobre mí mientras investiga un caso",
-    "el Servicio Electoral actualiza mi información en el registro para un proceso electoral",
-    "una oficina del Congreso procesa datos personales para cumplir una comisión o función interna",
-    "los funcionarios que manejan mis datos deben mantenerlos en secreto y pueden ser sancionados si no lo hacen"
+    "un tribunal procesa mis antecedentes personales para tramitar un juicio sin pedirme consentimiento",
+    "un funcionario público revisa y comparte información mía y no guarda secreto sobre mis datos",
+    "la oficina interna de una institución pública dicta nuevas normas sobre cómo se deben proteger y usar los datos de las personas",
+    "una unidad solicita apoyo técnico a la autoridad competente para mejorar la seguridad de las bases de datos que administra",
+    "un empleado es investigado y sancionado por su institución por manejar mal o divulgar datos personales de terceros"
    ]
   },
   "141599-2026-12-01-art-55": {
@@ -1816,11 +1841,11 @@
   "191865-karin-art-14": {
    "rol": "sustantivo",
    "hechos": [
-    "En la oficina hay comentarios y conductas que molestan a varias personas y no existe un protocolo para prevenirlo.",
-    "No se hacen capacitaciones ni se informa al personal sobre cómo identificar y prevenir el acoso o la violencia laboral.",
-    "Durante una investigación se filtraron datos personales de la persona denunciada y de la denunciante.",
-    "La jefatura nunca comunica los canales para denunciar ni cómo acceder a prestaciones de seguridad social relacionadas con el incidente.",
-    "Se necesita asistencia externa especializada para evaluar riesgos psicosociales y no se sabe si corresponde pedirla."
+    "La oficina donde trabajo no tiene un protocolo claro para prevenir el acoso y la violencia laboral.",
+    "Me citaron a una investigación por una denuncia y temo que se filtre mi situación o se dañe mi honra.",
+    "No me han dado capacitación sobre cómo identificar o prevenir el acoso sexual o el estrés por relaciones de trabajo.",
+    "Quiero saber qué canales tiene mi organismo para recibir denuncias y cómo puedo acceder a las prestaciones de seguridad social si me afecta el acoso.",
+    "En servicios que atienden público he visto situaciones que ponen en riesgo la seguridad y la salud de las funcionarias y funcionarios y no hay medidas inmediatas para protegerlos."
    ]
   },
   "191865-karin-art-46": {
@@ -1836,52 +1861,51 @@
   "191865-karin-art-62": {
    "rol": "sustantivo",
    "hechos": [
-    "mi colega vendió información confidencial que tenía por su trabajo para que un amigo obtuviera un negocio",
-    "el jefe presionó a un proveedor para que contratara a su hermano",
-    "una funcionaria usó el auto del servicio para un viaje personal",
-    "me pidieron un regalo a cambio de acelerar un trámite",
-    "una persona me acosó sexualmente en la oficina"
+    "un funcionario usó información del servicio para que un conocido comprara terreno antes de anunciarse un proyecto",
+    "un jefe exigió que le lleváramos favores personales durante la jornada de trabajo",
+    "me pidieron dinero para que me aprobaran un trámite en la institución",
+    "una autoridad participó en la resolución que beneficiaba a su familiar cercano"
    ],
    "literales": {
     "1": [
-     "un funcionario entregó datos confidenciales de un proyecto a un conocido para que invirtiera",
-     "compartieron información privilegiada de licitaciones con terceros para obtener lucro"
+     "un empleado accede a datos internos y se los entrega a un tercero para que obtenga lucro",
+     "alguien usa información reservada del expediente para invertir antes de que se haga pública"
     ],
     "2": [
-     "un superior llamó a un proveedor para obligarlo a contratar a un allegado",
-     "una autoridad presionó a alguien para que favoreciera a su empresa"
+     "un superior presiona a un proveedor para contratar a una empresa de su amigo",
+     "un funcionario hace valer su cargo para que le otorguen un beneficio a un conocido"
     ],
     "3": [
-     "emplearon fondos de la institución para pagar compras personales",
-     "se utilizó material del organismo para beneficio privado"
+     "personal del organismo toma dinero de caja para comprar bienes que usa en su casa",
+     "se llevan materiales de la institución para beneficio propio"
     ],
     "4": [
-     "se hizo trabajo particular durante la jornada usando el computador de la oficina",
-     "se destinó personal del servicio a tareas privadas de un funcionario"
+     "empleados realizan tareas privadas usando computadoras y tiempo del trabajo",
+     "un directivo asigna personal del servicio para labores particulares fuera de sus funciones"
     ],
     "5": [
-     "un empleado solicitó un obsequio a cambio de agilizar un trámite",
-     "aceptaron entradas a un evento por favores relacionados con el cargo"
+     "se solicita o acepta regalos o pagos a cambio de agilizar un trámite",
+     "un funcionario recibe ventajas personales por realizar una gestión por alguien"
     ],
     "6": [
-     "un funcionario participó en la evaluación de un contrato donde su hijo era postor",
-     "no se apartó de una decisión administrativa que afectaba a su cónyuge"
+     "una persona interviene en un asunto administrativo que favorece a su cónyuge",
+     "un funcionario participa en decisiones donde tiene interés por un pariente cercano"
     ],
     "7": [
-     "se adjudicó un contrato sin realizar la licitación pública que correspondía",
-     "el organismo evitó la convocatoria pública exigida por la ley"
+     "se omite hacer una contratación pública obligatoria y se adjudica de forma directa",
+     "una entidad evita convocar la propuesta pública exigida por la norma aplicable"
     ],
     "8": [
-     "no atendieron trámites esenciales provocando demoras graves en el servicio",
-     "se ignoraron procedimientos legales que impedían el ejercicio de derechos de usuarios"
+     "incumplen procedimientos y retrasan gravemente la entrega de un servicio público",
+     "se actúa de forma ineficiente que impide el ejercicio de derechos frente a la Administración"
     ],
     "9": [
-     "presentaron una denuncia falsa contra un compañero para perjudicarlo",
-     "difundieron acusaciones sin pruebas sabiendo que eran falsas"
+     "alguien denuncia falsamente a un colega por corrupción con la intención de dañarlo",
+     "se efectúan acusaciones sin evidencia y luego se comprueba que eran falsas"
     ],
     "10": [
-     "una trabajadora sufrió comentarios sexuales y tocamientos en el lugar de trabajo",
-     "un funcionario fue objeto de burlas y actos de violencia laboral en su oficina"
+     "un trabajador sufre comentarios o gestos de contenido sexual por parte de su jefe en el trabajo",
+     "hay conductas que constituyen acoso laboral que afectan a funcionarias o funcionarios"
     ]
    }
   },
@@ -2064,12 +2088,9 @@
   "236392-karin-art-12": {
    "rol": "sustantivo",
    "hechos": [
-    "Una persona que no tiene ciudadanía ni permiso de residencia solicita un puesto público y se le niega el ingreso.",
-    "Alguien que no completó la educación requerida para un cargo no puede ingresar a la Administración.",
-    "Un candidato con problemas de salud que le impiden realizar las funciones del cargo es rechazado.",
-    "Una persona que fue separada de un cargo público por mala calificación intenta postular antes de cinco años.",
-    "Alguien con una condena por un delito grave intenta ingresar a la Administración y se le impide hacerlo.",
-    "Una persona con discapacidad que terminó sus estudios en educación especial solicita un cargo que exige licencia de enseñanza media."
+    "Soy extranjero con visa de turista y quiero postular a un puesto público.",
+    "Fui dado de baja de un cargo público por mala evaluación hace tres años y quiero volver a postular.",
+    "Terminé la enseñanza básica en modalidad de educación especial y quiero optar a un cargo que exige licencia de educación media."
    ]
   },
   "236392-karin-art-121": {
@@ -2177,64 +2198,64 @@
   "236392-karin-art-84": {
    "rol": "sustantivo",
    "hechos": [
-    "Me pidieron usar mi cargo para representar a la institución en algo que no me corresponde",
-    "Un compañero aceptó regalos de un proveedor a cambio de favores en el trabajo",
-    "Un jefe demoró y pidió papeles innecesarios para tramitar una licencia que correspondía",
-    "Vi a un funcionario usar las oficinas y el personal en actividades personales fuera del horario",
-    "Un trabajador fue objeto de burlas y comentarios que afectaron su dignidad en el lugar de trabajo"
+    "Un funcionario firma documentos o toma decisiones que no le fueron autorizadas por su cargo.",
+    "Un trabajador actúa en un asunto administrativo donde su cónyuge o un familiar directo tiene interés personal.",
+    "Un empleado solicita o acepta regalos o privilegios de proveedores a cambio de trato preferente.",
+    "Alguien usa horas de trabajo, recursos, información confidencial o el personal de la institución para proyectos personales.",
+    "Un funcionario organiza o participa en actividades políticas o en paralizaciones dentro de la institución.",
+    "Un trabajador insulta, humilla, acosa sexualmente o discrimina de forma arbitraria a otro compañero, o ejerce acoso laboral hacia él."
    ],
    "literales": {
     "a": [
-     "Un funcionario asume funciones o firma actos que no le fueron atribuidos",
-     "Alguien se presenta como representante de la institución sin tener delegación"
+     "Firmar contratos o representar a la entidad sin que le hayan dado facultad para hacerlo."
     ],
     "b": [
-     "Un funcionario decide sobre un contrato donde participa su familiar cercano",
-     "Un trabajador interviene en un trámite que beneficia a su cónyuge"
+     "Tomar decisiones sobre licitaciones donde participa la empresa de su hermano.",
+     "Intervenir en la contratación de un proveedor que es su cónyuge."
     ],
     "c": [
-     "Un empleado inicia una demanda civil que va contra la institución sin relación directa con su interés personal",
-     "Alguien ejerce una acción civil contra la institución por un asunto propio que no le atañe directamente"
+     "Demandar al Estado en un juicio que perjudica los intereses de la institución, salvo que sea por un derecho propio o de su familiar cercano."
     ],
     "d": [
-     "Un testigo declara sobre hechos que conoció por su trabajo sin avisar a su jefe",
-     "Un perito aporta información de causas que conoció en sus funciones sin informar a su superior"
+     "Declarar en un juicio sobre hechos internos que conoció por su trabajo sin avisar a su superior.",
+     "Actuar como perito en un caso que investiga hechos que conoció en su cargo sin informar antes."
     ],
     "e": [
-     "Un funcionario retrasa intencionalmente la resolución de solicitudes que le ingresan",
-     "Se exige documentación que no corresponde para demorar un trámite"
+     "Retrasar intencionalmente la aprobación de un trámite administrativo.",
+     "Pedir documentos que no están exigidos por la normativa para demorar un expediente."
     ],
     "f": [
-     "Un empleado pide o acepta regalos de un proveedor para favorecerlo en licitaciones",
-     "Alguien recibe promesas de ventajas personales a cambio de decisiones administrativas"
+     "Solicitar dinero a un particular a cambio de favorecerlo en un trámite.",
+     "Aceptar un regalo costoso de un contratista después de adjudicarle un contrato."
     ],
     "g": [
-     "Un trabajador usa computadoras y archivos del organismo para un emprendimiento privado",
-     "Se emplea personal de la institución en tareas fuera de las funciones oficiales"
+     "Usar la base de datos institucional para un emprendimiento privado.",
+     "Hacer trabajo personal durante la jornada usando el equipo de la institución."
     ],
     "h": [
-     "Un funcionario organiza actos políticos dentro de oficinas del Estado usando recursos institucionales",
-     "Se utiliza el cargo para promover una candidatura privada dentro de la institución"
+     "Realizar propaganda política en oficinas públicas usando su cargo para presionar a subordinados.",
+     "Usar bienes institucionales para una campaña electoral."
     ],
     "i": [
-     "Un funcionario organiza una paralización parcial dentro de una repartición",
-     "Alguien participa en la retención indebida de bienes o personas en la oficina"
+     "Organizar un sindicato dentro de la administración pública.",
+     "Liderar una paralización de actividades en la institución."
     ],
     "j": [
-     "Un trabajador rompe equipos o destruye material de trabajo de la institución",
-     "Se dañan herramientas o insumos provocando pérdida de valor"
+     "Romper equipos o destruir materiales de la oficina a propósito.",
+     "Dañar mobiliario institucional para impedir su uso."
     ],
     "k": [
-     "Alguien impulsa la destrucción de instalaciones públicas o privadas del servicio",
-     "Participan en actos que inutilizan dependencias del organismo"
+     "Incitar a compañeros a prender fuego a instalaciones.",
+     "Participar en actos que inutilicen instalaciones públicas o privadas."
     ],
     "l": [
-     "Un funcionario hace comentarios sexuales no deseados hacia una compañera en su puesto",
-     "Se discrimina a un trabajador por razones arbitrarias que humillan su dignidad"
+     "Insultar sistemáticamente a un compañero hasta humillarlo.",
+     "Tocar de manera inapropiada a una colega configurando acoso sexual.",
+     "Negar trato igualitario a alguien por motivos arbitrarios."
     ],
     "m": [
-     "Un superior ejerce conductas persistentes que generan temor o menoscabo en un empleado",
-     "Se realizan actos que constituyen acoso laboral reiterado hacia un funcionario"
+     "Enviar mensajes constantes de menosprecio a un colega para aislarlo en el trabajo.",
+     "Imponer tareas degradantes repetidamente a un subordinado para forzarlo a renunciar."
     ]
    }
   },
@@ -2251,11 +2272,11 @@
   "251693-karin-art-60": {
    "rol": "sustantivo",
    "hechos": [
-    "Me enteré de que perdí la calidad de ciudadano y por eso no puedo seguir como alcalde.",
-    "Me ofrecieron un cargo que me hace incompatible y ya no puedo ejercer como alcalde.",
-    "Varios concejales pidieron mi remoción porque no pagué cotizaciones y descuidé funciones importantes.",
-    "Presenté mi renuncia al cargo por motivos personales y espero que el concejo la acepte.",
-    "Renuncié para postular a otro cargo de elección popular y me dijeron que no necesitan aprobar mi renuncia."
+    "Me quitaron la ciudadanía y por eso el alcalde dejó de ejercer.",
+    "Se descubre que el alcalde tiene una incompatibilidad que surgió después de asumir y debe cesar.",
+    "Se denuncia que el alcalde no cumple con las normas de probidad o abandona sus deberes y se pide su remoción.",
+    "El alcalde renuncia alegando motivos justificados y el concejo debe votar si lo acepta.",
+    "El alcalde renuncia porque se postula a otro cargo de elección popular y la renuncia procede sin acuerdo del concejo."
    ]
   },
   "251693-karin-art-76": {
@@ -2291,11 +2312,12 @@
   "30256-karin-art-10": {
    "rol": "sustantivo",
    "hechos": [
-    "Me piden ser ciudadano para postular al municipio.",
-    "Me exigen haber cumplido la ley de reclutamiento si corresponde.",
-    "Me hacen exámenes médicos para verificar que mi salud sea compatible con el puesto.",
-    "Me solicitan tener la enseñanza requerida o un título técnico o profesional según el cargo.",
-    "Me niegan el ingreso porque tenía una sanción o mala calificación en un puesto público anterior y no han pasado cinco años."
+    "Quiero postular al municipio pero no soy ciudadano chileno.",
+    "Me llamaron a desempeñar un cargo y aún no hice la reserva o trámite de reclutamiento militar que corresponde.",
+    "Tengo una enfermedad crónica y me preocupa si podré desempeñar las funciones del cargo.",
+    "No terminé la educación media y me dicen que no cumplo el requisito para el puesto.",
+    "Fui cesado antes de un cargo público por una mala calificación hace tres años y quiero volver a postular.",
+    "Tengo una condena por un simple delito y quiero postular a un puesto administrativo o auxiliar."
    ]
   },
   "30256-karin-art-118": {
@@ -2420,64 +2442,64 @@
   "30256-karin-art-82": {
    "rol": "sustantivo",
    "hechos": [
-    "Mi jefe decidió firmar un contrato que no le correspondía sin que nadie se lo hubiese autorizado.",
-    "Un funcionario usó el correo y las horas de trabajo para vender productos por su cuenta.",
-    "Vi a un trabajador pedir dinero a un vecino a cambio de agilizar un trámite municipal.",
-    "Un empleado filtró información reservada del municipio para favorecer a un familiar.",
-    "Un funcionario organizó a sus compañeros para dejar de trabajar y presionar por demandas internas."
+    "Un funcionario decide firmar contratos o tomar decisiones para los que no tiene autorización formal.",
+    "Un empleado trata un asunto personal o de un pariente y toma decisiones administrativas sobre ese tema.",
+    "Alguien usa el horario de trabajo para organizar actividades privadas y usa documentos de la municipalidad para ello.",
+    "Un funcionario exige o recibe regalos o favores a cambio de acelerar trámites.",
+    "Un trabajador insulta, humilla o acosa sexualmente a un compañero en el lugar de trabajo."
    ],
    "literales": {
     "a": [
-     "Un encargado firma permisos municipales que no le fueron delegados.",
-     "Un funcionario asume representación legal del municipio sin facultades para ello."
+     "Firmar autorizaciones o resolver expedientes sin que su cargo se lo permita.",
+     "Representar a la municipalidad en reuniones o contratos sin haber recibido delegación expresa."
     ],
     "b": [
-     "Un empleado interviene en la adjudicación de un contrato en beneficio de su hermano.",
-     "Un funcionario participa en la resolución de un caso donde su cónyuge tiene interés económico."
+     "Resolver la solicitud de un familiar cercano que le favorece personalmente.",
+     "Participar en la aprobación de un permiso que beneficia a su cónyuge o a una persona que adoptó."
     ],
     "c": [
-     "Un trabajador municipal demanda a la municipalidad en asuntos que afectan solo a terceros.",
-     "Un funcionario presenta una demanda contra la institución por un derecho personal reconocido."
+     "Iniciar una demanda civil contra la municipalidad por problemas laborales, actuando en contra del organismo.",
+     "Interponer una acción civil que perjudique a una institución municipal, cuando no es un derecho propio directo."
     ],
     "d": [
-     "Un funcionario testifica en un juicio sobre documentos internos que conoció en su trabajo sin avisar a su jefe.",
-     "Un empleado actúa como perito en un proceso sobre hechos que conoció en su cargo sin comunicarlo."
+     "Declarar en un juicio sobre hechos internos de la municipalidad sin avisar a su jefe.",
+     "Comparecer como testigo en un proceso sobre asuntos que conoció por su trabajo sin informar al superior."
     ],
     "e": [
-     "Un funcionario retrasa la resolución de una solicitud hasta que el solicitante pague una coima.",
-     "Un empleado pide papeles no requeridos para completar un trámite y así dilatarlo."
+     "Retrasar intencionalmente la tramitación de una solicitud ciudadana sin motivo válido.",
+     "Pedir documentos que no exige la normativa para demorar un trámite."
     ],
     "f": [
-     "Un inspector pide dinero a un vecino para no cursar una multa.",
-     "Un funcionario acepta regalos de una empresa que busca contratos con la municipalidad."
+     "Solicitar dinero o regalos a un proveedor para adjudicarle un contrato.",
+     "Aceptar invitaciones o beneficios de una empresa que busca favorecerse en licitaciones municipales."
     ],
     "g": [
-     "Un empleado usa computadoras del municipio para llevar su negocio personal durante la jornada.",
-     "Un funcionario utiliza hojas de cálculo internas para beneficio privado."
+     "Usar computadoras y papel de la municipalidad para preparar trabajos personales.",
+     "Hacer gestiones privadas durante la jornada laboral usando información interna reservada."
     ],
     "h": [
-     "Un funcionario usa la sala municipal para un mitin político privado durante la jornada.",
-     "Un empleado promociona una campaña política aprovechando su cargo en la municipalidad."
+     "Difundir propaganda política en dependencias municipales usando su cargo para presionar a otros.",
+     "Usar vehículos o instalaciones municipales para actividades partidarias."
     ],
     "i": [
-     "Un trabajador organiza una huelga dentro de la municipalidad interrumpiendo servicios.",
-     "Un funcionario dirige una paralización parcial del área donde trabaja para presionar demandas."
+     "Organizar una huelga dentro de la municipalidad que paraliza servicios.",
+     "Pertenecer a un sindicato estatal o promover paros que interrumpen el funcionamiento municipal."
     ],
     "j": [
-     "Un empleado destruye herramientas del taller municipal por enojo con su superior.",
-     "Un funcionario rompe equipos de oficina que son propiedad de la municipalidad."
+     "Romper o maltratar equipos municipales a propósito para impedir su uso.",
+     "Dañar materiales de trabajo para evitar que otros los usen."
     ],
     "k": [
-     "Un grupo incita a vandalizar una instalación pública y algunos empleados participan.",
-     "Un funcionario anima a terceros a inutilizar luminarias públicas."
+     "Incitar a compañeros a destruir cerraduras o maquinaria de dependencias públicas o privadas.",
+     "Participar en la destrucción de instalaciones que prestan servicios."
     ],
     "l": [
-     "Un trabajador insulta y humilla a otro en el puesto de trabajo de forma degradante.",
-     "Un empleado realiza comentarios sexuales no deseados a una compañera en la oficina."
+     "Hacer comentarios humillantes o degradantes hacia otro funcionario en su lugar de trabajo.",
+     "Tocar de forma inapropiada a una compañera o compañero y generar un ambiente ofensivo."
     ],
     "m": [
-     "Un superior somete a un subordinado a labores denigrantes de forma sistemática.",
-     "Un funcionario obliga a un compañero a realizar tareas fuera de sus funciones por intimidación constante."
+     "Someter a un subordinado a trato degradante repetido, como aislarlo y descalificarlo constantemente.",
+     "Imponer tareas humillantes o castigos que constituyan acoso laboral continuado."
     ]
    }
   },

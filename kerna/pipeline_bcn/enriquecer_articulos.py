@@ -43,6 +43,9 @@ SISTEMA = (
     "\"la empresa vendió mis datos sin avisarme\"). Una frase corta cada una, sin citar números de artículo ni "
     "nombres de leyes, sin jerga jurídica. Si el artículo es de procedimiento, definición o vigencia, describe los "
     "hechos o consultas en que esa regla importa (p. ej. quien pregunta hasta cuándo puede reclamar).\n"
+    "Si el artículo define sus conductas o delitos remitiendo a otras normas (\"los delitos de los artículos X de la ley Y\"), "
+    "describe en los hechos esas conductas remitidas en lenguaje común (qué hace o qué le pasa a la gente), no solo la regla "
+    "general; cubre cada familia de conductas que el texto enumera o a la que remite.\n"
     "3. literales: solo si recibes el artículo dividido en literales, para cada literal (por su etiqueta) 1 a 3 hechos "
     "típicos concretos de ese literal; si no, un objeto vacío.\n"
     "Responde solo JSON: {\"rol\": ..., \"hechos\": [...], \"literales\": {\"a\": [...]}}."
@@ -98,7 +101,7 @@ async def generar(frags: list[dict], modelo: str, salida: Path, solo: list[str] 
     arts = articulos(frags)
     previo = json.loads(salida.read_text())["articulos"] if salida.exists() else {}
     sem = asyncio.Semaphore(6)
-    hechos: dict[str, dict] = {k: v for k, v in previo.items() if not solo or k not in solo}
+    hechos: dict[str, dict] = {k: v for k, v in previo.items() if not solo or k not in solo or v.get("manual")}
     sha = hashlib.sha256(SISTEMA.encode()).hexdigest()[:12]
 
     def guardar():   # tras cada artículo: una corrida cortada se reanuda sin repetir
@@ -118,7 +121,7 @@ async def generar(frags: list[dict], modelo: str, salida: Path, solo: list[str] 
                     err = type(e).__name__
             print("falló", aid, err, flush=True)
 
-    pendientes = [k for k in arts if k not in hechos]
+    pendientes = [k for k in arts if k not in hechos]   # los artículos con "manual": true (redactados a mano) no se regeneran
     print(f"{len(pendientes)} artículos por enriquecer de {len(arts)}", flush=True)
     await asyncio.gather(*(uno(k, arts[k]) for k in pendientes))
     guardar()
