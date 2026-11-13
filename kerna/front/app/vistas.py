@@ -825,7 +825,8 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
     else:
         pa = [_M(f"En {dias} días, {_em(V['e_sug'], str(V['sug_pct']) + ' %')} recibió sugerencia.")]
         if rei:
-            pa.append(_M(f"{_em('warn', f.miles(nrei))} {'caso espera' if nrei == 1 else 'casos esperan'} reintento." if nrei else "Sin casos en espera."))
+            if nrei:
+                pa.append(_M(f"{_em('warn', f.miles(nrei))} {'caso espera' if nrei == 1 else 'casos esperan'} reintento."))
         if prov_mal:
             pa.append(_M(f"{_em('bad', prov_mal[0]['nombre'])} está caído."))
         if V["eg"]["e"] == "ok":

@@ -91,7 +91,7 @@ def test_frase_distingue_periodo_de_ahora_y_no_contradice_el_bloque(monkeypatch)
         assert "En 7 días, <em" in t and "29 %" in t and esperado in t and f">{n}<" in t
         assert "425 denuncias en 7 días por modo" in P["diag"] and "Revisión manual" in P["diag"]
     P = vistas.presentacion_resumen(V, {"r": {"reintentables": 0, "fuente": "conector"}}, 7)
-    assert "Sin casos en espera" in str(P["frase"]) and "esperan reintento" not in str(P["frase"])
+    assert "esperan reintento" not in str(P["frase"]) and "en espera" not in str(P["frase"])
 
 
 @pytest.fixture
