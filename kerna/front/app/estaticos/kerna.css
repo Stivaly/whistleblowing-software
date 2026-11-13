@@ -1044,3 +1044,4 @@ html,body{max-width:100%}
 .team-n{font:700 14px Inter,sans-serif;fill:rgba(255,255,255,.8);text-anchor:middle}.team-n.on{fill:#fff}
 .as-1 .ap{height:112px;padding:4px}.as-1 .ap-svg{width:100%;max-width:480px;height:104px}
 @media(max-width:599px){.as-1 .ap{height:100px}.as-1 .ap-svg{height:96px}}
+@media(max-width:599px){#app .as-1 .as-ch.ctl{flex-wrap:wrap;overflow:visible;-webkit-mask-image:none;mask-image:none;scroll-snap-type:none}}

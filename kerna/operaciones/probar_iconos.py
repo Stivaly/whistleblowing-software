@@ -77,7 +77,7 @@ ANCHO_ACTUAL = [0]
 def revisar(pg, pg_aux, etiqueta):
     """Devuelve la lista de fallos de la vista actual."""
     pg.add_style_tag(content=CSS_QUIETO)
-    pg.evaluate("document.querySelectorAll('details').forEach(d => d.open = true)")   # los plegables cerrados esconden íconos: se abren para revisarlos
+    pg.evaluate("document.querySelectorAll('details:not(.otro)').forEach(d => d.open = true)")   # los plegables cerrados esconden íconos: se abren para revisarlos
     pg.evaluate("async()=>{for(let y=0;y<document.documentElement.scrollHeight;y+=500){scrollTo(0,y);await new Promise(r=>setTimeout(r,120))}scrollTo(0,0)}")
     pg.wait_for_timeout(1500)   # termina las animaciones de entrada
     cands = pg.evaluate(JS_CAND)
