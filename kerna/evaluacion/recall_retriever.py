@@ -507,7 +507,7 @@ def registrar(res: dict, *, campo: str, dataset: bytes, articulos_corpus: int, c
     return entrada
 
 
-PARTICIONES = ("desarrollo", "prueba", "todas")
+PARTICIONES = ("desarrollo", "prueba", "prueba2", "todas")
 
 
 ETIQUETAS = ("original", "corregida")
@@ -528,6 +528,22 @@ def filtrar_por_triage(casos: list[dict], triage: dict, particion: str = "todas"
     return [c for c in casos
             if decision.get(c["id"], {}).get("en_alcance") in ("si", "control")
             and particion in ("todas", decision[c["id"]]["particion"])]
+
+
+def cargar_extra_casos(ruta: Path) -> tuple[list[dict], dict]:
+    """Casos nuevos (datos/denuncias_nuevas_*.json) y el triage que traen incrustado.
+
+    Cada caso trae los campos del dataset más `triage` (si/control), `particion` y `articulos_corregidos`. Devuelve
+    (casos, triage) con el mismo formato que usan filtrar_por_triage() y aplicar_etiqueta_corregida(); `articulos_corpus`
+    (etiqueta original) es igual a la corregida porque estos casos se etiquetaron una sola vez."""
+    casos = json.loads(Path(ruta).read_text())["casos"]
+    triage = {"casos": [{"id": c["id"], "en_alcance": c["triage"], "particion": c.get("particion", "prueba2"),
+                         "articulos_corregidos": c.get("articulos_corregidos", []),
+                         "articulos_corpus": c.get("articulos_corregidos", [])} for c in casos]}
+    ids = [c["id"] for c in casos]
+    if len(ids) != len(set(ids)):
+        raise ValueError(f"{ruta}: ids repetidos")
+    return casos, triage
 
 
 def _config(args) -> dict:
@@ -562,6 +578,9 @@ def main(argv=None):
                     help="con --triage: 'desarrollo' (jurídicos), 'prueba' (reddit) o 'todas'")
     ap.add_argument("--etiqueta", choices=ETIQUETAS, default="original",
                     help="con --triage: artículos esperados de la etiqueta 'original' o los 'corregida' (articulos_corregidos)")
+    ap.add_argument("--extra-casos", metavar="JSON",
+                    help="casos nuevos con triage incrustado (datos/denuncias_nuevas_*.json): se suman al dataset y a "
+                         "--triage; sin --triage se miden solo ellos (partición 'prueba2')")
     ap.add_argument("--solo-mapeo", action="store_true",
                     help="solo cuenta los casos con artículos mapeables (sin proveedor de embeddings)")
     args = ap.parse_args(argv)
@@ -570,14 +589,31 @@ def main(argv=None):
     inicio = time.monotonic()
     crudo = DATASET.read_bytes()
     casos = json.loads(crudo)["casos"]
-    if args.triage:
-        triage = json.loads(Path(args.triage).read_text())
+    triage_arg = args.triage
+    if args.extra_casos:
+        extra, triage_extra = cargar_extra_casos(Path(args.extra_casos))
+        crudo += Path(args.extra_casos).read_bytes()
+        ids_previos = {c["id"] for c in casos}
+        if ids_previos & {c["id"] for c in extra}:
+            ap.error("--extra-casos repite ids del dataset")
+        casos = casos + extra
+        if triage_arg and args.etiqueta != "corregida":
+            ap.error("--extra-casos con --triage requiere --etiqueta corregida (los casos nuevos solo traen esa etiqueta)")
+        if not triage_arg:
+            triage_arg = "(extra-casos)"
+            if args.particion == "todas":
+                args.particion = "prueba2"
+            args.etiqueta = "corregida"          # los casos nuevos solo traen la etiqueta corregida
+    if triage_arg:
+        triage = json.loads(Path(args.triage).read_text()) if args.triage else {"casos": []}
+        if args.extra_casos:
+            triage = {**triage, "casos": triage["casos"] + triage_extra["casos"]}
         casos = filtrar_por_triage(casos, triage, args.particion)
         if args.etiqueta == "corregida":
             casos = aplicar_etiqueta_corregida(casos, triage)
-        print(f"Triage {args.triage}, partición {args.particion}: {len(casos)} casos (en alcance + controles)")
+        print(f"Triage {triage_arg}, partición {args.particion}: {len(casos)} casos (en alcance + controles)")
     elif args.particion != "todas" or args.etiqueta != "original":
-        ap.error("--particion y --etiqueta requieren --triage")
+        ap.error("--particion y --etiqueta requieren --triage o --extra-casos")
     articulos_corpus = articulos_vigentes(cfg["coleccion"])
     positivos = [c for c in casos if c["ley_principal"] != "ninguna"]
     mapeables = defaultdict(int)
@@ -629,7 +665,7 @@ def main(argv=None):
         else f"_{cfg['coleccion']}_{re.sub(r'[^A-Za-z0-9._-]', '-', cfg['modelo_consulta'])}"
     if args.mapeo != "concordancia":
         sufijo += f"_{args.mapeo}"
-    if args.triage:
+    if triage_arg:
         sufijo += f"_triage_{args.particion}" + ("_corregida" if args.etiqueta == "corregida" else "")
     salida = AQUI / "datos" / f"resultado_recall_{args.campo}{sufijo}.json"
     salida.write_text(json.dumps(res, ensure_ascii=False, indent=1))
@@ -638,8 +674,10 @@ def main(argv=None):
               parametros={"modelo": cfg["modelo"], "proveedor": cfg["proveedor"], "dims": cfg["dims"],
                           "coleccion": cfg["coleccion"], "modelo_consulta": cfg["modelo_consulta"],
                           "mapeo": args.mapeo, "vectores_consulta": args.vectores_consulta,
-                          **({"triage": Path(args.triage).name, "particion": args.particion, "etiqueta": args.etiqueta}
-                             if args.triage else {})},
+                          **({"triage": Path(args.triage).name if args.triage else triage_arg,
+                              "particion": args.particion, "etiqueta": args.etiqueta,
+                              **({"extra_casos": Path(args.extra_casos).name} if args.extra_casos else {})}
+                             if triage_arg else {})},
               extra={"latencia_consulta": {"p95_ms": p95, "muestras": len(lat), "origen": origen_lat},
                      "tokens_consultas": {"total": tokens, "origen": origen_tokens},
                      "costo_estimado": costo},

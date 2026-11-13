@@ -229,3 +229,26 @@ def test_etiqueta_corregida_reemplaza_candidatos_sin_tocar_la_original():
     tops = [[{"fragmento_id": "207436-karin-art-211-b-bis-p1", "id_norma": 207436, "score": 0.5}]]
     assert r.evaluar(corr, tops, corpus)["detalle"][0]["acierto_articulo"] is True
     assert r.evaluar(casos, tops, corpus)["detalle"][0]["acierto_articulo"] is False
+
+
+def test_cargar_extra_casos_arma_triage_incrustado(tmp_path):
+    f = tmp_path / "nuevas.json"
+    base = {"ley_principal": "21.643", "particion": "prueba2"}
+    f.write_text(json.dumps({"casos": [
+        {"id": "NUE-0001", "triage": "si", "articulos_corregidos": ["207436-karin-art-2"], **base},
+        {"id": "NUE-0002", "triage": "control", "articulos_corregidos": [], **{**base, "ley_principal": "ninguna"}},
+    ]}))
+    casos, triage = r.cargar_extra_casos(f)
+    assert [c["id"] for c in casos] == ["NUE-0001", "NUE-0002"]
+    assert [(e["en_alcance"], e["particion"]) for e in triage["casos"]] == [("si", "prueba2"), ("control", "prueba2")]
+    assert [c["id"] for c in r.filtrar_por_triage(casos, triage, "prueba2")] == ["NUE-0001", "NUE-0002"]
+    assert r.filtrar_por_triage(casos, triage, "prueba") == []
+    corr = r.aplicar_etiqueta_corregida(casos, triage)
+    assert corr[0]["_candidatos_ids"] == ["207436-karin-art-2"] and corr[1]["_candidatos_ids"] == []
+
+
+def test_cargar_extra_casos_rechaza_ids_repetidos(tmp_path):
+    f = tmp_path / "x.json"
+    f.write_text(json.dumps({"casos": [{"id": "A", "triage": "si"}, {"id": "A", "triage": "si"}]}))
+    with pytest.raises(ValueError):
+        r.cargar_extra_casos(f)
