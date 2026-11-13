@@ -1212,3 +1212,4 @@ html,body{max-width:100%}
 .zv .stt .stl{flex-wrap:nowrap;min-width:0}.zv .stl .stl-t{min-width:0}
 @media(max-width:599px){.zv .stt .stl{padding:8px 18px 8px 10px;gap:10px}.zv .stl svg.ani{width:48px;height:48px}}
 .pr-n .frase{font-size:clamp(20px,1.8vw,28px)}
+.zv .stt .stl .ani-b{stroke:rgba(15,23,54,.14)}

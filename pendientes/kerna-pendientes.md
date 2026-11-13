@@ -466,3 +466,10 @@ Falta (en orden):
 3. Los ajustes de IA (`evaluador`, `candidatos`, `cadena`) siguen siendo del núcleo (ver sección anterior).
 4. El estado «en curso» del botón solo se verificó con respuesta simulada (no se pulsó el reintento real): comprobarlo cuando haya un pedido real.
 5. Arco de «Meta de respuesta»: anima `stroke-dasharray` (no solo transform/opacity) porque es una transición corta de un SVG de 120 px disparada por el control; no hay animación continua.
+
+## Negocio, Informe y «?» (2026-11-13, agente de Negocio e Informe)
+Hecho y desplegado: ver `pendientes/resumen-sesion-2026-11-12.md` (sección «Negocio, Informe y «?»»). Capturas `kerna/front/diseno-v2/capturas/prod14-*.png` y `prod14.json`.
+Falta (en orden):
+1. Movimiento de las bandas de Negocio e Informe: hoy aparecen con el fundido general (`[data-rv]`), igual que el Resumen; un escalonado por banda (`.zv>.bn`, solo `opacity`/`transform`) quedaría más fluido (`kerna/front/app/estaticos/kerna.css`, bloque v14 al final).
+2. Informe móvil: la banda de KPI de 6 indicadores usa 2 columnas; «Sugerencias útiles» queda en dos líneas (`kerna/front/app/plantillas/_macros.html`, macro `kb`).
+3. Ajustes: sus «?» ya son de una línea; el diseño no se tocó. Pendiente confirmar con la usuaria los nombres de las filas (`kerna/front/app/ajustes.py` línea 41 en adelante).
