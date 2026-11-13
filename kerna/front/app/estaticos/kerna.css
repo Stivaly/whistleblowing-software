@@ -1235,3 +1235,7 @@ html,body{max-width:100%}
   :is(#zona,.zv)>:nth-child(5),#inf-cuerpo>:nth-child(5){--i:4}:is(#zona,.zv)>:nth-child(n+6),#inf-cuerpo>:nth-child(n+6){--i:5}
 }
 @media(min-width:1800px){.kbs6>.kb{border-left:2px dotted var(--line-strong)}.kbs6>.kb:first-child{border-left:0}}
+.py-k b{white-space:nowrap;font-size:clamp(22px,2vw,32px)}
+@media(min-width:1100px){.py-g{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) auto}}
+@media(max-width:599px){.kbs6 .kb{gap:6px;padding:2px 4px}:is(#zona,.zv) .bn,:is(#zona,.zv) .z-ly{padding-right:28px}}
+@media(min-width:900px){:is(#zona,.zv) .ley-b .ch-w{flex:0 1 340px}:is(#zona,.zv) .ley-b .ly-l{flex:1 1 440px}}
