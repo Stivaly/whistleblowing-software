@@ -44,7 +44,7 @@
 {% macro kb(k) -%}
 <div class="kb s-{{ k.e }}" id="k-{{ k.k }}" data-s="k.{{ k.k }}">
 {{ ic(k.ic, px=44) }}
-<div class="kb-b"><span class="kb-l">{{ k.l }}{{ tip(k.g or k.k, k.x, 'k.' ~ k.k) }}</span>
+<div class="kb-b">{% set _p = k.l.split(' ') %}<span class="kb-l">{% if _p|length > 1 %}{{ _p[:-1]|join(' ') }} {% endif %}<span class="nw">{{ _p[-1] }}{{ tip(k.g or k.k, k.x, 'k.' ~ k.k) }}</span></span>
 <span class="kb-v">{% if k.p %}<small>{{ k.p }}</small>{% endif %}<b data-t="k.{{ k.k }}.v">{{ k.v }}</b>{% if k.u %}<small>{{ k.u }}</small>{% endif %}</span>
 {% if k.bar %}<span class="bu" role="img" aria-label="{{ k.l }}: {{ k.v }} {{ k.u }}, {{ k.bar.t }}"><span class="bu-t">{% for z in k.bar.z %}<i class="s-{{ z.e }}" style="flex:{{ z.w }}"></i>{% endfor %}<b class="bu-m" style="left:{{ k.bar.pos }}%"></b><u class="bu-g" style="left:{{ k.bar.meta }}%"></u></span><span class="bu-gl">{{ k.bar.t }}</span></span>{% endif %}
 {% if k.sub %}<span class="kb-sub">{{ k.sub }}</span>{% endif %}

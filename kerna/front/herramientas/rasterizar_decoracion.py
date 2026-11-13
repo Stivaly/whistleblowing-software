@@ -40,10 +40,14 @@ def halo() -> str:
 
 
 def zona(c: str, sat1: str, sat2: str) -> str:
-    """Arcos orbitales para las esquinas cortadas de una banda del Resumen (centro en la esquina); estática."""
-    return ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180' fill='none'>"
-            "<g stroke='#%s' stroke-opacity='.55' stroke-width='1.8' stroke-dasharray='.1 6' stroke-linecap='round'><circle cx='90' cy='90' r='40'/><circle cx='90' cy='90' r='62'/><circle cx='90' cy='90' r='84'/></g>"
-            "<circle cx='30.6' cy='149.4' r='6' fill='#%s' stroke='#%s' stroke-width='2'/><circle cx='149.4' cy='30.6' r='5' fill='#%s' stroke='#%s' stroke-width='1.5'/></svg>" % (c, sat1, c, sat2, c))
+    """Arcos orbitales para las esquinas derechas de una banda (centro en la esquina: arriba a la derecha se ve el cuadrante inferior izquierdo
+    del dibujo, abajo a la derecha el superior izquierdo). Los satélites van pegados al borde de la banda, dentro del margen derecho
+    reservado para la decoración, para que nunca queden encima de un texto; estática."""
+    arcos = ("<g stroke='#%s' stroke-opacity='.55' stroke-width='1.8' stroke-dasharray='.1 6' stroke-linecap='round'>"
+             "<circle cx='90' cy='90' r='40'/><circle cx='90' cy='90' r='62'/><circle cx='90' cy='90' r='84'/></g>" % c)
+    sats = ("<g stroke='#%s' stroke-width='2'><circle cx='80' cy='151.4' r='7' fill='#%s'/><circle cx='50.6' cy='99' r='6' fill='#%s'/>"
+            "<circle cx='80' cy='28.6' r='7' fill='#%s'/><circle cx='50.6' cy='81' r='6' fill='#%s'/></g>" % (c, sat1, sat2, sat2, sat1))
+    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180' fill='none'>" + arcos + sats + "</svg>"
 
 
 ZONAS = {"pr": ("6E9A12", "CFFF5E", "47D985"), "kb": ("3B4FB4", "FFC93C", "8FA8FF"), "cm": ("0E8FAD", "B58CFF", "FFC93C"),

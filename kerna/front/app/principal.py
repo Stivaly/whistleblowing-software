@@ -253,7 +253,7 @@ def precalentar():
     """Al arrancar: deja listos Resumen, informe y Negocio para que la primera visita no espere a Log Analytics."""
     cache.precalentar([(("metricas", 7), lambda: consultas.metricas(7), 60), (("prov",), proveedores.estado_proveedores, 60),
                        (("informe", 30, None, None), lambda: _informe_directo(30), 120), (("rei",), reintentos.resumen, 60), (("ev",), evaluaciones.cargar, 120),
-                       (("negocio", 30), lambda: negocio.cargar(dias=30), 120)]
+                       (("negocio", 30), lambda: negocio.cargar(dias=30), 120), (("ajustes",), aj.cargar, 15)]
                       + [(("extra", k, 7), (lambda k=k: _extra_directo(k, 7)), consultas.TTL_S) for k in ("front_tokens_por_modelo", "latencia_por_etapa", "front_horarios")])
 
 
@@ -369,7 +369,7 @@ def panel_ajustes(request: Request):
     if not _permitido(request):
         return RedirectResponse("/acceso", status_code=303)
     try:
-        est, error = cache.obtener(("ajustes",), aj.cargar, 15), None
+        est, error = cache.obtener(("ajustes",), aj.cargar, 15, vida_max=86400), None
     except Exception as e:
         est, error = {"valores": aj.RECOMENDADO, "guardado_en": None}, type(e).__name__
     return plantillas.TemplateResponse(request, "ajustes.html", {
@@ -398,7 +398,7 @@ def guardar_ajustes(request: Request, csrf: str = Form(""), valores: str = Form(
         return fin("invalido", 400)
     try:
         g = aj.guardar(v)
-        cache.invalidar(("ajustes",))
+        cache.poner(("ajustes",), g)  # lo recién guardado queda como dato fresco: sin leer la tabla ni servir el valor anterior
         return fin("ok", guardado_en=g["guardado_en"])
     except Exception:
         return fin("error", 502)

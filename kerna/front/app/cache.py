@@ -27,10 +27,15 @@ def paralelo(tareas: dict[str, Callable]) -> dict:
     return out
 
 
+_version: dict = {}
+
+
 def _calcular(clave, fn):
     try:
+        ver = _version.get(clave, 0)
         v = fn()
-        _datos[clave] = (time.time(), v)
+        if _version.get(clave, 0) == ver:  # si mientras tanto se guardó un valor nuevo (poner), no lo pisa con uno viejo
+            _datos[clave] = (time.time(), v)
     finally:
         with _candado:
             _enproceso.discard(clave)
@@ -83,3 +88,9 @@ def marca(clave):
 
 def invalidar(clave) -> None:
     _datos.pop(clave, None)
+
+
+def poner(clave, valor) -> None:
+    """Guarda un valor ya conocido (p. ej. lo recién guardado) como dato fresco."""
+    _version[clave] = _version.get(clave, 0) + 1
+    _datos[clave] = (time.time(), valor)

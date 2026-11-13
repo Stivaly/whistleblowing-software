@@ -862,11 +862,11 @@ k-n svg,k-lx svg{display:block;width:100%;height:100%;overflow:visible}
 /* banda de indicadores */
 .kbs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 0}
 @media(min-width:900px){.kbs{grid-template-columns:repeat(4,minmax(0,1fr))}.kbs6{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(min-width:1240px){.kbs6{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(min-width:1800px){.kbs6{grid-template-columns:repeat(6,minmax(0,1fr))}}
 .kb{display:flex;align-items:center;gap:10px;padding:2px 14px;min-width:0;border-left:2px dotted var(--line-strong)}
 .kbs>.kb:first-child,.kb:nth-child(2n+1){border-left:0}
 @media(min-width:900px){.kbs>.kb:nth-child(2n+1){border-left:2px dotted var(--line-strong)}.kbs>.kb:first-child{border-left:0}.kbs6>.kb:nth-child(3n+1){border-left:0}}
-@media(min-width:1240px){.kbs6>.kb:nth-child(3n+1){border-left:2px dotted var(--line-strong)}.kbs6>.kb:first-child{border-left:0}}
+@media(min-width:1800px){.kbs6>.kb:nth-child(3n+1){border-left:2px dotted var(--line-strong)}.kbs6>.kb:first-child{border-left:0}}
 .kb-b{display:grid;gap:2px;min-width:0}
 .kb-l{display:flex;align-items:center;gap:2px;font:500 11px/1.2 "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .kb-v{display:flex;align-items:baseline;gap:4px;color:var(--st);line-height:1.05}
@@ -876,7 +876,6 @@ k-n svg,k-lx svg{display:block;width:100%;height:100%;overflow:visible}
 .kb-e{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--st)}
 .kb .bu{display:block;width:120px;max-width:100%;margin:2px 0 0;padding:0}
 .kb .bu-t{margin-top:4px}.kb .bu-gl{position:static;transform:none;display:block;margin-top:3px;font-size:11px;color:var(--muted);font-weight:600}
-@media(max-width:1239px){.kbs6 .kb-l{font-size:10.5px}}
 .kbs6 .kb{gap:8px;padding:2px 10px}.kbs6 .kb>k-st,.kbs6 .kb>k-n{--s:36px!important}
 /* camino de una denuncia */
 .cm{list-style:none;margin:0;padding:0;display:flex;gap:4px;position:relative}
@@ -1116,11 +1115,11 @@ html,body{max-width:100%}
 #app .vw-main{max-width:1440px;margin-inline:auto}
 :is(#zona,.zv) .bn{--ok:#17622E;--cut:20px;position:relative;margin:0 0 12px;padding:14px 20px 12px;background-color:var(--z1);background-image:var(--arc),var(--arc),linear-gradient(100deg,var(--z1),var(--z2));background-repeat:no-repeat;background-position:right -90px top -90px,left -90px bottom -90px,0 0;background-size:180px 180px,180px 180px,100% 100%;
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
-:is(#zona,.zv) .z-pr{--z1:#E9FBB8;--z2:#D6F4C8;--arc:url(img/zona-pr.webp)}
-:is(#zona,.zv) .z-kb{--z1:#D9E4FF;--z2:#E8EEFF;--arc:url(img/zona-kb.webp)}
-:is(#zona,.zv) .z-cm{--z1:#D3F3FA;--z2:#E6DEFF;--arc:url(img/zona-cm.webp)}
-:is(#zona,.zv) .z-ly{--z1:#FFEFB8;--z2:#FFE0CC;--arc:url(img/zona-ly.webp)}
-:is(#zona,.zv) .z-hm{--z1:#D5F5E3;--z2:#E9FAD0;--arc:url(img/zona-hm.webp)}
+:is(#zona,.zv) .z-pr{--z1:#E9FBB8;--z2:#D6F4C8;--arc:url(img/zona-pr.webp?v=15)}
+:is(#zona,.zv) .z-kb{--z1:#D9E4FF;--z2:#E8EEFF;--arc:url(img/zona-kb.webp?v=15)}
+:is(#zona,.zv) .z-cm{--z1:#D3F3FA;--z2:#E6DEFF;--arc:url(img/zona-cm.webp?v=15)}
+:is(#zona,.zv) .z-ly{--z1:#FFEFB8;--z2:#FFE0CC;--arc:url(img/zona-ly.webp?v=15)}
+:is(#zona,.zv) .z-hm{--z1:#D5F5E3;--z2:#E9FAD0;--arc:url(img/zona-hm.webp?v=15)}
 :is(#zona,.zv) .z-ly .ani-b{stroke:rgba(255,255,255,.75)}
 :is(#zona,.zv) .kb-v b,:is(#zona,.zv) .cm b{text-shadow:none}
 :is(#zona,.zv) .orb-c{fill:var(--lime);stroke:var(--brand);stroke-width:1.6}
@@ -1192,7 +1191,7 @@ html,body{max-width:100%}
 .zv .chs li{background:#fff}
 
 /* v14 · Informe: bandas de color, baldosas de cifras con anillo (sin borde izquierdo de color) */
-.zv .z-co{--z1:#FFE4DC;--z2:#FFD3C7;--arc:url(img/zona-ly.webp)}
+.zv .z-co{--z1:#FFE4DC;--z2:#FFD3C7;--arc:url(img/zona-ly.webp?v=15)}
 .zv .tp{max-width:100%}
 .zv .tp.bn{margin-top:0}
 .zv .stt{margin:14px 0 0;gap:12px}
@@ -1207,9 +1206,32 @@ html,body{max-width:100%}
 /* el «?» de «En espera · próximo reintento…» va pegado al texto aunque este pase a dos líneas */
 .cola>.mk{display:block}
 .cola>.mk k-tip{margin-left:4px}
-.zv .kbs6{padding-right:36px}
 .zv .tp .cch{max-width:960px}
 .zv .stt .stl{flex-wrap:nowrap;min-width:0}.zv .stl .stl-t{min-width:0}
 @media(max-width:599px){.zv .stt .stl{padding:8px 18px 8px 10px;gap:10px}.zv .stl svg.ani{width:48px;height:48px}}
 .pr-n .frase{font-size:clamp(20px,1.8vw,28px)}
 .zv .stt .stl .ani-b{stroke:rgba(15,23,54,.14)}
+
+/* v15 · pulido: banda de KPI sin choques, decoración solo en el margen derecho, escalonado por banda, Clientes compacto */
+:is(#zona,.zv) .bn{--dec:56px;padding-right:calc(var(--dec) + 6px);background-image:var(--arc),var(--arc),linear-gradient(100deg,var(--z1),var(--z2));background-size:calc(var(--dec)*2) calc(var(--dec)*2),calc(var(--dec)*2) calc(var(--dec)*2),100% 100%;background-position:right calc(var(--dec)*-1) top calc(var(--dec)*-1),right calc(var(--dec)*-1) bottom calc(var(--dec)*-1),0 0}
+:is(#zona,.zv) .z-ly{background-image:var(--arc),var(--arc),linear-gradient(100deg,var(--z1),var(--z2));background-size:calc(var(--dec)*2) calc(var(--dec)*2),calc(var(--dec)*2) calc(var(--dec)*2),100% 100%;background-position:right calc(var(--dec)*-1) top calc(var(--dec)*-1),right calc(var(--dec)*-1) bottom calc(var(--dec)*-1),0 0}
+@media(max-width:599px){:is(#zona,.zv) .bn,:is(#zona,.zv) .z-ly{--dec:26px;--cut:14px;padding:12px 32px 10px 14px;background-image:var(--arc),var(--arc),linear-gradient(100deg,var(--z1),var(--z2));background-size:calc(var(--dec)*2) calc(var(--dec)*2),calc(var(--dec)*2) calc(var(--dec)*2),100% 100%;background-position:right calc(var(--dec)*-1) top calc(var(--dec)*-1),right calc(var(--dec)*-1) bottom calc(var(--dec)*-1),0 0}}
+/* etiqueta de KPI: texto en línea (máx. 2 líneas) y «?» pegado a su última palabra */
+.kb-l{display:block;font-size:11px;line-height:1.3}
+.kb-l .nw{white-space:nowrap}
+.kb-l k-tip{margin:-5px 0 -4px 3px;vertical-align:middle}
+.kb-l k-tip button{width:20px;height:20px}
+.kb-e{align-items:flex-start}.kb-e>span{min-width:0}
+.kbs6 .kb-b{flex:1 1 auto}
+@media(max-width:599px){.kb-l{font-size:9px;letter-spacing:0}.kb-l k-tip{margin-left:1px}.kb-l k-tip button{width:16px;height:16px}.kb-l k-tip k-ic{width:13px;height:13px}.kbs6 .kb-l{font-size:9px}}
+/* Clientes: columnas repartidas, anillo más pequeño, sin huecos bajo la fila */
+@media(min-width:900px){.cli-g{align-items:stretch}.cli-d{display:flex;flex-direction:column;justify-content:center}.cli-d .dn{width:104px;height:104px}.cli-d .mk{margin-bottom:6px}.cli-l{align-self:center}}
+/* Movimiento: cada banda entra una tras otra (solo opacity y transform); sin movimiento si el sistema lo pide */
+@keyframes bnIn{from{opacity:0;transform:translate3d(0,14px,0)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:no-preference){
+  :is(#zona,.zv)>.bar,:is(#zona,.zv)>.bn,:is(#zona,.zv)>.vac,#inf-cuerpo>*{animation:bnIn .6s var(--ease) backwards;animation-delay:calc(var(--i,0)*70ms)}
+  :is(#zona,.zv)>:nth-child(1),#inf-cuerpo>:nth-child(1){--i:0}:is(#zona,.zv)>:nth-child(2),#inf-cuerpo>:nth-child(2){--i:1}
+  :is(#zona,.zv)>:nth-child(3),#inf-cuerpo>:nth-child(3){--i:2}:is(#zona,.zv)>:nth-child(4),#inf-cuerpo>:nth-child(4){--i:3}
+  :is(#zona,.zv)>:nth-child(5),#inf-cuerpo>:nth-child(5){--i:4}:is(#zona,.zv)>:nth-child(n+6),#inf-cuerpo>:nth-child(n+6){--i:5}
+}
+@media(min-width:1800px){.kbs6>.kb{border-left:2px dotted var(--line-strong)}.kbs6>.kb:first-child{border-left:0}}
