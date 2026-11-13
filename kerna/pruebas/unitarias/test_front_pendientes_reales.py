@@ -35,6 +35,23 @@ def test_con_fila_reciente_manda_el_estado_del_conector():
     assert "Estado actual de los casos en Veridy" in reintentos.ayuda_pendientes(r, 7, AHORA)
 
 
+def test_con_conteo_por_motivo_el_desglose_es_por_motivo_y_suma_el_total():
+    c = fila(pendientes_por_motivo='{"cadena_agotada": 2, "validacion_fallida": 1, "error": 1}')
+    r = reintentos.con_estado_real(TELE, c, AHORA)
+    assert [(m["texto"], m["casos"]) for m in r["motivos"]] == [
+        ("Los modelos de IA no estaban disponibles", 2), ("La sugerencia no pasó la revisión de calidad", 1), ("Con error al procesar", 1)]
+    assert sum(m["casos"] for m in r["motivos"]) == r["total"] == 4
+    assert vistas.motivo_ico(r["motivos"][0]["texto"], True) == "e-nucleo-no-disponible"
+    t = fila(pendientes_por_motivo='{"tiempo_agotado": 3, "error": 1}')
+    assert vistas.motivo_ico(reintentos.con_estado_real(TELE, t, AHORA)["motivos"][0]["texto"], True) == "e-revision-tiempo"
+
+
+@pytest.mark.parametrize("crudo", [None, "", "no es json", '{"cadena_agotada": 9}', '{"cadena_agotada": 1}', "[1]"])
+def test_conteo_por_motivo_ausente_invalido_o_que_no_suma_deja_lo_actual(crudo):
+    r = reintentos.con_estado_real(TELE, fila(pendientes_por_motivo=crudo), AHORA)
+    assert [(m["texto"], m["casos"]) for m in r["motivos"]] == [("En revisión manual", 3), ("Con error al procesar", 1)]
+
+
 def test_sin_pendientes_reales_no_hereda_las_cifras_de_la_telemetria():
     r = reintentos.con_estado_real(TELE, fila(en_revision_manual=0, error=0), AHORA)
     assert r["fuente"] == "conector" and r["reintentables"] == 0 and r["motivos"] == []

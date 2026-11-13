@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import os
 from datetime import datetime, timedelta, timezone
+import json
 from pathlib import Path
 
 from . import consultas
@@ -70,10 +71,26 @@ def resumen(dias: int = 7, ejecutar=None, ahora=None) -> dict:
 VIGENCIA_CONECTOR_S = 300  # contrato: el conector está caído si su fila lleva más de 5 min sin actualizarse
 
 
+def _motivos_conector(crudo, total: int) -> list:
+    """Desglose por motivo de la fila `conector` (JSON `pendientes_por_motivo`). [] si falta, es inválido o no suma el total."""
+    try:
+        d = json.loads(crudo) if isinstance(crudo, str) else dict(crudo or {})
+        cuenta = {str(k): int(v) for k, v in d.items() if int(v) > 0}
+    except (ValueError, TypeError, AttributeError):
+        return []
+    if not cuenta or sum(cuenta.values()) != total:
+        return []
+    out = []
+    for k, n in sorted(cuenta.items(), key=lambda kv: -kv[1]):
+        texto, auto = ("Con error al procesar", True) if k == "error" else MOTIVOS.get(k, ("Otro motivo", False))
+        out.append({"motivo": k, "texto": texto, "casos": n, "se_reintenta": auto})
+    return out
+
+
 def con_estado_real(r: dict | None, c: dict | None, ahora=None) -> dict | None:
     """Lo pendiente HOY. Con la fila `conector` reciente sale de su estado real (casos de Veridy ya reconciliados);
     si no existe o es vieja, queda la telemetría acumulada, marcada como estimación. `fuente` = conector | telemetria.
-    El conector no informa el motivo de cada caso en espera: con su estado el desglose es por situación (revisión manual, error), que sí suma el total."""
+    El conector no informa el motivo de cada caso en espera: con `pendientes_por_motivo` el desglose es por motivo; sin él, por situación (revisión manual, error). Siempre suma el total."""
     ahora = ahora or datetime.now(timezone.utc)
     act = _fecha((c or {}).get("actualizado_en"))
     fresca = bool(c and act and 0 <= (ahora - act).total_seconds() <= VIGENCIA_CONECTOR_S)
@@ -82,7 +99,8 @@ def con_estado_real(r: dict | None, c: dict | None, ahora=None) -> dict | None:
             return None
         return {**r, "fuente": "telemetria", "conector_visto": (c or {}).get("actualizado_en")}
     man, err = _num(c.get("en_revision_manual")), _num(c.get("error"))
-    motivos = [{"motivo": k, "texto": t, "casos": n, "se_reintenta": True} for k, t, n in (("revision_manual", "En revisión manual", man), ("error", "Con error al procesar", err)) if n]
+    motivos = _motivos_conector(c.get("pendientes_por_motivo"), man + err) or [
+        {"motivo": k, "texto": t, "casos": n, "se_reintenta": True} for k, t, n in (("revision_manual", "En revisión manual", man), ("error", "Con error al procesar", err)) if n]
     casos, hecho = _num(c.get("casos")), _num(c.get("completado"))
     return {"total": man + err, "reintentables": man + err, "motivos": motivos, "proximo_auto": None, "ultimo_reintento": (r or {}).get("ultimo_reintento"),
             "fuente": "conector", "actualizado_en": c.get("actualizado_en"), "casos": casos, "con_sugerencia": max(0, hecho - man), "en_proceso": _num(c.get("nuevo")) + _num(c.get("pendiente"))}

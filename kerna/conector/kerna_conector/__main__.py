@@ -6,6 +6,7 @@ Códigos de salida de `--una-pasada`: 0 todo bien, 1 la pasada terminó con erro
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import os
 import signal
@@ -30,7 +31,11 @@ def _vivo(estado, r, p, en_reintento: bool) -> dict:
     por = estado.contar_estados()
     revision = estado.contar_objetos("resultado", "actual", "revision_manual", prefijo_nota=True)
     conocidos = estado.contar_objetos("resultado", "actual", None)
-    return {"ultima_pasada": r.resultado, "casos": r.casos, "archivados": estado.contar_archivados(), "nuevo": por.get("nuevo", 0), "pendiente": por.get("pendiente", 0),
+    # pendientes por motivo (JSON; la suma es en_revision_manual + error): motivos del núcleo y «error» (fallo al procesar)
+    motivos = dict(estado.contar_motivos_revision())
+    if por.get("error", 0):
+        motivos["error"] = por["error"]
+    return {"pendientes_por_motivo": json.dumps(motivos, sort_keys=True), "ultima_pasada": r.resultado, "casos": r.casos, "archivados": estado.contar_archivados(), "nuevo": por.get("nuevo", 0), "pendiente": por.get("pendiente", 0),
             "error": por.get("error", 0), "completado": por.get("completado", 0), "en_revision_manual": revision,
             "resultado_desconocido": max(0, por.get("completado", 0) - conocidos), "nucleo_caido": bool(r.nucleo_caido),
             "enviados": r.enviados, "sugerencias": r.sugerencias, "errores": r.errores, "en_reintento": en_reintento,

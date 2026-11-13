@@ -701,6 +701,19 @@ def test_estado_en_vivo_de_la_pasada(mundo):
     assert vivo["intervalo_s"] == 30 and "reprocesar" in vivo["ajustes_aplicados"] and vivo["en_reintento"] is False
 
 
+def test_estado_en_vivo_publica_pendientes_por_motivo(mundo):
+    import json
+    from kerna_conector import __main__ as m
+    v, n, e, ref = _caso_agotado(mundo)
+    r = pasada(v, n, e)
+    vivo = m._vivo(e, r, m.parametros(_cfg(), None), False)
+    d = json.loads(vivo["pendientes_por_motivo"])
+    assert sum(d.values()) == vivo["en_revision_manual"] + vivo["error"] and d  # la suma cuadra con el total pendiente
+    e.fijar_procesado("x1", "resultado", "actual", "revision_manual|validacion_fallida")
+    e.fijar_procesado("x2", "resultado", "actual", "revision_manual")
+    assert e.contar_motivos_revision().get("validacion_fallida") == 1 and e.contar_motivos_revision().get("sin_motivo") == 1
+
+
 def test_casos_que_ya_no_existen_en_veridy_se_archivan_y_no_cuentan(mundo):
     from kerna_conector import __main__ as m
     v, n, e, ref = _caso_agotado(mundo)

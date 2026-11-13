@@ -108,6 +108,8 @@ class Estado(ABC):
     @abstractmethod
     def contar_estados(self) -> dict: ...
     @abstractmethod
+    def contar_motivos_revision(self) -> dict: ...
+    @abstractmethod
     def archivar_ausentes(self, vigentes: set) -> tuple[int, int]: ...
     @abstractmethod
     def contar_archivados(self) -> int: ...
@@ -209,6 +211,18 @@ class _EstadoSql(Estado):
         return {f[0]: int(f[1]) for f in self._ejecutar(
             "SELECT estado, COUNT(*) FROM correspondencia_caso WHERE id_caso NOT IN (%s) GROUP BY estado" % _ARCHIVADOS,
             lectura=True)}
+
+    def contar_motivos_revision(self) -> dict:
+        """{motivo: cantidad} de los casos cuya última sugerencia es `revision_manual` (sin los archivados).
+        El motivo es el que entregó el núcleo; sin motivo cuenta como `sin_motivo`."""
+        filas = self._ejecutar(
+            "SELECT id_nota, COUNT(*) FROM objeto_procesado WHERE tipo = 'resultado' AND clave = 'actual' "
+            "AND id_nota LIKE 'revision_manual%%' AND id_caso NOT IN (%s) GROUP BY id_nota" % _ARCHIVADOS, lectura=True)
+        out: dict = {}
+        for nota, n in filas:
+            motivo = str(nota).partition("|")[2] or "sin_motivo"
+            out[motivo] = out.get(motivo, 0) + int(n)
+        return out
 
     def _ids_archivados(self) -> set:
         return {f[0] for f in self._ejecutar(_ARCHIVADOS, lectura=True)}
