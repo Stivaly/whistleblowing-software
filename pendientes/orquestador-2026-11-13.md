@@ -20,6 +20,29 @@ Lee primero:
 - **Fuera de alcance:** no tocar Terraform. El conector se toca solo según el punto 7.
 - **Rendimiento:** mantener el actual (TTFB < 100 ms, CPU en reposo < 1 %). La usuaria quiere que todo el panel se sienta tan fluido como el Resumen actual, **pero con movimiento**: animar solo `transform` y `opacity`, con capas rasterizadas para la decoración y SVG vivo solo en lo que reacciona; nada de `steps()` que se note a saltos.
 
+## Índice de scripts de operación (usar SIEMPRE estos; nunca comandos directos de az/curl/docker)
+
+Ninguna clave se ve ni se imprime: los scripts las leen de Key Vault por dentro. Se ejecutan desde la raíz del repo.
+
+| Para qué | Script |
+|---|---|
+| Desplegar el front | `kerna/front/desplegar.sh --ref HEAD` (corre las pruebas antes; para volver atrás: `--ref <commit bueno>`) |
+| Construir y subir la imagen del conector, núcleo o servicio local | `infra/scripts/subir_imagen_kerna.sh conector --tag <tag>` |
+| Construir y subir la imagen de Veridy | `infra/veridy/subir_imagen.sh --tag <tag>` |
+| Terraform, por ejemplo para desplegar el conector cambiando `conector_tag` | `echo n \| infra/aplicar.sh veridy\|kerna` (ver el plan) · `infra/aplicar.sh veridy\|kerna -y` (aplicar) |
+| Encender, apagar o ver el estado y los registros de Veridy y del conector | `infra/veridy/veridy.sh encender \| apagar \| estado \| logs [contenedor]` |
+| Telemetría (solo lectura y conteos) | `kerna/operaciones/telemetria.sh resumen \| reprocesos \| motivos [días]` · `telemetria.sh kql <archivo\|"consulta"> [días]` |
+| Tablas de Azure | `kerna/operaciones/tablas.sh ver <tabla> ["filtro"] \| solicitud \| ajustes` · escribir: `CONFIRMAR=si kerna/operaciones/tablas.sh escribir <tabla> <PK> <RK> campo=valor…` |
+| Probar el front en producción | `kerna/operaciones/probar_front.sh [--clave-anterior] [--reintento]` (código 1 si algo falla) |
+| Cargar denuncias en Veridy | `kerna/operaciones/cargar_denuncias.sh [N] [--dry-run \| --verificar \| --casos …]` (idempotente; código 3 = límite por hora, repetir después) |
+| Despertar o reiniciar el front antes de medir | `kerna/operaciones/despertar_front.sh [--reiniciar]` |
+| Navegador | `kerna/operaciones/playwright.sh pdf \| modal [--confirmar] \| script <archivo.py>` |
+| Capturas y mediciones de vistas | `kerna/front/herramientas/medir_vistas.sh` |
+| Íconos, estáticos y rasterizados | `kerna/front/herramientas/{construir_identidad,construir_estaticos,construir_echarts,lamina_iconos,rasterizar_baldosas,rasterizar_decoracion}` |
+| Limpiar Docker (imágenes y caché, nunca volúmenes) | `infra/limpiar_docker.sh` |
+
+Si una tarea no tiene script, no la improvises con comandos sueltos: escribe un script nuevo de función fija en `kerna/operaciones/`, commitéalo y agrégalo a este índice.
+
 ## Lo que pidió la usuaria (2026-11-12, 22:30), por vista
 
 ### 1. Ajustes (prioridad alta; el rediseño fue insuficiente)
