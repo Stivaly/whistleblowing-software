@@ -81,6 +81,53 @@ Diseño completo y decisiones: `pendientes/revisor-juridico-kerna.md` (§1 por q
 \* medido antes de corregir etiquetas y ampliar corpus; repetir.
 prueba2 por ley: Karin 0,69, datos 0,43, **20.393 0,20** (trae arts. de procedimiento 13, 17 ter, 20, 22 en vez de 1, 3, 4).
 
+### Medición base B2 (2026-11-13, commit 3d6d7785e, etiqueta corregida, corpus 181, gpt-5-nano)
+Configuraciones: (a) retriever solo; (b) cadena con la mejor config de §2 (+ `KERNA_EVALUADOR_CANDIDATOS=70`); (c) (b) + `KERNA_REVISOR=1`
+((b) y (c) de una sola corrida: el revisor va después del generador). Casos en revisión manual cuentan como fallo. recall@5 = hit@5 por artículo.
+
+| Set | Ley (n) | (a) retriever recall@5 [IC] | (b) cadena recall@5 [IC] | (c) +revisor [IC] |
+|---|---|---|---|---|
+| desarrollo | global (42) | 0.548 [0.40-0.69] | 0.429 [0.29-0.57] | 0.405 [0.26-0.55] |
+| desarrollo | 19.628-21.719 (16) | 0.688 [0.44-0.88] | 0.375 [0.12-0.62] | 0.375 [0.12-0.62] |
+| desarrollo | 20.393 (9) | 0.111 [0.00-0.33] | 0.222 [0.00-0.56] | 0.222 [0.00-0.56] |
+| desarrollo | 21.643 (17) | 0.647 [0.41-0.88] | 0.588 [0.35-0.82] | 0.529 [0.29-0.76] |
+| prueba | global (15) | 0.467 [0.20-0.73] | 0.467 [0.20-0.73] | 0.467 [0.20-0.73] |
+| prueba | 19.628-21.719 (8) | 0.250 [0.00-0.62] | 0.125 [0.00-0.38] | 0.125 [0.00-0.38] |
+| prueba | 21.643 (7) | 0.714 [0.43-1.00] | 0.857 [0.57-1.00] | 0.857 [0.57-1.00] |
+| prueba2 | global (48) | 0.562 [0.42-0.71] | 0.688 [0.56-0.81] | 0.688 [0.56-0.81] |
+| prueba2 | 19.628-21.719 (14) | 0.429 [0.21-0.71] | 0.500 [0.21-0.79] | 0.500 [0.21-0.79] |
+| prueba2 | 20.393 (5) | 0.200 [0.00-0.60] | 1.000 [1.00-1.00] | 1.000 [1.00-1.00] |
+| prueba2 | 21.643 (29) | 0.690 [0.52-0.86] | 0.724 [0.55-0.86] | 0.724 [0.55-0.86] |
+| prueba3 | global (80) | 0.600 [0.50-0.71] | 0.688 [0.59-0.79] | 0.500 [0.39-0.61] |
+| prueba3 | 19.628-21.719 (16) | 0.625 [0.38-0.88] | 0.625 [0.38-0.88] | 0.375 [0.12-0.62] |
+| prueba3 | 20.393 (17) | 0.059 [0.00-0.18] | 0.471 [0.24-0.71] | 0.412 [0.18-0.65] |
+| prueba3 | 21.643 (47) | 0.787 [0.66-0.89] | 0.787 [0.66-0.89] | 0.575 [0.45-0.70] |
+
+| Set | Ley | retriever hit@5/10/20/70 | híbrida (candidatos de la cadena) hit@5/10/20/70 | evaluador top-5 |
+|---|---|---|---|---|
+| desarrollo | global | 0.55/0.62/0.76/0.95 | 0.57/0.64/0.79/0.98 | 0.64 |
+| desarrollo | 19.628-21.719 | 0.69/0.69/0.94/1.00 | 0.75/0.88/0.94/1.00 | 0.69 |
+| desarrollo | 20.393 | 0.11/0.11/0.22/0.89 | 0.00/0.00/0.22/0.89 | 0.44 |
+| desarrollo | 21.643 | 0.65/0.82/0.88/0.94 | 0.71/0.76/0.94/1.00 | 0.71 |
+| prueba | global | 0.47/0.60/0.87/1.00 | 0.60/0.80/0.93/1.00 | 0.47 |
+| prueba | 19.628-21.719 | 0.25/0.50/0.75/1.00 | 0.25/0.62/0.88/1.00 | 0.12 |
+| prueba | 21.643 | 0.71/0.71/1.00/1.00 | 1.00/1.00/1.00/1.00 | 0.86 |
+| prueba2 | global | 0.56/0.71/0.77/0.94 | 0.67/0.75/0.83/1.00 | 0.77 |
+| prueba2 | 19.628-21.719 | 0.43/0.50/0.50/0.79 | 0.50/0.57/0.57/1.00 | 0.50 |
+| prueba2 | 20.393 | 0.20/0.40/0.80/1.00 | 0.20/0.80/1.00/1.00 | 1.00 |
+| prueba2 | 21.643 | 0.69/0.86/0.90/1.00 | 0.83/0.83/0.93/1.00 | 0.86 |
+| prueba3 | global | 0.60/0.74/0.82/0.99 | 0.69/0.81/0.88/0.99 | 0.84 |
+| prueba3 | 19.628-21.719 | 0.62/0.75/0.81/0.94 | 0.62/0.75/0.75/0.94 | 0.75 |
+| prueba3 | 20.393 | 0.06/0.12/0.41/1.00 | 0.06/0.41/0.65/1.00 | 0.47 |
+| prueba3 | 21.643 | 0.79/0.96/0.98/1.00 | 0.94/0.98/1.00/1.00 | 1.00 |
+
+Lectura (detalle y 20.393 en `kerna/evaluacion/registro-pruebas.md`, B2):
+- **Traer no es el problema:** hit@70 de la híbrida 0,98-1,00 en los 4 sets (retriever denso 0,94-1,00; 20.393 de desarrollo 0,89).
+- **Ordenar sí:** hit@5 de la híbrida 0,57-0,69; el evaluador sube a 0,64 / 0,47 / 0,77 / 0,84 (desarrollo, prueba, prueba2, prueba3) pero sigue lejos de 0,80 en 3 de 4.
+- **El generador pierde entre 0,00 y 0,21** sobre el top-5 del evaluador (desarrollo 0,64 → 0,43; prueba3 0,84 → 0,69).
+- **El revisor** no cambia desarrollo/prueba/prueba2 (-0,02 a 0,00) pero en prueba3 baja 0,69 → 0,50 (pareado -0,101, IC -0,154 a -0,054); 20 de sus vetos son `hechos_fuera_de_chile` sobre relatos sintéticos ambientados fuera de Chile y etiquetados por la norma chilena equivalente (supuesto A9 a confirmar).
+- **20.393:** el retriever trae arts. de procedimiento (17 ter, 7, 8, 13, 17 bis, 20, 22, 25) en vez de 1, 3 y 4; la cadena lo sube a 0,22 / 1,00 / 0,47 (n = 9 / 5 / 17).
+
 Comandos:
 - Retriever: `python3 kerna/evaluacion/recall_retriever.py --triage kerna/evaluacion/datos/triage_casos.json
   --etiqueta corregida --particion desarrollo|prueba` y `--extra-casos <json> --particion prueba2`.

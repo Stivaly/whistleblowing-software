@@ -1,0 +1,73 @@
+{
+  "fecha": "2026-11-13T20:05:01Z",
+  "commit": "3d6d7785e",
+  "parametros": {
+    "k": 5,
+    "bootstrap": 2000,
+    "semilla": 20261112,
+    "etiqueta": "B2 prueba evaluador3m+hibrida+mq3+revisor, 70 candidatos, gpt-5-nano",
+    "archivo": "casos_b2_prueba_20261113.json"
+  },
+  "resultado": {
+    "k": 5,
+    "casos": 29,
+    "casos_con_esperados": 13,
+    "casos_control": 16,
+    "recall_por_articulo": {
+      "antes": 0.2333,
+      "despues": 0.2141,
+      "antes_global": 0.2432,
+      "despues_global": 0.2162,
+      "diferencia": {
+        "media": -0.0192,
+        "ic95": [
+          -0.0577,
+          0.0
+        ]
+      },
+      "caida_maxima_permitida": 0.02,
+      "no_rompe_recall": false
+    },
+    "precision": {
+      "antes": 0.1722,
+      "despues": 0.1819
+    },
+    "vetos": {
+      "total": 18,
+      "correctos": 2,
+      "incorrectos": 1,
+      "precision_del_veto": 0.6667,
+      "en_controles": 15,
+      "controles_con_sugerencias": 14,
+      "controles_con_todo_vetado": 4,
+      "tasa_control_limpio": 0.2857
+    },
+    "revision": {
+      "sugerencias": 78,
+      "cobertura": 1.0,
+      "condicionadas": 55,
+      "esperadas_por_dictamen": {
+        "confirma": {
+          "esperadas": 2,
+          "total": 5,
+          "proporcion": 0.4
+        },
+        "condiciona": {
+          "esperadas": 6,
+          "total": 55,
+          "proporcion": 0.1091
+        },
+        "veta": {
+          "esperadas": 1,
+          "total": 18,
+          "proporcion": 0.0556
+        },
+        "sin_revision": {
+          "esperadas": 0,
+          "total": 0,
+          "proporcion": null
+        }
+      }
+    }
+  }
+}

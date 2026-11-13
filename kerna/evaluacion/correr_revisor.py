@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import contextvars
 import json
 import sys
 import time
@@ -35,6 +36,42 @@ from kerna_nucleo.orquestador import Orquestador  # noqa: E402
 from kerna_nucleo.retriever import Retriever  # noqa: E402
 
 TRIAGE = AQUI / "datos" / "triage_casos.json"
+# Etapas de un caso (solo IDs de fragmento): candidatos del retriever (híbrida + multiquery) y salida del evaluador.
+_ETAPAS: contextvars.ContextVar = contextvars.ContextVar("etapas_caso", default=None)
+
+
+def instrumentar(orq) -> None:
+    """Registra por caso los fragmentos que entrega el retriever y los que deja el evaluador (sin textos)."""
+    recuperar, evaluar = orq.retriever.recuperar, orq._evaluar
+
+    async def recuperar_i(*a, **k):
+        rec = await recuperar(*a, **k)
+        et = _ETAPAS.get()
+        if et is not None:
+            et["candidatos"] = [f["fragmento_id"] for f in rec.fragmentos]
+        return rec
+
+    async def evaluar_i(limpio, candidatos, *a, **k):
+        out = await evaluar(limpio, candidatos, *a, **k)
+        et = _ETAPAS.get()
+        if et is not None:
+            et["evaluador"] = [f["fragmento_id"] for f in out]
+        return out
+
+    orq.retriever.recuperar, orq._evaluar = recuperar_i, evaluar_i
+
+
+def cargar_casos(particion: str, extra: str | None) -> tuple[list[dict], dict]:
+    """Casos de la partición (dataset + triage; o `--extra-casos` para prueba2/prueba3) y su triage por id."""
+    dataset = json.loads(rr.DATASET.read_bytes())["casos"]
+    triage = {e["id"]: e for e in json.loads(TRIAGE.read_text())["casos"]}
+    if extra:
+        nuevos, tri_extra = rr.cargar_extra_casos(Path(extra))
+        dataset = dataset + nuevos
+        triage.update({e["id"]: e for e in tri_extra["casos"]})
+    casos = [x for x in dataset if x["id"] in triage and triage[x["id"]]["particion"] == particion
+             and triage[x["id"]]["en_alcance"] in ("si", "control")]
+    return casos, triage
 
 
 def construir(c: Config, modelo: str):
@@ -54,9 +91,12 @@ def construir(c: Config, modelo: str):
 
 async def correr(casos: list[dict], triage: dict, c: Config, modelo: str) -> list[dict]:
     alm, orq = construir(c, modelo)
+    instrumentar(orq)
     out: list[dict] = []
 
     async def uno(caso: dict):
+        et: dict = {}
+        _ETAPAS.set(et)
         t = triage[caso["id"]]
         texto = anonimizador.anonimizar(rr.texto_consulta(caso, "texto_original")).texto
         sol = {"id_solicitud": str(uuid.uuid4()), "cliente": "eval", "ref_opaca": str(uuid.uuid4()),
@@ -73,6 +113,7 @@ async def correr(casos: list[dict], triage: dict, c: Config, modelo: str) -> lis
         control = t["en_alcance"] == "control"
         out.append({"id": caso["id"], "control": control, "ley": caso["ley_principal"],
                     "esperados": [] if control else sorted(t["articulos_corregidos"]),
+                    "candidatos": et.get("candidatos"), "evaluador": et.get("evaluador"),
                     "estado": fin["estado"], "motivo_revision": fin.get("motivo_revision"),
                     "revision_juridica": fin.get("revision_juridica"), "alertas_revision": fin.get("alertas_revision"),
                     "tokens_entrada": fin.get("tokens_entrada"), "tokens_salida": fin.get("tokens_salida"),
@@ -87,16 +128,15 @@ async def correr(casos: list[dict], triage: dict, c: Config, modelo: str) -> lis
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--particion", required=True, choices=["desarrollo", "prueba"])
+    ap.add_argument("--particion", required=True, choices=["desarrollo", "prueba", "prueba2", "prueba3"])
+    ap.add_argument("--extra-casos", metavar="JSON", help="casos con triage incrustado (prueba2, prueba3)")
     ap.add_argument("--salida", required=True)
     ap.add_argument("--modelo", default="gpt-5-nano")
     ap.add_argument("--reanudar", metavar="JSON", help="repite solo los casos con cadena_agotada de una corrida previa y la completa")
     ap.add_argument("--limite", type=int, help="solo los primeros N casos (humo)")
     a = ap.parse_args(argv)
     c = Config.desde_entorno()
-    triage = {e["id"]: e for e in json.loads(TRIAGE.read_text())["casos"]}
-    casos = [x for x in json.loads(rr.DATASET.read_bytes())["casos"]
-             if triage[x["id"]]["particion"] == a.particion and triage[x["id"]]["en_alcance"] in ("si", "control")]
+    casos, triage = cargar_casos(a.particion, a.extra_casos)
     previo: list[dict] = []
     if a.reanudar:
         previo = json.loads(Path(a.reanudar).read_text())
