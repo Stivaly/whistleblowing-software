@@ -83,6 +83,10 @@ Hallar la causa real (probable: sprites externos con `<use href="archivo.svg#id"
 
 **A11. Un solo botón «Informe».** Hoy aparece en todas las vistas y parece que fueran informes distintos, cuando es uno solo. Dejarlo solo donde corresponde (menú «Generar informe»); quitarlo de las barras de Resumen, Negocio y demás.
 
+**A12. El panel cuenta «revisión manual» con eventos, no con casos.** El anillo del Resumen y el Informe suman eventos de telemetría de 7 o 30 días: cada reintento de un mismo caso cuenta otra vez, y siguen contando casos ya borrados o archivados de Veridy (el 12-nov hubo 261 eventos «revisión manual» sobre ~117 casos). Al 2026-11-14 Veridy tiene 116 casos, 0 en revisión manual y 0 con error (fila `conector`). Que todo número de «revisión manual» o «sin sugerencia» del front cuente **casos distintos que existen hoy en Veridy** (estado del conector); los históricos, si se muestran, por caso único y sin borrados. Si aparecen casos inválidos nuevos, se borran con `kerna/operaciones/borrar_casos_invalidos.sh` (autorizado).
+
+**A13. Calidad en el panel = la mejor configuración, la misma de Veridy.** La sección de calidad (recall por ley) muestra hoy la última corrida guardada, de cualquier set o configuración (por eso Karin pasó de ~0,79 a ~0,65). Debe mostrar siempre la medición de la **mejor configuración vigente, la que está desplegada en Veridy**, con el set nombrado; no todas las corridas.
+
 **A10. Ya decidido, no tocar:** UF en el valor actual (40.000); no subir a B1.
 
 Auditoría de la Parte A: capturas a 390/1366/1920 en Chromium **y Firefox**; ninguna banda estirada para poco contenido; nada de texto agregado; íconos visibles en ambos navegadores.
