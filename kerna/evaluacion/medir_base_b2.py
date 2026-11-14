@@ -33,8 +33,11 @@ import recall_retriever as rr  # noqa: E402
 PROFUNDIDADES = (5, 10, 20, 70)
 TRIAGE = AQUI / "datos" / "triage_casos.json"
 EXTRA = {"prueba2": AQUI / "datos" / "denuncias_nuevas_20261112.json",
-         "prueba3": AQUI / "datos" / "denuncias_sinteticas_20261113_prueba3.json"}
+         "prueba3": AQUI / "datos" / "denuncias_sinteticas_20261113_prueba3.json",
+         "afinar": AQUI / "datos" / "denuncias_complejas_20261114_etiquetadas.json",
+         "medir_complejas": AQUI / "datos" / "denuncias_complejas_20261114_etiquetadas.json"}
 SETS = ("desarrollo", "prueba", "prueba2", "prueba3")
+SETS_VALIDOS = SETS + ("afinar", "medir_complejas")
 OPCIONES = {"coleccion": None, "dedup": False}   # --coleccion / --dedup-literales (experimento de enriquecimiento)
 
 
@@ -148,10 +151,14 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--set", action="append", default=[], metavar="NOMBRE=casos.json",
                     help="salida de correr_revisor.py de ese set (repetible)")
+    ap.add_argument("--sets", default=",".join(SETS), help=f"sets a medir, separados por coma ({', '.join(SETS_VALIDOS)})")
     ap.add_argument("--salida", type=Path, required=True)
     ap.add_argument("--coleccion", help="colección del retriever solo (por defecto normativa_cl)")
     ap.add_argument("--dedup-literales", action="store_true", help="un literal por artículo partido (colecciones _p/_pe)")
     a = ap.parse_args(argv)
+    sets = a.sets.split(",")
+    if not set(sets) <= set(SETS_VALIDOS):
+        ap.error(f"--sets: {sorted(set(sets) - set(SETS_VALIDOS))} desconocidos")
     OPCIONES.update(coleccion=a.coleccion, dedup=a.dedup_literales)
     cadenas = dict(s.split("=", 1) for s in a.set)
     corpus = rr.articulos_vigentes(a.coleccion)
@@ -159,7 +166,7 @@ def main(argv=None) -> int:
            "corpus_articulos": len(corpus), "coleccion": a.coleccion or rr.embed_sync.COLECCION,
            "dedup_literales": a.dedup_literales, "profundidades": list(PROFUNDIDADES),
            "comando": "medir_base_b2.py " + " ".join(argv if argv is not None else sys.argv[1:]), "sets": {}}
-    for nombre in SETS:
+    for nombre in sets:
         casos = casos_set(nombre, corpus)
         ret, extra = medir_retriever(nombre, casos, corpus)
         entrada = {"casos_con_esperados": len(casos), "retriever": ret,

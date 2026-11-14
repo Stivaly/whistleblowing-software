@@ -69,7 +69,7 @@ def instrumentar(orq) -> None:
 
 
 def cargar_casos(particion: str, extra: str | None) -> tuple[list[dict], dict]:
-    """Casos de la partición (dataset + triage; o `--extra-casos` para prueba2/prueba3) y su triage por id."""
+    """Casos de la partición (dataset + triage; o `--extra-casos` para prueba2/prueba3/afinar/medir_complejas) y su triage por id."""
     dataset = json.loads(rr.DATASET.read_bytes())["casos"]
     triage = {e["id"]: e for e in json.loads(TRIAGE.read_text())["casos"]}
     if extra:
@@ -138,8 +138,8 @@ async def correr(casos: list[dict], triage: dict, c: Config, modelo: str) -> lis
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--particion", required=True, choices=["desarrollo", "prueba", "prueba2", "prueba3"])
-    ap.add_argument("--extra-casos", metavar="JSON", help="casos con triage incrustado (prueba2, prueba3)")
+    ap.add_argument("--particion", required=True, choices=["desarrollo", "prueba", "prueba2", "prueba3", "afinar", "medir_complejas"])
+    ap.add_argument("--extra-casos", metavar="JSON", help="casos con triage incrustado (prueba2, prueba3, afinar, medir_complejas)")
     ap.add_argument("--salida", required=True)
     ap.add_argument("--modelo", default="gpt-5-nano")
     ap.add_argument("--reanudar", metavar="JSON", help="repite solo los casos con cadena_agotada de una corrida previa y la completa")

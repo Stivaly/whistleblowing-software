@@ -265,3 +265,19 @@ def test_particion_prueba3_filtra_y_excluye_casos_no(tmp_path):
     assert "prueba3" in r.PARTICIONES
     assert [c["id"] for c in r.filtrar_por_triage(casos, triage, "prueba3")] == ["SIN-0001", "SIN-0003"]
     assert r.filtrar_por_triage(casos, triage, "prueba2") == []
+
+
+def test_particiones_complejas_separan_afinar_de_medir(tmp_path):
+    f = tmp_path / "complejas.json"
+    f.write_text(json.dumps({"casos": [
+        {"id": "CX-0001", "triage": "si", "articulos_corregidos": ["191865-karin-art-62"],
+         "ley_principal": "18.575-18.834-18.883", "particion": "afinar"},
+        {"id": "CX-0002", "triage": "si", "articulos_corregidos": ["207436-karin-art-2"],
+         "ley_principal": "21.643", "particion": "medir_complejas"},
+        {"id": "CX-0003", "triage": "no", "articulos_corregidos": [], "ley_principal": "ninguna", "particion": "afinar"},
+    ]}))
+    casos, triage = r.cargar_extra_casos(f)
+    assert {"afinar", "medir_complejas"} <= set(r.PARTICIONES)
+    assert [c["id"] for c in r.filtrar_por_triage(casos, triage, "afinar")] == ["CX-0001"]
+    assert [c["id"] for c in r.filtrar_por_triage(casos, triage, "medir_complejas")] == ["CX-0002"]
+    assert r.LEYES["18.575-18.834-18.883"] == {191865, 236392, 30256, 251693}

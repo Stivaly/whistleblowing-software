@@ -77,6 +77,7 @@ LEYES = {
     "20.393": {1008668},
     "21.643": {1200096, 207436},          # la ley y los artículos del CT que modificó
     "19.628-21.719": {141599, 1209272},   # texto reformado de la 19.628 y la 21.719
+    "18.575-18.834-18.883": {191865, 236392, 30256, 251693},   # probidad y estatutos administrativos (sets complejos)
 }
 
 # Cuerpo citado en articulos_candidatos -> prefijo de los IDs de fragmento vigentes.
@@ -517,7 +518,7 @@ def registrar(res: dict, *, campo: str, dataset: bytes, articulos_corpus: int, c
     return entrada
 
 
-PARTICIONES = ("desarrollo", "prueba", "prueba2", "prueba3", "todas")
+PARTICIONES = ("desarrollo", "prueba", "prueba2", "prueba3", "afinar", "medir_complejas", "todas")
 
 
 ETIQUETAS = ("original", "corregida")

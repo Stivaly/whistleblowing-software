@@ -26,3 +26,21 @@ def test_medir_cadena_cuenta_fallos_y_estados():
     r, meta = m.medir_cadena(casos, salida)
     assert r["global"]["cadena5"]["valor"] == 0.5 and r["global"]["cand70"]["valor"] == 0.5
     assert meta["estados"] == {"completada": 1, "revision_manual:validacion_fallida": 1}
+
+
+def test_casos_set_acepta_particiones_complejas(tmp_path, monkeypatch):
+    import json
+    f = tmp_path / "complejas.json"
+    f.write_text(json.dumps({"casos": [
+        {"id": "CX-9001", "triage": "si", "ley_principal": "20.393", "particion": "afinar",
+         "articulos_corregidos": ["1008668-art-1"], "texto_original": "x"},
+        {"id": "CX-9002", "triage": "si", "ley_principal": "20.393", "particion": "medir_complejas",
+         "articulos_corregidos": ["1008668-art-3"], "texto_original": "y"},
+        {"id": "CX-9003", "triage": "control", "ley_principal": "ninguna", "particion": "medir_complejas",
+         "articulos_corregidos": [], "texto_original": "z"}]}))
+    monkeypatch.setitem(m.EXTRA, "afinar", f)
+    monkeypatch.setitem(m.EXTRA, "medir_complejas", f)
+    corpus = {"1008668-art-1", "1008668-art-3"}
+    assert [c["id"] for c in m.casos_set("afinar", corpus)] == ["CX-9001"]
+    assert [c["id"] for c in m.casos_set("medir_complejas", corpus)] == ["CX-9002"]
+    assert {"afinar", "medir_complejas"} <= set(m.SETS_VALIDOS) and "afinar" not in m.SETS
