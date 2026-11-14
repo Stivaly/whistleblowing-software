@@ -81,6 +81,8 @@ Hallar la causa real (probable: sprites externos con `<use href="archivo.svg#id"
 
 **A9. Denuncias sintéticas: auditoría real.** `kerna/evaluacion/datos/denuncias_sinteticas_20261113.json` (150 relatos) **no fue auditado**. Revísalos tú, todos: realistas y específicos, sin plantillas ni patrones repetidos, variedad real de tema, tono y extensión, ~15 % ambiguos y ~10 % sin falta, datos personales ficticios y variados, sin textos copiados. Los que no cumplan se reemplazan con un agente nuevo (el encargo **no puede revelar el contexto**: ni modelo, ni evaluación, ni leyes, ni país) y se vuelven a auditar. Resguardar el resultado como archivo nuevo en `kerna/evaluacion/datos/` (fuera de git) sin modificar los existentes, y registrar la auditoría en `kerna/evaluacion/registro-pruebas.md`.
 
+**A11. Un solo botón «Informe».** Hoy aparece en todas las vistas y parece que fueran informes distintos, cuando es uno solo. Dejarlo solo donde corresponde (menú «Generar informe»); quitarlo de las barras de Resumen, Negocio y demás.
+
 **A10. Ya decidido, no tocar:** UF en el valor actual (40.000); no subir a B1.
 
 Auditoría de la Parte A: capturas a 390/1366/1920 en Chromium **y Firefox**; ninguna banda estirada para poco contenido; nada de texto agregado; íconos visibles en ambos navegadores.
