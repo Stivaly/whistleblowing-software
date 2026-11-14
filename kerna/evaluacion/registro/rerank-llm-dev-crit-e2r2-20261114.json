@@ -1,0 +1,808 @@
+{
+ "filas": [
+  {
+   "id": "DEN-0008",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 18191,
+   "top5": [
+    "236392-karin-art-121",
+    "30256-karin-art-120",
+    "30256-karin-art-123",
+    "30256-karin-art-138",
+    "30256-karin-art-127"
+   ]
+  },
+  {
+   "id": "DEN-0009",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 18245,
+   "top5": [
+    "236392-karin-art-121",
+    "236392-karin-art-84",
+    "236392-karin-art-159",
+    "236392-karin-art-126",
+    "30256-karin-art-123"
+   ]
+  },
+  {
+   "id": "DEN-0012",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 18247,
+   "top5": [
+    "207436-karin-art-211-b-bis",
+    "207436-karin-art-211-a",
+    "236392-karin-art-136",
+    "236392-karin-art-84",
+    "30256-karin-art-82"
+   ]
+  },
+  {
+   "id": "DEN-0013",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 18043,
+   "top5": [
+    "207436-karin-art-211-e",
+    "207436-karin-art-211-c",
+    "207436-karin-art-211-b",
+    "207436-karin-art-211-a",
+    "207436-karin-art-211-d"
+   ]
+  },
+  {
+   "id": "DEN-0014",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 0.0,
+   "hit_ventana": 1.0,
+   "tokens": 17626,
+   "top5": [
+    "141599-2026-12-01-art-14-bis",
+    "141599-2026-12-01-art-23",
+    "207436-karin-art-154-ter",
+    "141599-2026-12-01-art-24",
+    "141599-2026-12-01-art-46"
+   ]
+  },
+  {
+   "id": "DEN-0015",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 17836,
+   "top5": [
+    "207436-karin-art-211-b",
+    "207436-karin-art-211-a",
+    "207436-karin-art-211-e",
+    "191865-karin-art-14",
+    "207436-karin-art-211-d"
+   ]
+  },
+  {
+   "id": "DEN-0016",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 17742,
+   "top5": [
+    "207436-karin-art-211-c",
+    "30256-karin-art-133",
+    "207436-karin-art-211-e",
+    "30256-karin-art-141",
+    "141599-2026-12-01-art-42"
+   ]
+  },
+  {
+   "id": "DEN-0017",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 17041,
+   "top5": [
+    "207436-karin-art-211-a",
+    "207436-karin-art-211-b-bis",
+    "207436-karin-art-211-c",
+    "191865-karin-art-14",
+    "207436-karin-art-211-e"
+   ]
+  },
+  {
+   "id": "DEN-0018",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 16658,
+   "top5": [
+    "236392-karin-art-121",
+    "30256-karin-art-127",
+    "236392-karin-art-129",
+    "30256-karin-art-124",
+    "236392-karin-art-126"
+   ]
+  },
+  {
+   "id": "DEN-0020",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 18018,
+   "top5": [
+    "207436-karin-art-211-a",
+    "207436-karin-art-211-e",
+    "207436-karin-art-211-c",
+    "207436-karin-art-2",
+    "207436-karin-art-211-b-bis"
+   ]
+  },
+  {
+   "id": "DEN-0021",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 16838,
+   "top5": [
+    "207436-karin-art-211-a",
+    "207436-karin-art-211-b-bis",
+    "207436-karin-art-211-e",
+    "191865-karin-art-14",
+    "207436-karin-art-211-c"
+   ]
+  },
+  {
+   "id": "DEN-0022",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 0.0,
+   "hit_ventana": 1.0,
+   "tokens": 18902,
+   "top5": [
+    "207436-karin-art-211-a",
+    "207436-karin-art-211-b-bis",
+    "191865-karin-art-14",
+    "1200096-art-6",
+    "236392-karin-art-136"
+   ]
+  },
+  {
+   "id": "DEN-0023",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 0.0,
+   "hit_ventana": 0.0,
+   "tokens": 17227,
+   "top5": [
+    "30256-karin-art-123",
+    "236392-karin-art-125",
+    "30256-karin-art-82",
+    "236392-karin-art-84",
+    "30256-karin-art-88"
+   ]
+  },
+  {
+   "id": "DEN-0024",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 20039,
+   "top5": [
+    "207436-karin-art-211-a",
+    "207436-karin-art-211-c",
+    "191865-karin-art-14",
+    "207436-karin-art-211-b",
+    "207436-karin-art-2"
+   ]
+  },
+  {
+   "id": "DEN-0025",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 0.0,
+   "hit_ventana": 1.0,
+   "tokens": 16677,
+   "top5": [
+    "141599-2026-12-01-art-46",
+    "141599-2026-12-01-art-14-ter",
+    "141599-2026-12-01-art-24",
+    "141599-2026-12-01-art-41",
+    "141599-2026-12-01-art-54"
+   ]
+  },
+  {
+   "id": "DEN-0026",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 19649,
+   "top5": [
+    "236392-karin-art-121",
+    "30256-karin-art-120",
+    "30256-karin-art-123",
+    "236392-karin-art-129",
+    "30256-karin-art-82"
+   ]
+  },
+  {
+   "id": "DEN-0029",
+   "ley": "21.643",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 17610,
+   "top5": [
+    "207436-karin-art-211-c",
+    "207436-karin-art-211-a",
+    "207436-karin-art-211-b",
+    "207436-karin-art-211-e",
+    "207436-karin-art-211-d"
+   ]
+  },
+  {
+   "id": "DEN-0032",
+   "ley": "20.393",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 26405,
+   "top5": [
+    "1008668-art-1",
+    "1008668-art-3",
+    "1008668-art-19-bis",
+    "1008668-art-12",
+    "1008668-art-18-bis"
+   ]
+  },
+  {
+   "id": "DEN-0034",
+   "ley": "20.393",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 25996,
+   "top5": [
+    "1008668-art-3",
+    "1008668-art-4",
+    "1008668-art-1",
+    "141599-2026-12-01-art-34-quater",
+    "141599-2026-12-01-art-46"
+   ]
+  },
+  {
+   "id": "DEN-0035",
+   "ley": "20.393",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 19734,
+   "top5": [
+    "1008668-art-3",
+    "1008668-art-4",
+    "1008668-art-25",
+    "1008668-art-1",
+    "1008668-art-20-bis"
+   ]
+  },
+  {
+   "id": "DEN-0036",
+   "ley": "20.393",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 19165,
+   "top5": [
+    "1008668-art-1",
+    "1008668-art-4",
+    "1008668-art-3",
+    "1008668-art-5",
+    "141599-2026-12-01-art-30-quinquies"
+   ]
+  },
+  {
+   "id": "DEN-0037",
+   "ley": "20.393",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 30528,
+   "top5": [
+    "1008668-art-3",
+    "1008668-art-1",
+    "1008668-art-14",
+    "1008668-art-4",
+    "1008668-art-20"
+   ]
+  },
+  {
+   "id": "DEN-0040",
+   "ley": "20.393",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 0.0,
+   "hit_ventana": 1.0,
+   "tokens": 26166,
+   "top5": [
+    "207436-karin-art-211-c",
+    "191865-karin-art-62",
+    "141599-2026-12-01-art-32",
+    "191865-karin-art-14",
+    "141599-2026-12-01-art-49"
+   ]
+  },
+  {
+   "id": "DEN-0041",
+   "ley": "20.393",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 28662,
+   "top5": [
+    "1008668-art-1",
+    "1008668-art-4",
+    "1008668-art-3",
+    "191865-karin-art-62",
+    "30256-karin-art-82"
+   ]
+  },
+  {
+   "id": "DEN-0043",
+   "ley": "20.393",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 20236,
+   "top5": [
+    "1008668-art-3",
+    "1008668-art-1",
+    "1008668-art-4",
+    "1008668-art-14",
+    "1008668-art-12"
+   ]
+  },
+  {
+   "id": "DEN-0051",
+   "ley": "20.393",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 0.0,
+   "hit_ventana": 1.0,
+   "tokens": 18812,
+   "top5": [
+    "1008668-art-25",
+    "1008668-art-29",
+    "1008668-art-27",
+    "30256-karin-art-120",
+    "236392-karin-art-121"
+   ]
+  },
+  {
+   "id": "DEN-0068",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 17378,
+   "top5": [
+    "141599-2026-12-01-art-34-quater",
+    "141599-2026-12-01-art-34-ter",
+    "141599-2026-12-01-art-14-sexies",
+    "141599-2026-12-01-art-46",
+    "141599-2026-12-01-art-2-p1"
+   ]
+  },
+  {
+   "id": "DEN-0069",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 26096,
+   "top5": [
+    "141599-2026-12-01-art-16-ter",
+    "141599-2026-12-01-art-16",
+    "141599-2026-12-01-art-34-ter",
+    "141599-2026-12-01-art-2-p1",
+    "141599-2026-12-01-art-15-ter"
+   ]
+  },
+  {
+   "id": "DEN-0070",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 16512,
+   "top5": [
+    "141599-2026-12-01-art-5",
+    "141599-2026-12-01-art-14-ter",
+    "141599-2026-12-01-art-10",
+    "141599-2026-12-01-art-11",
+    "141599-2026-12-01-art-2-p2"
+   ]
+  },
+  {
+   "id": "DEN-0073",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 18150,
+   "top5": [
+    "141599-2026-12-01-art-17",
+    "141599-2026-12-01-art-19",
+    "141599-2026-12-01-art-34-quater",
+    "141599-2026-12-01-art-55",
+    "141599-2026-12-01-art-34-ter"
+   ]
+  },
+  {
+   "id": "DEN-0074",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 0.0,
+   "hit_ventana": 1.0,
+   "tokens": 17063,
+   "top5": [
+    "141599-2026-12-01-art-15-ter",
+    "141599-2026-12-01-art-16-ter",
+    "141599-2026-12-01-art-30",
+    "141599-2026-12-01-art-14-bis",
+    "141599-2026-12-01-art-1"
+   ]
+  },
+  {
+   "id": "DEN-0081",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 15796,
+   "top5": [
+    "141599-2026-12-01-art-18",
+    "141599-2026-12-01-art-17",
+    "141599-2026-12-01-art-19",
+    "141599-2026-12-01-art-13",
+    "141599-2026-12-01-art-25"
+   ]
+  },
+  {
+   "id": "DEN-0082",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 15826,
+   "top5": [
+    "141599-2026-12-01-art-7",
+    "141599-2026-12-01-art-17",
+    "141599-2026-12-01-art-19",
+    "141599-2026-12-01-art-18",
+    "141599-2026-12-01-art-30-bis"
+   ]
+  },
+  {
+   "id": "DEN-0083",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 18333,
+   "top5": [
+    "141599-2026-12-01-art-16-bis",
+    "141599-2026-12-01-art-2-p1",
+    "141599-2026-12-01-art-15-ter",
+    "141599-2026-12-01-art-16-ter",
+    "141599-2026-12-01-art-16"
+   ]
+  },
+  {
+   "id": "DEN-0085",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 0.0,
+   "hit_ventana": 1.0,
+   "tokens": 17944,
+   "top5": [
+    "141599-2026-12-01-art-43",
+    "141599-2026-12-01-art-8-ter",
+    "141599-2026-12-01-art-25",
+    "141599-2026-12-01-art-17",
+    "141599-2026-12-01-art-55"
+   ]
+  },
+  {
+   "id": "DEN-0086",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 17231,
+   "top5": [
+    "141599-2026-12-01-art-24",
+    "141599-2026-12-01-art-22",
+    "141599-2026-12-01-art-20",
+    "141599-2026-12-01-art-30-bis",
+    "141599-2026-12-01-art-46"
+   ]
+  },
+  {
+   "id": "DEN-0087",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 17060,
+   "top5": [
+    "141599-2026-12-01-art-34",
+    "141599-2026-12-01-art-34-quater",
+    "141599-2026-12-01-art-34-ter",
+    "141599-2026-12-01-art-14-bis",
+    "141599-2026-12-01-art-46"
+   ]
+  },
+  {
+   "id": "DEN-0088",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 0.0,
+   "hit_ventana": 1.0,
+   "tokens": 26136,
+   "top5": [
+    "141599-2026-12-01-art-24",
+    "141599-2026-12-01-art-14-ter",
+    "141599-2026-12-01-art-22",
+    "141599-2026-12-01-art-5",
+    "141599-2026-12-01-art-23"
+   ]
+  },
+  {
+   "id": "DEN-0089",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 30332,
+   "top5": [
+    "141599-2026-12-01-art-2-p1",
+    "141599-2026-12-01-art-3",
+    "141599-2026-12-01-art-24",
+    "141599-2026-12-01-art-16",
+    "141599-2026-12-01-art-11"
+   ]
+  },
+  {
+   "id": "DEN-0090",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 1.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 17163,
+   "top5": [
+    "141599-2026-12-01-art-16-ter",
+    "141599-2026-12-01-art-16",
+    "141599-2026-12-01-art-16-sexies",
+    "141599-2026-12-01-art-16-bis",
+    "141599-2026-12-01-art-3"
+   ]
+  },
+  {
+   "id": "DEN-0091",
+   "ley": "19.628-21.719",
+   "usado": true,
+   "motivo": "",
+   "antes": 0.0,
+   "despues": 1.0,
+   "hit_ventana": 1.0,
+   "tokens": 17248,
+   "top5": [
+    "141599-2026-12-01-art-34-quater",
+    "141599-2026-12-01-art-34-ter",
+    "141599-2026-12-01-art-16",
+    "141599-2026-12-01-art-14-bis",
+    "141599-2026-12-01-art-3"
+   ]
+  }
+ ],
+ "resumen": {
+  "global": {
+   "n": 41,
+   "antes": 0.659,
+   "antes_ic": [
+    0.512,
+    0.805
+   ],
+   "despues": 0.78,
+   "despues_ic": [
+    0.634,
+    0.902
+   ],
+   "hit_ventana": 0.976,
+   "pareado": {
+    "diferencia": 0.122,
+    "ic95": [
+     0.0,
+     0.244
+    ]
+   },
+   "fallidos": 0
+  },
+  "21.643": {
+   "n": 17,
+   "antes": 0.706,
+   "antes_ic": [
+    0.471,
+    0.882
+   ],
+   "despues": 0.765,
+   "despues_ic": [
+    0.588,
+    0.941
+   ],
+   "hit_ventana": 0.941,
+   "pareado": {
+    "diferencia": 0.059,
+    "ic95": [
+     -0.118,
+     0.294
+    ]
+   },
+   "fallidos": 0
+  },
+  "20.393": {
+   "n": 9,
+   "antes": 0.556,
+   "antes_ic": [
+    0.222,
+    0.889
+   ],
+   "despues": 0.778,
+   "despues_ic": [
+    0.444,
+    1.0
+   ],
+   "hit_ventana": 1.0,
+   "pareado": {
+    "diferencia": 0.222,
+    "ic95": [
+     0.0,
+     0.444
+    ]
+   },
+   "fallidos": 0
+  },
+  "19.628-21.719": {
+   "n": 15,
+   "antes": 0.667,
+   "antes_ic": [
+    0.467,
+    0.867
+   ],
+   "despues": 0.8,
+   "despues_ic": [
+    0.6,
+    1.0
+   ],
+   "hit_ventana": 1.0,
+   "pareado": {
+    "diferencia": 0.133,
+    "ic95": [
+     0.0,
+     0.333
+    ]
+   },
+   "fallidos": 0
+  }
+ },
+ "parametros": {
+  "particion": "desarrollo",
+  "extra_casos": null,
+  "casos": "evaluacion/registro/casos_exp2_base_desarrollo_20261114.json",
+  "fuente": "evaluador",
+  "ventana": 35,
+  "voto_eval": 2.0,
+  "voto_ret": 2.0,
+  "criterios": true,
+  "permutaciones": 2,
+  "modelo": "gpt-5-nano",
+  "concurrencia": 4,
+  "salida": "evaluacion/registro/rerank-llm-dev-crit-e2r2-20261114.json"
+ },
+ "coleccion": "normativa_cl_x_e",
+ "comando": "medir_rerank_llm.py --particion desarrollo --casos evaluacion/registro/casos_exp2_base_desarrollo_20261114.json --fuente evaluador --ventana 35 --concurrencia 4 --criterios --voto-eval 2 --voto-ret 2 --salida evaluacion/registro/rerank-llm-dev-crit-e2r2-20261114.json",
+ "fecha": "2026-11-14T17:32:03Z"
+}

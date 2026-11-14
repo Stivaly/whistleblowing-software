@@ -140,3 +140,67 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 - Por ley, cadena [(b)] / retriever: 20.393 desarrollo 0,222 -> 0,333 / 0,444 (n=9); prueba2 1,00 / 0,80 (n=5); prueba3 0,471 -> 0,647 / 0,412 (n=17). 21.643: desarrollo 0,706, prueba 0,857, prueba2 0,793, prueba3 0,851. 19.628-21.719: desarrollo 0,688, prueba 0,125, prueba2 0,786, prueba3 0,750.
 - Lectura: el enriquecimiento sube el retriever y el top-5 del evaluador en todos los sets salvo prueba (n=15, igual). El evaluador ya pasa 0,80 en prueba2 y prueba3, pero el generador pierde 0,12 (desarrollo), 0,00 (prueba), 0,04 (prueba2) y 0,125 (prueba3), y el revisor resta 0,02-0,07 más en desarrollo y prueba2. Falta 0,80 en desarrollo (0,62), prueba (0,47) y 19.628-21.719 en prueba (0,125).
 - Archivos: `registro/casos_enr_ebm_{prueba,prueba2,prueba3}_20261113t.json`, `casos_enr_ebm_desarrollo_20261113.json`, `enr-ebm-20261113t.json` (parcial, sin desarrollo ni cadena completa) y `enr-ebm-completo-20261114.json` (medición final).
+
+
+## 2026-11-14 · Experimento 2: completar el top del evaluador tras el generador + reranker LLM listwise
+- Fecha: 2026-11-14 · Commit de las corridas: bebf67189 (código 48ed0d3cf + bebf67189; los flags nuevos de 1-4 permutaciones y criterios, commit 5e56232d5, solo se usaron en las 4 variantes marcadas). Colección `normativa_cl_x_e` (corpus 181, `version_corpus` 3, verificado en Qdrant: 181 artículos vigentes), etiqueta corregida, gpt-5-nano (salvo mini indicado), texto anonimizado, solo IDs.
+- Cadena: `operaciones/medicion_exp2.sh base|rr 20261114 <set>` = configuración de ebm (evaluador 3m, 70 candidatos, híbrida +15, multiquery 3, `KERNA_ENR_BM25=concat`, `KERNA_REVISOR=1`; prueba3 con `KERNA_REVISOR_SIN_CAUSALES=hechos_fuera_de_chile`). `base` = sin flags nuevos (solo desarrollo). `rr` = con `KERNA_GENERADOR_COMPLETAR` y `KERNA_RERANK_LLM=1`. **Los flags exactos de `rr` no quedaron registrados** (se pasaron por línea de comandos): por la fecha de los archivos (desarrollo 06:18Z, después de las 16 variantes, última 05:57Z) y el solapamiento del top-5, la más probable es ventana 35, votos evaluador/retriever 2/2, 2 permutaciones, nano. Para reproducir hay que volver a correr con esos flags explícitos.
+- Reranker solo: `operaciones/correr_evaluacion.sh KERNA_COLECCION=normativa_cl_x_e python3 evaluacion/medir_rerank_llm.py --particion desarrollo --casos evaluacion/registro/casos_exp2_base_desarrollo_20261114.json --fuente evaluador --ventana 35 --voto-eval V --voto-ret W [--modelo gpt-5-mini] [--permutaciones 4] [--criterios]`.
+- Recálculo independiente (script propio sobre los archivos por caso, etiquetas de `triage_casos.json`/`denuncias_nuevas_20261112.json`/`denuncias_sinteticas_20261113_prueba3.json` ∩ corpus 181, mismas definiciones de `medir_base_b2.py`: casos `si` y controles con etiqueta; hit@5 por artículo; IC bootstrap de `recall_retriever.py`). Todos los casos esperados están en los archivos (42/15/48/80), salvo DEN-0084 en la base de desarrollo (cadena agotada por 429, cuenta como fallo; en `rr` está completo). Hay 1 caso en revisión manual en `rr` prueba2 (`cadena_agotada`), que cuenta como fallo. Los 16 resúmenes originales de variantes coinciden con el recálculo (antes/después por caso verificados contra la base).
+- Cadena, recall@5 por artículo [IC 95 %]: columnas = top-5 del evaluador (tras reranker) / cadena (generador por confianza) / + revisor.
+
+| Set | Ley (n) | Evaluador | Cadena | + revisor |
+|---|---|---|---|---|
+| desarrollo (base) | global (42) | 0.643 [0.50-0.79] | 0.571 [0.43-0.71] | 0.548 [0.38-0.69] |
+| desarrollo (base) | 19.628-21.719 (16) | 0.625 [0.38-0.88] | 0.625 [0.38-0.88] | 0.625 [0.38-0.88] |
+| desarrollo (base) | 20.393 (9) | 0.556 [0.22-0.89] | 0.333 [0.11-0.67] | 0.333 [0.11-0.67] |
+| desarrollo (base) | 21.643 (17) | 0.706 [0.47-0.88] | 0.647 [0.41-0.88] | 0.588 [0.35-0.82] |
+| desarrollo | global (42) | 0.762 [0.62-0.88] | 0.786 [0.67-0.90] | 0.762 [0.62-0.88] |
+| desarrollo | 19.628-21.719 (16) | 0.812 [0.62-1.00] | 0.812 [0.62-1.00] | 0.812 [0.62-1.00] |
+| desarrollo | 20.393 (9) | 0.556 [0.22-0.89] | 0.667 [0.33-0.89] | 0.667 [0.33-0.89] |
+| desarrollo | 21.643 (17) | 0.824 [0.65-1.00] | 0.824 [0.65-1.00] | 0.765 [0.53-0.94] |
+| prueba | global (15) | 0.667 [0.40-0.87] | 0.800 [0.60-1.00] | 0.800 [0.60-1.00] |
+| prueba | 19.628-21.719 (8) | 0.500 [0.12-0.88] | 0.625 [0.25-0.88] | 0.625 [0.25-0.88] |
+| prueba | 21.643 (7) | 0.857 [0.57-1.00] | 1.000 [1.00-1.00] | 1.000 [1.00-1.00] |
+| prueba2 | global (48) | 0.812 [0.71-0.92] | 0.792 [0.67-0.90] | 0.792 [0.67-0.90] |
+| prueba2 | 19.628-21.719 (14) | 0.571 [0.29-0.86] | 0.571 [0.29-0.86] | 0.571 [0.29-0.86] |
+| prueba2 | 20.393 (5) | 1.000 [1.00-1.00] | 1.000 [1.00-1.00] | 1.000 [1.00-1.00] |
+| prueba2 | 21.643 (29) | 0.897 [0.76-1.00] | 0.862 [0.72-0.97] | 0.862 [0.72-0.97] |
+| prueba3 | global (80) | 0.912 [0.85-0.97] | 0.875 [0.80-0.94] | 0.875 [0.80-0.94] |
+| prueba3 | 19.628-21.719 (16) | 0.750 [0.50-0.94] | 0.812 [0.62-1.00] | 0.812 [0.62-1.00] |
+| prueba3 | 20.393 (17) | 0.941 [0.82-1.00] | 0.882 [0.71-1.00] | 0.882 [0.71-1.00] |
+| prueba3 | 21.643 (47) | 0.957 [0.89-1.00] | 0.894 [0.79-0.98] | 0.894 [0.79-0.98] |
+
+- Diferencias pareadas rr − ebm del 2026-11-13 (misma etiqueta): desarrollo cadena 0,619 → 0,786 (+0,167, IC 0,048-0,310), revisor 0,548 → 0,762 (+0,214, IC 0,071-0,357); prueba 0,467 → 0,800 (+0,333, IC 0,133-0,600); prueba2 0,813 → 0,792 (-0,021, IC -0,146-0,104); prueba3 0,787 → 0,875 (+0,087, IC 0,000-0,175), revisor 0,762 → 0,875 (+0,113, IC 0,025-0,212). Contra la base repetida el mismo día (desarrollo 0,571) la mejora es +0,214 (IC 0,095-0,333).
+- Variantes del reranker en desarrollo (hit@5 del top-5 reordenado; el script excluye DEN-0084, por eso n=41; la columna n=42 lo cuenta como fallo; la base sin reranker da 0,659 con n=41):
+
+| Variante | Modelo | Ventana | Perm. | Votos eval/ret | Criterios | hit@5 n=41 [IC] | n=42 | Fallidos |
+|---|---|---|---|---|---|---|---|---|
+| dev-crit-e2r2 | gpt-5-nano | 35 | 2 | 2/2 | si | 0.780 [0.63-0.90] | 0.762 | 0 |
+| dev-e0r1 | gpt-5-nano | 35 | 2 | 0/1 | no | 0.732 [0.59-0.85] | 0.714 | 0 |
+| dev-e1r1 | gpt-5-nano | 35 | 2 | 1/1 | no | 0.707 [0.56-0.83] | 0.690 | 0 |
+| dev-e2r1 | gpt-5-nano | 35 | 2 | 2/1 | no | 0.732 [0.59-0.85] | 0.714 | 0 |
+| dev-e2r2 | gpt-5-nano | 35 | 2 | 2/2 | no | 0.780 [0.63-0.90] | 0.762 | 0 |
+| dev-e2r2b | gpt-5-nano | 35 | 2 | 2/2 | no | 0.780 [0.63-0.90] | 0.762 | 0 |
+| dev-e3r3 | gpt-5-nano | 35 | 2 | 3/3 | no | 0.780 [0.63-0.90] | 0.762 | 0 |
+| dev-ev35 | gpt-5-nano | 35 | 2 | 0/0 | no | 0.585 [0.44-0.73] | 0.571 | 0 |
+| dev-ev35-voto1.0 | gpt-5-nano | 35 | 2 | 1/0 | no | 0.707 [0.56-0.83] | 0.690 | 0 |
+| dev-ev35-voto2.0 | gpt-5-nano | 35 | 2 | 2/0 | no | 0.634 [0.49-0.78] | 0.619 | 0 |
+| dev-mini-e2r2 | gpt-5-mini | 35 | 2 | 2/2 | no | 0.805 [0.66-0.93] | 0.786 | 0 |
+| dev-mini-v0 | gpt-5-mini | 35 | 2 | 0/0 | no | 0.780 [0.66-0.90] | 0.762 | 3 |
+| dev-mini-v1 | gpt-5-mini | 35 | 2 | 1/0 | no | 0.756 [0.61-0.88] | 0.738 | 1 |
+| dev-nanomed-v0 | gpt-5-nano | 35 | 2 | 0/0 | no | 0.659 [0.51-0.80] | 0.643 | 0 |
+| dev-nanomed-v1 | gpt-5-nano | 35 | 2 | 1/0 | no | 0.732 [0.59-0.85] | 0.714 | 0 |
+| dev-p4e1r1 | gpt-5-nano | 35 | 4 | 1/1 | no | 0.780 [0.63-0.90] | 0.762 | 0 |
+| dev-p4e2r2 | gpt-5-nano | 35 | 4 | 2/2 | no | 0.756 [0.61-0.88] | 0.738 | 0 |
+| dev-v20e1 | gpt-5-nano | 20 | 2 | 1/0 | no | 0.659 [0.51-0.80] | 0.643 | 0 |
+| dev-v35e1b | gpt-5-nano | 35 | 2 | 1/0 | no | 0.683 [0.54-0.83] | 0.667 | 0 |
+| dev-v50e1 | gpt-5-nano | 50 | 2 | 1/0 | no | 0.707 [0.56-0.83] | 0.690 | 0 |
+
+- Elección sin mirar prueba: las 16 variantes originales se corrieron solo en desarrollo (archivos `rerank-llm-dev-*`); la cadena `rr` de desarrollo se ejecutó después de la última (05:57Z) y la de prueba, prueba2 y prueba3 una sola vez cada una (un archivo por set; hora local de los archivos 03:40, 04:09 y 04:47). No hay variantes ni repeticiones con prueba en el registro; el «una sola vez» se infiere de los archivos, no hay bitácora de comandos. Las 5 variantes nuevas (p4e1r1, p4e2r2, crit-e2r2, mini-e2r2; `--permutaciones`/`--criterios`) se midieron solo en desarrollo, hoy, y no se confirmaron en prueba.
+- Discrepancias con resúmenes previos: (1) base de desarrollo repetida el 14-nov da cadena 0,571 y revisor 0,548 (ebm del 13-nov: 0,619 y 0,548; el LLM no es determinista, ±2 casos de 42); (2) prueba n=15 incluye 2 controles con etiqueta (DEN-0002 y DEN-0007), como en B2/ebm, mientras que los casos `si` son 13 (con 13: evaluador 0,615, cadena 0,769); (3) el «0,78» del reranker solo (n=41) no es el recall de la cadena (0,786 con n=42 y generador); (4) la tabla del reranker mezcla n=41 y 42: usar n=42.
+- Lectura: el reranker LLM con votos del evaluador y del retriever (2/2) es la primera mejora con IC pareado que excluye 0 en desarrollo y prueba3; desarrollo queda en 0,786 (33/42: falta 1 caso para 0,80) y la cadena con revisor en 0,762 (el revisor veta DEN-0008 por `hechos_anteriores_a_vigencia`, caso esperado). Sin votos el reranker empeora (0,585); con un voto es un conjunto (0,71); más votos o más permutaciones (4) ni la ventana (20/35/50) ni criterios por ley en el prompt cambian el global (0,76-0,78, ruido de ±1 caso); gpt-5-mini con votos 2/2 llega a 0,805 (n=41; 0,786 con n=42), igual que nano en la cadena. Falla en prueba2 (-0,02; 19.628: 0,571). Meta 0,80 **no alcanzada en desarrollo**; la cumplen prueba (0,80, n=15) y no la cumplen prueba2 (0,79) ni la cadena con revisor; prueba3 pasa (0,875, supuesto de causales).
+- Casos que siguen fallando en desarrollo (cadena rr): 21.643 DEN-0022, 0023 (ningún candidato de la ventana), 0025; 20.393 DEN-0040, 0041, 0051 (el artículo esperado cae en la posición 15-35 de los candidatos o el reranker pone arts. de procedimiento 25, 27, 29); datos DEN-0083, 0085, 0088 (esperados en pos. 5, 11, 16; el reranker pone arts. 14-ter, 24, 43 de la ley reformada).
+- Configuración a desplegar si la usuaria decide (no se desplegó el núcleo): `KERNA_COLECCION=normativa_cl_x_e KERNA_ENR_BM25=concat` + evaluador/híbrida/multiquery de B2 + `KERNA_GENERADOR_COMPLETAR=5` (valor a confirmar: no registrado) `KERNA_RERANK_LLM=1 KERNA_RERANK_LLM_VENTANA=35 KERNA_RERANK_LLM_VOTO_EVAL=2 KERNA_RERANK_LLM_VOTO_RETRIEVER=2`. Antes hay que re-correr desarrollo con esos flags explícitos para fijar la configuración.
+- Siguiente paso (en orden): (1) re-correr `rr` en desarrollo con flags explícitos y repetir 2 veces para medir la varianza; (2) 20.393 y datos: el esperado no sube al top-5 aunque está en la ventana, probar partir arts. 82/84 por letra y subir 1/3/4 con el enriquecimiento (`rol` sustantivo), medir en desarrollo; (3) criterios del revisor (el veto `hechos_anteriores_a_vigencia` en DEN-0008); (4) más casos de desarrollo (sintéticas complejas, B6) para dejar de decidir con n=42. Confirmar en prueba una sola vez por cambio.
+- Archivos (todos solo IDs): `registro/casos_exp2_base_desarrollo_20261114.json`, `casos_exp2_rr_{desarrollo,prueba,prueba2,prueba3}_20261114.json`, `rerank-llm-dev-*-20261114.json` (21).
