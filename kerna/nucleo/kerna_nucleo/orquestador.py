@@ -227,8 +227,9 @@ class Orquestador:
         ids_eval = [f["fragmento_id"] for f in orden_eval] if orden_eval else []
         ventana = (orden_eval if (c.rerank_llm_fuente == "evaluador" and orden_eval) else retriever)
         with telemetria.etapa("rerank_llm", **base) as a:
-            r = await RerankerLLM(self.enrutador.generar, c.rerank_llm_ventana, c.rerank_llm_voto_eval).reordenar(
-                limpio, list(ventana), inicio, ids_eval)
+            r = await RerankerLLM(self.enrutador.generar, c.rerank_llm_ventana, c.rerank_llm_voto_eval,
+                             voto_retriever=getattr(c, "rerank_llm_voto_retriever", 0.0)).reordenar(
+                limpio, list(ventana), inicio, ids_eval, [f["fragmento_id"] for f in retriever])
             a.update(usado=r.usado, motivo=r.motivo, permutaciones=r.permutaciones, descartados_id=r.descartados_id,
                      tokens_entrada=r.tokens_entrada, tokens_salida=r.tokens_salida)
         reg["tokens_entrada"] += r.tokens_entrada

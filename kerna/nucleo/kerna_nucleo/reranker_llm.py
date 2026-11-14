@@ -3,7 +3,7 @@
 Cada candidata se presenta con su perfil (encabezado, rol y situaciones típicas del enriquecimiento; sin enriquecimiento,
 el comienzo del texto), no con el texto completo. El modelo devuelve los identificadores de las 10 más aplicables, de
 la más a la menos aplicable. Para el sesgo de posición se hacen dos permutaciones (orden de entrada e invertido) y los
-puestos se combinan por Borda; opcionalmente el orden del evaluador vota como un tercer ranking. Todo se valida en
+puestos se combinan por Borda; opcionalmente el orden del evaluador y el del retriever votan como rankings adicionales (pesos propios). Todo se valida en
 código: solo identificadores de la ventana, sin repetidos. Una falla de ambas permutaciones conserva el orden de entrada.
 El texto de la denuncia no se registra ni se persiste.
 """
@@ -87,8 +87,10 @@ class ResultadoRerank:
 
 
 class RerankerLLM:
-    def __init__(self, generar, ventana: int = 35, voto_evaluador: float = 0.0, permutaciones: int = 2):
+    def __init__(self, generar, ventana: int = 35, voto_evaluador: float = 0.0, permutaciones: int = 2,
+                 voto_retriever: float = 0.0):
         self._generar, self.ventana, self.voto_evaluador = generar, max(2, ventana), voto_evaluador
+        self.voto_retriever = voto_retriever
         self.permutaciones = max(1, min(2, permutaciones))
 
     async def _una(self, hechos, perm: list[dict], inicio, res: ResultadoRerank):
@@ -113,7 +115,8 @@ class RerankerLLM:
         return out or None
 
     async def reordenar(self, texto: str, candidatos: list[dict], inicio: float,
-                        orden_evaluador: list[str] | None = None) -> ResultadoRerank:
+                        orden_evaluador: list[str] | None = None,
+                        orden_retriever: list[str] | None = None) -> ResultadoRerank:
         """`candidatos`: ventana ya ordenada (la entrada se cambia solo en este orden). Devuelve la ventana reordenada
         (los candidatos fuera del ranking de ambas permutaciones quedan detrás, en su orden de entrada)."""
         ventana = candidatos[: self.ventana]
@@ -130,9 +133,10 @@ class RerankerLLM:
             res.motivo = "reranker_fallido"
             return res
         votos = [(r, 1.0) for r in rankings]
-        if self.voto_evaluador > 0 and orden_evaluador:
-            votos.append(([i for i in orden_evaluador if i in {f["fragmento_id"] for f in ventana}][:TOP_LISTA],
-                          self.voto_evaluador))
+        en_ventana = {f["fragmento_id"] for f in ventana}
+        for orden_x, peso_x in ((orden_evaluador, self.voto_evaluador), (orden_retriever, self.voto_retriever)):
+            if peso_x > 0 and orden_x:
+                votos.append(([i for i in orden_x if i in en_ventana][:TOP_LISTA], peso_x))
         puntos: dict[str, float] = {}
         for r, peso in votos:
             for pos, ident in enumerate(r[:TOP_LISTA]):

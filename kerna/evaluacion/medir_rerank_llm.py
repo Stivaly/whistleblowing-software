@@ -26,6 +26,7 @@ import recall_retriever as rr  # noqa: E402
 from kerna_comun import anonimizador  # noqa: E402
 from kerna_nucleo.api import proveedores_reales  # noqa: E402
 from kerna_nucleo.config import Config  # noqa: E402
+from kerna_nucleo.enrutador import PlazoAgotado  # noqa: E402
 from kerna_nucleo.reranker_llm import RerankerLLM  # noqa: E402
 
 
@@ -44,7 +45,7 @@ async def correr(a, c: Config) -> dict:
     prov = proveedores_reales(c)
     frags = {f["fragmento_id"]: dict(f, vigente=True) for f in await prov.qdrant.fragmentos_vigentes(c.coleccion)
              if f.get("tipo") != "meta" and f.get("fragmento_id")}
-    rr_llm = RerankerLLM(orq.enrutador.generar, a.ventana, a.voto_eval)
+    rr_llm = RerankerLLM(orq.enrutador.generar, a.ventana, a.voto_eval, voto_retriever=a.voto_ret)
     sem = asyncio.Semaphore(a.concurrencia)
     filas: list[dict] = []
 
@@ -61,7 +62,11 @@ async def correr(a, c: Config) -> dict:
             return
         texto = anonimizador.anonimizar(rr.texto_consulta(caso, "texto_original")).texto
         async with sem:
-            res = await rr_llm.reordenar(texto, ventana, time.time(), orden_eval)
+            try:
+                res = await rr_llm.reordenar(texto, ventana, time.time(), orden_eval, r.get("candidatos") or [])
+            except PlazoAgotado:
+                print(f"{caso['id']}: plazo agotado", flush=True)
+                return
         nuevo = [f["fragmento_id"] for f in res.fragmentos]
         filas.append({"id": caso["id"], "ley": caso["ley_principal"], "usado": res.usado, "motivo": res.motivo,
                       "antes": hit5(base, esp), "despues": hit5(nuevo, esp),
@@ -99,6 +104,7 @@ def main(argv=None):
     ap.add_argument("--fuente", choices=["evaluador", "retriever"], default="evaluador")
     ap.add_argument("--ventana", type=int, default=35)
     ap.add_argument("--voto-eval", type=float, default=0.0)
+    ap.add_argument("--voto-ret", type=float, default=0.0)
     ap.add_argument("--modelo", default="gpt-5-nano")
     ap.add_argument("--concurrencia", type=int, default=4)
     ap.add_argument("--salida", required=True)
