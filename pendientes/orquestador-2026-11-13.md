@@ -48,6 +48,9 @@ Si falta uno, crear un script de función fija en `kerna/operaciones/`, commitea
 | Prueba de movimiento y CPU en reposo (órbitas, satélites, arco, teclado, botón de reintento, «En vivo»; solo lectura) | `kerna/operaciones/probar_movimiento.sh` |
 | Íconos, estáticos y rasterizados | `kerna/front/herramientas/{construir_identidad,construir_estaticos,construir_echarts,lamina_iconos,rasterizar_baldosas,rasterizar_decoracion}` |
 | Limpiar Docker (imágenes y caché, nunca volúmenes) | `infra/limpiar_docker.sh` |
+| Volcar a JSON los fragmentos vigentes (texto legal) de una colección de Qdrant | `kerna/operaciones/volcar_fragmentos.sh [colección] [salida.json]` |
+| Crear en Qdrant las colecciones del experimento de enriquecimiento (`normativa_cl_x_{p,e,pe,eonly}`; no toca `normativa_cl`) | `kerna/operaciones/indexar_enriquecido.sh [--modos p,e,pe,eonly]` |
+| Medir el experimento de enriquecimiento (cadena + revisor y retriever) con una colección y flags `KERNA_ENR_*` | `kerna/operaciones/medicion_enriquecido.sh ETIQUETA AAAAMMDD "sets" COLECCION [VAR=valor…]` |
 
 ## Parte A: lo que pidió la usuaria (2026-11-13, 09:30)
 
