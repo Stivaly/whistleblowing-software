@@ -318,6 +318,7 @@ class ResultadoEvaluadorIds:
     descartados_cita: int = 0            # puntajes >= 2 sin hecho y frase válidos (bajados a 1)
     evaluaciones: dict = field(default_factory=dict)   # id -> {puntaje, hecho_ids, frase_ids}
     rellenados: int = 0                  # candidatos agregados por el orden del retriever
+    orden: list[dict] = field(default_factory=list)   # todos los candidatos en el orden final (puntuados, luego relleno)
     perfil: bool = False
     tokens_entrada: int = 0
     tokens_salida: int = 0
@@ -488,7 +489,8 @@ class EvaluadorIds:
         vistos = {f["fragmento_id"] for f in final}
         relleno = [f for f in candidatos if f["fragmento_id"] not in vistos]
         res.rellenados = max(0, min(self.salida, len(candidatos)) - len(final))
-        res.fragmentos, res.usado = (final + relleno)[: self.salida], True
+        res.orden = final + relleno
+        res.fragmentos, res.usado = res.orden[: self.salida], True
         if not puntuados:
             res.motivo = "ninguno_aplica"
         return res

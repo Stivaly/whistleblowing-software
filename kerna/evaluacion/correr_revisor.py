@@ -60,6 +60,13 @@ def instrumentar(orq) -> None:
 
     orq.retriever.recuperar, orq._evaluar = recuperar_i, evaluar_i
 
+    def sonda(nombre, datos):      # solo IDs, puntajes y motivos de rechazo; nunca texto
+        et = _ETAPAS.get()
+        if et is not None:
+            et[nombre] = datos
+
+    orq.sonda = sonda
+
 
 def cargar_casos(particion: str, extra: str | None) -> tuple[list[dict], dict]:
     """Casos de la partición (dataset + triage; o `--extra-casos` para prueba2/prueba3) y su triage por id."""
@@ -115,6 +122,8 @@ async def correr(casos: list[dict], triage: dict, c: Config, modelo: str) -> lis
         out.append({"id": caso["id"], "control": control, "ley": caso["ley_principal"],
                     "esperados": [] if control else sorted(t["articulos_corregidos"]),
                     "candidatos": et.get("candidatos"), "evaluador": et.get("evaluador"),
+                    "evaluador_orden": et.get("evaluador_orden"), "orden_generador": et.get("orden"),
+                    "generador": et.get("generador"),
                     "estado": fin["estado"], "motivo_revision": fin.get("motivo_revision"),
                     "revision_juridica": fin.get("revision_juridica"), "alertas_revision": fin.get("alertas_revision"),
                     "tokens_entrada": fin.get("tokens_entrada"), "tokens_salida": fin.get("tokens_salida"),

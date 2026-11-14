@@ -46,6 +46,12 @@ class Config:
     enr_coleccion_aparte: str = "" # KERNA_ENR_COLECCION_APARTE: colección con vectores del enriquecimiento solo (lista densa extra)
     enr_peso_aparte: float = 1.0   # KERNA_ENR_PESO_APARTE: peso en la fusión de las listas «aparte»
     enr_rol_factor: float = 1.0    # KERNA_ENR_ROL_FACTOR: multiplica el puntaje de fusión de artículos de rol procedimiento/sancion (1 = apagado)
+    generador_completar: int = 0   # KERNA_GENERADOR_COMPLETAR=N: el resultado sigue el orden del evaluador y completa con él hasta N artículos (0 = apagado)
+    generador_min_puntaje: int = 1  # KERNA_GENERADOR_MIN_PUNTAJE: puntaje mínimo del evaluador para completar un artículo que el generador omitió
+    rerank_llm: bool = False       # KERNA_RERANK_LLM: reranker LLM listwise sobre la ventana de candidatas (apagado por defecto)
+    rerank_llm_ventana: int = 35
+    rerank_llm_fuente: str = "evaluador"  # KERNA_RERANK_LLM_FUENTE: evaluador | retriever (orden de la ventana de entrada)
+    rerank_llm_voto_eval: float = 0.0     # KERNA_RERANK_LLM_VOTO_EVAL: peso del orden del evaluador como tercer ranking
     revisor_sin_causales: tuple = ()  # KERNA_REVISOR_SIN_CAUSALES: causales de veto que el revisor no aplica (solo evaluación; vacío = todas)
     revisor: bool = False          # KERNA_REVISOR: revisor jurídico (confirma/condiciona/veta) tras la validación de citas
     concurrencia: int = 2
@@ -89,6 +95,12 @@ class Config:
         c.enr_coleccion_aparte = e.get("KERNA_ENR_COLECCION_APARTE", "").strip()
         c.enr_peso_aparte = float(e.get("KERNA_ENR_PESO_APARTE", c.enr_peso_aparte))
         c.enr_rol_factor = float(e.get("KERNA_ENR_ROL_FACTOR", c.enr_rol_factor))
+        c.generador_completar = int(e.get("KERNA_GENERADOR_COMPLETAR", c.generador_completar))
+        c.generador_min_puntaje = int(e.get("KERNA_GENERADOR_MIN_PUNTAJE", c.generador_min_puntaje))
+        c.rerank_llm = e.get("KERNA_RERANK_LLM", "").strip().lower() in ("1", "true", "si", "sí", "on")
+        c.rerank_llm_ventana = int(e.get("KERNA_RERANK_LLM_VENTANA", c.rerank_llm_ventana))
+        c.rerank_llm_fuente = e.get("KERNA_RERANK_LLM_FUENTE", c.rerank_llm_fuente).strip().lower()
+        c.rerank_llm_voto_eval = float(e.get("KERNA_RERANK_LLM_VOTO_EVAL", c.rerank_llm_voto_eval))
         c.revisor_sin_causales = tuple(x.strip() for x in e.get("KERNA_REVISOR_SIN_CAUSALES", "").split(",") if x.strip())
         c.revisor = e.get("KERNA_REVISOR", "").strip().lower() in ("1", "true", "si", "sí", "on")
         _si = ("1", "true", "si", "sí", "on")

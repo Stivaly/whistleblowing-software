@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import asyncio
-
+import contextvars
 import logging
 import uuid
 from datetime import datetime, timezone
@@ -12,13 +12,16 @@ from kerna_comun import anonimizador, telemetria
 
 from . import prompts
 from .evaluador import Evaluador
-from .evaluador_ids import EvaluadorIds
+from .evaluador_ids import EvaluadorIds, segmentar_articulo
+from .reranker_llm import RerankerLLM
 from .revisor import Revisor
 from .enrutador import CadenaAgotada, Enrutador, PlazoAgotado
 from .retriever import RecuperacionFallida, Retriever
-from .validador import validar
+from .validador import normalizar, validar
 
 _log = logging.getLogger("kerna.nucleo")
+# Orden completo que dejó el evaluador en la cadena en curso (para el reranker LLM y la sonda de evaluación).
+_ORDEN_EVAL: contextvars.ContextVar = contextvars.ContextVar("orden_evaluador", default=None)
 _SIN_REVISION = SimpleNamespace(dictamenes={}, alertas=[])  # revisor activo sin dictámenes: todo «sin_revision»
 
 
@@ -130,8 +133,12 @@ class Orquestador:
                     "modo": "manual", "articulos": [], **parcial}
         # 4. generación
         fragmentos = rec.fragmentos[: self.config.top_k]
+        _ORDEN_EVAL.set(None)
         if getattr(self.config, "evaluador", False) and len(rec.fragmentos) > 1:
             fragmentos = await self._evaluar(limpio, rec.fragmentos, inicio, reg, base, perfil)
+        if getattr(self.config, "rerank_llm", False) and len(rec.fragmentos) > 1:
+            fragmentos = await self._rerank_llm(limpio, rec.fragmentos, fragmentos, inicio, reg, base)
+        self._sonda("orden", [(f["fragmento_id"], f.get("puntaje_evaluador"), bool(f.get("rerank_llm"))) for f in fragmentos])
         with telemetria.etapa("generacion", **base) as a:
             gen = await self.enrutador.generar(prompts.SISTEMA_GENERADOR,
                                                prompts.usuario_generador(limpio, fragmentos, clasif["materia"], clasif["riesgo"]),
@@ -144,6 +151,10 @@ class Orquestador:
         # 5. validación de citas
         with telemetria.etapa("validacion", **base) as a:
             aceptados, rechazados = validar(gen.datos, fragmentos, self.config.max_articulos)
+            self._sonda("generador", {"ids": [str(d.get("fragmento_id")) for d in gen.datos if isinstance(d, dict)],
+                                      "rechazos": [(r["fragmento_id"], r["motivo"]) for r in rechazados]})
+            if getattr(self.config, "generador_completar", 0) > 0:
+                aceptados = self._completar(aceptados, fragmentos)
             a.update(articulos=len(aceptados), citas_rechazadas=len(rechazados))
         reg["citas_rechazadas"] = len(rechazados)
         reg["motivos_rechazo"] = sorted({r["motivo"] for r in rechazados})
@@ -161,6 +172,73 @@ class Orquestador:
             if rev is not None:
                 articulos[-1].update(self._anotacion(rev, f["fragmento_id"]))
         return {"estado": "completada", "motivo_revision": None, "articulos": articulos, **parcial}
+
+    def _sonda(self, nombre: str, datos) -> None:
+        """Gancho opcional de las mediciones (solo IDs y puntajes, nunca texto): `orq.sonda = f(nombre, datos)`."""
+        f = getattr(self, "sonda", None)
+        if f is not None:
+            f(nombre, datos)
+
+    def _completar(self, aceptados: list, fragmentos: list) -> list:
+        """KERNA_GENERADOR_COMPLETAR=N: el resultado sigue el orden del evaluador (o del reranker) y no pierde sus N
+        primeros artículos por una omisión del generador: el que el generador omitió, o cuya cita no validó, entra con
+        una frase del propio artículo que el evaluador indicó (o el comienzo del texto) y confianza baja."""
+        n = self.config.generador_completar
+        por_id = {a["fragmento"]["fragmento_id"]: a for a in aceptados}
+        minimo = getattr(self.config, "generador_min_puntaje", 1)
+        out = []
+        for pos, f in enumerate(fragmentos):
+            if len(out) >= self.config.max_articulos:
+                break
+            a = por_id.get(f["fragmento_id"])
+            if a is not None:
+                out.append(a)
+                continue
+            if pos >= n:
+                continue
+            puntaje = f.get("puntaje_evaluador")
+            if not (f.get("rerank_llm") or (isinstance(puntaje, (int, float)) and puntaje >= minimo)):
+                continue
+            texto = f.get("texto") or ""
+            segs = segmentar_articulo(texto)
+            cita = ""
+            for fid in f.get("frase_ids_evaluador") or []:
+                try:
+                    j = int(str(fid).split(".")[1])
+                    cita = segs[j - 1]
+                except (IndexError, ValueError):
+                    continue
+                break
+            if len(normalizar(cita)) < 10 or normalizar(cita) not in normalizar(texto):
+                cita = " ".join(texto.split())[:240]
+            if len(normalizar(cita)) < 10:
+                continue
+            conf = max(0.1, (puntaje or 1) / 3 * 0.6) if isinstance(puntaje, (int, float)) else 0.3
+            out.append({"fragmento": f, "cita": cita.strip(), "confianza": round(conf, 2),
+                        "explicacion": "Los hechos descritos podrían relacionarse con este artículo, según el análisis "
+                                       "previo de aplicabilidad."})
+        return out[: self.config.max_articulos]
+
+    async def _rerank_llm(self, limpio: str, retriever: list, evaluados: list, inicio: float, reg: dict, base: dict) -> list:
+        """KERNA_RERANK_LLM: reordena la ventana (por defecto, el orden completo del evaluador) con el reranker listwise
+        y entrega los top_k. Cualquier falla conserva el orden recibido; solo el plazo global se propaga."""
+        c = self.config
+        orden_eval = _ORDEN_EVAL.get()
+        ids_eval = [f["fragmento_id"] for f in orden_eval] if orden_eval else []
+        ventana = (orden_eval if (c.rerank_llm_fuente == "evaluador" and orden_eval) else retriever)
+        with telemetria.etapa("rerank_llm", **base) as a:
+            r = await RerankerLLM(self.enrutador.generar, c.rerank_llm_ventana, c.rerank_llm_voto_eval).reordenar(
+                limpio, list(ventana), inicio, ids_eval)
+            a.update(usado=r.usado, motivo=r.motivo, permutaciones=r.permutaciones, descartados_id=r.descartados_id,
+                     tokens_entrada=r.tokens_entrada, tokens_salida=r.tokens_salida)
+        reg["tokens_entrada"] += r.tokens_entrada
+        reg["tokens_salida"] += r.tokens_salida
+        if not r.usado:
+            return evaluados
+        if orden_eval:                       # conservar puntajes y frases del evaluador en los fragmentos reordenados
+            ev = {f["fragmento_id"]: f for f in orden_eval}
+            r.fragmentos = [dict(ev.get(f["fragmento_id"], {}), **f) for f in r.fragmentos]
+        return r.fragmentos[: max(c.top_k, 1)]
 
     def _evaluador(self):
         clase = EvaluadorIds if str(self.config.evaluador_variante).startswith("3") else Evaluador
@@ -196,6 +274,8 @@ class Orquestador:
                      tokens_salida=r.tokens_salida)
         reg["tokens_entrada"] += r.tokens_entrada
         reg["tokens_salida"] += r.tokens_salida
+        _ORDEN_EVAL.set(getattr(r, "orden", None) or None)
+        self._sonda("evaluador_orden", [(f["fragmento_id"], f.get("puntaje_evaluador")) for f in (getattr(r, "orden", None) or [])])
         return r.fragmentos
 
     async def _revisar(self, limpio: str, aceptados: list, inicio: float, reg: dict, base: dict, perfil=None):
