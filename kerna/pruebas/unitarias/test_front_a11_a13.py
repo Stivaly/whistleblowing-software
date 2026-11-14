@@ -77,3 +77,9 @@ def test_a13_el_panel_nombra_el_set():
     v = vistas.resumen(M, EV, None, None, None, [], None, 7)
     p = vistas.presentacion_resumen(v, None, 7)
     assert next(k for k in p["kb"] if k["k"] == "calidad")["sub"] == "Set desarrollo"
+
+
+def test_a13_el_informe_nombra_el_set_en_la_banda():
+    inf = informe.construir(INI, FIN, ejecutar=falso, evaluacion=EVAL)
+    v = vistas.informe_v2(inf)
+    assert next(k for k in v["kb"] if k["k"] == "calidad")["sub"] == "Set desarrollo"

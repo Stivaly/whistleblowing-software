@@ -614,7 +614,7 @@ def informe_v2(inf_: dict) -> dict:
         serie, menos, pts, meta = extra[c["k"]]
         tr = _tendencia(serie, menos, pts=pts) if serie else {"tr": "", "te": "na", "ta": "minus"}
         d = {"d_l": graficos.spark(serie), "d_a": graficos.spark_area(serie)} if len(serie) >= 4 else {}
-        cards.append({"k": c["k"], "i": c["i"], "l": nombres[c["k"]], "v": c["v"], "u": c["u"], "p": c["p"], "e": "na" if c["k"] == "costo_k" else c["e"], "et": "" if c["k"] == "costo_k" else c["et"], "meta": meta, "x": c["x"], **tr, **d, **{k2: c[k2] for k2 in ("form", "z", "f", "zm", "zl", "max", "pos", "pos_meta", "metaT") if k2 in c}})
+        cards.append({"k": c["k"], "i": c["i"], "l": nombres[c["k"]], "v": c["v"], "u": c["u"], "p": c["p"], "e": "na" if c["k"] == "costo_k" else c["e"], "et": "" if c["k"] == "costo_k" else c["et"], "meta": meta, "x": c["x"], "sub": c.get("sub", ""), **tr, **d, **{k2: c[k2] for k2 in ("form", "z", "f", "zm", "zl", "max", "pos", "pos_meta", "metaT") if k2 in c}})
     mal = [c for c in cards if c["e"] == "bad"]
     atencion = [c for c in cards if c["e"] == "warn"]
     con_meta = [c for c in cards if c["e"] != "na" and c["k"] not in ("casos", "costo_k")]
