@@ -51,6 +51,7 @@ Si falta uno, crear un script de función fija en `kerna/operaciones/`, commitea
 | Volcar a JSON los fragmentos vigentes (texto legal) de una colección de Qdrant | `kerna/operaciones/volcar_fragmentos.sh [colección] [salida.json]` |
 | Crear en Qdrant las colecciones del experimento de enriquecimiento (`normativa_cl_x_{p,e,pe,eonly}`; no toca `normativa_cl`) | `kerna/operaciones/indexar_enriquecido.sh [--modos p,e,pe,eonly]` |
 | Medir el experimento de enriquecimiento (cadena + revisor y retriever) con una colección y flags `KERNA_ENR_*` | `kerna/operaciones/medicion_enriquecido.sh ETIQUETA AAAAMMDD "sets" COLECCION [VAR=valor…]` |
+| Medir la configuración fija del exp. 2 (cadena + revisor + completar + reranker LLM 2/2, flags explícitos; salida `cfg2-*.json`) | `kerna/operaciones/medicion_config_exp2.sh ETIQUETA AAAAMMDD set [VAR=valor…]` · subir a la tabla `evaluaciones`: `python3 kerna/evaluacion/subir_medicion_cfg2.py <cfg2-….json> --escribir` |
 
 ## Parte A: lo que pidió la usuaria (2026-11-13, 09:30)
 
