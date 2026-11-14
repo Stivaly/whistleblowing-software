@@ -45,7 +45,8 @@ async def correr(a, c: Config) -> dict:
     prov = proveedores_reales(c)
     frags = {f["fragmento_id"]: dict(f, vigente=True) for f in await prov.qdrant.fragmentos_vigentes(c.coleccion)
              if f.get("tipo") != "meta" and f.get("fragmento_id")}
-    rr_llm = RerankerLLM(orq.enrutador.generar, a.ventana, a.voto_eval, voto_retriever=a.voto_ret)
+    rr_llm = RerankerLLM(orq.enrutador.generar, a.ventana, a.voto_eval, permutaciones=a.permutaciones, criterios=a.criterios,
+                        voto_retriever=a.voto_ret)
     sem = asyncio.Semaphore(a.concurrencia)
     filas: list[dict] = []
 
@@ -105,6 +106,8 @@ def main(argv=None):
     ap.add_argument("--ventana", type=int, default=35)
     ap.add_argument("--voto-eval", type=float, default=0.0)
     ap.add_argument("--voto-ret", type=float, default=0.0)
+    ap.add_argument("--criterios", action="store_true")
+    ap.add_argument("--permutaciones", type=int, default=2)
     ap.add_argument("--modelo", default="gpt-5-nano")
     ap.add_argument("--concurrencia", type=int, default=4)
     ap.add_argument("--salida", required=True)

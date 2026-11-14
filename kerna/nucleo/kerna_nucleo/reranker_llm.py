@@ -39,6 +39,17 @@ _SISTEMA = (
 )
 
 
+_CRITERIOS = (
+    "\nCRITERIOS POR LEY (úsalos al decidir; no sustituyen el análisis de los hechos):\n"
+    "- Ley 20.393: los artículos sustantivos son el 1 (delitos que originan la responsabilidad de la persona jurídica), "
+    "el 3 (requisitos de atribución de responsabilidad) y el 4 (modelo de prevención); los de procedimiento, "
+    "investigación y sanciones (desde el 17 en adelante) no se aplican por el solo hecho de que se hable de delitos.\n"
+    "- Ley 21.643 (Karin): primero el artículo que define o prohíbe la conducta (acoso, violencia, definiciones del "
+    "Código del Trabajo) y su sanción o procedimiento solo si los hechos lo piden.\n"
+    "- Datos personales (19.628 con la reforma 21.719): sube el artículo que establece el derecho, principio o deber "
+    "vulnerado (licitud, finalidad, seguridad, derechos del titular) antes que los de sanciones, multas u organización.\n")
+
+
 def esquema(n: int) -> dict:
     return {"type": "object", "additionalProperties": False,
             "properties": {"ranking": {"type": "array", "maxItems": TOP_LISTA,
@@ -88,15 +99,16 @@ class ResultadoRerank:
 
 class RerankerLLM:
     def __init__(self, generar, ventana: int = 35, voto_evaluador: float = 0.0, permutaciones: int = 2,
-                 voto_retriever: float = 0.0):
+                 voto_retriever: float = 0.0, criterios: bool = False):
         self._generar, self.ventana, self.voto_evaluador = generar, max(2, ventana), voto_evaluador
         self.voto_retriever = voto_retriever
-        self.permutaciones = max(1, min(2, permutaciones))
+        self.sistema = _SISTEMA + _CRITERIOS if criterios else _SISTEMA
+        self.permutaciones = max(1, min(4, permutaciones))
 
     async def _una(self, hechos, perm: list[dict], inicio, res: ResultadoRerank):
         """Ranking (ids de fragmento) de una permutación, o None si falla."""
         try:
-            r = await self._generar(_SISTEMA, usuario(hechos, perm), esquema(len(perm)), _validar, inicio)
+            r = await self._generar(self.sistema, usuario(hechos, perm), esquema(len(perm)), _validar, inicio)
         except PlazoAgotado:
             raise
         except (CadenaAgotada, ValueError):
@@ -125,7 +137,9 @@ class RerankerLLM:
         if len(ventana) < 2 or not hechos:
             res.motivo = "pocos_candidatos" if len(ventana) < 2 else "sin_hechos"
             return res
-        perms = [ventana, ventana[::-1]][: self.permutaciones]
+        mitad = len(ventana) // 2
+        rotada = ventana[mitad:] + ventana[:mitad]
+        perms = [ventana, ventana[::-1], rotada, rotada[::-1]][: self.permutaciones]
         rankings = await asyncio.gather(*(self._una(hechos, p, inicio, res) for p in perms))
         rankings = [r for r in rankings if r]
         res.permutaciones = len(rankings)

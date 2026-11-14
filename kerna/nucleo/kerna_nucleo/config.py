@@ -52,6 +52,8 @@ class Config:
     rerank_llm_ventana: int = 35
     rerank_llm_fuente: str = "evaluador"  # KERNA_RERANK_LLM_FUENTE: evaluador | retriever (orden de la ventana de entrada)
     rerank_llm_voto_eval: float = 0.0     # KERNA_RERANK_LLM_VOTO_EVAL: peso del orden del evaluador como tercer ranking
+    rerank_llm_criterios: bool = False    # KERNA_RERANK_LLM_CRITERIOS=1: agrega criterios por ley al prompt del reranker
+    rerank_llm_permutaciones: int = 2     # KERNA_RERANK_LLM_PERMUTACIONES: 1-4 (entrada, invertida, rotada, rotada invertida)
     rerank_llm_voto_retriever: float = 0.0  # KERNA_RERANK_LLM_VOTO_RETRIEVER: peso del orden del retriever como ranking adicional
     revisor_sin_causales: tuple = ()  # KERNA_REVISOR_SIN_CAUSALES: causales de veto que el revisor no aplica (solo evaluación; vacío = todas)
     revisor: bool = False          # KERNA_REVISOR: revisor jurídico (confirma/condiciona/veta) tras la validación de citas
@@ -102,6 +104,8 @@ class Config:
         c.rerank_llm_ventana = int(e.get("KERNA_RERANK_LLM_VENTANA", c.rerank_llm_ventana))
         c.rerank_llm_fuente = e.get("KERNA_RERANK_LLM_FUENTE", c.rerank_llm_fuente).strip().lower()
         c.rerank_llm_voto_eval = float(e.get("KERNA_RERANK_LLM_VOTO_EVAL", c.rerank_llm_voto_eval))
+        c.rerank_llm_criterios = e.get("KERNA_RERANK_LLM_CRITERIOS", "").strip().lower() in ("1", "true", "si", "sí", "on")
+        c.rerank_llm_permutaciones = int(e.get("KERNA_RERANK_LLM_PERMUTACIONES", c.rerank_llm_permutaciones))
         c.rerank_llm_voto_retriever = float(e.get("KERNA_RERANK_LLM_VOTO_RETRIEVER", c.rerank_llm_voto_retriever))
         c.revisor_sin_causales = tuple(x.strip() for x in e.get("KERNA_REVISOR_SIN_CAUSALES", "").split(",") if x.strip())
         c.revisor = e.get("KERNA_REVISOR", "").strip().lower() in ("1", "true", "si", "sí", "on")

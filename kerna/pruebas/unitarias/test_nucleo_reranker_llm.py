@@ -94,3 +94,19 @@ def test_completar_incluye_los_reordenados_por_el_reranker_y_respeta_el_maximo()
     frags = [dict(f, rerank_llm=True) for f in CANDS]
     out = _orq(generador_completar=5, max_articulos=5)._completar([], frags)
     assert [a["fragmento"]["fragmento_id"] for a in out] == ["f1", "f2", "f3", "f4", "f5"]
+
+
+def test_cuatro_permutaciones_incluyen_rotada_e_invertida_y_criterios_en_el_sistema():
+    sistemas = []
+
+    class Gen(Falso):
+        async def __call__(self, sistema, usuario_, esquema, validar, inicio):
+            sistemas.append(sistema)
+            return await super().__call__(sistema, usuario_, esquema, validar, inicio)
+
+    g = Gen(["A1"], ["A1"], ["A1"], ["A1"])
+    r = correr(g, permutaciones=4, criterios=True)
+    assert r.permutaciones == 4 and len(g.usuarios) == 4
+    assert "[A1] Ley X" in g.usuarios[0] and all("CRITERIOS POR LEY" in s for s in sistemas)
+    assert g.usuarios[2] != g.usuarios[0] and g.usuarios[3] != g.usuarios[1]
+    assert Config().rerank_llm_permutaciones == 2 and Config().rerank_llm_criterios is False
