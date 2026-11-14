@@ -1,0 +1,4407 @@
+{
+ "fecha": "2026-11-14T03:40:05Z",
+ "commit": "d706abfc7",
+ "corpus_articulos": 181,
+ "coleccion": "normativa_cl_x_e",
+ "dedup_literales": false,
+ "profundidades": [
+  5,
+  10,
+  20,
+  70
+ ],
+ "comando": "medir_base_b2.py --set prueba=evaluacion/registro/casos_enr_ebm_prueba_20261113t.json --set prueba2=evaluacion/registro/casos_enr_ebm_prueba2_20261113t.json --set prueba3=evaluacion/registro/casos_enr_ebm_prueba3_20261113t.json --coleccion normativa_cl_x_e --salida evaluacion/registro/enr-ebm-20261113t.json",
+ "sets": {
+  "desarrollo": {
+   "casos_con_esperados": 42,
+   "retriever": {
+    "19.628-21.719": {
+     "hit5": {
+      "n": 16,
+      "valor": 0.625,
+      "ic95": [
+       0.375,
+       0.875
+      ]
+     },
+     "hit10": {
+      "n": 16,
+      "valor": 0.75,
+      "ic95": [
+       0.5,
+       0.9375
+      ]
+     },
+     "hit20": {
+      "n": 16,
+      "valor": 0.875,
+      "ic95": [
+       0.6875,
+       1.0
+      ]
+     },
+     "hit70": {
+      "n": 16,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    "20.393": {
+     "hit5": {
+      "n": 9,
+      "valor": 0.4444,
+      "ic95": [
+       0.1111,
+       0.7778
+      ]
+     },
+     "hit10": {
+      "n": 9,
+      "valor": 0.6667,
+      "ic95": [
+       0.3333,
+       0.8889
+      ]
+     },
+     "hit20": {
+      "n": 9,
+      "valor": 0.8889,
+      "ic95": [
+       0.6667,
+       1.0
+      ]
+     },
+     "hit70": {
+      "n": 9,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    "21.643": {
+     "hit5": {
+      "n": 17,
+      "valor": 0.7647,
+      "ic95": [
+       0.5294,
+       0.9412
+      ]
+     },
+     "hit10": {
+      "n": 17,
+      "valor": 0.8824,
+      "ic95": [
+       0.7059,
+       1.0
+      ]
+     },
+     "hit20": {
+      "n": 17,
+      "valor": 0.8824,
+      "ic95": [
+       0.7059,
+       1.0
+      ]
+     },
+     "hit70": {
+      "n": 17,
+      "valor": 0.9412,
+      "ic95": [
+       0.8235,
+       1.0
+      ]
+     }
+    },
+    "global": {
+     "hit5": {
+      "n": 42,
+      "valor": 0.6429,
+      "ic95": [
+       0.4762,
+       0.7857
+      ]
+     },
+     "hit10": {
+      "n": 42,
+      "valor": 0.7857,
+      "ic95": [
+       0.6429,
+       0.9048
+      ]
+     },
+     "hit20": {
+      "n": 42,
+      "valor": 0.881,
+      "ic95": [
+       0.7619,
+       0.9762
+      ]
+     },
+     "hit70": {
+      "n": 42,
+      "valor": 0.9762,
+      "ic95": [
+       0.9048,
+       1.0
+      ]
+     }
+    }
+   },
+   "20393": {
+    "casos_fallidos": 5,
+    "de_20393_total": 9,
+    "top5_aparecen": {
+     "1008668-art-25": 3,
+     "1008668-art-29": 2,
+     "1008668-art-7": 2,
+     "236392-karin-art-129": 2,
+     "1008668-art-15": 1,
+     "1008668-art-20-bis": 1,
+     "1008668-art-22": 1,
+     "1008668-art-23": 1,
+     "1008668-art-17-ter": 1,
+     "1008668-art-13": 1,
+     "236392-karin-art-140": 1,
+     "141599-2026-12-01-art-30-septies": 1
+    },
+    "esperados_perdidos": {
+     "1008668-art-1": 4,
+     "1008668-art-3": 4,
+     "1008668-art-4": 3
+    },
+    "posicion_primer_esperado": {
+     "8": 1,
+     "7": 1,
+     "16": 1,
+     "20": 1,
+     "25": 1
+    }
+   },
+   "ranking": [
+    {
+     "id": "DEN-0008",
+     "ley": "21.643",
+     "esperados": [
+      "30256-karin-art-123",
+      "30256-karin-art-127",
+      "30256-karin-art-82"
+     ],
+     "top5": [
+      "30256-karin-art-120",
+      "236392-karin-art-121",
+      "30256-karin-art-123",
+      "30256-karin-art-138",
+      "236392-karin-art-140"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "DEN-0009",
+     "ley": "21.643",
+     "esperados": [
+      "236392-karin-art-121",
+      "236392-karin-art-125",
+      "236392-karin-art-159",
+      "236392-karin-art-84"
+     ],
+     "top5": [
+      "236392-karin-art-159",
+      "30256-karin-art-155",
+      "236392-karin-art-121",
+      "236392-karin-art-158",
+      "236392-karin-art-140"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0012",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-211-b-bis"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0013",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-d"
+     ],
+     "top5": [
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-b",
+      "1200096-art-t-segundo",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0014",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-154",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-55",
+      "141599-2026-12-01-art-32",
+      "207436-karin-art-211-b"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "DEN-0015",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-b"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-e",
+      "1200096-art-t-segundo"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "DEN-0016",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-d"
+     ],
+     "top5": [
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-e",
+      "30256-karin-art-133"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "DEN-0017",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis"
+     ],
+     "top5": [
+      "236392-karin-art-90",
+      "191865-karin-art-14",
+      "30256-karin-art-88",
+      "141599-2026-12-01-art-46",
+      "207436-karin-art-211-b-bis"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "DEN-0018",
+     "ley": "21.643",
+     "esperados": [
+      "30256-karin-art-123",
+      "30256-karin-art-127",
+      "30256-karin-art-82"
+     ],
+     "top5": [
+      "30256-karin-art-138",
+      "30256-karin-art-123",
+      "30256-karin-art-120",
+      "236392-karin-art-140",
+      "236392-karin-art-121"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "DEN-0020",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-b",
+      "1200096-art-t-segundo",
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "DEN-0021",
+     "ley": "21.643",
+     "esperados": [
+      "191865-karin-art-14"
+     ],
+     "top5": [
+      "207436-karin-art-211-d",
+      "1200096-art-t-segundo",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-b-bis"
+     ],
+     "pos_primer_esperado": 6
+    },
+    {
+     "id": "DEN-0022",
+     "ley": "21.643",
+     "esperados": [
+      "30256-karin-art-133",
+      "30256-karin-art-135"
+     ],
+     "top5": [
+      "191865-karin-art-46",
+      "236392-karin-art-136",
+      "191865-karin-art-14",
+      "30256-karin-art-127",
+      "207436-karin-art-211-b-bis"
+     ],
+     "pos_primer_esperado": 10
+    },
+    {
+     "id": "DEN-0023",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "236392-karin-art-90",
+      "30256-karin-art-88",
+      "141599-2026-12-01-art-45",
+      "30256-karin-art-133",
+      "30256-karin-art-127"
+     ],
+     "pos_primer_esperado": null
+    },
+    {
+     "id": "DEN-0024",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "191865-karin-art-14",
+      "1200096-art-t-segundo",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "DEN-0025",
+     "ley": "21.643",
+     "esperados": [
+      "141599-2026-12-01-art-2",
+      "207436-karin-art-211-b"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-25",
+      "141599-2026-12-01-art-45",
+      "141599-2026-12-01-art-54",
+      "141599-2026-12-01-art-22"
+     ],
+     "pos_primer_esperado": 31
+    },
+    {
+     "id": "DEN-0026",
+     "ley": "21.643",
+     "esperados": [
+      "30256-karin-art-123",
+      "30256-karin-art-127",
+      "30256-karin-art-82"
+     ],
+     "top5": [
+      "30256-karin-art-138",
+      "30256-karin-art-123",
+      "236392-karin-art-140",
+      "30256-karin-art-127",
+      "30256-karin-art-120"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "DEN-0029",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0032",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "1008668-art-1",
+      "1008668-art-17-ter",
+      "1008668-art-19-bis",
+      "1008668-art-18-bis",
+      "1008668-art-3"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0034",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1"
+     ],
+     "top5": [
+      "1008668-art-1",
+      "1008668-art-17-ter",
+      "141599-2026-12-01-art-45",
+      "1008668-art-3",
+      "1008668-art-22"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0035",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "1008668-art-25",
+      "1008668-art-29",
+      "1008668-art-7",
+      "1008668-art-15",
+      "1008668-art-20-bis"
+     ],
+     "pos_primer_esperado": 8
+    },
+    {
+     "id": "DEN-0036",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "1008668-art-22",
+      "1008668-art-23",
+      "1008668-art-17-ter",
+      "1008668-art-13",
+      "1008668-art-25"
+     ],
+     "pos_primer_esperado": 7
+    },
+    {
+     "id": "DEN-0037",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1"
+     ],
+     "top5": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-22",
+      "1008668-art-20",
+      "1008668-art-2"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0040",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "236392-karin-art-140",
+      "141599-2026-12-01-art-30-septies",
+      "236392-karin-art-129",
+      "141599-2026-12-01-art-32",
+      "141599-2026-12-01-art-45"
+     ],
+     "pos_primer_esperado": 16
+    },
+    {
+     "id": "DEN-0041",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1"
+     ],
+     "top5": [
+      "30256-karin-art-135",
+      "30256-karin-art-127",
+      "30256-karin-art-133",
+      "30256-karin-art-126",
+      "236392-karin-art-129"
+     ],
+     "pos_primer_esperado": 20
+    },
+    {
+     "id": "DEN-0043",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1"
+     ],
+     "top5": [
+      "1008668-art-3",
+      "1008668-art-1",
+      "1008668-art-10",
+      "1008668-art-13",
+      "1008668-art-20"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "DEN-0051",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3"
+     ],
+     "top5": [
+      "1008668-art-25",
+      "1008668-art-7",
+      "1008668-art-27",
+      "1008668-art-16",
+      "1008668-art-29"
+     ],
+     "pos_primer_esperado": 25
+    },
+    {
+     "id": "DEN-0068",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-14-quinquies",
+      "141599-2026-12-01-art-14-sexies",
+      "141599-2026-12-01-art-16",
+      "141599-2026-12-01-art-2",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-39",
+      "141599-2026-12-01-art-55",
+      "141599-2026-12-01-art-34",
+      "141599-2026-12-01-art-t-2",
+      "141599-2026-12-01-art-34-quater"
+     ],
+     "pos_primer_esperado": 15
+    },
+    {
+     "id": "DEN-0069",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-13",
+      "141599-2026-12-01-art-16",
+      "141599-2026-12-01-art-16-quater",
+      "141599-2026-12-01-art-16-ter",
+      "141599-2026-12-01-art-2"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-16-ter",
+      "141599-2026-12-01-art-34-quater",
+      "141599-2026-12-01-art-30-bis",
+      "141599-2026-12-01-art-30",
+      "141599-2026-12-01-art-34"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0070",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-11",
+      "141599-2026-12-01-art-4",
+      "141599-2026-12-01-art-5",
+      "141599-2026-12-01-art-6",
+      "141599-2026-12-01-art-7"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-55",
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-19",
+      "141599-2026-12-01-art-t-2",
+      "141599-2026-12-01-art-5"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "DEN-0073",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-19",
+      "141599-2026-12-01-art-8-ter"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-19",
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-t-3",
+      "141599-2026-12-01-art-36"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0074",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "207436-karin-art-154-ter"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-15-ter",
+      "141599-2026-12-01-art-30",
+      "141599-2026-12-01-art-48",
+      "141599-2026-12-01-art-54"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0081",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-7"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-19",
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-t-3",
+      "141599-2026-12-01-art-55"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0082",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-7"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-19",
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-t-3",
+      "141599-2026-12-01-art-39"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0083",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-2"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-16-ter",
+      "141599-2026-12-01-art-15-ter",
+      "141599-2026-12-01-art-30-bis",
+      "141599-2026-12-01-art-30",
+      "141599-2026-12-01-art-55"
+     ],
+     "pos_primer_esperado": 24
+    },
+    {
+     "id": "DEN-0084",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-2"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-25",
+      "141599-2026-12-01-art-54",
+      "141599-2026-12-01-art-39",
+      "141599-2026-12-01-art-45"
+     ],
+     "pos_primer_esperado": 15
+    },
+    {
+     "id": "DEN-0085",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-4",
+      "141599-2026-12-01-art-5",
+      "141599-2026-12-01-art-6",
+      "141599-2026-12-01-art-7"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-7",
+      "141599-2026-12-01-art-39",
+      "141599-2026-12-01-art-55",
+      "141599-2026-12-01-art-t-2",
+      "141599-2026-12-01-art-34"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0086",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-16",
+      "141599-2026-12-01-art-16-bis",
+      "141599-2026-12-01-art-2",
+      "141599-2026-12-01-art-22"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-54",
+      "141599-2026-12-01-art-30-bis",
+      "141599-2026-12-01-art-55",
+      "141599-2026-12-01-art-20",
+      "141599-2026-12-01-art-22"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "DEN-0087",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-14-quinquies"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-34",
+      "141599-2026-12-01-art-34-quater",
+      "141599-2026-12-01-art-48"
+     ],
+     "pos_primer_esperado": 6
+    },
+    {
+     "id": "DEN-0088",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-2"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-22",
+      "141599-2026-12-01-art-25",
+      "141599-2026-12-01-art-23",
+      "141599-2026-12-01-art-5",
+      "141599-2026-12-01-art-20"
+     ],
+     "pos_primer_esperado": 26
+    },
+    {
+     "id": "DEN-0089",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-13",
+      "141599-2026-12-01-art-2",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-25",
+      "141599-2026-12-01-art-22",
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-23",
+      "141599-2026-12-01-art-24"
+     ],
+     "pos_primer_esperado": 7
+    },
+    {
+     "id": "DEN-0090",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-16-sexies",
+      "141599-2026-12-01-art-16-ter"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-16-bis",
+      "141599-2026-12-01-art-16-ter",
+      "141599-2026-12-01-art-16-sexies",
+      "141599-2026-12-01-art-54",
+      "141599-2026-12-01-art-30-bis"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "DEN-0091",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-16",
+      "141599-2026-12-01-art-16-bis",
+      "141599-2026-12-01-art-16-quater",
+      "141599-2026-12-01-art-22"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-16-quater",
+      "141599-2026-12-01-art-16-bis",
+      "141599-2026-12-01-art-16",
+      "141599-2026-12-01-art-54",
+      "141599-2026-12-01-art-34-ter"
+     ],
+     "pos_primer_esperado": 1
+    }
+   ]
+  },
+  "prueba": {
+   "casos_con_esperados": 15,
+   "retriever": {
+    "19.628-21.719": {
+     "hit5": {
+      "n": 8,
+      "valor": 0.375,
+      "ic95": [
+       0.125,
+       0.75
+      ]
+     },
+     "hit10": {
+      "n": 8,
+      "valor": 0.5,
+      "ic95": [
+       0.125,
+       0.875
+      ]
+     },
+     "hit20": {
+      "n": 8,
+      "valor": 0.75,
+      "ic95": [
+       0.375,
+       1.0
+      ]
+     },
+     "hit70": {
+      "n": 8,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    "21.643": {
+     "hit5": {
+      "n": 7,
+      "valor": 0.7143,
+      "ic95": [
+       0.4286,
+       1.0
+      ]
+     },
+     "hit10": {
+      "n": 7,
+      "valor": 0.7143,
+      "ic95": [
+       0.4286,
+       1.0
+      ]
+     },
+     "hit20": {
+      "n": 7,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "hit70": {
+      "n": 7,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    "global": {
+     "hit5": {
+      "n": 15,
+      "valor": 0.5333,
+      "ic95": [
+       0.2667,
+       0.8
+      ]
+     },
+     "hit10": {
+      "n": 15,
+      "valor": 0.6,
+      "ic95": [
+       0.3333,
+       0.8667
+      ]
+     },
+     "hit20": {
+      "n": 15,
+      "valor": 0.8667,
+      "ic95": [
+       0.6667,
+       1.0
+      ]
+     },
+     "hit70": {
+      "n": 15,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     }
+    }
+   },
+   "20393": {
+    "casos_fallidos": 0,
+    "de_20393_total": 0,
+    "top5_aparecen": {},
+    "esperados_perdidos": {},
+    "posicion_primer_esperado": {}
+   },
+   "ranking": [
+    {
+     "id": "DEN-0001",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-d",
+      "207436-karin-art-154",
+      "207436-karin-art-211-c",
+      "207436-karin-art-154-bis"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "DEN-0002",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-13",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c",
+      "207436-karin-art-154"
+     ],
+     "pos_primer_esperado": 18
+    },
+    {
+     "id": "DEN-0003",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-e"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "DEN-0004",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "DEN-0005",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "30256-karin-art-82",
+      "191865-karin-art-62",
+      "236392-karin-art-84",
+      "207436-karin-art-2",
+      "207436-karin-art-154"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "DEN-0006",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "207436-karin-art-154",
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-46",
+      "207436-karin-art-2"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "DEN-0007",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "207436-karin-art-211-a",
+      "191865-karin-art-13",
+      "207436-karin-art-154-bis"
+     ],
+     "pos_primer_esperado": 12
+    },
+    {
+     "id": "DEN-0055",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-18"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-35",
+      "141599-2026-12-01-art-10",
+      "141599-2026-12-01-art-6",
+      "141599-2026-12-01-art-19",
+      "141599-2026-12-01-art-47"
+     ],
+     "pos_primer_esperado": 19
+    },
+    {
+     "id": "DEN-0057",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-11",
+      "141599-2026-12-01-art-4",
+      "141599-2026-12-01-art-5",
+      "141599-2026-12-01-art-6",
+      "141599-2026-12-01-art-7"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-39",
+      "141599-2026-12-01-art-53",
+      "141599-2026-12-01-art-40",
+      "141599-2026-12-01-art-14",
+      "141599-2026-12-01-art-33"
+     ],
+     "pos_primer_esperado": 22
+    },
+    {
+     "id": "DEN-0060",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-4",
+      "141599-2026-12-01-art-5",
+      "141599-2026-12-01-art-6",
+      "141599-2026-12-01-art-7",
+      "141599-2026-12-01-art-8"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-11",
+      "141599-2026-12-01-art-19",
+      "141599-2026-12-01-art-8-ter",
+      "141599-2026-12-01-art-6",
+      "141599-2026-12-01-art-10"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "DEN-0061",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-13",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-39",
+      "141599-2026-12-01-art-25",
+      "141599-2026-12-01-art-53",
+      "141599-2026-12-01-art-34",
+      "141599-2026-12-01-art-33"
+     ],
+     "pos_primer_esperado": 22
+    },
+    {
+     "id": "DEN-0062",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-16-sexies",
+      "141599-2026-12-01-art-16-ter",
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-30",
+      "141599-2026-12-01-art-34"
+     ],
+     "pos_primer_esperado": 11
+    },
+    {
+     "id": "DEN-0064",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-8"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-11",
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-8-ter",
+      "141599-2026-12-01-art-8",
+      "141599-2026-12-01-art-30"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "DEN-0065",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "207436-karin-art-154-ter"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-48",
+      "141599-2026-12-01-art-45",
+      "141599-2026-12-01-art-49",
+      "236392-karin-art-125",
+      "141599-2026-12-01-art-46"
+     ],
+     "pos_primer_esperado": 10
+    },
+    {
+     "id": "DEN-0066",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "207436-karin-art-154-ter"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-33",
+      "141599-2026-12-01-art-5"
+     ],
+     "pos_primer_esperado": 1
+    }
+   ],
+   "cadena": {
+    "19.628-21.719": {
+     "cand5": {
+      "n": 8,
+      "valor": 0.25,
+      "ic95": [
+       0.0,
+       0.625
+      ]
+     },
+     "cand10": {
+      "n": 8,
+      "valor": 0.5,
+      "ic95": [
+       0.125,
+       0.875
+      ]
+     },
+     "cand20": {
+      "n": 8,
+      "valor": 0.75,
+      "ic95": [
+       0.375,
+       1.0
+      ]
+     },
+     "cand70": {
+      "n": 8,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "evaluador5": {
+      "n": 8,
+      "valor": 0.25,
+      "ic95": [
+       0.0,
+       0.625
+      ]
+     },
+     "cadena5": {
+      "n": 8,
+      "valor": 0.125,
+      "ic95": [
+       0.0,
+       0.375
+      ]
+     },
+     "revisor5": {
+      "n": 8,
+      "valor": 0.125,
+      "ic95": [
+       0.0,
+       0.375
+      ]
+     }
+    },
+    "21.643": {
+     "cand5": {
+      "n": 7,
+      "valor": 0.8571,
+      "ic95": [
+       0.5714,
+       1.0
+      ]
+     },
+     "cand10": {
+      "n": 7,
+      "valor": 0.8571,
+      "ic95": [
+       0.5714,
+       1.0
+      ]
+     },
+     "cand20": {
+      "n": 7,
+      "valor": 0.8571,
+      "ic95": [
+       0.5714,
+       1.0
+      ]
+     },
+     "cand70": {
+      "n": 7,
+      "valor": 0.8571,
+      "ic95": [
+       0.5714,
+       1.0
+      ]
+     },
+     "evaluador5": {
+      "n": 7,
+      "valor": 0.5714,
+      "ic95": [
+       0.2857,
+       0.8571
+      ]
+     },
+     "cadena5": {
+      "n": 7,
+      "valor": 0.7143,
+      "ic95": [
+       0.4286,
+       1.0
+      ]
+     },
+     "revisor5": {
+      "n": 7,
+      "valor": 0.7143,
+      "ic95": [
+       0.4286,
+       1.0
+      ]
+     }
+    },
+    "global": {
+     "cand5": {
+      "n": 15,
+      "valor": 0.5333,
+      "ic95": [
+       0.2667,
+       0.8
+      ]
+     },
+     "cand10": {
+      "n": 15,
+      "valor": 0.6667,
+      "ic95": [
+       0.4,
+       0.8667
+      ]
+     },
+     "cand20": {
+      "n": 15,
+      "valor": 0.8,
+      "ic95": [
+       0.6,
+       1.0
+      ]
+     },
+     "cand70": {
+      "n": 15,
+      "valor": 0.9333,
+      "ic95": [
+       0.8,
+       1.0
+      ]
+     },
+     "evaluador5": {
+      "n": 15,
+      "valor": 0.4,
+      "ic95": [
+       0.1333,
+       0.6667
+      ]
+     },
+     "cadena5": {
+      "n": 15,
+      "valor": 0.4,
+      "ic95": [
+       0.2,
+       0.6667
+      ]
+     },
+     "revisor5": {
+      "n": 15,
+      "valor": 0.4,
+      "ic95": [
+       0.2,
+       0.6667
+      ]
+     }
+    }
+   },
+   "cadena_meta": {
+    "estados": {
+     "completada": 14,
+     "revision_manual:cadena_agotada": 1
+    },
+    "casos": 15
+   },
+   "controles": {
+    "controles": 16,
+    "con_sugerencias": 12,
+    "con_todo_vetado": 1
+   },
+   "cadena_20393_top5": {}
+  },
+  "prueba2": {
+   "casos_con_esperados": 48,
+   "retriever": {
+    "19.628-21.719": {
+     "hit5": {
+      "n": 14,
+      "valor": 0.4286,
+      "ic95": [
+       0.2143,
+       0.7143
+      ]
+     },
+     "hit10": {
+      "n": 14,
+      "valor": 0.5,
+      "ic95": [
+       0.2143,
+       0.7857
+      ]
+     },
+     "hit20": {
+      "n": 14,
+      "valor": 0.6429,
+      "ic95": [
+       0.3571,
+       0.8571
+      ]
+     },
+     "hit70": {
+      "n": 14,
+      "valor": 0.8571,
+      "ic95": [
+       0.6429,
+       1.0
+      ]
+     }
+    },
+    "20.393": {
+     "hit5": {
+      "n": 5,
+      "valor": 0.8,
+      "ic95": [
+       0.4,
+       1.0
+      ]
+     },
+     "hit10": {
+      "n": 5,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "hit20": {
+      "n": 5,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "hit70": {
+      "n": 5,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    "21.643": {
+     "hit5": {
+      "n": 29,
+      "valor": 0.7586,
+      "ic95": [
+       0.6207,
+       0.8966
+      ]
+     },
+     "hit10": {
+      "n": 29,
+      "valor": 0.8621,
+      "ic95": [
+       0.7241,
+       0.9655
+      ]
+     },
+     "hit20": {
+      "n": 29,
+      "valor": 0.8966,
+      "ic95": [
+       0.7586,
+       1.0
+      ]
+     },
+     "hit70": {
+      "n": 29,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    "global": {
+     "hit5": {
+      "n": 48,
+      "valor": 0.6667,
+      "ic95": [
+       0.5208,
+       0.7917
+      ]
+     },
+     "hit10": {
+      "n": 48,
+      "valor": 0.7708,
+      "ic95": [
+       0.6458,
+       0.875
+      ]
+     },
+     "hit20": {
+      "n": 48,
+      "valor": 0.8333,
+      "ic95": [
+       0.7292,
+       0.9375
+      ]
+     },
+     "hit70": {
+      "n": 48,
+      "valor": 0.9583,
+      "ic95": [
+       0.8958,
+       1.0
+      ]
+     }
+    }
+   },
+   "20393": {
+    "casos_fallidos": 1,
+    "de_20393_total": 5,
+    "top5_aparecen": {
+     "1008668-art-13": 1,
+     "1008668-art-17-ter": 1,
+     "1008668-art-29": 1,
+     "1008668-art-27": 1,
+     "1008668-art-7": 1
+    },
+    "esperados_perdidos": {
+     "1008668-art-3": 1,
+     "1008668-art-8": 1
+    },
+    "posicion_primer_esperado": {
+     "8": 1
+    }
+   },
+   "ranking": [
+    {
+     "id": "NUE-0001",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c",
+      "236392-karin-art-90",
+      "30256-karin-art-88"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0002",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-154-bis",
+      "1200096-art-t-segundo",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 7
+    },
+    {
+     "id": "NUE-0003",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "207436-karin-art-154-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-a"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0004",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-b"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "NUE-0005",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-b"
+     ],
+     "top5": [
+      "236392-karin-art-136",
+      "207436-karin-art-211-e",
+      "236392-karin-art-90",
+      "30256-karin-art-133",
+      "236392-karin-art-140"
+     ],
+     "pos_primer_esperado": 27
+    },
+    {
+     "id": "NUE-0006",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "207436-karin-art-2",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-154-bis"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "NUE-0007",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "1200096-art-6",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-e",
+      "1200096-art-t-segundo",
+      "207436-karin-art-211-a"
+     ],
+     "pos_primer_esperado": 57
+    },
+    {
+     "id": "NUE-0008",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-a"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "NUE-0009",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-154",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "NUE-0010",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-d",
+      "207436-karin-art-154-bis",
+      "1200096-art-t-segundo"
+     ],
+     "pos_primer_esperado": 7
+    },
+    {
+     "id": "NUE-0011",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-a",
+      "207436-karin-art-154"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "NUE-0012",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "NUE-0013",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-154-bis",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0014",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-e"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c",
+      "191865-karin-art-14"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "NUE-0015",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a",
+      "207436-karin-art-2",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "NUE-0016",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "1200096-art-t-segundo",
+      "207436-karin-art-211-b",
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "NUE-0017",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "236392-karin-art-90",
+      "207436-karin-art-211-b-bis",
+      "30256-karin-art-88",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-e"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "NUE-0018",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "207436-karin-art-211-a",
+      "207436-karin-art-154-bis",
+      "207436-karin-art-2"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "NUE-0019",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "30256-karin-art-88",
+      "236392-karin-art-90",
+      "191865-karin-art-14",
+      "207436-karin-art-211-e"
+     ],
+     "pos_primer_esperado": 6
+    },
+    {
+     "id": "NUE-0020",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-211-b",
+      "191865-karin-art-14",
+      "191865-karin-art-13",
+      "207436-karin-art-211-a",
+      "207436-karin-art-2"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "NUE-0021",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "236392-karin-art-90",
+      "207436-karin-art-211-a",
+      "191865-karin-art-46"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "NUE-0022",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-e",
+      "191865-karin-art-14",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 39
+    },
+    {
+     "id": "NUE-0023",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-154",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-2",
+      "207436-karin-art-211-e",
+      "207436-karin-art-154-bis"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "NUE-0024",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "NUE-0025",
+     "ley": "21.643",
+     "esperados": [
+      "191865-karin-art-13",
+      "191865-karin-art-14"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "236392-karin-art-136",
+      "207436-karin-art-211-b-bis",
+      "30256-karin-art-133",
+      "236392-karin-art-129"
+     ],
+     "pos_primer_esperado": 17
+    },
+    {
+     "id": "NUE-0026",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-15",
+      "141599-2026-12-01-art-8"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-34",
+      "141599-2026-12-01-art-34-quater",
+      "141599-2026-12-01-art-47",
+      "141599-2026-12-01-art-33",
+      "141599-2026-12-01-art-34-ter"
+     ],
+     "pos_primer_esperado": 15
+    },
+    {
+     "id": "NUE-0027",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-3",
+      "141599-2026-12-01-art-7"
+     ],
+     "top5": [
+      "236392-karin-art-90",
+      "141599-2026-12-01-art-34-quater",
+      "141599-2026-12-01-art-11",
+      "141599-2026-12-01-art-34-ter",
+      "141599-2026-12-01-art-55"
+     ],
+     "pos_primer_esperado": 66
+    },
+    {
+     "id": "NUE-0028",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-32",
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-39",
+      "141599-2026-12-01-art-33",
+      "141599-2026-12-01-art-34-quater"
+     ],
+     "pos_primer_esperado": null
+    },
+    {
+     "id": "NUE-0029",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-3",
+      "141599-2026-12-01-art-6"
+     ],
+     "top5": [
+      "207436-karin-art-154",
+      "141599-2026-12-01-art-39",
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-16-ter",
+      "141599-2026-12-01-art-33"
+     ],
+     "pos_primer_esperado": 18
+    },
+    {
+     "id": "NUE-0030",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-14-quinquies",
+      "141599-2026-12-01-art-16-ter"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-16-ter",
+      "141599-2026-12-01-art-16-sexies",
+      "141599-2026-12-01-art-34-quater",
+      "141599-2026-12-01-art-53",
+      "141599-2026-12-01-art-34"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0031",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-16-ter",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-16-ter",
+      "141599-2026-12-01-art-8-bis",
+      "141599-2026-12-01-art-34-ter",
+      "141599-2026-12-01-art-9",
+      "141599-2026-12-01-art-2"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0032",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-ter",
+      "141599-2026-12-01-art-17"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-39",
+      "141599-2026-12-01-art-19",
+      "141599-2026-12-01-art-13"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0033",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-19"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-19",
+      "141599-2026-12-01-art-17",
+      "1008668-art-17-bis",
+      "141599-2026-12-01-art-55"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0034",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-14-quinquies"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-55",
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-6",
+      "141599-2026-12-01-art-11"
+     ],
+     "pos_primer_esperado": 27
+    },
+    {
+     "id": "NUE-0035",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-14-quinquies",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-30",
+      "141599-2026-12-01-art-30-bis",
+      "141599-2026-12-01-art-16-ter",
+      "141599-2026-12-01-art-55",
+      "141599-2026-12-01-art-11"
+     ],
+     "pos_primer_esperado": 26
+    },
+    {
+     "id": "NUE-0036",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "236392-karin-art-90",
+      "30256-karin-art-88",
+      "207436-karin-art-211-e",
+      "141599-2026-12-01-art-39",
+      "30256-karin-art-123"
+     ],
+     "pos_primer_esperado": null
+    },
+    {
+     "id": "NUE-0037",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-d"
+     ],
+     "top5": [
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-b",
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0038",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis"
+     ],
+     "top5": [
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-b",
+      "207436-karin-art-154-bis"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0039",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-211-b-bis"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0040",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-d"
+     ],
+     "top5": [
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-b",
+      "1200096-art-t-segundo"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0041",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3"
+     ],
+     "top5": [
+      "1008668-art-17-ter",
+      "1008668-art-8",
+      "1008668-art-29",
+      "1008668-art-1",
+      "1008668-art-10"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "NUE-0042",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "1008668-art-20",
+      "1008668-art-1",
+      "1008668-art-22",
+      "1008668-art-13",
+      "1008668-art-3"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "NUE-0043",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-3",
+      "1008668-art-8"
+     ],
+     "top5": [
+      "1008668-art-13",
+      "1008668-art-17-ter",
+      "1008668-art-29",
+      "1008668-art-27",
+      "1008668-art-7"
+     ],
+     "pos_primer_esperado": 8
+    },
+    {
+     "id": "NUE-0044",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-3",
+      "1008668-art-4",
+      "1008668-art-8"
+     ],
+     "top5": [
+      "1008668-art-15",
+      "1008668-art-17-ter",
+      "1008668-art-13",
+      "1008668-art-8",
+      "1008668-art-11"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "NUE-0045",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "1008668-art-17-ter",
+      "1008668-art-1",
+      "1008668-art-20",
+      "1008668-art-22",
+      "1008668-art-3"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "NUE-0046",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-6"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-19",
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-18",
+      "141599-2026-12-01-art-6",
+      "141599-2026-12-01-art-55"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "NUE-0047",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-14-quinquies",
+      "141599-2026-12-01-art-14-sexies"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-14-sexies",
+      "141599-2026-12-01-art-36",
+      "141599-2026-12-01-art-39",
+      "141599-2026-12-01-art-34-quater",
+      "141599-2026-12-01-art-30-bis"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "NUE-0048",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-ter",
+      "141599-2026-12-01-art-16-ter"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-30-bis",
+      "141599-2026-12-01-art-30",
+      "141599-2026-12-01-art-39",
+      "1209272-art-t-sexto",
+      "141599-2026-12-01-art-29"
+     ],
+     "pos_primer_esperado": 8
+    }
+   ],
+   "cadena": {
+    "19.628-21.719": {
+     "cand5": {
+      "n": 14,
+      "valor": 0.4286,
+      "ic95": [
+       0.2143,
+       0.7143
+      ]
+     },
+     "cand10": {
+      "n": 14,
+      "valor": 0.5714,
+      "ic95": [
+       0.2857,
+       0.7857
+      ]
+     },
+     "cand20": {
+      "n": 14,
+      "valor": 0.5714,
+      "ic95": [
+       0.2857,
+       0.7857
+      ]
+     },
+     "cand70": {
+      "n": 14,
+      "valor": 0.7143,
+      "ic95": [
+       0.5,
+       0.9286
+      ]
+     },
+     "evaluador5": {
+      "n": 14,
+      "valor": 0.5,
+      "ic95": [
+       0.2857,
+       0.7857
+      ]
+     },
+     "cadena5": {
+      "n": 14,
+      "valor": 0.6429,
+      "ic95": [
+       0.3571,
+       0.8571
+      ]
+     },
+     "revisor5": {
+      "n": 14,
+      "valor": 0.6429,
+      "ic95": [
+       0.3571,
+       0.8571
+      ]
+     }
+    },
+    "20.393": {
+     "cand5": {
+      "n": 5,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "cand10": {
+      "n": 5,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "cand20": {
+      "n": 5,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "cand70": {
+      "n": 5,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "evaluador5": {
+      "n": 5,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "cadena5": {
+      "n": 5,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "revisor5": {
+      "n": 5,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    "21.643": {
+     "cand5": {
+      "n": 29,
+      "valor": 0.7241,
+      "ic95": [
+       0.5517,
+       0.8621
+      ]
+     },
+     "cand10": {
+      "n": 29,
+      "valor": 0.8276,
+      "ic95": [
+       0.6897,
+       0.9655
+      ]
+     },
+     "cand20": {
+      "n": 29,
+      "valor": 0.8621,
+      "ic95": [
+       0.7241,
+       0.9655
+      ]
+     },
+     "cand70": {
+      "n": 29,
+      "valor": 0.931,
+      "ic95": [
+       0.8276,
+       1.0
+      ]
+     },
+     "evaluador5": {
+      "n": 29,
+      "valor": 0.8621,
+      "ic95": [
+       0.7241,
+       0.9655
+      ]
+     },
+     "cadena5": {
+      "n": 29,
+      "valor": 0.7241,
+      "ic95": [
+       0.5517,
+       0.8966
+      ]
+     },
+     "revisor5": {
+      "n": 29,
+      "valor": 0.6552,
+      "ic95": [
+       0.4828,
+       0.8276
+      ]
+     }
+    },
+    "global": {
+     "cand5": {
+      "n": 48,
+      "valor": 0.6667,
+      "ic95": [
+       0.5417,
+       0.7917
+      ]
+     },
+     "cand10": {
+      "n": 48,
+      "valor": 0.7708,
+      "ic95": [
+       0.6458,
+       0.875
+      ]
+     },
+     "cand20": {
+      "n": 48,
+      "valor": 0.7917,
+      "ic95": [
+       0.6667,
+       0.8958
+      ]
+     },
+     "cand70": {
+      "n": 48,
+      "valor": 0.875,
+      "ic95": [
+       0.7708,
+       0.9583
+      ]
+     },
+     "evaluador5": {
+      "n": 48,
+      "valor": 0.7708,
+      "ic95": [
+       0.6458,
+       0.875
+      ]
+     },
+     "cadena5": {
+      "n": 48,
+      "valor": 0.7292,
+      "ic95": [
+       0.6042,
+       0.8542
+      ]
+     },
+     "revisor5": {
+      "n": 48,
+      "valor": 0.6875,
+      "ic95": [
+       0.5625,
+       0.8125
+      ]
+     }
+    }
+   },
+   "cadena_meta": {
+    "estados": {
+     "completada": 43,
+     "revision_manual:cadena_agotada": 5
+    },
+    "casos": 48
+   },
+   "controles": {
+    "controles": 14,
+    "con_sugerencias": 12,
+    "con_todo_vetado": 2
+   },
+   "cadena_20393_top5": {}
+  },
+  "prueba3": {
+   "casos_con_esperados": 80,
+   "retriever": {
+    "19.628-21.719": {
+     "hit5": {
+      "n": 16,
+      "valor": 0.5625,
+      "ic95": [
+       0.3125,
+       0.8125
+      ]
+     },
+     "hit10": {
+      "n": 16,
+      "valor": 0.6875,
+      "ic95": [
+       0.4375,
+       0.875
+      ]
+     },
+     "hit20": {
+      "n": 16,
+      "valor": 0.8125,
+      "ic95": [
+       0.625,
+       1.0
+      ]
+     },
+     "hit70": {
+      "n": 16,
+      "valor": 0.9375,
+      "ic95": [
+       0.8125,
+       1.0
+      ]
+     }
+    },
+    "20.393": {
+     "hit5": {
+      "n": 17,
+      "valor": 0.4118,
+      "ic95": [
+       0.1765,
+       0.6471
+      ]
+     },
+     "hit10": {
+      "n": 17,
+      "valor": 0.5294,
+      "ic95": [
+       0.2941,
+       0.7647
+      ]
+     },
+     "hit20": {
+      "n": 17,
+      "valor": 0.7647,
+      "ic95": [
+       0.5294,
+       0.9412
+      ]
+     },
+     "hit70": {
+      "n": 17,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    "21.643": {
+     "hit5": {
+      "n": 47,
+      "valor": 0.8085,
+      "ic95": [
+       0.7021,
+       0.9149
+      ]
+     },
+     "hit10": {
+      "n": 47,
+      "valor": 0.9362,
+      "ic95": [
+       0.8723,
+       1.0
+      ]
+     },
+     "hit20": {
+      "n": 47,
+      "valor": 0.9787,
+      "ic95": [
+       0.9362,
+       1.0
+      ]
+     },
+     "hit70": {
+      "n": 47,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    "global": {
+     "hit5": {
+      "n": 80,
+      "valor": 0.675,
+      "ic95": [
+       0.5625,
+       0.775
+      ]
+     },
+     "hit10": {
+      "n": 80,
+      "valor": 0.8,
+      "ic95": [
+       0.7,
+       0.8875
+      ]
+     },
+     "hit20": {
+      "n": 80,
+      "valor": 0.9,
+      "ic95": [
+       0.825,
+       0.9625
+      ]
+     },
+     "hit70": {
+      "n": 80,
+      "valor": 0.9875,
+      "ic95": [
+       0.9625,
+       1.0
+      ]
+     }
+    }
+   },
+   "20393": {
+    "casos_fallidos": 10,
+    "de_20393_total": 17,
+    "top5_aparecen": {
+     "236392-karin-art-140": 6,
+     "236392-karin-art-129": 5,
+     "141599-2026-12-01-art-32": 4,
+     "207436-karin-art-211-c": 4,
+     "30256-karin-art-82": 4,
+     "30256-karin-art-126": 3,
+     "191865-karin-art-62": 3,
+     "30256-karin-art-138": 3,
+     "236392-karin-art-126": 2,
+     "30256-karin-art-124": 2,
+     "141599-2026-12-01-art-36": 2,
+     "141599-2026-12-01-art-51": 1
+    },
+    "esperados_perdidos": {
+     "1008668-art-1": 10,
+     "1008668-art-4": 10,
+     "1008668-art-3": 7
+    },
+    "posicion_primer_esperado": {
+     "7": 2,
+     "11": 1,
+     "28": 1,
+     "15": 1,
+     "23": 1,
+     "22": 1,
+     "14": 1,
+     "16": 1,
+     "34": 1
+    }
+   },
+   "ranking": [
+    {
+     "id": "SIN-0001",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "207436-karin-art-154",
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-d",
+      "191865-karin-art-14"
+     ],
+     "pos_primer_esperado": 8
+    },
+    {
+     "id": "SIN-0002",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-154",
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-a"
+     ],
+     "pos_primer_esperado": 33
+    },
+    {
+     "id": "SIN-0004",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "236392-karin-art-140",
+      "141599-2026-12-01-art-32",
+      "236392-karin-art-129",
+      "207436-karin-art-211-c",
+      "141599-2026-12-01-art-51"
+     ],
+     "pos_primer_esperado": 11
+    },
+    {
+     "id": "SIN-0006",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "191865-karin-art-14",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0008",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-b-bis",
+      "1200096-art-6",
+      "236392-karin-art-90",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 6
+    },
+    {
+     "id": "SIN-0009",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-32",
+      "30256-karin-art-82",
+      "1008668-art-3",
+      "191865-karin-art-62",
+      "1008668-art-7"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "SIN-0010",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-211-b",
+      "191865-karin-art-14",
+      "207436-karin-art-211-a",
+      "191865-karin-art-13",
+      "207436-karin-art-2"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "SIN-0011",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-154",
+      "191865-karin-art-14",
+      "1200096-art-6",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "SIN-0012",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "30256-karin-art-126",
+      "141599-2026-12-01-art-32",
+      "30256-karin-art-127",
+      "236392-karin-art-129",
+      "30256-karin-art-82"
+     ],
+     "pos_primer_esperado": 28
+    },
+    {
+     "id": "SIN-0015",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-quinquies",
+      "141599-2026-12-01-art-16",
+      "141599-2026-12-01-art-16-bis"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-48",
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-16-bis",
+      "141599-2026-12-01-art-14-bis"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "SIN-0017",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-154-bis"
+     ],
+     "pos_primer_esperado": 16
+    },
+    {
+     "id": "SIN-0018",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-2",
+      "236392-karin-art-90",
+      "191865-karin-art-14"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "SIN-0021",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-154",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-b"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "SIN-0023",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-13",
+      "207436-karin-art-211-a",
+      "207436-karin-art-154-ter"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "SIN-0025",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "236392-karin-art-90",
+      "30256-karin-art-88",
+      "207436-karin-art-211-e",
+      "1200096-art-6"
+     ],
+     "pos_primer_esperado": 6
+    },
+    {
+     "id": "SIN-0027",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-34-quater",
+      "141599-2026-12-01-art-30-bis",
+      "141599-2026-12-01-art-34-ter",
+      "141599-2026-12-01-art-33",
+      "141599-2026-12-01-art-48"
+     ],
+     "pos_primer_esperado": 42
+    },
+    {
+     "id": "SIN-0029",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "236392-karin-art-90",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "SIN-0031",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-32",
+      "236392-karin-art-84",
+      "141599-2026-12-01-art-30-bis",
+      "191865-karin-art-62",
+      "1008668-art-1"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "SIN-0033",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-32",
+      "141599-2026-12-01-art-45",
+      "1008668-art-3",
+      "1008668-art-1",
+      "141599-2026-12-01-art-36"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "SIN-0034",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-154",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "SIN-0035",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "1008668-art-4",
+      "141599-2026-12-01-art-49",
+      "141599-2026-12-01-art-36",
+      "141599-2026-12-01-art-51",
+      "141599-2026-12-01-art-34-quater"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0037",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "207436-karin-art-211-a",
+      "207436-karin-art-154-ter",
+      "1200096-art-6"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "SIN-0038",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-ter",
+      "141599-2026-12-01-art-16-sexies",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-16-sexies",
+      "141599-2026-12-01-art-30",
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-16-ter",
+      "141599-2026-12-01-art-30-bis"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0039",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "30256-karin-art-126",
+      "30256-karin-art-82",
+      "191865-karin-art-62",
+      "30256-karin-art-138",
+      "30256-karin-art-120"
+     ],
+     "pos_primer_esperado": 7
+    },
+    {
+     "id": "SIN-0041",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-154",
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a",
+      "207436-karin-art-2"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "SIN-0042",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-15",
+      "141599-2026-12-01-art-17"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-34-quater",
+      "141599-2026-12-01-art-54",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-30-bis"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "SIN-0043",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-a",
+      "207436-karin-art-154",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0045",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0046",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a",
+      "191865-karin-art-14",
+      "207436-karin-art-211-b",
+      "207436-karin-art-154-bis"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0049",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-14-quinquies",
+      "141599-2026-12-01-art-3",
+      "207436-karin-art-154-ter"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-48",
+      "141599-2026-12-01-art-54"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0052",
+     "ley": "21.643",
+     "esperados": [
+      "1008668-art-4",
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-d",
+      "207436-karin-art-154",
+      "207436-karin-art-154-ter"
+     ],
+     "pos_primer_esperado": 17
+    },
+    {
+     "id": "SIN-0053",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-154",
+      "207436-karin-art-211-b-bis",
+      "1200096-art-6",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "SIN-0054",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-29",
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4",
+      "1008668-art-17-quater"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0056",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-a",
+      "191865-karin-art-14",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0058",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-2",
+      "207436-karin-art-154-ter",
+      "191865-karin-art-46",
+      "207436-karin-art-154",
+      "141599-2026-12-01-art-32"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0060",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "236392-karin-art-126",
+      "236392-karin-art-140",
+      "207436-karin-art-211-c",
+      "30256-karin-art-124",
+      "236392-karin-art-129"
+     ],
+     "pos_primer_esperado": 15
+    },
+    {
+     "id": "SIN-0061",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "207436-karin-art-154",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 9
+    },
+    {
+     "id": "SIN-0062",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis"
+     ],
+     "top5": [
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "191865-karin-art-14",
+      "207436-karin-art-211-a"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0063",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "191865-karin-art-62",
+      "141599-2026-12-01-art-36",
+      "236392-karin-art-129",
+      "30256-karin-art-82",
+      "141599-2026-12-01-art-43"
+     ],
+     "pos_primer_esperado": 7
+    },
+    {
+     "id": "SIN-0064",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a",
+      "191865-karin-art-14",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0067",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "191865-karin-art-14",
+      "207436-karin-art-211-a",
+      "207436-karin-art-154-bis",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0068",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-16",
+      "141599-2026-12-01-art-16-bis",
+      "207436-karin-art-154-ter"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-16-bis",
+      "141599-2026-12-01-art-48"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0070",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-14-quinquies",
+      "141599-2026-12-01-art-14-sexies",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-14-sexies",
+      "141599-2026-12-01-art-34-quater",
+      "141599-2026-12-01-art-45",
+      "141599-2026-12-01-art-48",
+      "141599-2026-12-01-art-49"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0072",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-e",
+      "191865-karin-art-14"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0075",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-46",
+      "207436-karin-art-211-a",
+      "191865-karin-art-14",
+      "141599-2026-12-01-art-49"
+     ],
+     "pos_primer_esperado": 11
+    },
+    {
+     "id": "SIN-0077",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "191865-karin-art-14",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-e"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0078",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "207436-karin-art-154-ter",
+      "207436-karin-art-154",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 6
+    },
+    {
+     "id": "SIN-0080",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-a"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "SIN-0083",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-ter",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-30",
+      "207436-karin-art-211-a",
+      "141599-2026-12-01-art-30-bis",
+      "207436-karin-art-211-b-bis"
+     ],
+     "pos_primer_esperado": 28
+    },
+    {
+     "id": "SIN-0085",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-e",
+      "236392-karin-art-129"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "SIN-0089",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-32",
+      "30256-karin-art-126",
+      "30256-karin-art-138",
+      "141599-2026-12-01-art-30-nonies",
+      "236392-karin-art-140"
+     ],
+     "pos_primer_esperado": 23
+    },
+    {
+     "id": "SIN-0094",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c",
+      "191865-karin-art-14",
+      "207436-karin-art-211-b"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0095",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-e",
+      "236392-karin-art-140",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 22
+    },
+    {
+     "id": "SIN-0096",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-16",
+      "141599-2026-12-01-art-16-bis",
+      "141599-2026-12-01-art-3",
+      "207436-karin-art-154-ter"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-e",
+      "141599-2026-12-01-art-45",
+      "207436-karin-art-211-d",
+      "141599-2026-12-01-art-49"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0098",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "236392-karin-art-129",
+      "207436-karin-art-211-c",
+      "191865-karin-art-46",
+      "207436-karin-art-211-e",
+      "207436-karin-art-154"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0099",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-154",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a",
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-e"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "SIN-0100",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c",
+      "236392-karin-art-129",
+      "191865-karin-art-14",
+      "207436-karin-art-211-d"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0102",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "236392-karin-art-140",
+      "30256-karin-art-138",
+      "236392-karin-art-129",
+      "30256-karin-art-124",
+      "236392-karin-art-126"
+     ],
+     "pos_primer_esperado": 14
+    },
+    {
+     "id": "SIN-0104",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-e"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0105",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "1008668-art-1",
+      "141599-2026-12-01-art-36",
+      "1008668-art-17-bis",
+      "141599-2026-12-01-art-39",
+      "191865-karin-art-62"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0106",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-36",
+      "141599-2026-12-01-art-45",
+      "236392-karin-art-121",
+      "236392-karin-art-140",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 16
+    },
+    {
+     "id": "SIN-0109",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c",
+      "1200096-art-6"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0112",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0113",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "191865-karin-art-14",
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0115",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-45",
+      "141599-2026-12-01-art-54",
+      "141599-2026-12-01-art-48"
+     ],
+     "pos_primer_esperado": 7
+    },
+    {
+     "id": "SIN-0118",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-154-ter",
+      "1200096-art-t-primero",
+      "191865-karin-art-13"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0125",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "207436-karin-art-211-a",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-b",
+      "1200096-art-6",
+      "207436-karin-art-154-ter"
+     ],
+     "pos_primer_esperado": null
+    },
+    {
+     "id": "SIN-0127",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "191865-karin-art-62",
+      "236392-karin-art-84",
+      "30256-karin-art-82",
+      "251693-karin-art-89",
+      "141599-2026-12-01-art-32"
+     ],
+     "pos_primer_esperado": 34
+    },
+    {
+     "id": "SIN-0128",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a",
+      "207436-karin-art-2",
+      "207436-karin-art-154-bis",
+      "191865-karin-art-14"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0133",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-a",
+      "191865-karin-art-14",
+      "207436-karin-art-211-e",
+      "207436-karin-art-154-bis"
+     ],
+     "pos_primer_esperado": 2
+    },
+    {
+     "id": "SIN-0137",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-211-b",
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-d",
+      "207436-karin-art-2",
+      "207436-karin-art-211-c"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "SIN-0138",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-154",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e",
+      "207436-karin-art-211-a"
+     ],
+     "pos_primer_esperado": 5
+    },
+    {
+     "id": "SIN-0140",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-15",
+      "141599-2026-12-01-art-17",
+      "141599-2026-12-01-art-3"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-d",
+      "141599-2026-12-01-art-34-quater",
+      "207436-karin-art-211-b-bis",
+      "141599-2026-12-01-art-34-ter"
+     ],
+     "pos_primer_esperado": 13
+    },
+    {
+     "id": "SIN-0142",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-14-quinquies",
+      "141599-2026-12-01-art-16-bis"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-48",
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-16-bis"
+     ],
+     "pos_primer_esperado": 4
+    },
+    {
+     "id": "SIN-0143",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-15",
+      "141599-2026-12-01-art-16",
+      "141599-2026-12-01-art-16-quater"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-16-quater",
+      "141599-2026-12-01-art-46",
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-14-sexies",
+      "141599-2026-12-01-art-34-quater"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0145",
+     "ley": "19.628-21.719",
+     "esperados": [
+      "141599-2026-12-01-art-12",
+      "141599-2026-12-01-art-14-quinquies",
+      "141599-2026-12-01-art-16",
+      "141599-2026-12-01-art-16-bis"
+     ],
+     "top5": [
+      "207436-karin-art-154-ter",
+      "141599-2026-12-01-art-46",
+      "141599-2026-12-01-art-48",
+      "141599-2026-12-01-art-14-bis",
+      "141599-2026-12-01-art-33"
+     ],
+     "pos_primer_esperado": 7
+    },
+    {
+     "id": "SIN-0146",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2"
+     ],
+     "top5": [
+      "207436-karin-art-154",
+      "207436-karin-art-154-ter",
+      "207436-karin-art-211-d",
+      "207436-karin-art-211-b-bis",
+      "207436-karin-art-211-e"
+     ],
+     "pos_primer_esperado": 9
+    },
+    {
+     "id": "SIN-0148",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-a"
+     ],
+     "top5": [
+      "207436-karin-art-211-a",
+      "207436-karin-art-154",
+      "191865-karin-art-14",
+      "207436-karin-art-154-ter",
+      "1200096-art-6"
+     ],
+     "pos_primer_esperado": 1
+    },
+    {
+     "id": "SIN-0149",
+     "ley": "20.393",
+     "esperados": [
+      "1008668-art-1",
+      "1008668-art-3",
+      "1008668-art-4"
+     ],
+     "top5": [
+      "141599-2026-12-01-art-51",
+      "141599-2026-12-01-art-36",
+      "1008668-art-1",
+      "141599-2026-12-01-art-39",
+      "1008668-art-17-ter"
+     ],
+     "pos_primer_esperado": 3
+    },
+    {
+     "id": "SIN-0150",
+     "ley": "21.643",
+     "esperados": [
+      "207436-karin-art-2",
+      "207436-karin-art-211-b",
+      "207436-karin-art-211-c"
+     ],
+     "top5": [
+      "207436-karin-art-211-e",
+      "236392-karin-art-90",
+      "207436-karin-art-211-c",
+      "207436-karin-art-211-b-bis",
+      "236392-karin-art-140"
+     ],
+     "pos_primer_esperado": 3
+    }
+   ],
+   "cadena": {
+    "19.628-21.719": {
+     "cand5": {
+      "n": 16,
+      "valor": 0.75,
+      "ic95": [
+       0.5625,
+       0.9375
+      ]
+     },
+     "cand10": {
+      "n": 16,
+      "valor": 0.8125,
+      "ic95": [
+       0.625,
+       1.0
+      ]
+     },
+     "cand20": {
+      "n": 16,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "cand70": {
+      "n": 16,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "evaluador5": {
+      "n": 16,
+      "valor": 0.875,
+      "ic95": [
+       0.6875,
+       1.0
+      ]
+     },
+     "cadena5": {
+      "n": 16,
+      "valor": 0.75,
+      "ic95": [
+       0.5,
+       0.9375
+      ]
+     },
+     "revisor5": {
+      "n": 16,
+      "valor": 0.75,
+      "ic95": [
+       0.5,
+       0.9375
+      ]
+     }
+    },
+    "20.393": {
+     "cand5": {
+      "n": 17,
+      "valor": 0.7647,
+      "ic95": [
+       0.5882,
+       0.9412
+      ]
+     },
+     "cand10": {
+      "n": 17,
+      "valor": 0.9412,
+      "ic95": [
+       0.8235,
+       1.0
+      ]
+     },
+     "cand20": {
+      "n": 17,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "cand70": {
+      "n": 17,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "evaluador5": {
+      "n": 17,
+      "valor": 0.8824,
+      "ic95": [
+       0.7059,
+       1.0
+      ]
+     },
+     "cadena5": {
+      "n": 17,
+      "valor": 0.6471,
+      "ic95": [
+       0.4118,
+       0.8824
+      ]
+     },
+     "revisor5": {
+      "n": 17,
+      "valor": 0.6471,
+      "ic95": [
+       0.4118,
+       0.8824
+      ]
+     }
+    },
+    "21.643": {
+     "cand5": {
+      "n": 47,
+      "valor": 0.8085,
+      "ic95": [
+       0.7021,
+       0.9149
+      ]
+     },
+     "cand10": {
+      "n": 47,
+      "valor": 0.9149,
+      "ic95": [
+       0.8298,
+       0.9787
+      ]
+     },
+     "cand20": {
+      "n": 47,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "cand70": {
+      "n": 47,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "evaluador5": {
+      "n": 47,
+      "valor": 0.9362,
+      "ic95": [
+       0.8511,
+       1.0
+      ]
+     },
+     "cadena5": {
+      "n": 47,
+      "valor": 0.8511,
+      "ic95": [
+       0.7447,
+       0.9362
+      ]
+     },
+     "revisor5": {
+      "n": 47,
+      "valor": 0.8085,
+      "ic95": [
+       0.7021,
+       0.9149
+      ]
+     }
+    },
+    "global": {
+     "cand5": {
+      "n": 80,
+      "valor": 0.7875,
+      "ic95": [
+       0.7,
+       0.875
+      ]
+     },
+     "cand10": {
+      "n": 80,
+      "valor": 0.9,
+      "ic95": [
+       0.825,
+       0.9625
+      ]
+     },
+     "cand20": {
+      "n": 80,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "cand70": {
+      "n": 80,
+      "valor": 1.0,
+      "ic95": [
+       1.0,
+       1.0
+      ]
+     },
+     "evaluador5": {
+      "n": 80,
+      "valor": 0.9125,
+      "ic95": [
+       0.85,
+       0.9625
+      ]
+     },
+     "cadena5": {
+      "n": 80,
+      "valor": 0.7875,
+      "ic95": [
+       0.7,
+       0.875
+      ]
+     },
+     "revisor5": {
+      "n": 80,
+      "valor": 0.7625,
+      "ic95": [
+       0.6625,
+       0.85
+      ]
+     }
+    }
+   },
+   "cadena_meta": {
+    "estados": {
+     "completada": 77,
+     "revision_manual:validacion_fallida": 3
+    },
+    "casos": 80
+   },
+   "controles": {
+    "controles": 12,
+    "con_sugerencias": 9,
+    "con_todo_vetado": 1
+   },
+   "cadena_20393_top5": {
+    "191865-karin-art-62": 4,
+    "30256-karin-art-82": 2,
+    "141599-2026-12-01-art-32": 2,
+    "236392-karin-art-84": 1,
+    "30256-karin-art-123": 1,
+    "30256-karin-art-120": 1,
+    "207436-karin-art-211-b-bis": 1,
+    "207436-karin-art-154": 1,
+    "141599-2026-12-01-art-39": 1
+   }
+  }
+ }
+}

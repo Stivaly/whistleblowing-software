@@ -124,3 +124,19 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 - Controles (con sugerencias / todo vetado): desarrollo 6 de 8 / 2; prueba 14 de 16 / 4; prueba2 14 de 14 / 1; prueba3 10 de 12 / 0.
 - Estados no completados (revisión manual): desarrollo 3 y prueba 1 y prueba2 1 por `validacion_fallida`; prueba3 8 por `validacion_fallida` y 1 `cadena_agotada` (SIN-0028).
 - Archivos: `kerna/evaluacion/registro/base-b2-20261113.json` (por set, ley, configuración y profundidad, con ranking por caso), `casos_b2_<set>_20261113.json` (sugerencias, candidatos y salida del evaluador, solo IDs), `revisor-b2-<set>-20261113.json` (vetos y dictámenes) y 4 filas nuevas en `recall_retriever.jsonl`.
+
+## 2026-11-14 · Experimento 1 cerrado: enriquecimiento + BM25 (`ebm`) con cadena y revisor en los 4 sets
+- Commit base: d706abfc7 (medición con el código de ese commit; no se tocó el núcleo hasta 48ed0d3cf). Colección `normativa_cl_x_e` (enriquecimiento en el vector) con `KERNA_ENR_BM25=concat`; resto como B2 (evaluador 3m, 70 candidatos, híbrida +15 extras, multiquery 3, gpt-5-nano) y `KERNA_REVISOR=1`; en prueba3 `KERNA_REVISOR_SIN_CAUSALES=hechos_fuera_de_chile` (supuesto del orquestador). Casos con cadena agotada (429) reanudados hasta 0 pendientes (concurrencia 2).
+- Comando: `operaciones/medicion_enriquecido.sh ebm 20261113 "prueba prueba2 prueba3" normativa_cl_x_e KERNA_ENR_BM25=concat` (desarrollo: corrida anterior `casos_enr_ebm_desarrollo_20261113.json`), reanudado con un bucle sobre `correr_revisor.py --reanudar`; medida con `medir_base_b2.py --coleccion normativa_cl_x_e` en `registro/enr-ebm-completo-20261114.json`.
+- recall@5 por artículo (hit@5), B2 -> ebm, [IC 95 %]:
+
+| Set (n) | (a) retriever | evaluador top-5 | (b) cadena | (c) + revisor |
+|---|---|---|---|---|
+| desarrollo (42) | 0,548 -> 0,643 [0,48-0,79] | 0,64 -> 0,738 [0,60-0,86] | 0,429 -> 0,619 [0,48-0,76] | 0,405 -> 0,548 [0,40-0,69] |
+| prueba (15) | 0,467 -> 0,533 [0,27-0,80] | 0,47 -> 0,467 | 0,467 -> 0,467 [0,20-0,73] | 0,467 -> 0,467 |
+| prueba2 (48) | 0,562 -> 0,667 [0,52-0,79] | 0,77 -> 0,854 [0,75-0,94] | 0,688 -> 0,813 [0,71-0,92] | 0,688 -> 0,771 [0,65-0,88] |
+| prueba3 (80) | 0,600 -> 0,675 [0,56-0,78] | 0,84 -> 0,913 [0,85-0,96] | 0,688 -> 0,788 [0,70-0,88] | 0,500 -> 0,763 [0,66-0,85] |
+
+- Por ley, cadena [(b)] / retriever: 20.393 desarrollo 0,222 -> 0,333 / 0,444 (n=9); prueba2 1,00 / 0,80 (n=5); prueba3 0,471 -> 0,647 / 0,412 (n=17). 21.643: desarrollo 0,706, prueba 0,857, prueba2 0,793, prueba3 0,851. 19.628-21.719: desarrollo 0,688, prueba 0,125, prueba2 0,786, prueba3 0,750.
+- Lectura: el enriquecimiento sube el retriever y el top-5 del evaluador en todos los sets salvo prueba (n=15, igual). El evaluador ya pasa 0,80 en prueba2 y prueba3, pero el generador pierde 0,12 (desarrollo), 0,00 (prueba), 0,04 (prueba2) y 0,125 (prueba3), y el revisor resta 0,02-0,07 más en desarrollo y prueba2. Falta 0,80 en desarrollo (0,62), prueba (0,47) y 19.628-21.719 en prueba (0,125).
+- Archivos: `registro/casos_enr_ebm_{prueba,prueba2,prueba3}_20261113t.json`, `casos_enr_ebm_desarrollo_20261113.json`, `enr-ebm-20261113t.json` (parcial, sin desarrollo ni cadena completa) y `enr-ebm-completo-20261114.json` (medición final).
