@@ -177,6 +177,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
     real = conector if conector and conector.get("fuente") == "conector" else None  # casos distintos que existen hoy en Veridy
     if real:
         modos["manual"] = real["manual"]
+        con_sug = real["con_sugerencia"]
     val_dis = sum(int(_n(f["validas"])) for f in crudo["disponibilidad"])
     con_dis = sum(int(_n(f["con_sugerencia"])) for f in crudo["disponibilidad"])
     val = {"util": 0, "no_util": 0, "ninguno_aplica": 0}
@@ -189,8 +190,8 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
         "justificacion": "Responde en una página cuánto trabajó Kerna, con qué resultado y en qué modo; es lo primero que lee un tutor o auditor.",
         "kpis": [
             {"etiqueta": "Casos procesados", "valor": casos, "unidad": "casos", "fuente": LF_LA + ", evento solicitud_terminada"},
-            {"etiqueta": "Casos con sugerencia (estado completada)", "valor": con_sug, "unidad": "casos", "fuente": LF_LA},
-            {"etiqueta": "% con sugerencia", "valor": _pct(con_sug, casos), "unidad": "%", "fuente": "con sugerencia / casos procesados"},
+            {"etiqueta": "Casos con sugerencia (estado completada)", "valor": con_sug, "unidad": "casos", "fuente": "estado del conector (casos de Veridy)" if real else LF_LA},
+            {"etiqueta": "% con sugerencia", "valor": _pct(con_sug, real["casos"]) if real else _pct(con_sug, casos), "unidad": "%", "fuente": "con sugerencia / casos de Veridy" if real else "con sugerencia / casos procesados"},
             {"etiqueta": "% de sugerencias valoradas útiles", "valor": _pct(val["util"], total_val) if total_val else None, "unidad": "%", "fuente": LF_LA + ", eventos feedback y clasificacion_auditor"},
             {"etiqueta": "Disponibilidad efectiva", "valor": _pct(con_dis, val_dis), "unidad": "%", "fuente": "con sugerencia / solicitudes válidas (excluye sin_normativa_aplicable)"},
             {"etiqueta": "Modo oficial", "valor": modos["oficial"], "unidad": "casos", "fuente": LF_LA},

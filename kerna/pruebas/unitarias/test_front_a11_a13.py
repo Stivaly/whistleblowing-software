@@ -40,7 +40,7 @@ def test_a12_resumen_ignora_los_eventos_de_telemetria_si_hay_conector():
 def test_a12_informe_cuenta_revision_manual_con_el_conector():
     inf = informe.construir(INI, FIN, ejecutar=falso, evaluacion=EVAL, conector=reintentos.con_estado_real(None, CONECTOR))
     kp = {k["etiqueta"]: k["valor"] for s in inf["secciones"] for k in s["kpis"]}
-    assert kp["Revisión manual"] == 0 and kp["Casos en revisión manual"] == 0
+    assert kp["Revisión manual"] == 0 and kp["Casos en revisión manual"] == 0 and kp["% con sugerencia"] == 100.0
     sin = informe.construir(INI, FIN, ejecutar=falso, evaluacion=EVAL)
     assert {k["etiqueta"]: k["valor"] for s in sin["secciones"] for k in s["kpis"]}["Casos en revisión manual"] == 2
 
