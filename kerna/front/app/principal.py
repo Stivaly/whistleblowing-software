@@ -122,7 +122,7 @@ def _vista_resumen(m: dict, dias: int, prov, rei) -> dict:
     r = cache.paralelo({"ev": ev, **{k: (lambda k=k: _extra(k, dias)) for k in ("front_tokens_por_modelo", "latencia_por_etapa", "front_horarios")}})
     g = lambda k: [] if isinstance(r[k], Exception) else r[k]  # noqa: E731
     return vistas.resumen(m, None if isinstance(r["ev"], Exception) else r["ev"], prov, rei, vistas.costo_modelos(g("front_tokens_por_modelo")),
-                          vistas.etapas_lista(g("latencia_por_etapa")), vistas.heat(g("front_horarios")), dias)
+                          vistas.etapas_lista(g("latencia_por_etapa")), vistas.heat(g("front_horarios")), dias, conector=reintentos.con_estado_real(None, _conector()))
 
 
 def _metricas(dias: int) -> dict:
@@ -260,10 +260,10 @@ def _informe(dias, desde, hasta):
             n = negocio.cargar(dias=(fin - ini).days or 30)
         except Exception:
             n = None  # la sección de rentabilidad declara que no hay datos
-        inf = inf_mod.construir(ini, fin, negocio=n)
+        inf = inf_mod.construir(ini, fin, negocio=n, conector=reintentos.con_estado_real(None, _conector()))
         if inf.get("fallos", 0) > 3:  # casi todo falló (p. ej. identidad aún sin token): un segundo intento antes de guardar el resultado
             time.sleep(2)
-            inf = inf_mod.construir(ini, fin, negocio=n)
+            inf = inf_mod.construir(ini, fin, negocio=n, conector=reintentos.con_estado_real(None, _conector()))
         return inf
     return cache.obtener(("informe", dias, desde, hasta), calcular, 120)
 
@@ -282,7 +282,7 @@ def _informe_directo(dias):
         n = negocio.cargar(dias=(fin - ini).days or 30)
     except Exception:
         n = None
-    inf = inf_mod.construir(ini, fin, negocio=n)
+    inf = inf_mod.construir(ini, fin, negocio=n, conector=reintentos.con_estado_real(None, _conector()))
     return inf
 
 

@@ -10,6 +10,7 @@ import time
 from collections import defaultdict
 
 TABLA = "evaluaciones"
+SET = "desarrollo"  # el panel muestra siempre este set (casos reales y complejos); los demás sets no van al panel
 _cache: dict = {"t": 0.0, "v": None}
 TTL_S = 120
 
@@ -41,18 +42,33 @@ def _ultima(filas, fuente):
     return [x for x in f if x["fecha"] == corte]
 
 
+def _desarrollo(filas: list[dict]) -> list[dict]:
+    """Filas de recall del set desarrollo medidas con la configuración vigente (la desplegada en Veridy).
+    La marca es la fila `vigente`/`desarrollo` de la tabla (campo `corrida` = fecha de la medición); sin marca, la última medición de desarrollo sobre `normativa_cl`."""
+    rec = [x for x in filas if x.get("PartitionKey") == "recall_retriever" and _j(x.get("parametros")).get("particion") == SET]
+    marca = next((x.get("corrida") for x in filas if x.get("PartitionKey") == "vigente" and x.get("RowKey") == SET), None)
+    if marca:
+        return [x for x in rec if x["fecha"] == marca]
+    prod = [x for x in rec if _j(x.get("parametros")).get("coleccion") == "normativa_cl"]
+    corte = max((x["fecha"] for x in prod), default=None)
+    return [x for x in prod if x["fecha"] == corte]
+
+
 def construir(filas: list[dict]) -> dict | None:
     """Reconstruye {recall, serie, corpus_articulos, evaluador, anonimizador, pruebas, precios_embeddings}."""
     if not filas:
         return None
     out: dict = {}
-    rec = [x for x in filas if x.get("PartitionKey") == "recall_retriever" and x.get("metrica") == "recall5"]
-    if rec:
+    dev = [x for x in _desarrollo(filas) if x.get("metrica") == "recall5"]
+    if dev:
+        ult = dev
         corridas = defaultdict(list)
-        for x in rec:
-            corridas[x["fecha"]].append(x)
+        for x in filas:
+            p = _j(x.get("parametros"))
+            if x.get("PartitionKey") == "recall_retriever" and x.get("metrica") == "recall5" and p.get("particion") == SET and p.get("coleccion") == "normativa_cl":
+                corridas[x["fecha"]].append(x)
+        corridas[ult[0]["fecha"]] = ult
         fechas = sorted(corridas)
-        ult = corridas[fechas[-1]]
         glob = next((x for x in ult if x["ambito"] == "global"), ult[0])
         par = _j(glob.get("parametros"))
         por_ley = []
@@ -62,7 +78,7 @@ def construir(filas: list[dict]) -> dict | None:
                             "casos_articulo": d.get("casos_articulo"), "recall_ley": d.get("recall_ley"), "recall5": x.get("valor"),
                             "ic95_inf": d.get("ic95_inf"), "ic95_sup": d.get("ic95_sup")})
         por_ley.sort(key=lambda z: (z["ley"] != "Global", z["ley"]))
-        out["recall"] = {"fecha": fechas[-1], "commit": glob.get("commit"), "configuracion": par.get("configuracion"),
+        out["recall"] = {"fecha": ult[0]["fecha"], "set": SET, "commit": glob.get("commit"), "configuracion": par.get("configuracion"),
                          "meta": par.get("meta", 0.8), "dataset_casos": par.get("dataset_casos"), "por_ley": por_ley,
                          "fuente": "tabla evaluaciones (recall_retriever)"}
         out["serie"] = []

@@ -5,8 +5,7 @@
 {% block vista %}
 <div class="zv">
 <header class="bar">
-<div class="bar-t"><h1 class="h1">Negocio</h1><div class="seg" role="group" aria-label="Período">{% for d in (7, 30, 90) %}<a href="/panel/negocio?dias={{ d }}"{% if dias == d %} aria-current="true"{% endif %}>{{ d }} días</a>{% endfor %}</div></div>
-<div class="bar-a"><a href="/panel/informe" class="btn btn-pri">{{ ic('file-down') }}<span>Informe</span></a></div></header>
+<div class="bar-t"><h1 class="h1">Negocio</h1><div class="seg" role="group" aria-label="Período">{% for d in (7, 30, 90) %}<a href="/panel/negocio?dias={{ d }}"{% if dias == d %} aria-current="true"{% endif %}>{{ d }} días</a>{% endfor %}</div></div></header>
 
 {% if error %}<p class="vac bad" role="alert">{{ ic('e-cadena-agotada', px=24, mini=True) }}<span>Sin conexión con los datos de negocio ({{ error }})</span></p>
 {% elif not V %}{{ vacio('Sin clientes') }}

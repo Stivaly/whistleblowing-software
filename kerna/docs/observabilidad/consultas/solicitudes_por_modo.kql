@@ -2,6 +2,7 @@
 // Conmutación = contingencia true (modo distinto de oficial o recuperación local).
 AppTraces
 | where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| summarize arg_max(TimeGenerated, Properties) by id = coalesce(tostring(Properties.id_solicitud), tostring(new_guid()))  // un caso = su último estado
 | extend modo = coalesce(tostring(Properties.modo), "manual"), recuperacion = coalesce(tostring(Properties.recuperacion), "nube"),
          contingencia = tostring(Properties.contingencia) =~ "true" or coalesce(tostring(Properties.modo), "manual") != "oficial" or coalesce(tostring(Properties.recuperacion), "nube") == "local"
 | summarize solicitudes = count(), conmutadas = countif(contingencia) by modo, recuperacion

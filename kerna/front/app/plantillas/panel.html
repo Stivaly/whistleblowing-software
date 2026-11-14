@@ -21,8 +21,7 @@
 <header class="bar">
 <div class="bar-t"><h1 class="h1">Resumen</h1><button type="button" class="vivo" data-vivo data-tip="envivo"{% if vivo and vivo.dato %} data-dato="{{ vivo.dato }}" data-fuente="{{ vivo.fuente }}"{% endif %} aria-label="En vivo. Pasa el cursor para ver la hora del último dato recibido"><i class="vd"></i>En vivo</button>
 <div class="seg" role="group" aria-label="Período"><a href="/panel?dias=7"{% if dias == 7 %} aria-current="true"{% endif %}>7 días</a><a href="/panel?dias=30"{% if dias == 30 %} aria-current="true"{% endif %}>30 días</a></div></div>
-<div class="bar-a">{% if V and V.proveedores %}<ul class="pv" aria-label="Estado de los proveedores de modelos de IA">{% for p in V.proveedores %}<li class="pg s-{{ p.e }}" id="pv-{{ p.id }}" tabindex="0" title="{{ p.nombre }} · {{ p.modelo }} · {{ p.txt }}" aria-label="{{ p.nombre }}, {{ p.modelo }}: {{ p.txt }}">{{ ic(ICONO[p.e] if p.e != 'na' else 'e-sin-conexion', px=32) }}<span class="pg-n"><b>{{ p.nombre }}</b><span class="pg-s"><i class="pg-m">{{ p.modelo }} · </i><span data-pt>{{ p.txt }}</span></span></span></li>{% endfor %}</ul>{% endif %}
-<a href="/panel/informe" class="btn btn-pri">{{ ic('file-down') }}<span>Informe</span></a></div>
+<div class="bar-a">{% if V and V.proveedores %}<ul class="pv" aria-label="Estado de los proveedores de modelos de IA">{% for p in V.proveedores %}<li class="pg s-{{ p.e }}" id="pv-{{ p.id }}" tabindex="0" title="{{ p.nombre }} · {{ p.modelo }} · {{ p.txt }}" aria-label="{{ p.nombre }}, {{ p.modelo }}: {{ p.txt }}">{{ ic(ICONO[p.e] if p.e != 'na' else 'e-sin-conexion', px=32) }}<span class="pg-n"><b>{{ p.nombre }}</b><span class="pg-s"><i class="pg-m">{{ p.modelo }} · </i><span data-pt>{{ p.txt }}</span></span></span></li>{% endfor %}</ul>{% endif %}</div>
 </header>
 
 {% if error %}<p class="vac bad" role="alert">{{ ic('e-cadena-agotada', px=24, mini=True) }}<span>Sin conexión con Log Analytics ({{ error }})</span></p>

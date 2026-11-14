@@ -1,5 +1,6 @@
 // Front /panel: casos procesados por día (solicitudes terminadas). Solo conteos.
 AppTraces
 | where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| summarize arg_max(TimeGenerated, Properties) by id = coalesce(tostring(Properties.id_solicitud), tostring(new_guid()))  // un caso = su último estado
 | summarize casos = count(), con_sugerencia = countif(tostring(Properties.estado) == "completada") by dia = bin(TimeGenerated, 1d)
 | order by dia asc

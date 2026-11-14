@@ -143,7 +143,7 @@ def _pct(a, b):
     return round(100.0 * a / b, 1) if b else None
 
 
-def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, negocio=None) -> dict:
+def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, negocio=None, conector=None) -> dict:
     """`negocio`: resultado de negocio.construir (clientes y costos en UF) para la sección de rentabilidad; si falta, se declara."""
     """`ejecutar(texto, ini, fin)` y los datos de evaluación se inyectan en las pruebas."""
     ejecutar = ejecutar or _filas_rango
@@ -174,6 +174,9 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
     for f in crudo["modos"]:
         m = str(f.get("modo")) if str(f.get("modo")) in modos else "manual"
         modos[m] += int(_n(f["solicitudes"]))
+    real = conector if conector and conector.get("fuente") == "conector" else None  # casos distintos que existen hoy en Veridy
+    if real:
+        modos["manual"] = real["manual"]
     val_dis = sum(int(_n(f["validas"])) for f in crudo["disponibilidad"])
     con_dis = sum(int(_n(f["con_sugerencia"])) for f in crudo["disponibilidad"])
     val = {"util": 0, "no_util": 0, "ninguno_aplica": 0}
@@ -193,7 +196,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
             {"etiqueta": "Modo oficial", "valor": modos["oficial"], "unidad": "casos", "fuente": LF_LA},
             {"etiqueta": "Modo respaldo", "valor": modos["respaldo"], "unidad": "casos", "fuente": LF_LA},
             {"etiqueta": "Modo local (gemma)", "valor": modos["local"], "unidad": "casos", "fuente": LF_LA},
-            {"etiqueta": "Revisión manual", "valor": modos["manual"], "unidad": "casos", "fuente": LF_LA},
+            {"etiqueta": "Revisión manual", "valor": modos["manual"], "unidad": "casos", "fuente": "estado del conector (casos de Veridy)" if real else LF_LA},
         ],
         "tablas": [{"id": "casos_dia", "titulo": "Casos por día", "cols": ["Día", "Casos", "Con sugerencia"],
                     "filas": [[str(f["dia"])[:10], int(_n(f["casos"])), int(_n(f["con_sugerencia"]))] for f in crudo["casos"]], "fuente": LF_LA}],
@@ -218,7 +221,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
             cal["kpis"].append({"etiqueta": "Recall@5 por artículo (global)", "valor": round(glob["recall5"], 3), "unidad": "ratio", "fuente": fte})
             cal["kpis"].append({"etiqueta": "Meta de recall@5", "valor": r["meta"], "unidad": "ratio", "fuente": fte})
             cal["kpis"].append({"etiqueta": "Recall por ley (global)", "valor": round(glob["recall_ley"], 3), "unidad": "ratio", "fuente": fte})
-        cal["tablas"].append({"id": "recall_ley", "titulo": f"Recall@5 por ley ({r['configuracion']}; {r['dataset_casos']} casos del dataset público)",
+        cal["tablas"].append({"id": "recall_ley", "titulo": f"Recall@5 por ley ({r['configuracion']}; set desarrollo, {r['dataset_casos']} casos)",
                               "cols": ["Ley", "Casos", "Casos a nivel artículo", "Recall por ley", "Recall@5 artículo", "IC95 inf.", "IC95 sup.", "Meta", "Cumple meta"],
                               "filas": [[nombre_ley(x["ley"]), x["casos"], x["casos_articulo"], round(x["recall_ley"], 3), round(x["recall5"], 3),
                                          round(x["ic95_inf"], 3) if x["ic95_inf"] is not None else None, round(x["ic95_sup"], 3) if x["ic95_sup"] is not None else None,
@@ -228,7 +231,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
         if serie:
             cal["tablas"].append({"id": "recall_serie", "titulo": "Últimas 10 mediciones de recall@5 por artículo (global)", "cols": ["Fecha (UTC)", "Configuración", "Recall@5"],
                                   "filas": [[s["fecha"], s["configuracion"], round(s["recall5"], 3)] for s in serie], "fuente": r["fuente"]})
-        cal["notas"].append("El recall se mide sobre el dataset público de evaluación, no sobre denuncias reales; las cifras no cambian con el período elegido.")
+        cal["notas"].append("El recall se mide en el set desarrollo; no cambia con el período.")
     else:
         cal["notas"].append(f"Sin datos de evaluación: la tabla `evaluaciones` no respondió ({fallos['evaluaciones']})." if "evaluaciones" in fallos
                             else "Sin datos de evaluación: la tabla `evaluaciones` está vacía.")
@@ -356,10 +359,10 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
 
     # ---- 6. Incidentes ---------------------------------------------------------------------------------------
     err = [[str(f["evento"]), str(f["proveedor"]), str(f["modelo"]), str(f["codigo"]), int(_n(f["eventos"]))] for f in crudo["errores"]]
-    rev = [[str(f["motivo"]), int(_n(f["casos"]))] for f in crudo["revision"]]
+    rev = [list(x) for x in real["manual_motivos"]] if real else [[str(f["motivo"]), int(_n(f["casos"]))] for f in crudo["revision"]]
     inc = {"id": "incidentes", "titulo": "Incidentes",
            "justificacion": "Registra caídas de modelos, límites de cuota y casos que requirieron revisión humana: la parte operativa que explica las demás cifras.",
-           "kpis": [{"etiqueta": "Casos en revisión manual", "valor": sum(r[1] for r in rev) if "revision" not in fallos else None, "unidad": "casos", "fuente": LF_LA + ", solicitud_terminada con estado revision_manual"},
+           "kpis": [{"etiqueta": "Casos en revisión manual", "valor": real["manual"] if real else (sum(r[1] for r in rev) if "revision" not in fallos else None), "unidad": "casos", "fuente": "estado del conector (casos de Veridy)" if real else LF_LA + ", solicitud_terminada con estado revision_manual"},
                     {"etiqueta": "Eventos de falla de proveedor o modelo", "valor": sum(r[4] for r in err) if "errores" not in fallos else None, "unidad": "eventos", "fuente": LF_LA + ", nivel_fallido, recuperación fallida, cortocircuito"}],
            "tablas": [{"id": "fallas", "titulo": "Fallas por evento, proveedor, modelo y código", "cols": ["Evento", "Proveedor", "Modelo", "Código", "Eventos"], "filas": err, "fuente": LF_LA},
                       {"id": "revision", "titulo": "Casos en revisión manual por motivo", "cols": ["Motivo", "Casos"], "filas": rev, "fuente": LF_LA}],

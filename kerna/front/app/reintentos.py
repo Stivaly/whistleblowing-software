@@ -100,7 +100,8 @@ def con_estado_real(r: dict | None, c: dict | None, ahora=None) -> dict | None:
         {"motivo": k, "texto": t, "casos": n, "se_reintenta": True} for k, t, n in (("revision_manual", "En revisión manual", man), ("error", "Con error al procesar", err)) if n]
     casos, hecho = _num(c.get("casos")), _num(c.get("completado"))
     return {"total": man + err, "reintentables": man + err, "motivos": motivos, "proximo_auto": None, "ultimo_reintento": (r or {}).get("ultimo_reintento"),
-            "fuente": "conector", "actualizado_en": c.get("actualizado_en"), "casos": casos, "con_sugerencia": max(0, hecho - man), "en_proceso": _num(c.get("nuevo")) + _num(c.get("pendiente"))}
+            "fuente": "conector", "actualizado_en": c.get("actualizado_en"), "casos": casos, "con_sugerencia": max(0, hecho - man), "manual": man,
+            "manual_motivos": [(m["texto"], m["casos"]) for m in motivos if m["motivo"] != "error"], "sin_sugerencia": max(0, casos - max(0, hecho - man)), "en_proceso": _num(c.get("nuevo")) + _num(c.get("pendiente"))}
 
 
 def ayuda_pendientes(r: dict, dias: int = 7, ahora=None) -> str:

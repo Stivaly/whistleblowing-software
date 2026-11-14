@@ -52,3 +52,12 @@ Plan F1 sin costo. Las consultas a Log Analytics no tienen cargo para este volum
 `/panel/negocio` y `/api/negocio` leen las tablas `clientes` y `usodiario` del núcleo (Azure Table Storage, rol Table Data Reader de la identidad de la app; URL en `NEGOCIO_TABLA_URL`). Los costos de IA se calculan con los tokens por modelo y los precios de Anthropic (nano = Claude Haiku 5.5, 0,10/0,50 USD por millón; mini = Claude Sonnet 5.5, 2/10).
 
 `sembrar_negocio.py` (idempotente) llena las tablas: Veridy (`veridy-dev`) se calcula desde las tablas reales de solicitudes, valoraciones y clasificaciones; los otros cuatro clientes son datos de demostración (90 días de uso con estacionalidad de días hábiles, uno en riesgo por falta de uso y uno sobre su plan) y las tarifas son de referencia, no contractuales. Re-ejecutarlo actualiza el uso de Veridy.
+
+## Calidad del panel (set desarrollo)
+
+La banda de calidad (Resumen e Informe) muestra siempre el set `desarrollo` (`parametros.particion` en la tabla `evaluaciones`) con la configuración vigente, la desplegada en Veridy. La marca es la fila `vigente`/`desarrollo` de la misma tabla (campo `corrida` = `fecha` de la medición). Sin marca, toma la última medición de desarrollo sobre la colección `normativa_cl`.
+
+Actualizarla solo cuando una configuración nueva mejora desarrollo y se despliega:
+`CONFIRMAR=si kerna/operaciones/tablas.sh escribir evaluaciones vigente desarrollo "corrida=<fecha de la medición>" commit=<commit> "nota=<configuración>"`
+
+«Revisión manual» y «sin sugerencia» cuentan casos distintos que existen hoy en Veridy (fila `conector` de `reintentosmanuales`); las consultas históricas cuentan un caso por su último estado.

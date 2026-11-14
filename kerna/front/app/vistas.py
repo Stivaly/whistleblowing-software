@@ -122,12 +122,17 @@ def etapas_lista(filas: list[dict]) -> list[dict]:
 
 
 def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict | None = None, costo: dict | None = None,
-            etapas: list[dict] | None = None, horarios: dict | None = None, dias: int = 7, ahora: float | None = None) -> dict:
+            etapas: list[dict] | None = None, horarios: dict | None = None, dias: int = 7, ahora: float | None = None, conector: dict | None = None) -> dict:
+    """`conector`: estado real del conector (reintentos.con_estado_real): «revisión manual» y «sin sugerencia» cuentan casos distintos que existen hoy en Veridy."""
     mp = Mapas()
     tot = m["total_casos"]
     con_sug = sum(c["con_sugerencia"] for c in m["casos_por_dia"])
     sug_pct = pct(con_sug, tot)
     modos = m["modos"]
+    real = conector if conector and conector.get("fuente") == "conector" else None
+    if real:
+        modos = {**modos, "manual": real["manual"]}
+        sug_pct = pct(real["con_sugerencia"], real["casos"])
     ntot = sum(modos.values())
     recall = (ev or {}).get("recall") if ev else None
     meta_rec = (recall or {}).get("meta") or META_RECALL
@@ -151,7 +156,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
         va = f.dec_corto(rec_glob * 100, 1)
         et_a = "Cumple la meta" if e_a == "ok" else "Bajo la meta"
         x_a = (f"Cuando existe un artículo correcto, Kerna lo incluye entre sus 5 primeras sugerencias el {va} % de las veces. "
-               f"Meta: {f.dec_corto(meta_rec * 100, 1)} %. Medido el {f.fecha_corta(recall.get('fecha'))} sobre un conjunto público de pruebas.")
+               f"Meta: {f.dec_corto(meta_rec * 100, 1)} %. Medido el {f.fecha_corta(recall.get('fecha'))} en el {SET_PANEL.lower()}.")
     else:
         e_a, va, et_a, x_a = "na", "—", "Sin datos", "Todavía no hay una medición de calidad guardada."
     z_a = [(0, meta_rec - RECALL_ALERTA, "bad"), (meta_rec - RECALL_ALERTA, meta_rec, "warn"), (meta_rec, 1, "ok")]
@@ -301,7 +306,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
         "dias": dias,
     }
     return {"dias": dias, "generado": int(ahora or time.time()), "kpis": k, "eg": {"e": e_gen, "t": titulo, "s": sub}, "salud": salud, "modos": filas_modo,
-            "sug_pct": sug_pct, "e_sug": e_sug, "total": tot, "rapidez": rap, "etapas": et, "aciertos": aciertos, "meta_recall": f.dec_corto(meta_rec * 100, 1),
+            "sug_pct": sug_pct, "sug_real": bool(real), "e_sug": e_sug, "total": tot, "rapidez": rap, "etapas": et, "aciertos": aciertos, "meta_recall": f.dec_corto(meta_rec * 100, 1),
             "valoraciones": vals, "n_val": nval, "leyes": leyes_v, "sin_ley": sin_ley, "proveedores": provs, "costo": costo_v, "graficos": graf, "con_recall": rec_glob is not None,
             "mapas": mp.dic()}
 
@@ -463,7 +468,7 @@ def informe_ejecutivo(inf_: dict) -> dict:
     meta_r = kp.get("Meta de recall@5") or META_RECALL
     e_r = est("Recall@5 por artículo (global)")
     cards.append(_tarjeta("calidad", "target", "Acierto", None if rc is None else f.dec_corto(100 * rc, 1), "%" if rc is not None else "", e_r, f"Cuando existe un artículo correcto, Kerna lo incluye entre sus 5 primeras sugerencias con esta frecuencia. Meta: {f.dec_corto(100 * meta_r, 0)} %.",
-                          form="gauge", f=rc or 0, zm=meta_r, zl=f.dec_corto(100 * meta_r, 0), z=zonas([(0, meta_r - RECALL_ALERTA, "bad"), (meta_r - RECALL_ALERTA, meta_r, "warn"), (meta_r, 1, "ok")]),
+                          sub=SET_PANEL if rc is not None else "", form="gauge", f=rc or 0, zm=meta_r, zl=f.dec_corto(100 * meta_r, 0), z=zonas([(0, meta_r - RECALL_ALERTA, "bad"), (meta_r - RECALL_ALERTA, meta_r, "warn"), (meta_r, 1, "ok")]),
                           tick=graficos.g_tick(meta_r), et={"ok": "Cumple la meta", "warn": "Cerca de la meta", "bad": "Bajo la meta", "na": "Sin datos"}[e_r]))
     pv = kp.get("% de sugerencias valoradas útiles")
     e_v = est("% de sugerencias valoradas útiles")
@@ -811,9 +816,12 @@ def _barra(k: dict) -> dict | None:
     return None
 
 
+SET_PANEL = "Set desarrollo"  # rótulo del set que mide la banda de calidad (evaluaciones.SET)
+
+
 def _kb(k: dict, sub: str = "") -> dict:
     return {"k": k["k"], "ic": ICONO_KPI.get(k["k"], k.get("i", "resumen")), "l": k["l"], "v": k["v"], "u": k.get("u", ""), "p": k.get("p", ""), "e": k["e"], "et": k.get("et", ""),
-            "bar": _barra(k), "sub": sub, "x": k.get("x", "")}
+            "bar": _barra(k), "sub": sub or k.get("sub", ""), "x": k.get("x", "")}
 
 
 def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
@@ -823,7 +831,7 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
     if not tot:
         frase = _M(f"Sin denuncias en estos {dias} días.")
     else:
-        pa = [_M(f"En {dias} días, {_em(V['e_sug'], str(V['sug_pct']) + ' %')} recibió sugerencia.")]
+        pa = [_M(f"{_em(V['e_sug'], str(V['sug_pct']) + ' %')} recibió sugerencia." if V.get("sug_real") else f"En {dias} días, {_em(V['e_sug'], str(V['sug_pct']) + ' %')} recibió sugerencia.")]
         if rei:
             if nrei:
                 pa.append(_M(f"{_em('warn', f.miles(nrei))} {'caso espera' if nrei == 1 else 'casos esperan'} reintento."))
@@ -838,7 +846,7 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
     kb = []
     kp = {k["k"]: k for k in V["kpis"]}
     for key in ("calidad", "tiempo"):
-        kb.append(_kb(kp[key]))
+        kb.append(_kb(kp[key], sub=SET_PANEL if key == "calidad" and V.get("con_recall") else ""))
     c = kp["costo_k"]
     kb.append(_kb(c, sub=(f"US$ {V['costo']['por_caso']} por denuncia" if V.get("costo") else "")))
     vv = {x["t"]: x for x in V["valoraciones"]}
