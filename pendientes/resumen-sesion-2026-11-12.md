@@ -160,3 +160,9 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
 - Último front bueno antes de esta tanda: `e1e38e947` (volver con `kerna/front/desplegar.sh --ref e1e38e947`).
 - A1: Firefox no resuelve de forma fiable los sprites externos (`<use href="/estaticos/iconos.svg#id">`); los símbolos ahora van dentro de cada página (`<svg id="sprites">` en base.html) y todo `<use>` apunta a `#id`. `probar_iconos.sh` corre en Chromium, Firefox y WebKit y falla si queda un sprite externo. A2: barra de Ajustes con espacio reservado y botones parejos. A3: «Acierto por ley» comparte fila (Resumen con «El camino…», Informe con sus 3 datos). A4: textos más cortos. A5: el Resumen muestra siempre el último estado del conector con su hora.
 - Front desplegado: `bb2643f7f`. Capturas `prod20-*` (Chromium) y `prod20ff-*` (Firefox) en `kerna/front/diseno-v2/capturas/`.
+
+### Front tanda 2026-11-14 (A11-A13)
+- Front desplegado: `95b4a8eb2` (previo bueno: `17cbe6696`; volver con `kerna/front/desplegar.sh --ref 17cbe6696`). Sin cambios en el conector; Terraform kerna: solo el workbook (consultas por caso único).
+- A11: «Informe» solo en «Generar informe» (menú lateral y barra inferior móvil); quitado de las barras de Resumen y Negocio. A12: revisión manual y con/sin sugerencia salen de la fila `conector` (hoy 0 en revisión manual, 116 de 116 con sugerencia); las consultas históricas cuentan un caso por su último estado.
+- A13: banda de calidad = set desarrollo, fila `vigente`/`desarrollo` en `evaluaciones` (corrida 2026-11-13T23:18:22, 54,8 %); rótulo «Set desarrollo». Cómo actualizarla: `kerna/front/README.md`.
+- Capturas: `kerna/front/diseno-v2/capturas/prod22-*` (Chromium) y `prod22ff-*` (Firefox), 390/1366/1920.
