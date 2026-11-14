@@ -23,7 +23,7 @@ class TablaFalsa:
 
 
 RECALL = {"fecha": "2026-11-11T10:00:00+00:00", "commit": "abc+cambios",
-          "parametros": {"campo_consulta": "texto_original", "modelo": "m", "meta": 0.8}, "dataset": {"casos": 113},
+          "parametros": {"campo_consulta": "texto_original", "modelo": "m", "meta": 0.8, "particion": "desarrollo", "coleccion": "normativa_cl"}, "dataset": {"casos": 113},
           "corpus_articulos_vigentes": 144, "por_ley": {"global": {"casos": 91, "recall_ley": 0.9}, "20.393": {"casos": 24, "recall_ley": 0.8}},
           "metricas_articulo": {"global": {"recall5": 0.4, "ndcg10": 0.3, "casos_articulo": 61, "recall5_ic95": [0.3, 0.5]},
                                 "20.393": {"recall5": 0.0, "casos_articulo": 10, "recall5_ic95": [0.0, 0.0]}}}
@@ -77,3 +77,18 @@ def test_lector_reconstruye_el_modelo_del_informe(tmp_path):
 
 def test_lector_tabla_vacia_devuelve_none():
     assert evaluaciones.cargar(TablaFalsa()) is None
+
+
+def test_lector_usa_la_marca_vigente_y_solo_desarrollo(tmp_path):
+    tabla = TablaFalsa()
+    otra = {**RECALL, "fecha": "2026-11-12T10:00:00+00:00",
+            "parametros": {**RECALL["parametros"], "particion": "prueba"},
+            "metricas_articulo": {"global": {"recall5": 0.9, "casos_articulo": 10, "recall5_ic95": [0.8, 1.0]}}}
+    nueva = {**RECALL, "fecha": "2026-11-14T10:00:00+00:00", "parametros": {**RECALL["parametros"], "coleccion": "normativa_cl_x_e"},
+             "metricas_articulo": {"global": {"recall5": 0.7, "casos_articulo": 42, "recall5_ic95": [0.6, 0.8]}}}
+    for r in (RECALL, otra, nueva):
+        t.subir(t.filas_recall(r), tabla)
+    assert evaluaciones.cargar(tabla)["recall"]["por_ley"][0]["recall5"] == 0.4  # sin marca: normativa_cl, solo desarrollo
+    tabla.upsert_entity({"PartitionKey": "vigente", "RowKey": "desarrollo", "corrida": nueva["fecha"]})
+    r = evaluaciones.cargar(tabla)["recall"]
+    assert r["set"] == "desarrollo" and r["por_ley"][0]["recall5"] == 0.7
