@@ -434,3 +434,19 @@ def test_relleno_revisa_extra_y_solo_reemplaza_vetados():
     _, _, vivo = orquestar([resp(rev(cand="A1", dictamen="confirma", hechos=["H1"], frases=["A1.1"]), ok)],
                            max_articulos=1, revisor_relleno=1)
     assert [a["id_articulo"] for a in vivo] == ["l20393-3"]                  # nadie vetado: no pasa de max_articulos
+
+
+def test_alcance_no_veta_apagado_por_defecto_y_solo_con_el_flag():
+    assert Config().revisor_alcance_no_veta is False
+    assert Config.desde_entorno({"KERNA_REVISOR_ALCANCE_NO_VETA": "1"}).revisor_alcance_no_veta is True
+    base = sistema_revisor(["karin"])
+    assert base == sistema_revisor(["karin"], estricto=False, alcance_no_veta=False)
+    assert "ARTÍCULOS DE ALCANCE" not in base and "ARTÍCULOS DE ALCANCE" in sistema_revisor(["karin"], alcance_no_veta=True)
+    veto = rev(dictamen="veta", causal="naturaleza_distinta")
+    alcance = dict(L20393, rol="alcance")
+    for f in (L20393, alcance):                                  # sin flag: veta igual con o sin rol
+        assert correr(Falso(resp(veto)), items(f)).vetados == 1
+    r = asyncio.run(Revisor(Falso(resp(veto)), alcance_no_veta=True).revisar(DENUNCIA, items(alcance), 0.0))
+    assert r.vetados == 0 and r.dictamenes["l20393-3"]["dictamen"] == "condiciona"
+    r = asyncio.run(Revisor(Falso(resp(veto)), alcance_no_veta=True).revisar(DENUNCIA, items(L20393), 0.0))
+    assert r.vetados == 1                                        # sin rol de alcance, el flag no cambia el veto

@@ -64,6 +64,8 @@ class Config:
     revisor_votos: int = 1         # KERNA_REVISOR_VOTOS: llamadas independientes del revisor (1 = una sola, comportamiento original)
     revisor_veto_min: int = 0      # KERNA_REVISOR_VETO_MIN: vetos coincidentes (misma causal) necesarios para vetar; 0 = mayoría de los votos
     revisor_veto_cita: bool = False  # KERNA_REVISOR_VETO_CITA: un veto exige citar al menos una frase del artículo
+    evaluador_habilitante: bool = False   # KERNA_EVALUADOR_HABILITANTE: criterio del artículo habilitante del régimen
+    revisor_alcance_no_veta: bool = False   # KERNA_REVISOR_ALCANCE_NO_VETA: naturaleza_distinta no veta artículos de alcance
     revisor_estricto: bool = False   # KERNA_REVISOR_ESTRICTO: criterio adicional «vetar solo con evidencia expresa»
     revisor: bool = False          # KERNA_REVISOR: revisor jurídico (confirma/condiciona/veta) tras la validación de citas
     concurrencia: int = 2
@@ -127,6 +129,8 @@ class Config:
         c.revisor_veto_min = int(e.get("KERNA_REVISOR_VETO_MIN", c.revisor_veto_min))
         c.revisor_veto_cita = e.get("KERNA_REVISOR_VETO_CITA", "").strip().lower() in ("1", "true", "si", "sí", "on")
         c.revisor_estricto = e.get("KERNA_REVISOR_ESTRICTO", "").strip().lower() in ("1", "true", "si", "sí", "on")
+        c.evaluador_habilitante = e.get("KERNA_EVALUADOR_HABILITANTE", "").strip().lower() in ("1", "true", "si", "sí", "on")
+        c.revisor_alcance_no_veta = e.get("KERNA_REVISOR_ALCANCE_NO_VETA", "").strip().lower() in ("1", "true", "si", "sí", "on")
         c.revisor = e.get("KERNA_REVISOR", "").strip().lower() in ("1", "true", "si", "sí", "on")
         _si = ("1", "true", "si", "sí", "on")
         c.hibrida = e.get("KERNA_HIBRIDA", "").strip().lower() in _si

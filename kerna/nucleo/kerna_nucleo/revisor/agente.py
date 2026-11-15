@@ -21,6 +21,7 @@ from ..enrutador import CadenaAgotada, PlazoAgotado
 from ..evaluador_ids import _norm_id, _sin_etiquetas, encabezado, segmentar_articulo, segmentar_hechos
 
 DICTAMENES = ["confirma", "condiciona", "veta"]
+ROLES_ALCANCE = ("alcance", "presupuestos", "sujetos")   # roles de enriquecimiento que no se vetan (KERNA_REVISOR_ALCANCE_NO_VETA)
 CAUSALES = ["regimen_excluye_norma", "falta_sujeto_exigido", "hechos_anteriores_a_vigencia", "naturaleza_distinta",
             "hechos_fuera_de_chile"]
 CONDICIONES = ["ambito_regimen", "sujeto", "vigencia", "naturaleza_conducta", "territorialidad", "posicion_afectado",
@@ -135,8 +136,18 @@ _ESTRICTO = (
 )
 
 
-def sistema_revisor(familias: list[str], estricto: bool = False) -> str:
-    return _ENTRADA + cargar_criterios(familias) + (_ESTRICTO if estricto else "") + _SALIDA + _EJEMPLOS
+# Criterio adicional (KERNA_REVISOR_ALCANCE_NO_VETA), general para cualquier régimen legal.
+_ALCANCE_NO_VETA = (
+    "\n\nARTÍCULOS DE ALCANCE: un artículo que fija el alcance, los sujetos o los presupuestos de un régimen (cuándo "
+    "y a quién se aplica) no regula la conducta concreta, así que «naturaleza_distinta» no es causal de veto para él: "
+    "«condiciona» con la condición que corresponda. Sí puede vetarse por otra causal (régimen excluyente, sujeto "
+    "exigido que falta, hechos anteriores a la vigencia)."
+)
+
+
+def sistema_revisor(familias: list[str], estricto: bool = False, alcance_no_veta: bool = False) -> str:
+    return (_ENTRADA + cargar_criterios(familias) + (_ESTRICTO if estricto else "")
+            + (_ALCANCE_NO_VETA if alcance_no_veta else "") + _SALIDA + _EJEMPLOS)
 
 
 def esquema_revision(n_cand: int, n_hechos: int) -> dict:
@@ -203,7 +214,7 @@ class ResultadoRevisor:
 
 class Revisor:
     def __init__(self, generar, causales_inactivas=(), votos: int = 1, veto_min: int = 0, veto_cita: bool = False,
-                 estricto: bool = False):
+                 estricto: bool = False, alcance_no_veta: bool = False):
         """`generar(sistema, usuario, esquema, validar, inicio)` -> Resultado del enrutador (datos, tokens).
         `causales_inactivas` (KERNA_REVISOR_SIN_CAUSALES, solo evaluación): un veto con esa causal baja a «condiciona»."""
         self._generar = generar
@@ -213,6 +224,7 @@ class Revisor:
         self._veto_min = int(veto_min) if veto_min and veto_min > 0 else self._votos // 2 + 1
         self._veto_cita = bool(veto_cita)
         self._estricto = bool(estricto)
+        self._alcance_no_veta = bool(alcance_no_veta)
 
     async def _llamar(self, sistema, usuario, esquema, inicio, res: ResultadoRevisor):
         ultimo = None
@@ -275,6 +287,9 @@ class Revisor:
                 hechos = []                          # causal desactivada por configuración: se trata como veto sin respaldo
             if dictamen == "veta" and self._veto_cita and not frases:
                 hechos = []                          # veto sin cita de frase del artículo: no tiene respaldo
+            if (dictamen == "veta" and causal == "naturaleza_distinta" and self._alcance_no_veta
+                    and (item["fragmento"].get("rol") or "") in ROLES_ALCANCE):
+                hechos = []                          # artículo de alcance: no se veta por naturaleza distinta
             if dictamen == "veta" and not (causal and hechos):
                 # Anotar antes que eliminar: un veto sin causal cerrada o sin hecho que lo sustente es solo una duda.
                 if causal and CONDICION_DE_CAUSAL[causal] not in condiciones:
@@ -376,7 +391,7 @@ class Revisor:
         segs = [segmentar_articulo(i["fragmento"].get("texto") or "") or [(i["fragmento"].get("texto") or "").strip()]
                 for i in items]
         try:
-            sistema = sistema_revisor(res.familias, self._estricto)
+            sistema = sistema_revisor(res.familias, self._estricto, self._alcance_no_veta)
             usuario = usuario_revisor(hechos, [i["fragmento"] for i in items], segs, perfil, fecha_hechos)
             esquema = esquema_revision(len(items), len(hechos))
             if self._votos == 1:

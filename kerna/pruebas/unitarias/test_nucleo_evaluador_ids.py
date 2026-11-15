@@ -218,3 +218,12 @@ def test_un_voto_es_el_comportamiento_original():
     sal = {"evaluaciones": [ev(candidato="A3", frase_ids=["A3.1"])]}
     r = correr(Falso(PERFIL, sal), votos=1, salida=8)
     assert ids(r)[0] == "f3" and r.llamadas == 2
+
+
+def test_criterio_habilitante_apagado_por_defecto():
+    from kerna_nucleo.config import Config
+    assert Config().evaluador_habilitante is False
+    assert Config.desde_entorno({"KERNA_EVALUADOR_HABILITANTE": "1"}).evaluador_habilitante is True
+    base = EvaluadorIds(Falso()).sistema
+    assert base == EvaluadorIds(Falso(), habilitante=False).sistema and "HABILITANTE" not in base
+    assert "ARTÍCULO HABILITANTE" in EvaluadorIds(Falso(), habilitante=True).sistema

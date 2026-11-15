@@ -150,6 +150,15 @@ _SALIDA = (
     "contienen la regla; con puntaje 1 pueden ir vacíos. Responde únicamente el JSON del esquema."
 )
 
+# Criterio adicional (KERNA_EVALUADOR_HABILITANTE), general para cualquier régimen legal.
+_HABILITANTE = (
+    "\nCRITERIO DEL ARTÍCULO HABILITANTE: cuando los hechos describen un delito o una infracción cometidos en el "
+    "marco de una organización o de un régimen identificable (empresa, servicio público, relación laboral, "
+    "responsable de datos), el artículo que fija el alcance, los sujetos obligados o los presupuestos de ese régimen "
+    "es la norma habilitante: sin él los demás artículos del régimen no se activan. Si está entre los candidatos y "
+    "los hechos satisfacen su supuesto, puntúalo 3 aunque no regule la conducta concreta, de modo que ocupe un lugar "
+    "entre los mejores junto a los artículos de conducta, procedimiento o sanción.")
+
 _EJEMPLOS = (
     "\nEJEMPLOS (leyes y artículos inventados, solo para mostrar el formato y el criterio):\n"
     "<ejemplo>\nHechos: H1 «El supervisor de bodega retiene la mitad de mi bono cada mes sin explicación.» "
@@ -356,7 +365,8 @@ def conductas_consulta(d: dict | None, maximo: int = MAX_CONDUCTAS_CONSULTA) -> 
 
 
 class EvaluadorIds:
-    def __init__(self, generar: Generar, variante: str = "3", lote: int = 0, salida: int = 8, votos: int = 1, orden: str = "", **_):
+    def __init__(self, generar: Generar, variante: str = "3", lote: int = 0, salida: int = 8, votos: int = 1, orden: str = "",
+                 habilitante: bool = False, **_):
         """`generar(sistema, usuario, esquema, validar, inicio)` -> Resultado del enrutador (datos, tokens).
         `votos` (KERNA_EVALUADOR_VOTOS): pasadas independientes de la evaluación; el puntaje es el promedio (reduce la varianza)."""
         self.votos = max(1, int(votos))
@@ -366,7 +376,8 @@ class EvaluadorIds:
         self._generar, self.variante, self.lote = generar, variante, lote
         self.salida = max(salida, MIN_SALIDA)
         self.config = VARIANTES[variante]
-        self.sistema = _ENTRADA + self.config["criterio"] + "\n" + _SALIDA + _EJEMPLOS
+        self.sistema = (_ENTRADA + self.config["criterio"] + (_HABILITANTE if habilitante else "") + "\n" + _SALIDA
+                        + _EJEMPLOS)
 
     async def _llamar(self, sistema, usuario, esquema, validar, inicio, res: ResultadoEvaluadorIds):
         ultimo = None

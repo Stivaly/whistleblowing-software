@@ -258,7 +258,8 @@ class Orquestador:
     def _evaluador(self):
         clase = EvaluadorIds if str(self.config.evaluador_variante).startswith("3") else Evaluador
         extra = {"votos": getattr(self.config, "evaluador_votos", 1),
-                 "orden": getattr(self.config, "evaluador_orden", "")} if clase is EvaluadorIds else {}
+                 "orden": getattr(self.config, "evaluador_orden", ""),
+                 "habilitante": getattr(self.config, "evaluador_habilitante", False)} if clase is EvaluadorIds else {}
         esf = getattr(self.config, "evaluador_esfuerzo", "")
         generar = (functools.partial(self.enrutador.generar, esfuerzo=esf) if esf and clase is EvaluadorIds
                    else self.enrutador.generar)
@@ -308,7 +309,8 @@ class Orquestador:
                 r = await Revisor(self.enrutador.generar, getattr(self.config, "revisor_sin_causales", ()),
                                  votos=getattr(self.config, "revisor_votos", 1), veto_min=getattr(self.config, "revisor_veto_min", 0),
                                  veto_cita=getattr(self.config, "revisor_veto_cita", False),
-                                 estricto=getattr(self.config, "revisor_estricto", False)).revisar(limpio, items, inicio,
+                                 estricto=getattr(self.config, "revisor_estricto", False),
+                                 alcance_no_veta=getattr(self.config, "revisor_alcance_no_veta", False)).revisar(limpio, items, inicio,
                                                                  perfil=getattr(perfil, "texto", "") or "")
             except PlazoAgotado:
                 r = None
