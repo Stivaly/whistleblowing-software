@@ -14,18 +14,18 @@ class ClienteAzureOpenAI:
 
     def __init__(self, endpoint: str, api_key: str, http: httpx.AsyncClient | None = None,
                  timeout: float = 180.0, esfuerzo: str = "low", api_version: str = API_VERSION,
-                 max_salida: int = 16000):
+                 max_salida: int = 16000, seed: int | None = None):
         self._base = endpoint.rstrip("/")
         self._key = api_key
         self._http = http or httpx.AsyncClient(timeout=timeout)
-        self._esfuerzo, self._ver, self._max = esfuerzo, api_version, max_salida
+        self._esfuerzo, self._ver, self._max, self._seed = esfuerzo, api_version, max_salida, seed
 
     def _url(self, modelo: str) -> str:
         return f"{self._base}/openai/deployments/{modelo}/chat/completions?api-version={self._ver}"
 
     async def generar(self, modelo: str, sistema: str, usuario: str, esquema: dict | None = None,
                       con_sistema: bool = True, temperatura: float = 0.2,
-                      degradar: bool = False) -> RespuestaLLM:
+                      degradar: bool = False, esfuerzo: str = "") -> RespuestaLLM:
         """`esquema` activa el modo JSON (el esquema ya viaja descrito en el prompt) o, si es un objeto con
         `additionalProperties: false`, structured outputs con JSON schema estricto; la temperatura no se envía
         (los modelos de razonamiento solo aceptan la predeterminada)."""
@@ -38,8 +38,10 @@ class ClienteAzureOpenAI:
                                              "json_schema": {"name": "respuesta", "strict": True, "schema": esquema}}
             else:
                 cuerpo["response_format"] = {"type": "json_object"}
-        if self._esfuerzo:
-            cuerpo["reasoning_effort"] = self._esfuerzo
+        if esfuerzo or self._esfuerzo:
+            cuerpo["reasoning_effort"] = esfuerzo or self._esfuerzo
+        if self._seed is not None:
+            cuerpo["seed"] = self._seed
         try:
             r = await self._http.post(self._url(modelo), headers={"api-key": self._key}, json=cuerpo)
         except httpx.HTTPError as e:

@@ -20,6 +20,9 @@ class Config:
     azure_openai_endpoint: str = ""
     azure_openai_key: str = ""
     azure_openai_esfuerzo: str = "low"
+    azure_openai_seed: int | None = None   # KERNA_AZURE_OPENAI_SEED: semilla de muestreo (vacío = sin semilla)
+    evaluador_esfuerzo: str = ""   # KERNA_EVALUADOR_ESFUERZO: esfuerzo de razonamiento solo del evaluador (vacío = el general)
+    evaluador_orden: str = ""      # KERNA_EVALUADOR_ORDEN: "" (orden del retriever) | id | alterno (pasadas pares invertidas; con votos)
     voyage_api_key: str = ""
     qdrant_url: str = ""
     qdrant_api_key: str = ""
@@ -86,6 +89,10 @@ class Config:
         c.azure_openai_endpoint = e.get("AZURE_OPENAI_ENDPOINT", "")
         c.azure_openai_key = e.get("AZURE_OPENAI_KEY", "")
         c.azure_openai_esfuerzo = e.get("KERNA_AZURE_OPENAI_ESFUERZO", c.azure_openai_esfuerzo)
+        _seed = e.get("KERNA_AZURE_OPENAI_SEED", "").strip()
+        c.azure_openai_seed = int(_seed) if _seed else None
+        c.evaluador_esfuerzo = e.get("KERNA_EVALUADOR_ESFUERZO", "").strip().lower()
+        c.evaluador_orden = e.get("KERNA_EVALUADOR_ORDEN", "").strip().lower()
         c.voyage_api_key = e.get("VOYAGE_API_KEY", "")
         c.qdrant_url = e.get("QDRANT_URL", "")
         c.qdrant_api_key = e.get("QDRANT_API_KEY", "")

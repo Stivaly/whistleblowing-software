@@ -128,13 +128,14 @@ class Enrutador:
     def _restante(self, inicio: float) -> float:
         return self.plazo_global - (self._reloj() - inicio)
 
-    async def _llamar(self, nivel: Nivel, sistema, usuario, esquema, restante: float):
+    async def _llamar(self, nivel: Nivel, sistema, usuario, esquema, restante: float, esfuerzo: str = ""):
+        extra = {"esfuerzo": esfuerzo} if esfuerzo and nivel.proveedor == "azure-openai" else {}
         aw = self._cliente(nivel).generar(nivel.modelo, sistema, usuario, esquema if nivel.esquema else None,
-                                  con_sistema=nivel.sistema, degradar=True)
+                                  con_sistema=nivel.sistema, degradar=True, **extra)
         return await self._plazo(aw, min(self.corte, restante))
 
     async def generar(self, sistema: str, usuario: str, esquema: dict | None, validar: Callable[[Any], Any],
-                      inicio: float, desde_modelo: str | None = None) -> Resultado:
+                      inicio: float, desde_modelo: str | None = None, esfuerzo: str = "") -> Resultado:
         """Recorre los niveles en orden. `validar` recibe el JSON ya parseado y lanza ValueError si no sirve;
         una salida inválida cuenta como falla del nivel (sin reintento). `desde_modelo` recorta la cadena."""
         niveles = self.niveles
@@ -152,7 +153,7 @@ class Enrutador:
                 if restante <= 0:
                     raise PlazoAgotado()
                 try:
-                    r = await self._llamar(nivel, sistema, usuario, esquema, restante)
+                    r = await self._llamar(nivel, sistema, usuario, esquema, restante, esfuerzo)
                     datos = validar(extraer_json(r.texto))
                 except (asyncio.TimeoutError, TimeoutError):
                     err = ErrorProveedor(nivel.proveedor, None, True, "timeout")

@@ -64,7 +64,8 @@ class ClasificacionEntrada(BaseModel):
 
 
 def proveedores_reales(c: Config) -> Proveedores:
-    azure = (ClienteAzureOpenAI(c.azure_openai_endpoint, c.azure_openai_key, esfuerzo=c.azure_openai_esfuerzo)
+    azure = (ClienteAzureOpenAI(c.azure_openai_endpoint, c.azure_openai_key, esfuerzo=c.azure_openai_esfuerzo,
+                              seed=c.azure_openai_seed)
              if c.azure_openai_endpoint and c.azure_openai_key else None)
     return Proveedores(azure_openai=azure, gemini=ClienteGemini(c.gemini_api_key),
                        voyage=ClienteVoyage(c.voyage_api_key, c.embedding, c.dims),

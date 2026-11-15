@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import functools
 import contextvars
 import logging
 import uuid
@@ -256,8 +257,12 @@ class Orquestador:
 
     def _evaluador(self):
         clase = EvaluadorIds if str(self.config.evaluador_variante).startswith("3") else Evaluador
-        extra = {"votos": getattr(self.config, "evaluador_votos", 1)} if clase is EvaluadorIds else {}
-        return clase(self.enrutador.generar, variante=self.config.evaluador_variante, salida=self.config.top_k, **extra)
+        extra = {"votos": getattr(self.config, "evaluador_votos", 1),
+                 "orden": getattr(self.config, "evaluador_orden", "")} if clase is EvaluadorIds else {}
+        esf = getattr(self.config, "evaluador_esfuerzo", "")
+        generar = (functools.partial(self.enrutador.generar, esfuerzo=esf) if esf and clase is EvaluadorIds
+                   else self.enrutador.generar)
+        return clase(generar, variante=self.config.evaluador_variante, salida=self.config.top_k, **extra)
 
     async def _perfil_previo(self, limpio: str, inicio: float, reg: dict, base: dict):
         """Con KERNA_MULTIQUERY (y evaluador por IDs con perfil), extrae el perfil de la denuncia antes de recuperar.

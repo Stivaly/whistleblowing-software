@@ -1,0 +1,610 @@
+{
+ "particion": "desarrollo",
+ "variantes": {
+  "base": {},
+  "seed": {
+   "azure_openai_seed": 7
+  },
+  "medio": {
+   "evaluador_esfuerzo": "medium"
+  },
+  "alt": {
+   "evaluador_votos": 2,
+   "evaluador_orden": "alterno"
+  },
+  "id": {
+   "evaluador_orden": "id"
+  }
+ },
+ "repeticiones": 2,
+ "resumen": {
+  "base": {
+   "hit5_por_repeticion": [
+    1.0,
+    1.0
+   ],
+   "hit5_media": 1.0,
+   "hit5_rango": [
+    1.0,
+    1.0
+   ],
+   "mrr_por_repeticion": [
+    1.0,
+    0.875
+   ],
+   "mrr_media": 0.9375,
+   "casos_inestables": 0,
+   "n": 4
+  },
+  "seed": {
+   "hit5_por_repeticion": [
+    1.0,
+    1.0
+   ],
+   "hit5_media": 1.0,
+   "hit5_rango": [
+    1.0,
+    1.0
+   ],
+   "mrr_por_repeticion": [
+    0.875,
+    0.8333333333333334
+   ],
+   "mrr_media": 0.8541666666666667,
+   "casos_inestables": 0,
+   "n": 4
+  },
+  "medio": {
+   "hit5_por_repeticion": [
+    1.0,
+    1.0
+   ],
+   "hit5_media": 1.0,
+   "hit5_rango": [
+    1.0,
+    1.0
+   ],
+   "mrr_por_repeticion": [
+    1.0,
+    1.0
+   ],
+   "mrr_media": 1.0,
+   "casos_inestables": 1,
+   "n": 4
+  },
+  "alt": {
+   "hit5_por_repeticion": [
+    1.0,
+    1.0
+   ],
+   "hit5_media": 1.0,
+   "hit5_rango": [
+    1.0,
+    1.0
+   ],
+   "mrr_por_repeticion": [
+    0.875,
+    0.875
+   ],
+   "mrr_media": 0.875,
+   "casos_inestables": 0,
+   "n": 4
+  },
+  "id": {
+   "hit5_por_repeticion": [
+    0.75,
+    1.0
+   ],
+   "hit5_media": 0.875,
+   "hit5_rango": [
+    0.75,
+    1.0
+   ],
+   "mrr_por_repeticion": [
+    0.6527777777777778,
+    0.8333333333333334
+   ],
+   "mrr_media": 0.7430555555555556,
+   "casos_inestables": 1,
+   "n": 4
+  }
+ },
+ "filas": [
+  {
+   "id": "DEN-0008",
+   "esperados_en_candidatos": 3,
+   "variantes": {
+    "base": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "30256-karin-art-123",
+       "30256-karin-art-82",
+       "236392-karin-art-125",
+       "30256-karin-art-127",
+       "141599-2026-12-01-art-32"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "30256-karin-art-123",
+       "30256-karin-art-127",
+       "236392-karin-art-129",
+       "236392-karin-art-125",
+       "141599-2026-12-01-art-32"
+      ]
+     }
+    ],
+    "seed": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "30256-karin-art-82",
+       "191865-karin-art-62",
+       "30256-karin-art-123",
+       "236392-karin-art-125",
+       "30256-karin-art-127"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "30256-karin-art-123",
+       "30256-karin-art-82",
+       "30256-karin-art-127",
+       "236392-karin-art-125",
+       "141599-2026-12-01-art-32"
+      ]
+     }
+    ],
+    "medio": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "30256-karin-art-123",
+       "30256-karin-art-127",
+       "236392-karin-art-129",
+       "30256-karin-art-82",
+       "236392-karin-art-125"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "30256-karin-art-123",
+       "30256-karin-art-127",
+       "30256-karin-art-82",
+       "236392-karin-art-125",
+       "141599-2026-12-01-art-32"
+      ]
+     }
+    ],
+    "alt": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "30256-karin-art-123",
+       "236392-karin-art-125",
+       "30256-karin-art-120",
+       "30256-karin-art-127",
+       "236392-karin-art-126"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "30256-karin-art-123",
+       "236392-karin-art-125",
+       "30256-karin-art-82",
+       "236392-karin-art-129",
+       "30256-karin-art-127"
+      ]
+     }
+    ],
+    "id": [
+     {
+      "hit5": 0,
+      "primer": 9,
+      "top5": [
+       "236392-karin-art-125",
+       "236392-karin-art-121",
+       "236392-karin-art-129",
+       "236392-karin-art-140",
+       "236392-karin-art-119"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "30256-karin-art-123",
+       "236392-karin-art-126",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-e"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "DEN-0009",
+   "esperados_en_candidatos": 4,
+   "variantes": {
+    "base": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "236392-karin-art-121",
+       "236392-karin-art-125",
+       "236392-karin-art-159",
+       "236392-karin-art-84",
+       "30256-karin-art-123"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "236392-karin-art-125",
+       "236392-karin-art-159",
+       "236392-karin-art-84",
+       "236392-karin-art-121",
+       "30256-karin-art-123"
+      ]
+     }
+    ],
+    "seed": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "236392-karin-art-121",
+       "236392-karin-art-125",
+       "236392-karin-art-159",
+       "236392-karin-art-158",
+       "30256-karin-art-123"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "236392-karin-art-159",
+       "236392-karin-art-84",
+       "236392-karin-art-126",
+       "236392-karin-art-121",
+       "30256-karin-art-123"
+      ]
+     }
+    ],
+    "medio": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "236392-karin-art-121",
+       "236392-karin-art-159",
+       "236392-karin-art-126",
+       "236392-karin-art-84",
+       "30256-karin-art-123"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "236392-karin-art-121",
+       "236392-karin-art-125",
+       "236392-karin-art-159",
+       "236392-karin-art-84",
+       "236392-karin-art-158"
+      ]
+     }
+    ],
+    "alt": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "236392-karin-art-125",
+       "236392-karin-art-159",
+       "236392-karin-art-121",
+       "236392-karin-art-119",
+       "236392-karin-art-84"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "236392-karin-art-125",
+       "236392-karin-art-159",
+       "236392-karin-art-84",
+       "236392-karin-art-129",
+       "236392-karin-art-121"
+      ]
+     }
+    ],
+    "id": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "236392-karin-art-121",
+       "236392-karin-art-125",
+       "236392-karin-art-159",
+       "236392-karin-art-126",
+       "236392-karin-art-84"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "236392-karin-art-125",
+       "236392-karin-art-159",
+       "236392-karin-art-126",
+       "236392-karin-art-121",
+       "30256-karin-art-123"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "DEN-0012",
+   "esperados_en_candidatos": 1,
+   "variantes": {
+    "base": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-b",
+       "207436-karin-art-211-e",
+       "191865-karin-art-14",
+       "207436-karin-art-211-a"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-b",
+       "207436-karin-art-211-d"
+      ]
+     }
+    ],
+    "seed": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-b",
+       "207436-karin-art-211-e",
+       "191865-karin-art-14"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-b",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-e",
+       "191865-karin-art-14"
+      ]
+     }
+    ],
+    "medio": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-b",
+       "207436-karin-art-211-a",
+       "207436-karin-art-2"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-b",
+       "207436-karin-art-2",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-e"
+      ]
+     }
+    ],
+    "alt": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-e",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-d"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-b",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-e",
+       "207436-karin-art-211-a"
+      ]
+     }
+    ],
+    "id": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-e",
+       "191865-karin-art-14",
+       "30256-karin-art-133"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 3,
+      "top5": [
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-b",
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-e",
+       "191865-karin-art-14"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "DEN-0013",
+   "esperados_en_candidatos": 2,
+   "variantes": {
+    "base": [
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-d",
+       "207436-karin-art-211-e",
+       "30256-karin-art-127",
+       "236392-karin-art-129"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 2,
+      "top5": [
+       "207436-karin-art-211-e",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-d"
+      ]
+     }
+    ],
+    "seed": [
+     {
+      "hit5": 1,
+      "primer": 2,
+      "top5": [
+       "207436-karin-art-211-e",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-b-bis",
+       "30256-karin-art-127",
+       "236392-karin-art-129"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 3,
+      "top5": [
+       "207436-karin-art-211-e",
+       "236392-karin-art-126",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-b-bis"
+      ]
+     }
+    ],
+    "medio": [
+     {
+      "error": "PlazoAgotado"
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-b-bis",
+       "30256-karin-art-127",
+       "236392-karin-art-129",
+       "207436-karin-art-211-e"
+      ]
+     }
+    ],
+    "alt": [
+     {
+      "hit5": 1,
+      "primer": 2,
+      "top5": [
+       "207436-karin-art-211-e",
+       "207436-karin-art-211-c",
+       "30256-karin-art-127",
+       "236392-karin-art-129",
+       "236392-karin-art-84"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 2,
+      "top5": [
+       "207436-karin-art-211-e",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-d"
+      ]
+     }
+    ],
+    "id": [
+     {
+      "hit5": 1,
+      "primer": 2,
+      "top5": [
+       "207436-karin-art-211-e",
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-b-bis",
+       "207436-karin-art-211-d"
+      ]
+     },
+     {
+      "hit5": 1,
+      "primer": 1,
+      "top5": [
+       "207436-karin-art-211-c",
+       "207436-karin-art-211-d",
+       "207436-karin-art-211-b",
+       "207436-karin-art-211-a",
+       "207436-karin-art-211-e"
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

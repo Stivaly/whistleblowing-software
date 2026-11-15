@@ -356,10 +356,11 @@ def conductas_consulta(d: dict | None, maximo: int = MAX_CONDUCTAS_CONSULTA) -> 
 
 
 class EvaluadorIds:
-    def __init__(self, generar: Generar, variante: str = "3", lote: int = 0, salida: int = 8, votos: int = 1, **_):
+    def __init__(self, generar: Generar, variante: str = "3", lote: int = 0, salida: int = 8, votos: int = 1, orden: str = "", **_):
         """`generar(sistema, usuario, esquema, validar, inicio)` -> Resultado del enrutador (datos, tokens).
         `votos` (KERNA_EVALUADOR_VOTOS): pasadas independientes de la evaluación; el puntaje es el promedio (reduce la varianza)."""
         self.votos = max(1, int(votos))
+        self.orden = orden if orden in ("id", "alterno") else ""
         if variante not in VARIANTES:
             raise ValueError(f"variante desconocida: {variante!r}")
         self._generar, self.variante, self.lote = generar, variante, lote
@@ -473,6 +474,15 @@ class EvaluadorIds:
             res.evaluaciones[ident] = {"puntaje": punt, "media": media, "hecho_ids": mejor["hecho_ids"],
                                        "frase_ids": mejor["frase_ids"]}
 
+    def _ordenar(self, candidatos: list[dict], k: int) -> list[dict]:
+        """Orden de los candidatos en el prompt: el del retriever (por defecto), por id (determinista, sin sesgo de
+        posición del retriever) o alterno (pasadas impares invertidas: el sesgo de posición se promedia)."""
+        if self.orden == "id":
+            return sorted(candidatos, key=lambda f: f["fragmento_id"])
+        if self.orden == "alterno" and k % 2 == 1:
+            return candidatos[::-1]
+        return candidatos
+
     async def evaluar(self, texto: str, candidatos: list[dict], inicio: float,
                       perfil: PerfilExtraido | None = None) -> ResultadoEvaluadorIds:
         """`perfil`: extracción ya hecha por `extraer_perfil` (no se vuelve a pagar, ni se cuentan sus tokens aquí)."""
@@ -491,10 +501,11 @@ class EvaluadorIds:
                 memoria, res.perfil = perfil.texto, perfil.ok
             n = self.lote or len(candidatos)
 
-            async def pasada():
+            async def pasada(k: int = 0):
                 r = ResultadoEvaluadorIds([])
-                for i in range(0, len(candidatos), n):
-                    cand = candidatos[i:i + n]
+                base = self._ordenar(candidatos, k)
+                for i in range(0, len(base), n):
+                    cand = base[i:i + n]
                     segs = [segmentar_articulo(f.get("texto") or "") or [(f.get("texto") or "").strip()] for f in cand]
                     datos = await self._llamar(self.sistema, usuario_lote(hechos, memoria, cand, segs),
                                                esquema_evaluacion(len(cand), len(hechos)), _validar_evaluacion, inicio, r)
@@ -506,7 +517,7 @@ class EvaluadorIds:
                 self._sumar(res, r)
                 res.evaluaciones = r.evaluaciones
             else:
-                pasadas = await asyncio.gather(*(pasada() for _ in range(self.votos)))
+                pasadas = await asyncio.gather(*(pasada(k) for k in range(self.votos)))
                 for r in pasadas:
                     self._sumar(res, r)
                 self._promediar(res, pasadas)
