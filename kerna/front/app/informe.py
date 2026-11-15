@@ -178,6 +178,9 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
     if real:
         modos["manual"] = real["manual"]
         casos, con_sug = real["casos"], real["con_sugerencia"]
+        if real.get("principal") is not None:  # cada caso una vez, por el modo de su sugerencia final
+            modos.update(oficial=real["principal"], respaldo=real["respaldo"], local=0)
+    sin_sug = casos - con_sug if real else modos["manual"]
     val_dis = sum(int(_n(f["validas"])) for f in crudo["disponibilidad"])
     con_dis = sum(int(_n(f["con_sugerencia"])) for f in crudo["disponibilidad"])
     val = {"util": 0, "no_util": 0, "ninguno_aplica": 0}
@@ -198,11 +201,12 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
             {"etiqueta": "Modo respaldo", "valor": modos["respaldo"], "unidad": "casos", "fuente": LF_LA},
             {"etiqueta": "Modo local (gemma)", "valor": modos["local"], "unidad": "casos", "fuente": LF_LA},
             {"etiqueta": "Revisión manual", "valor": modos["manual"], "unidad": "casos", "fuente": "estado del conector (casos de Veridy)" if real else LF_LA},
+            {"etiqueta": "Sin sugerencia", "valor": sin_sug, "unidad": "casos", "fuente": "estado del conector (casos de Veridy)" if real else LF_LA},
         ],
         "tablas": [{"id": "casos_dia", "titulo": "Casos por día", "cols": ["Día", "Casos", "Con sugerencia"],
                     "filas": [[str(f["dia"])[:10], int(_n(f["casos"])), int(_n(f["con_sugerencia"]))] for f in crudo["casos"]], "fuente": LF_LA}],
         "graficos": [{"tipo": "v", "titulo": "Casos procesados por día", "items": [(str(f["dia"])[5:10], int(_n(f["casos"]))) for f in crudo["casos"]]},
-                     {"tipo": "h", "titulo": "Casos por modo", "items": [("oficial", modos["oficial"]), ("respaldo", modos["respaldo"]), ("local", modos["local"]), ("revisión manual", modos["manual"])]}],
+                     {"tipo": "h", "titulo": "Casos por modo", "items": [("oficial", modos["oficial"]), ("respaldo", modos["respaldo"]), ("local", modos["local"]), ("sin sugerencia", sin_sug)]}],
         "notas": [x for x in (sin("casos", "casos"), sin("modos", "modos"), sin("disponibilidad", "disponibilidad"), sin("valoraciones", "valoraciones")) if x],
     }
     if not casos and not fallos:

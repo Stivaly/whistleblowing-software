@@ -187,8 +187,10 @@ class _Pasada:
             return
         self.e.marcar_procesado(id_caso, "manual", self._m("fin"), "con" if estado_res == "completada" else "sin")
 
-    def _fijar_resultado(self, id_caso: str, estado_res: str, motivo: Optional[str] = None) -> None:
+    def _fijar_resultado(self, id_caso: str, estado_res: str, motivo: Optional[str] = None, modo: Optional[str] = None) -> None:
         self.e.fijar_procesado(id_caso, "resultado", "actual", estado_res if not motivo else "%s|%s" % (estado_res, motivo))
+        if modo:  # modo con que se generó la sugerencia final (oficial|respaldo|local|manual); solo para conteos
+            self.e.fijar_procesado(id_caso, "modo", "actual", str(modo))
 
     def procesar(self, meta: dict) -> None:
         id_caso = str(meta["id"])
@@ -238,7 +240,7 @@ class _Pasada:
             self.e.actualizar(id_caso, estado=est.COMPLETADO, id_nota_sugerencia=previa[0].id_nota,
                               id_solicitud=previa[0].nota.id_solicitud, intentos=0, proximo_intento=0, ultimo_error=None)
             ult = max(previa, key=lambda n: n.nota.generado_en)
-            self._fijar_resultado(id_caso, str(ult.nota.estado), ult.nota.motivo_revision)
+            self._fijar_resultado(id_caso, str(ult.nota.estado), ult.nota.motivo_revision, ult.nota.modo)
             self._cerrar_objetivo(id_caso, str(ult.nota.estado))
             return
         try:
@@ -306,7 +308,7 @@ class _Pasada:
             lambda: publicador.contenido(publicador.armar_sugerencia(res)))
         if not ya:
             self.r.sugerencias += 1
-        self._fijar_resultado(id_caso, str(res.get("estado")), res.get("motivo_revision"))
+        self._fijar_resultado(id_caso, str(res.get("estado")), res.get("motivo_revision"), res.get("modo"))
         self._cerrar_objetivo(id_caso, str(res.get("estado")))
         self.e.actualizar(id_caso, estado=est.COMPLETADO, id_nota_sugerencia=id_nota,
                           id_solicitud=res.get("id_solicitud") or corr.id_solicitud,
@@ -349,7 +351,7 @@ class _Pasada:
             propias = lector_casos.notas_de_cuenta(caso, self.id_cuenta, "kerna_sugerencia")
             ultima = max(propias, key=lambda n: n.nota.generado_en, default=None)
             if ultima is not None:
-                self._fijar_resultado(id_caso, str(ultima.nota.estado), ultima.nota.motivo_revision)
+                self._fijar_resultado(id_caso, str(ultima.nota.estado), ultima.nota.motivo_revision, ultima.nota.modo)
             if ultima is None or ultima.nota.estado != "revision_manual" or \
                     ultima.nota.motivo_revision not in MOTIVOS_REINTENTABLES:
                 e.marcar_procesado(id_caso, "reproceso", "final")
@@ -406,7 +408,7 @@ class _Pasada:
             return
         id_nota = self.v.publicar_nota(id_caso, publicador.contenido(publicador.armar_sugerencia(res))).get("id")
         e.marcar_procesado(id_caso, "reproceso", "final", str(id_nota or ""))
-        self._fijar_resultado(id_caso, str(res.get("estado")), res.get("motivo_revision"))
+        self._fijar_resultado(id_caso, str(res.get("estado")), res.get("motivo_revision"), res.get("modo"))
         self.r.reprocesados += 1
         log.info("reintento %d: nueva sugerencia estado=%s modo=%s", k, res.get("estado"), res.get("modo"))
         telemetria.contador("conector_caso_reprocesado", estado=str(res.get("estado")), modo=str(res.get("modo")))
@@ -416,7 +418,8 @@ class _Pasada:
     # ---- resultado conocido de cada caso (para el estado en vivo y para dirigir los reintentos) -----------------
     def _rellenar_resultado(self, corr: est.Correspondencia) -> None:
         """Casos completados antes de que el conector guardara el resultado: se lee la última nota de a poco."""
-        if self.rellenos >= 20 or self.e.objeto_procesado(corr.id_caso, "resultado", "actual"):
+        if self.rellenos >= 20 or (self.e.objeto_procesado(corr.id_caso, "resultado", "actual")
+                                   and self.e.objeto_procesado(corr.id_caso, "modo", "actual")):
             return
         self.rellenos += 1
         caso = self._leer(corr.id_caso)
@@ -425,7 +428,7 @@ class _Pasada:
         propias = lector_casos.notas_de_cuenta(caso, self.id_cuenta, "kerna_sugerencia")
         ultima = max(propias, key=lambda n: n.nota.generado_en, default=None)
         self._fijar_resultado(corr.id_caso, str(ultima.nota.estado) if ultima else "sin_nota",
-                              ultima.nota.motivo_revision if ultima else None)
+                              ultima.nota.motivo_revision if ultima else None, ultima.nota.modo if ultima else "sin_nota")
 
     def _manual(self, corr: est.Correspondencia) -> None:
         """Reintento manual de un caso con sugerencia en revisión manual (cualquier motivo): reenvía al núcleo con una
@@ -454,7 +457,7 @@ class _Pasada:
                 telemetria.contador("conector_caso_reprocesado", estado="completada", modo=str(res.get("modo")))
                 telemetria.evento("conector_reproceso", ref_opaca=corr.ref_opaca, intento=0, estado="completada",
                                   modo=str(res.get("modo")))
-            self._fijar_resultado(id_caso, str(res.get("estado")), res.get("motivo_revision"))
+            self._fijar_resultado(id_caso, str(res.get("estado")), res.get("motivo_revision"), res.get("modo"))
             e.marcar_procesado(id_caso, "manual", self._m("recibido"))
             self._cerrar_objetivo(id_caso, str(res.get("estado")))
             return
@@ -472,7 +475,7 @@ class _Pasada:
         propias = lector_casos.notas_de_cuenta(caso, self.id_cuenta, "kerna_sugerencia")
         ultima = max(propias, key=lambda n: n.nota.generado_en, default=None)
         if ultima is not None:
-            self._fijar_resultado(id_caso, str(ultima.nota.estado), ultima.nota.motivo_revision)
+            self._fijar_resultado(id_caso, str(ultima.nota.estado), ultima.nota.motivo_revision, ultima.nota.modo)
             if ultima.nota.estado != "revision_manual":
                 e.marcar_procesado(id_caso, "manual", self._m("omitido"))
                 return

@@ -129,11 +129,15 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     con_sug = sum(c["con_sugerencia"] for c in m["casos_por_dia"])
     modos = m["modos"]
     real = conector if conector and conector.get("fuente") == "conector" else None
+    reparto = False
     if real:
         tot, con_sug = real["casos"], real["con_sugerencia"]  # casos que existen hoy en Veridy, no eventos de telemetría
     sug_pct = pct(con_sug, tot)
     if real:
         modos = {**modos, "manual": real["manual"]}
+        if real.get("principal") is not None:  # cada caso una vez, por el modo de su sugerencia final; el resto no tiene sugerencia
+            reparto = True
+            modos = {"oficial": real["principal"], "respaldo": real["respaldo"], "local": 0, "manual": real["sin_sugerencia"]}
     ntot = sum(modos.values())
     recall = (ev or {}).get("recall") if ev else None
     meta_rec = (recall or {}).get("meta") or META_RECALL
@@ -213,7 +217,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
 
     # --- Modos y sugerencia
     filas_modo = []
-    for clave, txt, est in (("oficial", "Modelo principal", "ok"), ("respaldo", "Modelo de respaldo", "warn"), ("local", "Modelo local (sin costo)", "warn"), ("manual", "Revisión manual", "bad")):
+    for clave, txt, est in (("oficial", "Modelo principal", "ok"), ("respaldo", "Modelo de respaldo", "warn"), ("local", "Modelo local (sin costo)", "warn"), ("manual", "Sin sugerencia" if reparto else "Revisión manual", "bad")):
         n = modos.get(clave, 0)
         filas_modo.append({"k": clave, "t": txt, "e": est, "n": n, "p": pct(n, ntot)})
         mp.t[f"modo.{clave}.n"], mp.t[f"modo.{clave}.p"] = f.miles(n), f"{pct(n, ntot)} %"
@@ -307,7 +311,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
         "dias": dias,
     }
     return {"dias": dias, "generado": int(ahora or time.time()), "kpis": k, "eg": {"e": e_gen, "t": titulo, "s": sub}, "salud": salud, "modos": filas_modo,
-            "sug_pct": sug_pct, "sug_real": bool(real), "e_sug": e_sug, "total": tot, "rapidez": rap, "etapas": et, "aciertos": aciertos, "meta_recall": f.dec_corto(meta_rec * 100, 1),
+            "sug_pct": sug_pct, "sug_real": bool(real), "reparto": reparto, "e_sug": e_sug, "total": tot, "rapidez": rap, "etapas": et, "aciertos": aciertos, "meta_recall": f.dec_corto(meta_rec * 100, 1),
             "valoraciones": vals, "n_val": nval, "leyes": leyes_v, "sin_ley": sin_ley, "proveedores": provs, "costo": costo_v, "graficos": graf, "con_recall": rec_glob is not None,
             "mapas": mp.dic()}
 
@@ -486,7 +490,7 @@ def informe_ejecutivo(inf_: dict) -> dict:
     cards.append(_tarjeta("costo_k", "coins", "Costo", None if ctotal is None else f.usd(ctotal), "", "na" if ctotal is None else "ok",
                           "Lo que cuesta atender las denuncias del período, según los tokens de cada modelo y su precio." if ctotal is not None else "No hay tokens medidos en el período.", et="Sin alertas" if ctotal is not None else "Sin datos", p="US$" if ctotal is not None else ""))
     n_modos = [("oficial", "Modelo principal", "ok", kp.get("Modo oficial") or 0), ("respaldo", "Modelo de respaldo", "warn", kp.get("Modo respaldo") or 0),
-               ("local", "Modelo local", "warn", kp.get("Modo local (gemma)") or 0), ("manual", "Revisión manual", "bad", kp.get("Revisión manual") or 0)]
+               ("local", "Modelo local", "warn", kp.get("Modo local (gemma)") or 0), ("manual", "Sin sugerencia", "bad", kp.get("Sin sugerencia") or 0)]
     tot = sum(n for *_, n in n_modos)
     modos = [{"k": k, "t": t, "e": e, "n": n, "p": pct(n, tot), "w": round(100 * n / tot, 1) if tot else 0, "est": est("Revisión manual") if k == "manual" else ("ok" if k == "oficial" else est("Modo respaldo"))} for k, t, e, n in n_modos]
     return {"tarjetas": cards, "modos": modos, "n_modos": tot, "dias": [{"d": f.fecha_corta(str(r[0])), "c": f.miles(r[1]), "s": f.miles(r[2])} for r in dias]}
@@ -842,7 +846,7 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
             pa.append(_M("Todo dentro de las metas."))
         frase = _M(" ".join(pa))
     colores = {"oficial": "verde", "respaldo": "amarillo", "local": "cian", "manual": "coral"}
-    anillos = [{"n": MODO_PERIODO[m["k"]], "v": m["n"], "txt": f.miles(m["n"]), "c": colores[m["k"]]} for m in V["modos"] if m["n"]]
+    anillos = [{"n": "Sin sugerencia" if m["k"] == "manual" and V.get("reparto") else MODO_PERIODO[m["k"]], "v": m["n"], "txt": f.miles(m["n"]), "c": colores[m["k"]]} for m in V["modos"] if m["n"]]
     diag = _o.diagrama_orbital(anillos, f.miles(tot), "denuncias", f"{f.miles(tot)} denuncias en {dias} días por modo") if tot else None
     kb = []
     kp = {k["k"]: k for k in V["kpis"]}
@@ -928,7 +932,7 @@ def visuales_pdf(inf_: dict) -> dict:
     ej = informe_ejecutivo(inf_)
     colores = {"oficial": "verde", "respaldo": "amarillo", "local": "cian", "manual": "coral"}
     if ej["n_modos"]:
-        out["periodo"] = {"anillos": [{"n": MODO_CORTO[m["k"]], "v": m["n"], "txt": f.miles(m["n"]), "c": colores[m["k"]], "sub": f"{m['p']} % de los casos"} for m in ej["modos"] if m["n"]],
+        out["periodo"] = {"anillos": [{"n": "Sin sugerencia" if m["k"] == "manual" else MODO_CORTO[m["k"]], "v": m["n"], "txt": f.miles(m["n"]), "c": colores[m["k"]], "sub": f"{m['p']} % de los casos"} for m in ej["modos"] if m["n"]],
                           "total": ej["tarjetas"][0]["v"], "unidad": "denuncias"}
     rl = _tabla(inf_, "recall_ley")
     if rl and rl["filas"]:

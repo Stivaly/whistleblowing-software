@@ -345,7 +345,14 @@ def descargar_informe(ext: str, request: Request, dias: int = 30, desde: str = "
     inf = _informe(dias, desde or None, hasta or None)
     f, tipo = _FORMATOS[ext]
     nombre = "informe-kerna-%s.%s" % (inf["meta"]["periodo"].replace(" a ", "_"), ext)
-    return Response(f(inf), media_type=tipo, headers={"Content-Disposition": f'attachment; filename="{nombre}"'})
+    try:
+        cuerpo = f(inf)
+    except Exception as e:  # nunca el detalle de los datos: solo el tipo de error y dónde ocurrió
+        tb = e.__traceback__
+        while tb.tb_next:
+            tb = tb.tb_next
+        return JSONResponse({"detalle": "no se pudo generar el archivo", "tipo": type(e).__name__, "en": f"{Path(tb.tb_frame.f_code.co_filename).name}:{tb.tb_lineno}"}, status_code=500)
+    return Response(cuerpo, media_type=tipo, headers={"Content-Disposition": f'attachment; filename="{nombre}"'})
 
 
 @app.get("/api/negocio")

@@ -50,7 +50,7 @@ def glosario() -> dict:
         "tiempo": ("Tiempo de respuesta", f"Tiempo en que terminan 9 de cada 10 casos (meta {meta_t} s)."),
         "costo_k": ("Costo del período", "Lo que costó la IA al leer y escribir texto en el período."),
         "casos_dia": ("Denuncias por día", "Cada barra es un día: con sugerencia y sin sugerencia."),
-        "modos": ("Cómo se resolvieron", "Reparto entre modelo principal, respaldo y revisión manual."),
+        "modos": ("Cómo se resolvieron", "Reparto entre modelo principal, respaldo y sin sugerencia."),
         "acierto_ley": ("Acierto por ley", "El acierto de cada ley; la marca es la meta."),
         "valoraciones": ("Sugerencias útiles", "Cuántas sugerencias valoradas los auditores marcaron como útiles."),
         "latencia": ("Rapidez por día", f"Línea azul: la mitad de los casos. Gris: 9 de cada 10 (meta {meta_t} s)."),

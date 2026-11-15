@@ -110,6 +110,8 @@ class Estado(ABC):
     @abstractmethod
     def contar_motivos_revision(self) -> dict: ...
     @abstractmethod
+    def contar_modos(self) -> dict: ...
+    @abstractmethod
     def archivar_ausentes(self, vigentes: set) -> tuple[int, int]: ...
     @abstractmethod
     def contar_archivados(self) -> int: ...
@@ -222,6 +224,20 @@ class _EstadoSql(Estado):
         for nota, n in filas:
             motivo = str(nota).partition("|")[2] or "sin_motivo"
             out[motivo] = out.get(motivo, 0) + int(n)
+        return out
+
+    def contar_modos(self) -> dict:
+        """{modo: cantidad} de los casos cuya última sugerencia es `completada`, según el modo con que se generó (sin archivados).
+        Sin modo conocido todavía cuenta como `desconocido`."""
+        filas = self._ejecutar(
+            "SELECT m.id_nota, COUNT(*) FROM objeto_procesado r LEFT JOIN objeto_procesado m "
+            "ON m.id_caso = r.id_caso AND m.tipo = 'modo' AND m.clave = 'actual' "
+            "WHERE r.tipo = 'resultado' AND r.clave = 'actual' AND r.id_nota = 'completada' "
+            "AND r.id_caso NOT IN (%s) GROUP BY m.id_nota" % _ARCHIVADOS, lectura=True)
+        out: dict = {}
+        for modo, n in filas:
+            k = str(modo) if modo else "desconocido"
+            out[k] = out.get(k, 0) + int(n)
         return out
 
     def _ids_archivados(self) -> set:

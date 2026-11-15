@@ -714,6 +714,17 @@ def test_estado_en_vivo_publica_pendientes_por_motivo(mundo):
     assert e.contar_motivos_revision().get("validacion_fallida") == 1 and e.contar_motivos_revision().get("sin_motivo") == 1
 
 
+def test_estado_en_vivo_cuenta_casos_por_modo_de_su_sugerencia_final():
+    e = est.EstadoSqlite(":memory:")
+    for caso, modo in (("a", "oficial"), ("b", "oficial"), ("c", "respaldo"), ("d", None)):
+        e.fijar_procesado(caso, "resultado", "actual", "completada")
+        if modo:
+            e.fijar_procesado(caso, "modo", "actual", modo)
+    e.fijar_procesado("m", "resultado", "actual", "revision_manual|cadena_agotada")
+    e.fijar_procesado("m", "modo", "actual", "manual")
+    assert e.contar_modos() == {"oficial": 2, "respaldo": 1, "desconocido": 1}
+
+
 def test_sql_de_motivos_no_lleva_porcentaje_literal():
     """PostgreSQL (psycopg) toma `%` como marcador: el patrón LIKE debe ir como parámetro."""
     e = est.EstadoSqlite(":memory:")

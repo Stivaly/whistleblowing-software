@@ -29,5 +29,5 @@ if [ "$REINTENTO" = 1 ]; then
   fi
 else echo "OMITIDO pedido de reintento (usa --reintento para enviarlo de verdad)"; fi
 T="$(c -b "$JAR" -o "$PDF" -w '%{http_code} %{content_type}' "$FRONT_URL/panel/informe/descargar.pdf?dias=7")"
-[ "${T%% *}" = 200 ] && head -c4 "$PDF" | grep -q '%PDF' && ok "PDF descargado ($(wc -c <"$PDF") bytes, ${T#* })" || mal "descarga del PDF: $T"
+[ "${T%% *}" = 200 ] && head -c4 "$PDF" | grep -q '%PDF' && ok "PDF descargado ($(wc -c <"$PDF") bytes, ${T#* })" || mal "descarga del PDF: $T $(head -c 300 "$PDF" | tr -d '\0' | tr '\n' ' ')"
 [ "$FALLAS" = 0 ] && echo "Todo bien." || { echo "$FALLAS prueba(s) fallaron."; exit 1; }
