@@ -27,6 +27,9 @@ class ArticuloSugerido(BaseModel):
     cita: str
     enlace_fuente: str
     confianza: float = Field(ge=0, le=1)
+    veredicto: Optional[Literal["mantiene", "condiciona", "veta"]] = None
+    causal: Optional[str] = None
+    condiciones: list[str] = []
 
 
 class Sugerencia(_Base):
@@ -40,6 +43,7 @@ class Sugerencia(_Base):
     contingencia: bool = False
     generado_en: str
     articulos: list[ArticuloSugerido] = []
+    vetados: list[str] = []
 
 
 class Estado(_Base):

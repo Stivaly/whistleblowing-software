@@ -102,7 +102,7 @@ pendiente: `motivo_revision`, `modo`, `recuperacion`, `contingencia`, `version_c
 (con los campos de `kerna_sugerencia.articulos[]`). El conector arma la nota con estos campos tal cual.
 
 Con `KERNA_REVISOR` encendido, la respuesta agrega campos opcionales (ausentes con el revisor apagado). Los modelos de
-`kerna_comun.notas` ignoran campos extra: la nota `kerna_sugerencia` de Veridy todavía no los lleva. No contienen
+`kerna_comun.notas` ignoran campos extra: la nota `kerna_sugerencia` lleva por artículo `veredicto` (`mantiene` \| `condiciona` \| `veta`), `causal` y `condiciones`, y `vetados` (ids de artículos vetados). No contienen
 texto de la denuncia: son identificadores y códigos de listas cerradas.
 
 Por artículo de `articulos[]`:

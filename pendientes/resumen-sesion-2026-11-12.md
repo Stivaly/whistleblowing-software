@@ -182,3 +182,4 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
   3. Desplegar si la media de desarrollo llega a 0,80.
   4. Llevar los campos del revisor a la nota de Veridy (B7).
 - **Para ti, sin cambios:** valor de la UF y revisión de los renombres de los indicadores.
+- B7 hecho en código (nota con veredicto/causal/condiciones y vetados); falta desplegar: `infra/scripts/subir_imagen_kerna.sh conector --tag <tag>` y luego `infra/aplicar.sh kerna`.

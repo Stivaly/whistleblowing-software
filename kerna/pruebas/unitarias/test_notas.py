@@ -38,3 +38,26 @@ def test_nota_comun_no_es_de_kerna():
     assert notas.leer("comentario de un auditor") is None
     assert notas.leer(json.dumps({"tipo": "otra_cosa"})) is None
     assert notas.leer(json.dumps([1, 2])) is None
+
+
+def test_nota_lleva_campos_del_revisor_y_lista_vetados():
+    from kerna_conector import publicador
+    base = _sugerencia()["articulos"][0]
+    arts = [base | {"dictamen": "confirma", "revision_juridica": "revisado", "condiciones": ["x"]},
+            base | {"id_articulo": "A-2", "dictamen": "condiciona", "condiciones": ["vigencia"]},
+            base | {"id_articulo": "A-3", "dictamen": "veta", "causal_veto": "falta_sujeto_exigido",
+                    "hecho_ids_revision": ["H1"]},
+            base | {"id_articulo": "A-4", "revision_juridica": "sin_revision"}]
+    s = publicador.armar_sugerencia(_sugerencia() | {"articulos": arts})
+    assert [a.veredicto for a in s.articulos] == ["mantiene", "condiciona", "veta", None]
+    assert s.articulos[1].condiciones == ["vigencia"] and s.articulos[0].condiciones == ["x"]
+    assert s.articulos[2].causal == "falta_sujeto_exigido" and s.articulos[1].causal is None
+    assert s.vetados == ["A-3"]
+    assert "H1" not in publicador.contenido(s)
+    assert notas.leer(publicador.contenido(s)) == s
+
+
+def test_sin_revisor_la_nota_queda_igual():
+    from kerna_conector import publicador
+    s = publicador.armar_sugerencia(_sugerencia())
+    assert s.vetados == [] and s.articulos[0].veredicto is None
