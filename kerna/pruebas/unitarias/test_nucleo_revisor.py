@@ -420,3 +420,17 @@ def test_veto_sin_cita_de_frase_baja_a_condiciona_solo_con_el_flag():
 def test_criterio_estricto_solo_con_el_flag():
     assert "VETO ESTRICTO" not in sistema_revisor(["karin"])
     assert "VETO ESTRICTO" in sistema_revisor(["karin"], estricto=True)
+
+
+def test_relleno_revisa_extra_y_solo_reemplaza_vetados():
+    veta = rev(cand="A1", dictamen="veta", causal="falta_sujeto_exigido", hechos=["H1"], frases=["A1.2"])
+    ok = rev(cand="A2", dictamen="confirma", hechos=["H2"], frases=["A2.1"], conf=0.8)
+    assert Config().revisor_relleno == 0 and Config.desde_entorno({"KERNA_REVISOR_RELLENO": "3"}).revisor_relleno == 3
+    _, _, sin = orquestar([resp(veta)], max_articulos=1)
+    assert [a["id_articulo"] for a in sin] == ["l20393-3"]                   # sin relleno: 1 artículo, el vetado
+    _, _, con = orquestar([resp(veta, ok)], max_articulos=1, revisor_relleno=1)
+    assert sorted(a["id_articulo"] for a in con) == ["ck-211c", "l20393-3"]
+    assert {a["id_articulo"]: a["dictamen"] for a in con} == {"l20393-3": "veta", "ck-211c": "confirma"}
+    _, _, vivo = orquestar([resp(rev(cand="A1", dictamen="confirma", hechos=["H1"], frases=["A1.1"]), ok)],
+                           max_articulos=1, revisor_relleno=1)
+    assert [a["id_articulo"] for a in vivo] == ["l20393-3"]                  # nadie vetado: no pasa de max_articulos

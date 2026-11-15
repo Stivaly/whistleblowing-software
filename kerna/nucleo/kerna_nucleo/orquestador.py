@@ -150,7 +150,7 @@ class Orquestador:
         parcial["modo"] = gen.modo
         # 5. validación de citas
         with telemetria.etapa("validacion", **base) as a:
-            aceptados, rechazados = validar(gen.datos, fragmentos, self.config.max_articulos)
+            aceptados, rechazados = validar(gen.datos, fragmentos, self._tope())
             self._sonda("generador", {"ids": [str(d.get("fragmento_id")) for d in gen.datos if isinstance(d, dict)],
                                       "rechazos": [(r["fragmento_id"], r["motivo"]) for r in rechazados]})
             if getattr(self.config, "generador_completar", 0) > 0:
@@ -164,8 +164,13 @@ class Orquestador:
         rev = await self._revisar(limpio, aceptados, inicio, reg, base, perfil) if getattr(self.config, "revisor", False) else None
         # 6. registro por artículo
         articulos = []
+        vivos = 0
         for ac in aceptados:
             f = ac["fragmento"]
+            if self._relleno() and rev is not None:
+                if vivos >= self.config.max_articulos:
+                    break                                    # el relleno solo reemplaza vetados
+                vivos += self._anotacion(rev, f["fragmento_id"]).get("dictamen") != "veta"
             articulos.append({"id_sugerencia": str(uuid.uuid4()), "id_articulo": f["fragmento_id"], "norma": _norma(f),
                               "articulo": _articulo(f), "explicacion": ac["explicacion"], "cita": ac["cita"],
                               "enlace_fuente": str(f.get("url_fuente") or ""), "confianza": ac["confianza"]})
@@ -183,12 +188,12 @@ class Orquestador:
         """KERNA_GENERADOR_COMPLETAR=N: el resultado sigue el orden del evaluador (o del reranker) y no pierde sus N
         primeros artículos por una omisión del generador: el que el generador omitió, o cuya cita no validó, entra con
         una frase del propio artículo que el evaluador indicó (o el comienzo del texto) y confianza baja."""
-        n = self.config.generador_completar
+        n = self.config.generador_completar + self._relleno()
         por_id = {a["fragmento"]["fragmento_id"]: a for a in aceptados}
         minimo = getattr(self.config, "generador_min_puntaje", 1)
         out = []
         for pos, f in enumerate(fragmentos):
-            if len(out) >= self.config.max_articulos:
+            if len(out) >= self._tope():
                 break
             a = por_id.get(f["fragmento_id"])
             if a is not None:
@@ -217,7 +222,15 @@ class Orquestador:
             out.append({"fragmento": f, "cita": cita.strip(), "confianza": round(conf, 2),
                         "explicacion": "Los hechos descritos podrían relacionarse con este artículo, según el análisis "
                                        "previo de aplicabilidad."})
-        return out[: self.config.max_articulos]
+        return out[: self._tope()]
+
+    def _relleno(self) -> int:
+        """KERNA_REVISOR_RELLENO=K: con revisor, se revisan hasta K artículos más y solo entran en la sugerencia para
+        reemplazar a los vetados (la sugerencia nunca pasa de max_articulos sin vetar)."""
+        return max(0, int(getattr(self.config, "revisor_relleno", 0))) if getattr(self.config, "revisor", False) else 0
+
+    def _tope(self) -> int:
+        return self.config.max_articulos + self._relleno()
 
     async def _rerank_llm(self, limpio: str, retriever: list, evaluados: list, inicio: float, reg: dict, base: dict) -> list:
         """KERNA_RERANK_LLM: reordena la ventana (por defecto, el orden completo del evaluador) con el reranker listwise
