@@ -1,8 +1,10 @@
 """Agrega etiquetas manuales (CX-xxxx) a datos/cx_etiquetas.jsonl y arma el archivo de casos etiquetados.
 
-Uso: python3 etiquetar_cx.py agregar <archivo_con_lineas>   líneas: ID|triage|confianza|ley|sec|arts|justificación
-     python3 etiquetar_cx.py construir                       escribe denuncias_complejas_20261114_etiquetadas.json
-Abreviaturas de artículo: CT:2, DP:12 (19.628/21.719), PJ:1 (20.393), 18575:62, EA:84, EM:82, LOCM:76, 21643:6.
+Uso: python3 etiquetar_cx.py agregar <archivo_con_lineas> [dx]   líneas: ID|triage|confianza|ley|sec|arts|justificación
+     python3 etiquetar_cx.py construir [dx]                       escribe denuncias_complejas_20261114_etiquetadas.json
+     (con `dx`: lote de ampliación de desarrollo 2026-11-15, archivos denuncias_desarrollo_20261115_* y dx_etiquetas.jsonl)
+Abreviaturas de artículo: CT:2, DP:12 (19.628/21.719), PJ:1 (20.393), 18575:62, EA:84, EM:82, LOCM:76, 21643:6,
+21719:t-primero; también se acepta el ID completo (p. ej. 141599-2026-12-01-art-14-quinquies).
 Sin LLM: las etiquetas las escribe una persona leyendo cada relato; aquí solo se validan contra el corpus y se arma el JSON.
 """
 import json
@@ -15,7 +17,7 @@ ETIQ = DATOS / "cx_etiquetas.jsonl"
 SALIDA = DATOS / "denuncias_complejas_20261114_etiquetadas.json"
 CORPUS = DATOS / "corpus_articulos.json"   # ids de artículo vigentes (181), volcados de Qdrant
 PREFIJO = {"CT": "207436-karin", "DP": "141599-2026-12-01", "PJ": "1008668", "18575": "191865-karin",
-           "EA": "236392-karin", "EM": "30256-karin", "LOCM": "251693-karin", "21643": "1200096"}
+           "EA": "236392-karin", "EM": "30256-karin", "LOCM": "251693-karin", "21643": "1200096", "21719": "1209272"}
 TRIAGE = ("si", "control", "no")
 CONFIANZA = ("alta", "media", "baja")
 LEYES = ("21.643", "20.393", "19.628-21.719", "18.575-18.834-18.883", "ninguna")
@@ -30,6 +32,8 @@ CRITERIO = ("Casos sintéticos complejos auditados (B6, 2026-11-14), etiquetados
 
 
 def art_id(abrev: str) -> str:
+    if "-art-" in abrev:
+        return abrev.strip().lower()
     cuerpo, num = abrev.strip().split(":")
     return f"{PREFIJO[cuerpo]}-art-{num.strip().lower()}"
 
@@ -75,12 +79,27 @@ def agregar(ruta: str) -> None:
     print(f"{len(nuevas)} etiquetas agregadas; total {len(previas) + len(nuevas)}")
 
 
+LOTES = {"dx": {"origen": DATOS / "denuncias_desarrollo_20261115_auditadas.json", "etiq": DATOS / "dx_etiquetas.jsonl",
+                "salida": DATOS / "denuncias_desarrollo_20261115_etiquetadas.json", "fecha": "2026-11-15",
+                "plataforma": "Denuncia sintética de desarrollo (2026-11-15)",
+                "criterio": CRITERIO.replace("(B6, 2026-11-14)", "(ampliación de desarrollo, 2026-11-15)")
+                .replace("particion: afinar | medir_complejas", "particion: desarrollo_nuevo")}}
+FECHA, PLATAFORMA = "2026-11-14", "Denuncia sintética compleja (2026-11-14)"
+
+
+def usar_lote(nombre: str) -> None:
+    global ORIGEN, ETIQ, SALIDA, CRITERIO, FECHA, PLATAFORMA
+    L = LOTES[nombre]
+    ORIGEN, ETIQ, SALIDA, CRITERIO, FECHA, PLATAFORMA = (L["origen"], L["etiq"], L["salida"], L["criterio"], L["fecha"],
+                                                         L["plataforma"])
+
+
 def construir_caso(c: dict, e: dict) -> dict:
     n = c["id"].split("-")[1]
     arts = e["arts"]
-    return {"id": c["id"], "fuente_tipo": "sintetica", "plataforma_o_sitio": "Denuncia sintética compleja (2026-11-14)",
-            "subreddit_o_seccion": "", "url": "", "url_archivo": "", "fecha_publicacion": "2026-11-14",
-            "fecha_consulta": "2026-11-14", "pais": "", "evidencia_pais": "", "autor_pseudonimo": f"C-{n}",
+    return {"id": c["id"], "fuente_tipo": "sintetica", "plataforma_o_sitio": PLATAFORMA,
+            "subreddit_o_seccion": "", "url": "", "url_archivo": "", "fecha_publicacion": FECHA,
+            "fecha_consulta": FECHA, "pais": "", "evidencia_pais": "", "autor_pseudonimo": f"C-{n}",
             "titulo": "", "resumen_parafraseado": "", "ley_principal": e["ley"], "leyes_secundarias": e["sec"],
             "articulos_candidatos": "", "submateria": "", "rol_denunciante": "",
             "es_caso_frontera": "sí" if e["confianza"] == "baja" or e["triage"] == "control" else "no",
@@ -98,12 +117,14 @@ def construir() -> None:
     casos = json.loads(ORIGEN.read_text())
     etiq = {json.loads(x)["id"]: json.loads(x) for x in ETIQ.read_text().splitlines()}
     salida = [construir_caso(c, etiq[c["id"]]) for c in casos if c["id"] in etiq]
-    SALIDA.write_text(json.dumps({"generado": "2026-11-14", "criterio": CRITERIO, "casos": salida},
+    SALIDA.write_text(json.dumps({"generado": FECHA, "criterio": CRITERIO, "casos": salida},
                                  ensure_ascii=False, indent=1))
     print(f"{len(salida)} de {len(casos)} casos escritos en {SALIDA.name}")
 
 
 if __name__ == "__main__":
+    if sys.argv[-1] in LOTES:
+        usar_lote(sys.argv.pop())
     if sys.argv[1] == "agregar":
         agregar(sys.argv[2])
     else:

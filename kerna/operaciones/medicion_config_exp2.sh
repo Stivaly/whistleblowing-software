@@ -12,7 +12,8 @@ KERNA_HIBRIDA=1 KERNA_HIBRIDA_EXTRAS=15 KERNA_MULTIQUERY=1 KERNA_MULTIQUERY_MAX=
 KERNA_GENERADOR_COMPLETAR=5 KERNA_RERANK_LLM=1 KERNA_RERANK_LLM_VENTANA=35 KERNA_RERANK_LLM_FUENTE=evaluador KERNA_RERANK_LLM_VOTO_EVAL=2 \
 KERNA_RERANK_LLM_VOTO_RETRIEVER=2 KERNA_RERANK_LLM_PERMUTACIONES=2 KERNA_CONCURRENCIA=${KERNA_CONCURRENCIA:-3} $*"
 declare -A EXTRA=( [prueba2]="--extra-casos $D/denuncias_nuevas_20261112.json" [prueba3]="--extra-casos $D/denuncias_sinteticas_20261113_prueba3.json" \
-  [afinar]="--extra-casos $D/denuncias_complejas_20261114_etiquetadas.json" [medir_complejas]="--extra-casos $D/denuncias_complejas_20261114_etiquetadas.json" )
+  [afinar]="--extra-casos $D/denuncias_complejas_20261114_etiquetadas.json" [medir_complejas]="--extra-casos $D/denuncias_complejas_20261114_etiquetadas.json" \
+  [desarrollo_nuevo]="--extra-casos $D/denuncias_desarrollo_20261115_etiquetadas.json" )
 out="$R/casos_cfg2_${E}_${S}_$F.json"
 echo "$CFG" | sed 's/KERNA_CONCURRENCIA=[0-9]* //' > "$R/flags_cfg2_${E}_${S}_$F.txt"   # flags de la medición (sin claves)
 SC=""; [ "$S" = prueba3 ] && SC="KERNA_REVISOR_SIN_CAUSALES=hechos_fuera_de_chile"

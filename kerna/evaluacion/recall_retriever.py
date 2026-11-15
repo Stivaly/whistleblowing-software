@@ -518,7 +518,7 @@ def registrar(res: dict, *, campo: str, dataset: bytes, articulos_corpus: int, c
     return entrada
 
 
-PARTICIONES = ("desarrollo", "prueba", "prueba2", "prueba3", "afinar", "medir_complejas", "todas")
+PARTICIONES = ("desarrollo", "prueba", "prueba2", "prueba3", "afinar", "medir_complejas", "desarrollo_nuevo", "todas")
 
 
 ETIQUETAS = ("original", "corregida")

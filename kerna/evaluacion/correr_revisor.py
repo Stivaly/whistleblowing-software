@@ -138,7 +138,7 @@ async def correr(casos: list[dict], triage: dict, c: Config, modelo: str) -> lis
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--particion", required=True, choices=["desarrollo", "prueba", "prueba2", "prueba3", "afinar", "medir_complejas"])
+    ap.add_argument("--particion", required=True, choices=["desarrollo", "prueba", "prueba2", "prueba3", "afinar", "medir_complejas", "desarrollo_nuevo"])
     ap.add_argument("--extra-casos", metavar="JSON", help="casos con triage incrustado (prueba2, prueba3, afinar, medir_complejas)")
     ap.add_argument("--salida", required=True)
     ap.add_argument("--modelo", default="gpt-5-nano")

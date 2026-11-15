@@ -35,9 +35,10 @@ TRIAGE = AQUI / "datos" / "triage_casos.json"
 EXTRA = {"prueba2": AQUI / "datos" / "denuncias_nuevas_20261112.json",
          "prueba3": AQUI / "datos" / "denuncias_sinteticas_20261113_prueba3.json",
          "afinar": AQUI / "datos" / "denuncias_complejas_20261114_etiquetadas.json",
-         "medir_complejas": AQUI / "datos" / "denuncias_complejas_20261114_etiquetadas.json"}
+         "medir_complejas": AQUI / "datos" / "denuncias_complejas_20261114_etiquetadas.json",
+         "desarrollo_nuevo": AQUI / "datos" / "denuncias_desarrollo_20261115_etiquetadas.json"}
 SETS = ("desarrollo", "prueba", "prueba2", "prueba3")
-SETS_VALIDOS = SETS + ("afinar", "medir_complejas")
+SETS_VALIDOS = SETS + ("afinar", "medir_complejas", "desarrollo_nuevo")
 OPCIONES = {"coleccion": None, "dedup": False}   # --coleccion / --dedup-literales (experimento de enriquecimiento)
 
 
