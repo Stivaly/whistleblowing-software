@@ -342,10 +342,10 @@ def descargar_informe(ext: str, request: Request, dias: int = 30, desde: str = "
         return RedirectResponse("/acceso", status_code=303)
     if ext not in _FORMATOS:
         return JSONResponse({"detalle": "formato no disponible"}, status_code=404)
-    inf = _informe(dias, desde or None, hasta or None)
-    f, tipo = _FORMATOS[ext]
-    nombre = "informe-kerna-%s.%s" % (inf["meta"]["periodo"].replace(" a ", "_"), ext)
     try:
+        inf = _informe(dias, desde or None, hasta or None)
+        f, tipo = _FORMATOS[ext]
+        nombre = "informe-kerna-%s.%s" % (inf["meta"]["periodo"].replace(" a ", "_"), ext)
         cuerpo = f(inf)
     except Exception as e:  # nunca el detalle de los datos: solo el tipo de error y dónde ocurrió
         tb = e.__traceback__
