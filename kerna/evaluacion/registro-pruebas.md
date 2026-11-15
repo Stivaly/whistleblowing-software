@@ -254,3 +254,26 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 
 - Conclusión: la varianza no viene del revisor. El evaluador (top-5, sin revisor) va de 0,619 a 0,809 con la misma configuración de evaluador, y entre r1/r2 la cadena sin revisor fue 0,810 en ambas; el revisor, con 1 o 3 votos, cambia 0-2 aciertos. En prueba (n=15), los dos casos que w1 pierde frente a la corrida base (DEN-0006, DEN-0055) no tienen vetos: el generador no eligió el artículo esperado (cadena antes del revisor ya 0,600), es ruido de evaluador/generador, no del revisor. En prueba3 y prueba2 w1 queda en 0,86 y 0,81. Los votos del revisor no mejoran de forma estable respecto de 1 voto (0,714-0,809 frente a 0,738-0,786): sin evidencia para desplegarlos; siguen apagados.
 - Siguiente (en orden): reducir la varianza del evaluador y del reranker LLM (más permutaciones, repetir y promediar), 20.393 arts. 1/3/4 y partir 82/84 por letra, medir en `afinar`, y una sola vez en `medir_complejas`.
+
+## 2026-11-14/15 · Varianza del evaluador, relleno del revisor y medición en afinar y medir_complejas
+- Código nuevo, todo apagado por defecto (commits siguientes al de `18b5ee843`): `KERNA_EVALUADOR_VOTOS` (pasadas independientes del evaluador por IDs, puntaje promedio) y `KERNA_REVISOR_RELLENO=K` (se revisan hasta K artículos más y entran solo para reemplazar vetados; nunca pasan de `max_articulos` sin vetar). `medicion_config_exp2.sh` ahora guarda los flags (`registro/flags_cfg2_*.txt`) y mide `afinar` y `medir_complejas`. Suite unitaria: 568 pruebas pasan.
+- Configuración base (la desplegada, r1/r2), corpus 181, colección `normativa_cl_x_e`, solo IDs. Recall@5 por artículo [IC 95 %], desarrollo (n=42):
+
+| Corrida (cambio sobre la base) | Evaluador | Cadena | Cadena + revisor |
+|---|---|---|---|
+| e1 (evaluador 3 votos + reranker 4 permutaciones) | 0,667 [0,52-0,79] | 0,714 [0,57-0,83] | 0,691 [0,55-0,81] |
+| e2 (igual que e1, repetición) | 0,619 [0,48-0,76] | 0,786 [0,64-0,90] | 0,691 [0,55-0,83] |
+| p4 (solo reranker 4 permutaciones) | 0,691 [0,55-0,83] | 0,786 [0,64-0,90] | 0,714 [0,57-0,86] |
+| rl3 (`KERNA_REVISOR_RELLENO=3`) | 0,738 [0,60-0,88] | 0,762 [0,62-0,88] | 0,714 [0,57-0,86] |
+
+  Conclusión: ningún cambio mejora desarrollo de forma estable. El evaluador (top-5) de la misma configuración va de 0,62 a 0,81 entre corridas (±3 casos); los votos del evaluador y más permutaciones no lo bajan, y el relleno no sube la cadena + revisor sobre 0,74-0,79. No se despliega nada; sigue vigente la fila `vigente/desarrollo` (78,6 %).
+- Vetos del revisor sobre todas las corridas del 14-nov (sin controles): `regimen_excluye_norma` 129 (11 sobre artículos esperados), `naturaleza_distinta` 82 (12), `falta_sujeto_exigido` 9 (2), `hechos_anteriores_a_vigencia` 9 (3): ~90 % de los vetos quitan artículos no esperados, por lo que el costo en recall (1-3 casos por corrida) es el precio de la precisión.
+- Configuración desplegada (corrida única por partición, comandos `medicion_config_exp2.sh a1|m1 20261114 afinar|medir_complejas`; archivos `registro/cfg2-{a1-afinar,m1-medir_complejas}-20261114.json`, `casos_cfg2_*`, `flags_cfg2_*`):
+
+| Partición (n) | Retriever top-5 | Evaluador | Cadena | Cadena + revisor |
+|---|---|---|---|---|
+| afinar (42) | 0,881 [0,79-0,98] | 0,905 [0,81-0,98] | 0,881 [0,79-0,98] | 0,857 [0,74-0,95] |
+| medir_complejas (44) | 0,727 [0,59-0,84] | 0,841 [0,73-0,93] | 0,841 [0,73-0,93] | 0,841 [0,73-0,93] |
+
+  Por ley, cadena + revisor: afinar 20.393 0,545 [0,27-0,82] (11), 19.628-21.719 0,900 (10), 21.643 1,000 (14), probidad y estatutos 1,000 (7); medir_complejas 20.393 0,824 [0,65-1,00] (17), 19.628-21.719 0,833 (12), 21.643 0,889 (9), probidad y estatutos 0,833 (6). Controles con sugerencias: 7/7 (afinar, 0 con todo vetado) y 6/6 (medir_complejas, 1 con todo vetado). La meta 0,80 se cumple en medir_complejas (medida una sola vez) y en afinar; en desarrollo la cadena + revisor queda en 0,69-0,79 (cadena sin revisor 0,71-0,81): meta no estable allí.
+- Pendiente (en orden): (1) 20.393 arts. 1/3/4 en afinar (0,545) sin sobreajustar a desarrollo; (2) partir arts. 82/84 por letra si el análisis lo justifica (no se hizo); (3) para decidir entre configuraciones en desarrollo hace falta repetir cada una 3 veces o ampliar el set (n=42, ruido ±0,07).
