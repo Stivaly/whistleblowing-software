@@ -277,3 +277,17 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 
   Por ley, cadena + revisor: afinar 20.393 0,545 [0,27-0,82] (11), 19.628-21.719 0,900 (10), 21.643 1,000 (14), probidad y estatutos 1,000 (7); medir_complejas 20.393 0,824 [0,65-1,00] (17), 19.628-21.719 0,833 (12), 21.643 0,889 (9), probidad y estatutos 0,833 (6). Controles con sugerencias: 7/7 (afinar, 0 con todo vetado) y 6/6 (medir_complejas, 1 con todo vetado). La meta 0,80 se cumple en medir_complejas (medida una sola vez) y en afinar; en desarrollo la cadena + revisor queda en 0,69-0,79 (cadena sin revisor 0,71-0,81): meta no estable allí.
 - Pendiente (en orden): (1) 20.393 arts. 1/3/4 en afinar (0,545) sin sobreajustar a desarrollo; (2) partir arts. 82/84 por letra si el análisis lo justifica (no se hizo); (3) para decidir entre configuraciones en desarrollo hace falta repetir cada una 3 veces o ampliar el set (n=42, ruido ±0,07).
+
+## 2026-11-15 · Varianza de la cadena en desarrollo (base / alt3 / medio, 3 corridas)
+- Fecha 2026-11-15 10:55-16:05; commit del código `fe01b8d12` (corridas vb1/va1/vm1) y `0746ef96a` (medición, sin cambios del núcleo); corpus 181, `normativa_cl_x_e`, solo IDs.
+- Comando: `kerna/operaciones/medicion_config_exp2.sh v{b,a,m}{1,2,3} 20261115 desarrollo [flags]`, KERNA_CONCURRENCIA=2, tres en paralelo. Flags: base = ninguno; alt3 = `KERNA_EVALUADOR_VOTOS=3 KERNA_EVALUADOR_ORDEN=alterno`; medio = `KERNA_EVALUADOR_ESFUERZO=medium`. Archivos: `registro/cfg2-v*-desarrollo-20261115.json`, `casos_cfg2_v*`, `flags_cfg2_v*`, `var2_v*.log`.
+- Recall@5 por artículo, n=42, media [mín-máx]:
+
+| Variante | Evaluador | Cadena | Cadena + revisor | 20.393 cadena + revisor (9) |
+|---|---|---|---|---|
+| base | 0,738 [0,667-0,786] | 0,770 [0,762-0,786] | 0,706 [0,690-0,714] | 0,667 [0,556-0,778] |
+| alt3 | 0,714 [0,690-0,738] | 0,754 [0,690-0,786] | 0,683 [0,619-0,714] | 0,593 [0,444-0,778] |
+| medio | 0,595 [0,571-0,619] | 0,619 [0,595-0,643] | 0,595 [0,548-0,643] | 0,222 [0,111-0,333] |
+
+- Auditoría: medio dejó 7-8 casos por corrida en `tiempo_agotado` (plazo 900 s), así que su cifra incluye esos casos perdidos. Base: 1 caso `cadena_agotada` en vb1.
+- Conclusión: la mejor es la base, que es la desplegada. Ninguna variante llega a 0,80. En las 9 corridas el revisor resta entre 0 y 0,07 a la cadena (base: 0,770 → 0,706). No se despliega nada y la fila vigente no cambia.
