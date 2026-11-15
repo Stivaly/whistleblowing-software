@@ -182,4 +182,10 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
   3. Desplegar si la media de desarrollo llega a 0,80.
   4. Llevar los campos del revisor a la nota de Veridy (B7).
 - **Para ti, sin cambios:** valor de la UF y revisión de los renombres de los indicadores.
-- B7 hecho en código (nota con veredicto/causal/condiciones y vetados); falta desplegar: `infra/scripts/subir_imagen_kerna.sh conector --tag <tag>` y luego `infra/aplicar.sh kerna`.
+
+### Cierre 2026-11-15 16:40
+- **Front:** el total es el de Veridy hoy (fila `conector`, 118), commit `1d17560f8`, desplegado. Capturas `kerna/front/diseno-v2/capturas/prod14-total-*` en Chromium y Firefox. Faltan dos cosas: `probar_front.sh` falla en la descarga del PDF (500, ya fallaba antes) y los satélites del anillo (120 + 15) siguen contando eventos.
+- **Varianza en desarrollo** (3 corridas, cadena + revisor): base 0,706 [0,690-0,714], alt3 0,683 [0,619-0,714] y medio 0,595 (con casos en tiempo agotado). Gana la base, que es la desplegada. Ninguna llega a 0,80, así que no se despliega nada y el panel no cambia. El revisor resta entre 0 y 0,07 (sin revisor, base 0,770). Detalle en `kerna/evaluacion/registro-pruebas.md`.
+- **20.393:** de 14 fallos, 8 los causa el evaluador (los arts. 1, 3 y 4 están entre los 70 candidatos pero no en su top-5) y 4 el veto `naturaleza_distinta` del revisor. Ver `kerna/evaluacion/registro/analisis_20393_20261115.md`.
+- **B7:** la nota lleva veredicto, causal, condiciones y vetados (`ff00e0b7a`). El conector está desplegado con la imagen `39fb509f2` y responde.
+- **Siguiente:** probar dos cambios generales de la 20.393, medidos en afinar y después en desarrollo ×3: que el evaluador reserve un lugar para la norma habilitante y que `naturaleza_distinta` no vete los artículos de alcance. Aparte, evaluar si el revisor conviene, porque en la media resta recall.
