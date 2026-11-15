@@ -225,10 +225,10 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
         if glob:
             cal["kpis"].append({"etiqueta": "Recall@5 por artículo (global)", "valor": round(glob["recall5"], 3), "unidad": "ratio", "fuente": fte})
             cal["kpis"].append({"etiqueta": "Meta de recall@5", "valor": r["meta"], "unidad": "ratio", "fuente": fte})
-            cal["kpis"].append({"etiqueta": "Recall por ley (global)", "valor": round(glob["recall_ley"], 3), "unidad": "ratio", "fuente": fte})
+            cal["kpis"].append({"etiqueta": "Recall por ley (global)", "valor": None if glob.get("recall_ley") is None else round(glob["recall_ley"], 3), "unidad": "ratio", "fuente": fte})
         cal["tablas"].append({"id": "recall_ley", "titulo": f"Recall@5 por ley ({r['configuracion']}; set desarrollo, {r['dataset_casos']} casos)",
                               "cols": ["Ley", "Casos", "Casos a nivel artículo", "Recall por ley", "Recall@5 artículo", "IC95 inf.", "IC95 sup.", "Meta", "Cumple meta"],
-                              "filas": [[nombre_ley(x["ley"]), x["casos"], x["casos_articulo"], round(x["recall_ley"], 3), round(x["recall5"], 3),
+                              "filas": [[nombre_ley(x["ley"]), x["casos"], x["casos_articulo"], None if x.get("recall_ley") is None else round(x["recall_ley"], 3), round(x["recall5"], 3),
                                          round(x["ic95_inf"], 3) if x["ic95_inf"] is not None else None, round(x["ic95_sup"], 3) if x["ic95_sup"] is not None else None,
                                          r["meta"], "sí" if x["recall5"] >= r["meta"] else "no"] for x in r["por_ley"]], "fuente": fte})
         cal["graficos"].append({"tipo": "h", "titulo": f"Recall@5 por artículo (meta {str(r['meta']).replace('.', ',')})", "items": [(nombre_ley(x["ley"]), round(x["recall5"], 3)) for x in r["por_ley"]], "fmt": "ratio", "meta": r["meta"]})
