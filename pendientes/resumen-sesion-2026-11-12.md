@@ -172,3 +172,13 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
 - **Núcleo desplegado con la configuración del experimento 2** (reranker LLM con votos, completar el top, colección enriquecida; flags en `kerna/operaciones/medicion_config_exp2.sh`). Recall@5 por artículo en desarrollo, cadena con revisor: antes 0,405, ahora 0,786 y 0,738 en dos corridas (sin revisor 0,810 en ambas). El panel muestra 78,6 %.
 - **Sintéticas complejas (B6):** 120 relatos nuevos, leídos y auditados uno por uno, divididos en `afinar` (60) y `medir_complejas` (60); etiquetados (86 con falta en el corpus, 13 sin falta, 21 fuera del corpus) y etiquetas revisadas en muestra. Retriever solo: 0,50 y 0,46.
 - **En curso:** criterio del revisor con votos (variante w1: 0,810 en desarrollo una vez, 0,738 en la repetición; prueba bajó a 0,60). Aún no estable: sigue la Parte B.
+
+### Cierre 2026-11-15 04:50
+- **Meta 0,80:** se cumple en las sintéticas complejas con la configuración desplegada: medir_complejas 0,841 [0,73-0,93] y afinar 0,857. No se cumple todavía de forma estable en desarrollo, con cadena + revisor entre 0,69 y 0,79 según la corrida. Con n=42 el ruido entre corridas (±0,07) es mayor que cualquier cambio probado: revisor con votos, cita o criterio estricto, evaluador con votos, relleno del revisor. Prueba2 da 0,81 y prueba3 0,86.
+- **Panel:** sigue en 78,6 % (Set desarrollo), con la configuración desplegada.
+- **Falta, en orden** (detalle en `pendientes/relevo-evaluacion-2026-11-15.md`):
+  1. Bajar la varianza: la semilla, el esfuerzo y el orden del evaluador ya están listos y falta medirlos.
+  2. Revisar 20.393, arts. 1/3/4.
+  3. Desplegar si la media de desarrollo llega a 0,80.
+  4. Llevar los campos del revisor a la nota de Veridy (B7).
+- **Para ti, sin cambios:** valor de la UF y revisión de los renombres de los indicadores.
