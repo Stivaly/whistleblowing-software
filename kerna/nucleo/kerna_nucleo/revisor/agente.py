@@ -9,6 +9,7 @@ revisor no quita artículos, los anota. El texto de la denuncia no se registra n
 """
 from __future__ import annotations
 
+import asyncio
 import re
 import time
 from dataclasses import dataclass, field
@@ -122,8 +123,20 @@ _EJEMPLOS = (
 )
 
 
-def sistema_revisor(familias: list[str]) -> str:
-    return _ENTRADA + cargar_criterios(familias) + _SALIDA + _EJEMPLOS
+# Criterio adicional (KERNA_REVISOR_ESTRICTO), general: no depende de leyes ni de casos concretos.
+_ESTRICTO = (
+    "\n\nCRITERIO DE VETO ESTRICTO: un veto exige que el hecho citado muestre la causal de forma expresa, no inferida. "
+    "Si la causal depende de suponer un dato que los hechos no dicen (el tipo de empleador, la fecha, el país, la "
+    "naturaleza de la relación), no vetes: «condiciona» con la condición que corresponda. Si los hechos admiten otra "
+    "lectura en que el artículo sí aplica, «condiciona». Si el artículo cumple una función distinta de la conducta "
+    "denunciada pero acompaña a la norma principal (procedimiento, deberes del empleador, definiciones), «condiciona» "
+    "con procedimiento_aplicable en vez de vetar. Veta solo cuando no hay lectura razonable en que el artículo aplique, "
+    "y cita la frase del artículo (frase_ids) que muestra la exclusión."
+)
+
+
+def sistema_revisor(familias: list[str], estricto: bool = False) -> str:
+    return _ENTRADA + cargar_criterios(familias) + (_ESTRICTO if estricto else "") + _SALIDA + _EJEMPLOS
 
 
 def esquema_revision(n_cand: int, n_hechos: int) -> dict:
@@ -189,11 +202,17 @@ class ResultadoRevisor:
 
 
 class Revisor:
-    def __init__(self, generar, causales_inactivas=()):
+    def __init__(self, generar, causales_inactivas=(), votos: int = 1, veto_min: int = 0, veto_cita: bool = False,
+                 estricto: bool = False):
         """`generar(sistema, usuario, esquema, validar, inicio)` -> Resultado del enrutador (datos, tokens).
         `causales_inactivas` (KERNA_REVISOR_SIN_CAUSALES, solo evaluación): un veto con esa causal baja a «condiciona»."""
         self._generar = generar
         self._causales_inactivas = frozenset(causales_inactivas)
+        self._votos = max(1, int(votos))
+        # vetos coincidentes necesarios: por defecto, mayoría de los votos (con 1 voto, 1)
+        self._veto_min = int(veto_min) if veto_min and veto_min > 0 else self._votos // 2 + 1
+        self._veto_cita = bool(veto_cita)
+        self._estricto = bool(estricto)
 
     async def _llamar(self, sistema, usuario, esquema, inicio, res: ResultadoRevisor):
         ultimo = None
@@ -254,6 +273,8 @@ class Revisor:
                 causal = None
             if dictamen == "veta" and causal in self._causales_inactivas:
                 hechos = []                          # causal desactivada por configuración: se trata como veto sin respaldo
+            if dictamen == "veta" and self._veto_cita and not frases:
+                hechos = []                          # veto sin cita de frase del artículo: no tiene respaldo
             if dictamen == "veta" and not (causal and hechos):
                 # Anotar antes que eliminar: un veto sin causal cerrada o sin hecho que lo sustente es solo una duda.
                 if causal and CONDICION_DE_CAUSAL[causal] not in condiciones:
@@ -280,6 +301,65 @@ class Revisor:
             else:
                 res.descartados_id += 1
 
+    async def _votar(self, sistema, usuario, esquema, inicio, items, segs, n_hechos, res: ResultadoRevisor) -> None:
+        """Varias llamadas independientes. Un veto solo se mantiene si `veto_min` llamadas vetan con la misma causal;
+        si no, queda «condiciona» (con la condición de la causal). El resto del dictamen es el más frecuente."""
+        parciales = [ResultadoRevisor() for _ in range(self._votos)]
+
+        async def una(r):
+            try:
+                self._filtrar(await self._llamar(sistema, usuario, esquema, inicio, r), items, segs, n_hechos, r)
+                return True
+            except (CadenaAgotada, ValueError):
+                return False
+
+        oks = await asyncio.gather(*(una(r) for r in parciales))   # PlazoAgotado se propaga
+        validos = [r for r, ok in zip(parciales, oks) if ok]
+        if not validos:
+            raise CadenaAgotada()
+        for r in parciales:
+            res.tokens_entrada += r.tokens_entrada
+            res.tokens_salida += r.tokens_salida
+            res.llamadas += r.llamadas
+            res.latencia_ms = max(res.latencia_ms, r.latencia_ms)
+            res.descartados_id += r.descartados_id
+        n = len(validos)
+        minimo = min(self._veto_min, n) if n < self._votos else self._veto_min
+        for it in items:
+            ident = it["fragmento"]["fragmento_id"]
+            ents = [r.dictamenes[ident] for r in validos if ident in r.dictamenes]
+            if not ents:
+                continue
+            vetos = [e for e in ents if e["dictamen"] == "veta"]
+            causales = [e["causal_veto"] for e in vetos]
+            mejor = max(set(causales), key=lambda c: (causales.count(c), -causales.index(c))) if causales else None
+            if vetos and causales.count(mejor) >= minimo:
+                res.dictamenes[ident] = next(e for e in vetos if e["causal_veto"] == mejor)
+                continue
+            resto = [e for e in ents if e["dictamen"] != "veta"]
+            degradado = bool(vetos)
+            if resto:
+                ds = [e["dictamen"] for e in resto]
+                elegido = max(set(ds), key=lambda d: (ds.count(d), d == "condiciona"))
+                grupo = [e for e in resto if e["dictamen"] == elegido]
+                base = dict(grupo[0])
+                base["confianza_ajustada"] = round(sum(e["confianza_ajustada"] for e in grupo) / len(grupo), 3)
+            else:                                    # solo vetos sueltos: bajan a condiciona
+                base = dict(vetos[0])
+                base.update(dictamen="condiciona", causal_veto=None, confianza_ajustada=max(base["confianza_ajustada"], 0.3))
+            if degradado:
+                for e in vetos:
+                    c = CONDICION_DE_CAUSAL[e["causal_veto"]]
+                    if c not in base["condiciones"]:
+                        base["condiciones"] = base["condiciones"] + [c]
+                base["veto_degradado"] = True
+                res.vetos_degradados += 1
+            res.dictamenes[ident] = base
+        for r in validos:
+            for a in r.alertas:
+                if a not in res.alertas:
+                    res.alertas.append(a)
+
     async def revisar(self, texto: str, items: list[dict], inicio: float, perfil: str = "",
                       fecha_hechos: str = "") -> ResultadoRevisor:
         """`items`: [{"fragmento": dict del corpus, "confianza": float}] en el orden de la sugerencia.
@@ -296,10 +376,14 @@ class Revisor:
         segs = [segmentar_articulo(i["fragmento"].get("texto") or "") or [(i["fragmento"].get("texto") or "").strip()]
                 for i in items]
         try:
-            datos = await self._llamar(sistema_revisor(res.familias),
-                                       usuario_revisor(hechos, [i["fragmento"] for i in items], segs, perfil, fecha_hechos),
-                                       esquema_revision(len(items), len(hechos)), inicio, res)
-            self._filtrar(datos, items, segs, len(hechos), res)
+            sistema = sistema_revisor(res.familias, self._estricto)
+            usuario = usuario_revisor(hechos, [i["fragmento"] for i in items], segs, perfil, fecha_hechos)
+            esquema = esquema_revision(len(items), len(hechos))
+            if self._votos == 1:
+                datos = await self._llamar(sistema, usuario, esquema, inicio, res)
+                self._filtrar(datos, items, segs, len(hechos), res)
+            else:
+                await self._votar(sistema, usuario, esquema, inicio, items, segs, len(hechos), res)
         except PlazoAgotado:
             raise
         except (CadenaAgotada, ValueError):

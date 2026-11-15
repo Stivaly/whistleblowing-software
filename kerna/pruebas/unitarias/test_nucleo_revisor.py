@@ -366,3 +366,57 @@ def test_causal_desactivada_por_configuracion_baja_el_veto_a_condiciona():
     r = asyncio.run(Revisor(gen, ("falta_sujeto_exigido",)).revisar(DENUNCIA, items(L20393), 0.0))
     d = r.dictamenes["l20393-3"]
     assert d["dictamen"] == "condiciona" and d["causal_veto"] is None and d["veto_degradado"] and r.vetados == 0
+
+
+# ---- votos, cita y criterio estricto (flags apagados por defecto)
+VETO = rev(dictamen="veta", causal="regimen_excluye_norma", conf=0.9)
+
+
+def correr_votos(gen, its, **kw):
+    return asyncio.run(Revisor(gen, **kw).revisar(DENUNCIA, its, 0.0))
+
+
+def test_un_veto_suelto_entre_tres_votos_baja_a_condiciona_con_la_condicion_de_la_causal():
+    gen = Falso(resp(VETO), resp(rev(dictamen="confirma")), resp(rev(dictamen="confirma")))
+    r = correr_votos(gen, items(KARIN), votos=3)
+    d = r.dictamenes["ck-211c"]
+    assert d["dictamen"] == "confirma" and "ambito_regimen" in d["condiciones"] and d["veto_degradado"]
+    assert r.vetados == 0 and r.vetos_degradados == 1 and r.llamadas == 3
+
+
+def test_dos_vetos_de_tres_con_la_misma_causal_mantienen_el_veto():
+    gen = Falso(resp(VETO), resp(rev(dictamen="confirma")), resp(VETO))
+    r = correr_votos(gen, items(KARIN), votos=3)
+    assert r.dictamenes["ck-211c"]["dictamen"] == "veta" and r.vetados == 1
+
+
+def test_vetos_con_causales_distintas_no_suman():
+    otro = rev(dictamen="veta", causal="naturaleza_distinta", conf=0.9)
+    gen = Falso(resp(VETO), resp(otro), resp(rev(dictamen="condiciona", condiciones=["sujeto"])))
+    r = correr_votos(gen, items(KARIN), votos=3)
+    assert r.dictamenes["ck-211c"]["dictamen"] == "condiciona" and r.vetados == 0
+
+
+def test_con_dos_votos_el_veto_exige_unanimidad():
+    gen = Falso(resp(VETO), resp(rev(dictamen="condiciona", condiciones=["sujeto"])))
+    assert correr_votos(gen, items(KARIN), votos=2).vetados == 0
+    gen = Falso(resp(VETO), resp(VETO))
+    assert correr_votos(gen, items(KARIN), votos=2).vetados == 1
+
+
+def test_voto_fallido_no_anula_la_revision():
+    gen = Falso(resp(VETO), CadenaAgotada(), CadenaAgotada(), resp(rev(dictamen="condiciona", condiciones=["sujeto"])))
+    r = correr_votos(gen, items(KARIN), votos=3, veto_min=2)
+    assert r.usado and r.dictamenes["ck-211c"]["dictamen"] == "condiciona"
+
+
+def test_veto_sin_cita_de_frase_baja_a_condiciona_solo_con_el_flag():
+    sin_cita = rev(dictamen="veta", causal="regimen_excluye_norma", frases=[])
+    assert correr(Falso(resp(sin_cita)), items(KARIN)).vetados == 1
+    r = correr_votos(Falso(resp(sin_cita)), items(KARIN), veto_cita=True)
+    assert r.vetados == 0 and r.dictamenes["ck-211c"]["dictamen"] == "condiciona"
+
+
+def test_criterio_estricto_solo_con_el_flag():
+    assert "VETO ESTRICTO" not in sistema_revisor(["karin"])
+    assert "VETO ESTRICTO" in sistema_revisor(["karin"], estricto=True)
