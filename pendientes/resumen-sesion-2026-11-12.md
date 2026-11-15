@@ -166,3 +166,9 @@ Tanda 16 (desplegado: 88b7c98b7; previo bueno 301ef5df9). Capturas `prod16-*.png
 - A11: «Informe» solo en «Generar informe» (menú lateral y barra inferior móvil); quitado de las barras de Resumen y Negocio. A12: revisión manual y con/sin sugerencia salen de la fila `conector` (hoy 0 en revisión manual, 116 de 116 con sugerencia); las consultas históricas cuentan un caso por su último estado.
 - A13: banda de calidad = set desarrollo, fila `vigente`/`desarrollo` en `evaluaciones` (corrida 2026-11-13T23:18:22, 54,8 %); rótulo «Set desarrollo». Cómo actualizarla: `kerna/front/README.md`.
 - Capturas: `kerna/front/diseno-v2/capturas/prod22-*` (Chromium) y `prod22ff-*` (Firefox), 390/1366/1920.
+
+## Orquestador 2026-11-14 (tarde y noche)
+- **Parte A cerrada.** A11: «Informe» solo en el menú. A12: revisión manual y sin sugerencia cuentan casos que existen hoy en Veridy (116 casos, 0 en revisión manual). A13: la calidad del panel es el set desarrollo con la configuración desplegada, rotulado «Set desarrollo». Front desplegado `95b4a8eb2` (previo bueno `17cbe6696`). Capturas auditadas: `prod22-resumen-d.png`, `prod22ff-informe-m.png`, `prod23-resumen-d.png`.
+- **Núcleo desplegado con la configuración del experimento 2** (reranker LLM con votos, completar el top, colección enriquecida; flags en `kerna/operaciones/medicion_config_exp2.sh`). Recall@5 por artículo en desarrollo, cadena con revisor: antes 0,405, ahora 0,786 y 0,738 en dos corridas (sin revisor 0,810 en ambas). El panel muestra 78,6 %.
+- **Sintéticas complejas (B6):** 120 relatos nuevos, leídos y auditados uno por uno, divididos en `afinar` (60) y `medir_complejas` (60); etiquetados (86 con falta en el corpus, 13 sin falta, 21 fuera del corpus) y etiquetas revisadas en muestra. Retriever solo: 0,50 y 0,46.
+- **En curso:** criterio del revisor con votos (variante w1: 0,810 en desarrollo una vez, 0,738 en la repetición; prueba bajó a 0,60). Aún no estable: sigue la Parte B.
