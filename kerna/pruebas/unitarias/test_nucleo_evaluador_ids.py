@@ -202,3 +202,19 @@ def test_azure_usa_json_schema_estricto_solo_con_additionalproperties_false():
     rf = cap[0]["response_format"]
     assert rf["type"] == "json_schema" and rf["json_schema"]["strict"] is True
     assert cap[1]["response_format"] == {"type": "json_object"}
+
+
+def test_votos_promedian_puntajes_y_reducen_la_varianza():
+    a = {"evaluaciones": [ev(candidato="A1", puntaje=3, frase_ids=["A1.1"]), ev(candidato="A2", puntaje=1, hecho_ids=[], frase_ids=[])]}
+    b = {"evaluaciones": [ev(candidato="A1", puntaje=1, hecho_ids=[], frase_ids=[]), ev(candidato="A2", puntaje=3, frase_ids=["A2.1"])]}
+    c = {"evaluaciones": [ev(candidato="A2", puntaje=3, frase_ids=["A2.1"]), ev(candidato="A1", puntaje=1, hecho_ids=[], frase_ids=[])]}
+    g = Falso(PERFIL, a, b, c)
+    r = correr(g, votos=3, salida=8)
+    assert ids(r)[:2] == ["f2", "f1"] and r.llamadas == 4
+    assert [f["puntaje_evaluador"] for f in r.fragmentos[:2]] == [2, 2]
+
+
+def test_un_voto_es_el_comportamiento_original():
+    sal = {"evaluaciones": [ev(candidato="A3", frase_ids=["A3.1"])]}
+    r = correr(Falso(PERFIL, sal), votos=1, salida=8)
+    assert ids(r)[0] == "f3" and r.llamadas == 2

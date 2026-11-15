@@ -56,6 +56,7 @@ class Config:
     rerank_llm_permutaciones: int = 2     # KERNA_RERANK_LLM_PERMUTACIONES: 1-4 (entrada, invertida, rotada, rotada invertida)
     rerank_llm_voto_retriever: float = 0.0  # KERNA_RERANK_LLM_VOTO_RETRIEVER: peso del orden del retriever como ranking adicional
     revisor_sin_causales: tuple = ()  # KERNA_REVISOR_SIN_CAUSALES: causales de veto que el revisor no aplica (solo evaluación; vacío = todas)
+    evaluador_votos: int = 1       # KERNA_EVALUADOR_VOTOS: pasadas independientes del evaluador por IDs (promedio de puntajes)
     revisor_votos: int = 1         # KERNA_REVISOR_VOTOS: llamadas independientes del revisor (1 = una sola, comportamiento original)
     revisor_veto_min: int = 0      # KERNA_REVISOR_VETO_MIN: vetos coincidentes (misma causal) necesarios para vetar; 0 = mayoría de los votos
     revisor_veto_cita: bool = False  # KERNA_REVISOR_VETO_CITA: un veto exige citar al menos una frase del artículo
@@ -112,6 +113,7 @@ class Config:
         c.rerank_llm_permutaciones = int(e.get("KERNA_RERANK_LLM_PERMUTACIONES", c.rerank_llm_permutaciones))
         c.rerank_llm_voto_retriever = float(e.get("KERNA_RERANK_LLM_VOTO_RETRIEVER", c.rerank_llm_voto_retriever))
         c.revisor_sin_causales = tuple(x.strip() for x in e.get("KERNA_REVISOR_SIN_CAUSALES", "").split(",") if x.strip())
+        c.evaluador_votos = max(1, int(e.get("KERNA_EVALUADOR_VOTOS", c.evaluador_votos)))
         c.revisor_votos = max(1, int(e.get("KERNA_REVISOR_VOTOS", c.revisor_votos)))
         c.revisor_veto_min = int(e.get("KERNA_REVISOR_VETO_MIN", c.revisor_veto_min))
         c.revisor_veto_cita = e.get("KERNA_REVISOR_VETO_CITA", "").strip().lower() in ("1", "true", "si", "sí", "on")

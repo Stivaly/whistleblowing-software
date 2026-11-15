@@ -15,6 +15,7 @@ denuncia no se registra ni se persiste.
 """
 from __future__ import annotations
 
+import asyncio
 import re
 import time
 from dataclasses import dataclass, field
@@ -355,8 +356,10 @@ def conductas_consulta(d: dict | None, maximo: int = MAX_CONDUCTAS_CONSULTA) -> 
 
 
 class EvaluadorIds:
-    def __init__(self, generar: Generar, variante: str = "3", lote: int = 0, salida: int = 8, **_):
-        """`generar(sistema, usuario, esquema, validar, inicio)` -> Resultado del enrutador (datos, tokens)."""
+    def __init__(self, generar: Generar, variante: str = "3", lote: int = 0, salida: int = 8, votos: int = 1, **_):
+        """`generar(sistema, usuario, esquema, validar, inicio)` -> Resultado del enrutador (datos, tokens).
+        `votos` (KERNA_EVALUADOR_VOTOS): pasadas independientes de la evaluación; el puntaje es el promedio (reduce la varianza)."""
+        self.votos = max(1, int(votos))
         if variante not in VARIANTES:
             raise ValueError(f"variante desconocida: {variante!r}")
         self._generar, self.variante, self.lote = generar, variante, lote
@@ -448,6 +451,28 @@ class EvaluadorIds:
             if prev is None or puntaje > prev["puntaje"]:
                 res.evaluaciones[ident] = {"puntaje": puntaje, "hecho_ids": hechos, "frase_ids": frases}
 
+    @staticmethod
+    def _sumar(res, r) -> None:
+        res.tokens_entrada += r.tokens_entrada
+        res.tokens_salida += r.tokens_salida
+        res.llamadas += r.llamadas
+        res.latencia_ms = max(res.latencia_ms, r.latencia_ms)
+        res.descartados_id += r.descartados_id
+        res.descartados_cita += r.descartados_cita
+
+    @staticmethod
+    def _promediar(res, pasadas) -> None:
+        """Puntaje = promedio de las pasadas (mitad hacia arriba); hechos y frases, los de la pasada de mayor puntaje."""
+        for ident in dict.fromkeys(i for p in pasadas for i in p.evaluaciones):
+            ev = [p.evaluaciones.get(ident, {"puntaje": 0, "hecho_ids": [], "frase_ids": []}) for p in pasadas]
+            media = sum(e["puntaje"] for e in ev) / len(ev)
+            mejor = max(ev, key=lambda e: e["puntaje"])
+            punt = int(media + 0.5)
+            if punt >= 2 and not (mejor["hecho_ids"] and mejor["frase_ids"]):
+                punt = 1
+            res.evaluaciones[ident] = {"puntaje": punt, "media": media, "hecho_ids": mejor["hecho_ids"],
+                                       "frase_ids": mejor["frase_ids"]}
+
     async def evaluar(self, texto: str, candidatos: list[dict], inicio: float,
                       perfil: PerfilExtraido | None = None) -> ResultadoEvaluadorIds:
         """`perfil`: extracción ya hecha por `extraer_perfil` (no se vuelve a pagar, ni se cuentan sus tokens aquí)."""
@@ -465,12 +490,26 @@ class EvaluadorIds:
             else:
                 memoria, res.perfil = perfil.texto, perfil.ok
             n = self.lote or len(candidatos)
-            for i in range(0, len(candidatos), n):
-                cand = candidatos[i:i + n]
-                segs = [segmentar_articulo(f.get("texto") or "") or [(f.get("texto") or "").strip()] for f in cand]
-                datos = await self._llamar(self.sistema, usuario_lote(hechos, memoria, cand, segs),
-                                           esquema_evaluacion(len(cand), len(hechos)), _validar_evaluacion, inicio, res)
-                self._filtrar(datos["evaluaciones"], cand, segs, len(hechos), res)
+
+            async def pasada():
+                r = ResultadoEvaluadorIds([])
+                for i in range(0, len(candidatos), n):
+                    cand = candidatos[i:i + n]
+                    segs = [segmentar_articulo(f.get("texto") or "") or [(f.get("texto") or "").strip()] for f in cand]
+                    datos = await self._llamar(self.sistema, usuario_lote(hechos, memoria, cand, segs),
+                                               esquema_evaluacion(len(cand), len(hechos)), _validar_evaluacion, inicio, r)
+                    self._filtrar(datos["evaluaciones"], cand, segs, len(hechos), r)
+                return r
+
+            if self.votos == 1:
+                r = await pasada()
+                self._sumar(res, r)
+                res.evaluaciones = r.evaluaciones
+            else:
+                pasadas = await asyncio.gather(*(pasada() for _ in range(self.votos)))
+                for r in pasadas:
+                    self._sumar(res, r)
+                self._promediar(res, pasadas)
         except PlazoAgotado:
             raise
         except (CadenaAgotada, ValueError):
@@ -479,7 +518,7 @@ class EvaluadorIds:
             return res
         orden = {f["fragmento_id"]: i for i, f in enumerate(candidatos)}
         puntuados = sorted((f for f in candidatos if res.evaluaciones.get(f["fragmento_id"], {}).get("puntaje", 0) >= 1),
-                           key=lambda f: (-res.evaluaciones[f["fragmento_id"]]["puntaje"], orden[f["fragmento_id"]]))
+                           key=lambda f: (-res.evaluaciones[f["fragmento_id"]].get("media", res.evaluaciones[f["fragmento_id"]]["puntaje"]), orden[f["fragmento_id"]]))
         res.aplican = sum(res.evaluaciones[f["fragmento_id"]]["puntaje"] >= 2 for f in puntuados)
         res.relacionados = len(puntuados) - res.aplican
         final = [dict(f, puntaje_evaluador=res.evaluaciones[f["fragmento_id"]]["puntaje"],
