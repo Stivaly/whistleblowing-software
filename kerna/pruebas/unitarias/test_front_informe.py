@@ -162,3 +162,11 @@ def test_ley_19628_se_nombra_con_su_reforma_21719():
     t = next(t for t in cal["tablas"] if t["id"] == "recall_ley")
     assert any(f[0] == "Ley 19.628 (datos personales), reformada por la Ley 21.719" for f in t["filas"])
     assert any(i[0] == informe.NOMBRE_19628 for g in cal["graficos"] for i in g["items"])
+
+
+def test_informe_casos_son_los_de_veridy():
+    from app import reintentos
+    con = reintentos.con_estado_real(None, {"actualizado_en": "2026-11-15T10:00:00+00:00", "casos": 116, "completado": 100})
+    r = informe.construir(INI, FIN, ejecutar=falso, evaluacion=EVAL, conector=con)
+    k = {x["etiqueta"]: x["valor"] for x in r["secciones"][0]["kpis"]}
+    assert k["Casos procesados"] == 116 and k["% con sugerencia"] == 86.2

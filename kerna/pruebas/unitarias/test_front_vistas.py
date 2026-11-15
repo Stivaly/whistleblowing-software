@@ -36,6 +36,14 @@ def test_resumen_estados_y_formato():
     assert v["mapas"]["t"]["k.tiempo.v"] == "41" and v["mapas"]["s"]["k.calidad"] == "bad"
 
 
+def test_resumen_total_es_el_de_veridy_no_la_telemetria():
+    from app import reintentos
+    con = reintentos.con_estado_real(None, {"actualizado_en": "2026-11-15T10:00:00+00:00", "casos": 116, "completado": 100})
+    v = vistas.resumen(M, EV, None, None, None, [], None, 7, conector=con)
+    k = {x["k"]: x for x in v["kpis"]}
+    assert v["total"] == 116 and k["casos"]["v"] == "116" and "20" not in k["casos"]["x"] and v["sug_pct"] == 86
+
+
 def test_resumen_sin_datos_es_na():
     m = {**M, "total_casos": 0, "casos_por_dia": [], "modos": {"oficial": 0, "respaldo": 0, "local": 0, "manual": 0}, "latencia": {"p50_ms": 0, "p95_ms": 0, "por_dia": []}}
     v = vistas.resumen(m, None, None, None, None, [], None, 7)

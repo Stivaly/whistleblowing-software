@@ -127,12 +127,13 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     mp = Mapas()
     tot = m["total_casos"]
     con_sug = sum(c["con_sugerencia"] for c in m["casos_por_dia"])
-    sug_pct = pct(con_sug, tot)
     modos = m["modos"]
     real = conector if conector and conector.get("fuente") == "conector" else None
     if real:
+        tot, con_sug = real["casos"], real["con_sugerencia"]  # casos que existen hoy en Veridy, no eventos de telemetría
+    sug_pct = pct(con_sug, tot)
+    if real:
         modos = {**modos, "manual": real["manual"]}
-        sug_pct = pct(real["con_sugerencia"], real["casos"])
     ntot = sum(modos.values())
     recall = (ev or {}).get("recall") if ev else None
     meta_rec = (recall or {}).get("meta") or META_RECALL
@@ -149,7 +150,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     serie = [c["casos"] for c in m["casos_por_dia"]]
     k.append({"k": "casos", "i": "inbox", "l": "Denuncias", "form": "spark", "e": e_c, "p": "", "u": "", "num": tot, "v": f.miles(tot),
               "et": "Normal" if tot else "Sin denuncias en el período", "tr": "", "te": "na", "ta": "minus", "s": serie,
-              "x": f"{f.miles(tot)} casos procesados en {dias} días; {f.miles(con_sug)} terminaron con sugerencia." if tot else "No hay denuncias en el período."})
+              "x": (f"{f.miles(tot)} casos en Veridy; {f.miles(con_sug)} con sugerencia." if real else f"{f.miles(tot)} casos procesados en {dias} días; {f.miles(con_sug)} terminaron con sugerencia.") if tot else "No hay denuncias en el período."})
     # --- Acierto
     if rec_glob is not None:
         e_a = "ok" if rec_glob >= meta_rec else ("warn" if rec_glob >= meta_rec - RECALL_ALERTA else "bad")
@@ -457,7 +458,7 @@ def informe_ejecutivo(inf_: dict) -> dict:
     serie = [r[1] for r in dias]
     cards = []
     e_c = "ok" if casos else "na"
-    cards.append(_tarjeta("casos", "inbox", "Denuncias", f.miles(casos), "", e_c, f"{f.miles(casos)} casos procesados en el período.", form="spark", s=serie,
+    cards.append(_tarjeta("casos", "inbox", "Denuncias", f.miles(casos), "", e_c, f"{f.miles(casos)} casos en Veridy.", form="spark", s=serie,
                           d_l=graficos.spark(serie), d_a=graficos.spark_area(serie), et="Normal" if casos else "Sin denuncias"))
     p_sug = kp.get("% con sugerencia")
     e_s = est("% con sugerencia")
