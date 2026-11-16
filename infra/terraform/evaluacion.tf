@@ -208,7 +208,7 @@ resource "azurerm_cognitive_deployment" "gpt_5_mini" {
 
   sku {
     name     = "GlobalStandard"
-    capacity = 300
+    capacity = 600
   }
 
   depends_on = [azurerm_cognitive_deployment.gpt_5_nano]

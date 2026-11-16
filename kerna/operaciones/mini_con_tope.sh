@@ -21,13 +21,19 @@ paso() {  # etiqueta set n_casos_estimado usd_estimado
   g=$(gasto); proy=$(python3 -c "print(round($g+$4,2))")
   echo "$(date +%T) $1 ($2): gastado est. $g USD, proyectado $proy USD, tope $TOPE" | tee -a "$LOG"
   if python3 -c "import sys;sys.exit(0 if $proy<=$TOPE else 1)"; then
-    KERNA_CONCURRENCIA=2 operaciones/medicion_config_exp2.sh "$1" "$F" "$2" KERNA_MODELO_LLM=gpt-5-mini >> "$LOG" 2>&1
+    KERNA_CONCURRENCIA="${CONC:-5}" operaciones/medicion_config_exp2.sh "$1" "$F" "$2" KERNA_MODELO_LLM=gpt-5-mini >> "$LOG" 2>&1
     echo "$(date +%T) $1 terminado; gastado est. $(gasto) USD" | tee -a "$LOG"
   else
     echo "$(date +%T) $1 NO se lanza: superaría el tope" | tee -a "$LOG"
   fi
 }
-paso mx1 desarrollo 0 2.6          # 42 casos: ~1,7 USD de lista x1,5
+# CONC = casos a la vez por corrida (por defecto 5). SALTAR_MX1=1 espera a que termine una corrida mx1 ya en curso y no la repite.
+if [ "${SALTAR_MX1:-0}" = 1 ]; then
+  while pgrep -f "casos_cfg2_mx1_desarrollo" > /dev/null; do sleep 30; done
+  echo "$(date +%T) mx1 ya terminada; sigo con mx2" | tee -a "$LOG"
+else
+  paso mx1 desarrollo 0 2.6          # 42 casos: ~1,7 USD de lista x1,5
+fi
 paso mx2 desarrollo_nuevo 0 10.5   # 206 casos: ~7 USD de lista x1,5
 paso mx3 desarrollo 0 2.6
 echo "$(date +%T) FIN; gastado est. $(gasto) USD" | tee -a "$LOG"
