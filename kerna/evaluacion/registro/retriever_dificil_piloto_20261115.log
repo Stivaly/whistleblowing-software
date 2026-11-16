@@ -1,0 +1,36 @@
+Triage evaluacion/datos/triage_casos.json, partición desarrollo_nuevo: 62 casos (en alcance + controles)
+Corpus vigente: 181 artículos. Casos con ley_principal: 58; con artículos candidatos mapeables: 58 ({'18.575-18.834-18.883': 11, '19.628-21.719': 15, '20.393': 16, '21.643': 16})
+Embebiendo 62 consultas con voyage-4-large...
+Voyage: límite de uso (429), espero 60 s
+Voyage: límite de uso (429), espero 120 s
+Voyage: límite de uso (429), espero 180 s
+Voyage: límite de uso (429), espero 60 s
+Voyage: límite de uso (429), espero 120 s
+Voyage: límite de uso (429), espero 60 s
+Voyage: límite de uso (429), espero 120 s
+Voyage: límite de uso (429), espero 60 s
+Voyage: límite de uso (429), espero 60 s
+
+Recall@5 — consulta = texto_original (meta ≥ 0.8 por artículo)
+ley             casos  (a) ley  casos art  (b) art         IC 95 %  nDCG@10    MRR
+18.575-18.834-18.883    11    0.909         11    0.455   [0.182,0.727]    0.251  0.286
+19.628-21.719      15    1.000         15    0.733   [0.467,0.933]    0.454  0.551
+20.393             16    0.812         16    0.062   [0.000,0.188]    0.088  0.082
+21.643             16    1.000         16    0.812   [0.625,1.000]    0.460  0.382
+global             58    0.931         58    0.517   [0.397,0.638]    0.316  0.325
+
+Casos 'ninguna' (4): score top-1 de 0.440 a 0.541
+ umbral  FP ninguna  positivos ≥
+   0.15       1.000        1.000
+   0.20       1.000        1.000
+   0.25       1.000        1.000
+   0.30       1.000        1.000
+   0.35       1.000        1.000
+   0.40       1.000        0.983
+   0.45       0.750        0.931
+   0.50       0.250        0.655
+   0.55       0.000        0.276
+
+P95 de la vectorización de una consulta: 674 ms (20 consultas sueltas); tokens de las consultas: 65110 (medido); costo estimado: None
+
+Detalle por caso: evaluacion/datos/resultado_recall_texto_original_triage_desarrollo_nuevo_corregida.json; registrado en evaluacion/registro/recall_retriever.jsonl

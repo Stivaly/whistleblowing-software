@@ -304,3 +304,31 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 | m1 gpt-5-mini | 0,952 | 0,929 | 0,929 | 0,818 |
 
 - Conclusión: n1 no aporta (se descarta). h1 y m1 pasan a desarrollo ×3 (dh1-3, dm1-3, 20261116). hn1 no se midió porque n1 no mueve 20.393.
+
+## 2026-11-15/16 · Ampliación de desarrollo (lote DX) y reescritura difícil
+- Commit del código: 657689884 (partición `desarrollo_nuevo`, lote `dx` de `etiquetar_cx.py`) y `combinar_ampliado.py` (nuevo). Datos fuera de git: `datos/denuncias_desarrollo_20261115_{auditadas,etiquetadas}.json`, `dx_etiquetas.jsonl`, versiones previas en `datos/dx_lotes/*_v1..v4*`.
+- **Versión 1 (fácil, 2026-11-15 17:15-20:01).** Cadena vigente, 1 corrida por variante: `medicion_config_exp2.sh dv{b,a}1 20261115 desarrollo_nuevo` (alt3 = `KERNA_EVALUADOR_VOTOS=3 KERNA_EVALUADOR_ORDEN=alterno`), KERNA_CONCURRENCIA=3, corpus 181, `normativa_cl_x_e`. Combinada con vb1/va1 de los 42: `combinar_ampliado.py` → `registro/ampliado_r1_20261115.json`. Recall@5 cadena + revisor:
+
+| Set (n) | Base | Alt3 |
+|---|---|---|
+| desarrollo, 42 originales | 0,714 | 0,619 |
+| desarrollo_nuevo v1 (135) | 0,963 | 0,859 (14 casos agotados) |
+| ampliado (177) | 0,904 | 0,802 |
+
+  Retriever top-5 (cfg2): 0,643 en los 42 frente a 0,822 en el v1. Conclusión: v1 es demasiado fácil y no sirve para comparar variantes. Las repeticiones 2 y 3 (`dv{b,a}{2,3}`) se detuvieron a pedido de la usuaria; sus `casos_cfg2_*` quedaron parciales y no se usan.
+- **Reescritura difícil (2026-11-15 22:05 a 2026-11-16 06:45).** Diagnóstico en los 42: mediana de 683 palabras (v1: 271), 2,55 artículos esperados (v1: 3,45), canal o modelo mencionado en el 7 % (v1: 22 %), alguna ley nombrada en el 79 % (v1: 1 %). Son fallos, noticias y dictámenes en tercera persona.
+  - Se reescribieron 206 casos (DX-0001…0206: los 160 del lote DX y DX-0161…0206 de los lotes 5 y 6), con fichas `dx_lotes/fichas_dificil_*.json` (formato fallo/noticia/dictamen/denuncia larga, 500-900 palabras, dos ambigüedades y ruido normativo). Los reetiquetaron a mano agentes Sonnet con `etiquetar_cx.py … dx` (1-3 artículos).
+  - Resultado: 172 `si` (20.393 53, datos personales 48, 21.643 39, estatutos 32), 14 `control`, 20 `no`; 2,47 artículos esperados y 627 palabras de mediana.
+  - Auditoría: 130 casos leídos (todos los de confianza baja, control y no, más 1 de cada 4-6 `si`); un cambio (DX-0064 pasa de `no` a `si`: CT 2 y 211-A).
+  - Disjuntos: como máximo 0,8 % de 8-gramas compartidos con prueba, prueba2, prueba3, afinar, medir_complejas, públicas, Veridy y las versiones DX anteriores.
+- Calibración, solo retriever (`recall_retriever.py --triage datos/triage_casos.json --etiqueta corregida --extra-casos datos/denuncias_desarrollo_20261115_etiquetadas.json --particion desarrollo_nuevo`, voyage-4-large, texto_original; logs `registro/retriever_dificil_*`). Recall@5 por artículo:
+
+| Iteración | n | Global [IC 95 %] | 20.393 | DP | 21.643 | Estatutos |
+|---|---|---|---|---|---|---|
+| 42 originales (referencia, cfg2) | 42 | 0,643 | 0,444 | 0,625 | 0,765 | — |
+| piloto (DX-0001…0070) | 58 | 0,517 [0,40-0,64] | 0,062 | 0,733 | 0,812 | 0,455 |
+| 206 difíciles | 172 | 0,459 [0,39-0,54] | 0,113 | 0,646 | 0,692 | 0,469 |
+| ajuste 1 (20.393 y estatutos reescritos) | 172 | 0,477 [0,41-0,55] | 0,264 | 0,646 | 0,700 | 0,290 |
+| ajuste 2 (estatutos vuelven a la versión anterior; 20.393 reescrito con la persona jurídica y su modelo en disputa) | 172 | **0,512 [0,44-0,58]** | 0,283 | 0,646 | 0,692 | 0,469 |
+
+  Conclusión: por ley, el set difícil queda cerca de los 42 (DP y 21.643 iguales; 20.393 algo bajo, dentro del IC de los 42 con n=9). La cifra global es menor porque el reparto sigue al del corpus (más 20.393 y estatutos); con el reparto de los 42 da ≈0,59. No se corrió la cadena ni variantes sobre estos casos.
