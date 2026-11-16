@@ -291,3 +291,16 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 
 - Auditoría: medio dejó 7-8 casos por corrida en `tiempo_agotado` (plazo 900 s), así que su cifra incluye esos casos perdidos. Base: 1 caso `cadena_agotada` en vb1.
 - Conclusión: la mejor es la base, que es la desplegada. Ninguna variante llega a 0,80. En las 9 corridas el revisor resta entre 0 y 0,07 a la cadena (base: 0,770 → 0,706). No se despliega nada y la fila vigente no cambia.
+
+## 2026-11-15/16 · Criterio 20.393 y gpt-5-mini en afinar (corrida única)
+- Commit del núcleo `319a7f67f` (flags apagados por defecto); medición desde `0f6828931`. Comando: `kerna/operaciones/medicion_config_exp2.sh {h1|n1|m1} 20261115 afinar VAR=…`, KERNA_CONCURRENCIA=2. Archivos `registro/cfg2-{h1,n1,m1}-afinar-20261115.json`.
+- Flags: h1 `KERNA_EVALUADOR_HABILITANTE=1`; n1 `KERNA_REVISOR_ALCANCE_NO_VETA=1`; m1 `KERNA_MODELO_LLM=gpt-5-mini` (todas las etapas LLM). Base a1 (20261114).
+
+| Variante | Evaluador | Cadena | Cadena + revisor | 20.393 c+r (11) |
+|---|---|---|---|---|
+| base a1 | 0,905 | 0,881 | 0,857 | 0,545 |
+| h1 habilitante | 0,905 | 0,929 | 0,881 | 0,818 |
+| n1 alcance no veta | 0,881 | 0,881 | 0,833 | 0,545 (2 casos `cadena_agotada`) |
+| m1 gpt-5-mini | 0,952 | 0,929 | 0,929 | 0,818 |
+
+- Conclusión: n1 no aporta (se descarta). h1 y m1 pasan a desarrollo ×3 (dh1-3, dm1-3, 20261116). hn1 no se midió porque n1 no mueve 20.393.
