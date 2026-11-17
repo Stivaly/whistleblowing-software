@@ -332,3 +332,8 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 | ajuste 2 (estatutos vuelven a la versión anterior; 20.393 reescrito con la persona jurídica y su modelo en disputa) | 172 | **0,512 [0,44-0,58]** | 0,283 | 0,646 | 0,692 | 0,469 |
 
   Conclusión: por ley, el set difícil queda cerca de los 42 (DP y 21.643 iguales; 20.393 algo bajo, dentro del IC de los 42 con n=9). La cifra global es menor porque el reparto sigue al del corpus (más 20.393 y estatutos); con el reparto de los 42 da ≈0,59. No se corrió la cadena ni variantes sobre estos casos.
+
+## 2026-11-17 · Ajustes del panel conectados (commit a90ec3509; núcleo `aj-2bd7555b2`)
+- Pruebas unitarias: 637 pasadas (`python3 -m pytest -q kerna/pruebas/unitarias`).
+- Producción, front desplegado con `kerna/front/desplegar.sh --ref HEAD`: `probar_front.sh` todo bien; `probar_ajustes.sh --solo-panel` todo bien (guarda desde el panel, la fila de la tabla cambia, el Resumen usa la meta de 20 s guardada, restaura los originales).
+- Núcleo `aj-2bd7555b2` desplegado y sano (`/salud` 200). Pendiente de verificar con Veridy encendido: el núcleo aplicando `candidatos`/`cadena` a un caso real y el conector con `compartir`/`alerta` (`probar_ajustes.sh` completo). No es medición de KPI.

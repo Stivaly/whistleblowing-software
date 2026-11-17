@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 # Prueba de punta a punta los ajustes del panel en producción: guarda valores de prueba, verifica que el conector y el
 # núcleo los apliquen y restaura los originales (también si algo falla). Solo usa az y curl; nunca imprime claves.
-# Uso: kerna/operaciones/probar_ajustes.sh
+# Uso: kerna/operaciones/probar_ajustes.sh [--solo-panel]
+#   --solo-panel   solo guarda, comprueba la tabla y que el Resumen use la meta de respuesta guardada; restaura (no necesita Veridy)
 # Requiere el front despierto, Veridy y el conector encendidos. Códigos: 0 todo bien, 1 algo falló, 2 conector o Veridy apagados.
 set -uo pipefail
+SOLO_PANEL=0; [ "${1:-}" = "--solo-panel" ] && SOLO_PANEL=1
 AQUI="$(dirname "$0")"; . "$AQUI/_comun.sh"
 CLAVE="$(clave_front vigente)" || exit 1
 JAR="$(mktemp)"; ORIG="$(mktemp)"; trap 'restaurar; rm -f "$JAR" "$ORIG"' EXIT; FALLAS=0; RESTAURAR=0
@@ -29,7 +31,7 @@ guardar() {  # guardar <json>: POST como lo hace la página
 restaurar() {
   [ "$RESTAURAR" = 1 ] || return 0
   RESTAURAR=0
-  if [ -s "$ORIG" ] && guardar "$(cat "$ORIG")" | grep -q '"estado": \?"ok"'; then echo "OK     valores originales restaurados"
+  if [ -s "$ORIG" ] && grep -q '"estado": \?"ok"' <<<"$(guardar "$(cat "$ORIG")")"; then echo "OK     valores originales restaurados"
   else echo "FALLA  no se pudieron restaurar los valores originales (revisa Ajustes en el panel)"; FALLAS=$((FALLAS+1)); fi
 }
 
@@ -39,8 +41,16 @@ csrf_y_valores >/dev/null
 [ -s "$ORIG" ] && ok "valores actuales guardados para restaurar" || { mal "no se pudieron leer los valores actuales"; exit 1; }
 RESTAURAR=1
 PRUEBA='{"envios":7,"reintentos":2,"espera":12,"revision":60,"reprocesar":false,"evaluador":true,"candidatos":40,"cadena":[{"v":"gemini","on":true},{"v":"azure","on":true}],"compartir":[],"maxresp":20,"alerta":1}'
-guardar "$PRUEBA" | grep -q '"estado": \?"ok"' && ok "valores de prueba guardados desde el panel" || { mal "no se pudieron guardar los valores de prueba"; exit 1; }
-"$AQUI/tablas.sh" ajustes | grep -q '"candidatos": *40' && ok "la fila de ajustes quedó guardada" || mal "la fila de ajustes no muestra los valores de prueba"
+grep -q '"estado": \?"ok"' <<<"$(guardar "$PRUEBA")" && ok "valores de prueba guardados desde el panel" || { mal "no se pudieron guardar los valores de prueba"; exit 1; }
+grep -q 'candidatos[^0-9]*40' <<<"$("$AQUI/tablas.sh" ajustes)" && ok "la fila de ajustes quedó guardada" || mal "la fila de ajustes no muestra los valores de prueba"
+
+grep -q 'meta 20 s' <<<"$(c -b "$JAR" "$FRONT_URL/panel")" && ok "el Resumen usa la meta de respuesta guardada (20 s)" || mal "el Resumen no muestra la meta de 20 s"
+if [ "$SOLO_PANEL" = 1 ]; then
+  restaurar
+  grep -q 'candidatos[^0-9]*40' <<<"$("$AQUI/tablas.sh" ajustes)" && mal "la fila sigue con los valores de prueba" || ok "la fila quedó con los valores originales"
+  [ "$FALLAS" = 0 ] && echo "Todo bien (solo panel)." || { echo "$FALLAS prueba(s) fallaron."; exit 1; }
+  exit 0
+fi
 
 # El conector aplica en su próxima pasada (hasta 3 min)
 FILA_Q="PartitionKey eq 'kerna' and RowKey eq 'conector'"
@@ -70,5 +80,5 @@ done
 [ "$HECHO" = 1 ] && ok "el núcleo aplicó candidatos=40 y cadena gemini>azure" || mal "el núcleo no registró ajustes_aplicados con los valores de prueba en 8 min"
 
 restaurar
-"$AQUI/tablas.sh" ajustes | grep -q '"candidatos": *40' && mal "la fila sigue con los valores de prueba" || ok "la fila quedó con los valores originales"
+grep -q 'candidatos[^0-9]*40' <<<"$("$AQUI/tablas.sh" ajustes)" && mal "la fila sigue con los valores de prueba" || ok "la fila quedó con los valores originales"
 [ "$FALLAS" = 0 ] && echo "Todo bien." || { echo "$FALLAS prueba(s) fallaron."; exit 1; }
