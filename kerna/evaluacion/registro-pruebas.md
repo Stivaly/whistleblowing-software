@@ -337,3 +337,9 @@ Retriever: Voyage `voyage-4-large`, 1024 dims, `input_type: query`; Qdrant `norm
 - Pruebas unitarias: 637 pasadas (`python3 -m pytest -q kerna/pruebas/unitarias`).
 - Producción, front desplegado con `kerna/front/desplegar.sh --ref HEAD`: `probar_front.sh` todo bien; `probar_ajustes.sh --solo-panel` todo bien (guarda desde el panel, la fila de la tabla cambia, el Resumen usa la meta de 20 s guardada, restaura los originales).
 - Núcleo `aj-2bd7555b2` desplegado y sano (`/salud` 200). Pendiente de verificar con Veridy encendido: el núcleo aplicando `candidatos`/`cadena` a un caso real y el conector con `compartir`/`alerta` (`probar_ajustes.sh` completo). No es medición de KPI.
+
+### 2026-11-17 · `probar_ajustes.sh` completo con Veridy encendido (conector desplegado, imagen `kerna-conector:aj-2bd7555b2`)
+- Veridy encendido; `infra/aplicar.sh veridy -y` reemplazó solo el grupo de contenedores (cambio de imagen del conector); Veridy responde 200. `crear_equipos.sh` creó las cuentas de Comité, Auditoría y Fiscalía.
+- Conector: OK. Aplicó envíos, reintentos, espera, revisión, alerta y equipos (fila `conector`: `ajustes_aplicados` con los 7 ajustes, `equipos` = analista, `equipos_sin_cuenta` vacío). Panel y restauración: OK.
+- Núcleo: SIN VERIFICAR en producción. Dos corridas (8 min cada una) no vieron `ajustes_aplicados`, porque el núcleo solo lo registra al procesar un caso y no entró ninguno: el set sintético (113 casos) ya está cargado entero en Veridy y no quedan casos nuevos que enviar. `probar_ajustes.sh` ahora acepta `--lote N`, pero no sirve mientras el set esté completo.
+- Compartir con un equipo real: no probado (la acción no se deshace: quitar un equipo no le quita lo ya compartido).

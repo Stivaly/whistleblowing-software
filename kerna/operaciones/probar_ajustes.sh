@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 # Prueba de punta a punta los ajustes del panel en producción: guarda valores de prueba, verifica que el conector y el
 # núcleo los apliquen y restaura los originales (también si algo falla). Solo usa az y curl; nunca imprime claves.
-# Uso: kerna/operaciones/probar_ajustes.sh [--solo-panel]
+# Uso: kerna/operaciones/probar_ajustes.sh [--solo-panel] [--lote N]
+#   --lote N       tras guardar, carga el lote de N denuncias sintéticas para que el núcleo procese un caso nuevo (por defecto 2;
+#                  es idempotente: si ese lote ya existe entero, súbelo en cada repetición: 3, 4, ...)
 #   --solo-panel   solo guarda, comprueba la tabla y que el Resumen use la meta de respuesta guardada; restaura (no necesita Veridy)
 # Requiere el front despierto, Veridy y el conector encendidos. Códigos: 0 todo bien, 1 algo falló, 2 conector o Veridy apagados.
 set -uo pipefail
-SOLO_PANEL=0; [ "${1:-}" = "--solo-panel" ] && SOLO_PANEL=1
+SOLO_PANEL=0; LOTE=2
+while [ $# -gt 0 ]; do case "$1" in --solo-panel) SOLO_PANEL=1;; --lote) shift; LOTE="${1:-2}";; esac; shift; done
 AQUI="$(dirname "$0")"; . "$AQUI/_comun.sh"
 CLAVE="$(clave_front vigente)" || exit 1
 JAR="$(mktemp)"; ORIG="$(mktemp)"; trap 'restaurar; rm -f "$JAR" "$ORIG"' EXIT; FALLAS=0; RESTAURAR=0
@@ -72,7 +75,8 @@ while [ $SECONDS -lt $FIN ]; do conector_ok && { HECHO=1; break; }; sleep 10; do
 # El núcleo registra `ajustes_aplicados` al ver el guardado (los eventos tardan minutos)
 KQL='AppTraces | where TimeGenerated > ago(30m) and Message == "ajustes_aplicados" | where tostring(Properties.candidatos) == "40" and tostring(Properties.cadena) == "gemini>azure" | count'
 FIN=$((SECONDS+480)); HECHO=0
-echo "       (para que el núcleo vea el guardado hace falta procesar un caso; los eventos tardan minutos en la telemetría)"
+echo "       (el núcleo ve el guardado al procesar un caso: cargo el lote $LOTE; los eventos tardan minutos en la telemetría)"
+"$AQUI/cargar_denuncias.sh" "$LOTE" 2>&1 | tail -2
 while [ $SECONDS -lt $FIN ]; do
   N="$("$AQUI/telemetria.sh" kql "$KQL" 1 2>/dev/null | grep -Eo '[0-9]+' | tail -1)"
   [ "${N:-0}" -gt 0 ] && { HECHO=1; break; }; sleep 20
