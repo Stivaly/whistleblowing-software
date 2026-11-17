@@ -72,3 +72,6 @@ La de integración inicia sesión, lista, lee un caso y cierra; no publica nada.
   `GET {KERNA_API_URL}/salud` y las credenciales `KERNA_CLIENT_*`; al volver, el conector continúa sin intervención.
 - Casos con error persistente: mirar `correspondencia_caso.ultimo_error` (`sin_acceso`, `http_403`, `ilegible_*`,
   `sin_texto`); la causa habitual es que la cuenta no tiene acceso al caso.
+
+## Ajustes que aplica
+Lee la tabla `ajustes` en cada pasada y aplica `envios`, `reintentos`, `espera`, `revision`, `reprocesar`, `compartir` (equipos receptores) y `alerta` (casos sin sugerencia tras N horas, en la fila `conector`). Contrato: `pendientes/contrato-reintento-conector.md`.

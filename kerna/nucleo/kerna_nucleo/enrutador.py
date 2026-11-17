@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextvars
 import json
 import time
 from dataclasses import dataclass, field
@@ -10,6 +11,10 @@ from typing import Any, Callable
 from kerna_comun import telemetria
 
 from .proveedores import ErrorProveedor
+
+
+# Niveles de la cadena del caso en curso (ajuste «orden de los modelos»); None = los del enrutador.
+NIVELES_CASO: contextvars.ContextVar = contextvars.ContextVar("niveles_caso", default=None)
 
 
 class PlazoAgotado(Exception):
@@ -138,10 +143,11 @@ class Enrutador:
                       inicio: float, desde_modelo: str | None = None, esfuerzo: str = "") -> Resultado:
         """Recorre los niveles en orden. `validar` recibe el JSON ya parseado y lanza ValueError si no sirve;
         una salida inválida cuenta como falla del nivel (sin reintento). `desde_modelo` recorta la cadena."""
-        niveles = self.niveles
+        base = NIVELES_CASO.get() or self.niveles
+        niveles = base
         if desde_modelo:
-            niveles = [n for i, n in enumerate(self.niveles) if i >= next(
-                (j for j, m in enumerate(self.niveles) if m.modelo == desde_modelo), 0)]
+            niveles = [n for i, n in enumerate(base) if i >= next(
+                (j for j, m in enumerate(base) if m.modelo == desde_modelo), 0)]
         for nivel in niveles:
             if self._restante(inicio) <= 0:
                 raise PlazoAgotado()

@@ -158,9 +158,10 @@ def test_ajustes_guardan_con_origen_https_y_base_http_detras_del_proxy(cli):
 
 def test_ajustes_dicen_cuales_se_aplican_ya_y_el_panel_tiene_capas_vivas(cli):
     r = cli.get("/panel/ajustes", headers=H)
-    assert r.text.count("class=\"ap-b ya\"") == 1 and r.text.count("class=\"ap-b no\"") == 3          # Procesamiento lo lee el conector; el resto no
+    assert r.text.count("class=\"ap-b ya\"") == 4 and r.text.count("class=\"ap-b no\"") == 0          # los once ajustes tienen consumidor
     assert 'class="ap-st"' in r.text and "data-cap" in r.text and 'role="status"' in r.text and 'class="aj"' in r.text
     assert all(it["ya"] == (it["k"] in ajustes.APLICA_YA) for g in ajustes.GRUPOS for it in g["items"])
+    assert set(ajustes.APLICA_YA) == {it["k"] for g in ajustes.GRUPOS for it in g["items"]} and len(ajustes.APLICA_YA) == 11
 
 
 def test_guardar_por_fetch_devuelve_json_y_los_errores_no_son_redirecciones(cli):

@@ -19,7 +19,7 @@ NOTAS_AJUSTE = {
     "evaluador": "Apagado: más rápido y barato, con menos control de las citas.",
     "candidatos": "Más artículos: revisión más cuidadosa y más costo.",
     "cadena": "Cambia qué modelo responde primero y cuál respalda.",
-    "compartir": "Solo afecta a los casos nuevos.",
+    "compartir": "Quitar un equipo no le quita lo ya compartido.",
     "maxresp": "Más bajo: más casos marcados como lentos.",
     "alerta": "Más corto: se destacan antes los casos sin sugerencia.",
 }
@@ -32,7 +32,8 @@ def _ajustes(L: str) -> dict:
 
 def glosario() -> dict:
     meta_r = f.dec_corto(inf.META_RECALL * 100, 0)
-    meta_t = f.dec_corto(inf.META_P95_MS / 1000, 0)
+    from . import ajustes as _aj
+    meta_t = f.dec_corto(_aj.meta_respuesta_s(), 0)
     L = ""
     G = {
         "envivo": ("En vivo", "Se actualiza cada minuto; los datos pueden tardar unos minutos."),

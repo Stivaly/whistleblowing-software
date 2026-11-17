@@ -40,6 +40,7 @@ class ResultadoPasada:
     compartidos: int = 0
     errores: int = 0
     nucleo_caido: bool = False
+    equipos_sin_cuenta: tuple = ()  # nombres de receptores de compartir que no existen en Veridy
     omitida: bool = False
     archivados: int = 0         # casos del estado que ya no existen en Veridy (marcados, no borrados)
     reactivados: int = 0
@@ -57,7 +58,7 @@ class ResultadoPasada:
 
 class _Pasada:
     def __init__(self, veridy, nucleo, estado: est.Estado, id_empresa: str, ahora: Callable[[], float],
-                 compartir_con: str = "", reprocesar: bool = False, reintentos_max: int = 3,
+                 compartir_con: "str | tuple" = "", reprocesar: bool = False, reintentos_max: int = 3,
                  reintento_horas: float = 24.0, envios_max: int = 5, corrida=None, en_vuelo_max: int = 12):
         # `corrida`: reintento manual pedido desde el panel (objeto con `.id`): sin esperas ni tope de envíos por
         # pasada, pero con a lo sumo `en_vuelo_max` casos reenviados al núcleo sin respuesta (para no saturarlo).
@@ -70,8 +71,9 @@ class _Pasada:
         self.reprocesar = reprocesar
         self.reintentos_max, self.reintento_horas = reintentos_max, reintento_horas
         self.v, self.n, self.e, self.ahora = veridy, nucleo, estado, ahora
-        self.compartir_con = compartir_con
-        self.id_receptor: Optional[str] = None
+        self.compartir_con = (compartir_con,) if isinstance(compartir_con, str) and compartir_con else tuple(n for n in (compartir_con or ()) if n)
+        self._receptores: dict[str, Optional[str]] = {}  # nombre de receptor -> id en Veridy (None = no existe)
+        self.sin_cuenta: list[str] = []
         self.compartir_bloqueado = False
         self.id_empresa = id_empresa
         self.r = ResultadoPasada()
@@ -139,26 +141,30 @@ class _Pasada:
         if meta.get("accessible") is False:
             return
         try:
-            if self.id_receptor is None:
-                self.id_receptor = self.v.buscar_receptor(self.compartir_con)
-                if self.id_receptor is None:
-                    self.compartir_bloqueado = True
-                    log.warning("compartir: no existe el receptor configurado")
-                    return
-            if self.id_receptor == self.id_cuenta:
-                self.compartir_bloqueado = True
-                return
-            if self.e.objeto_procesado(id_caso, "compartido", self.id_receptor):
+            ids = []
+            for nombre in self.compartir_con:
+                if nombre not in self._receptores:
+                    self._receptores[nombre] = self.v.buscar_receptor(nombre)
+                    if self._receptores[nombre] is None:
+                        self.sin_cuenta.append(nombre)
+                        self.r.equipos_sin_cuenta = tuple(self.sin_cuenta)
+                        log.warning("compartir: no existe un receptor configurado")
+                rid = self._receptores[nombre]
+                if rid is not None and rid != self.id_cuenta and rid not in ids:
+                    ids.append(rid)
+            pendientes = [rid for rid in ids if not self.e.objeto_procesado(id_caso, "compartido", rid)]
+            if not pendientes:
                 return
             caso = self.v.leer_caso(id_caso)
-            ya = any(r.get("id") == self.id_receptor and r.get("active", True) for r in (caso.get("receivers") or []))
+            activos = {r.get("id") for r in (caso.get("receivers") or []) if r.get("active", True)}
             del caso
-            if not ya:
-                self.v.compartir_caso(id_caso, self.id_receptor)
-                self.r.compartidos += 1
-                telemetria.contador("conector_caso_compartido")
-                telemetria.evento("conector_caso_compartido")
-            self.e.marcar_procesado(id_caso, "compartido", self.id_receptor)
+            for rid in pendientes:
+                if rid not in activos:
+                    self.v.compartir_caso(id_caso, rid)
+                    self.r.compartidos += 1
+                    telemetria.contador("conector_caso_compartido")
+                    telemetria.evento("conector_caso_compartido")
+                self.e.marcar_procesado(id_caso, "compartido", rid)
         except CasoNoAccesible as exc:
             if exc.codigo == 403:  # sin permiso can_grant_access_to_reports: no insistir en esta pasada
                 self.compartir_bloqueado = True
@@ -569,7 +575,7 @@ class _Pasada:
 
 
 def ejecutar_pasada(veridy, nucleo, estado: est.Estado, id_empresa: str = "veridy",
-                    ahora: Callable[[], float] = time.time, compartir_con: str = "",
+                    ahora: Callable[[], float] = time.time, compartir_con: "str | tuple" = "",
                     reprocesar: bool = False, reintentos_max: int = 3,
                     reintento_horas: float = 24.0, envios_max: int = 5, corrida=None,
                     en_vuelo_max: int = 12) -> ResultadoPasada:

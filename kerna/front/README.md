@@ -61,3 +61,5 @@ Actualizarla solo cuando una configuración nueva mejora desarrollo y se desplie
 `CONFIRMAR=si kerna/operaciones/tablas.sh escribir evaluaciones vigente desarrollo "corrida=<fecha de la medición>" commit=<commit> "nota=<configuración>"`
 
 «Revisión manual» y «sin sugerencia» cuentan casos distintos que existen hoy en Veridy (fila `conector` de `reintentosmanuales`); las consultas históricas cuentan un caso por su último estado.
+
+Los ajustes de la vista Ajustes (valores, rangos y validación) viven en `kerna/comun/kerna_comun/ajustes_esquema.py`; los consumen el panel, el conector y el núcleo, y `kerna/front/desplegar.sh` empaqueta ese archivo junto a `app/`.

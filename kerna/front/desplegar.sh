@@ -12,16 +12,18 @@ while [ $# -gt 0 ]; do case "$1" in --ref) REF="$2"; shift 2;; --sin-pruebas) PR
 APP="$(terraform -chdir="$RAIZ/infra/terraform" output -raw front_nombre)"
 TMP="$(mktemp -d)"; FUENTE="$(mktemp -d)"; trap 'rm -rf "$TMP" "$FUENTE"' EXIT; mkdir -p "$TMP/app/kql"
 if [ -n "$REF" ]; then
-  git -C "$RAIZ" archive "$REF" kerna/front kerna/docs/observabilidad/consultas kerna/pruebas kerna/diseno/identidad-v3 | tar -x -C "$FUENTE"
-  AQUI="$FUENTE/kerna/front"; RAIZ_PRUEBAS="$FUENTE"; RAIZ_KQL="$FUENTE"
+  git -C "$RAIZ" archive "$REF" kerna/front kerna/comun kerna/docs/observabilidad/consultas kerna/pruebas kerna/diseno/identidad-v3 | tar -x -C "$FUENTE"
+  AQUI="$FUENTE/kerna/front"; RAIZ_PRUEBAS="$FUENTE"; RAIZ_KQL="$FUENTE"; COMUN="$FUENTE/kerna/comun/kerna_comun"
   echo "Desplegando $(git -C "$RAIZ" rev-parse --short "$REF")"
 else
-  RAIZ_PRUEBAS="$RAIZ"; RAIZ_KQL="$RAIZ"
+  RAIZ_PRUEBAS="$RAIZ"; RAIZ_KQL="$RAIZ"; COMUN="$RAIZ/kerna/comun/kerna_comun"
 fi
 if [ "$PRUEBAS" = 1 ]; then
   (cd "$RAIZ_PRUEBAS" && python3 -m pytest -q kerna/pruebas/unitarias/test_front*.py -p no:cacheprovider) || { echo "Pruebas del front fallaron: no se despliega." >&2; exit 1; }
 fi
 cp -r "$AQUI/app/." "$TMP/app/"; cp "$AQUI/requirements.txt" "$TMP/"
+# solo el esquema de ajustes de kerna_comun (el resto trae dependencias de Azure que el front no necesita)
+mkdir -p "$TMP/kerna_comun"; cp "$COMUN/ajustes_esquema.py" "$COMUN/__init__.py" "$TMP/kerna_comun/"
 rm -rf "$TMP/app/__pycache__" "$TMP/app/kql"; mkdir "$TMP/app/kql"
 for k in informe_revision_manual latencia_por_etapa disponibilidad_efectiva errores_por_proveedor solicitudes_por_modo tokens_por_solicitud front_casos_por_dia front_articulos_por_ley front_valoraciones front_latencia front_reintentos front_tokens_por_modelo front_pendientes_motivos front_reintentos_resumen front_horarios; do
   cp "$RAIZ_KQL/kerna/docs/observabilidad/consultas/$k.kql" "$TMP/app/kql/"

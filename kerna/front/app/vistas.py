@@ -13,6 +13,7 @@ from __future__ import annotations
 import math
 import time
 
+from . import ajustes as aj
 from . import formato as f
 from . import informe as inf
 from . import graficos
@@ -124,6 +125,7 @@ def etapas_lista(filas: list[dict]) -> list[dict]:
 def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict | None = None, costo: dict | None = None,
             etapas: list[dict] | None = None, horarios: dict | None = None, dias: int = 7, ahora: float | None = None, conector: dict | None = None) -> dict:
     """`conector`: estado real del conector (reintentos.con_estado_real): «revisión manual» y «sin sugerencia» cuentan casos distintos que existen hoy en Veridy."""
+    META_P95_S = aj.meta_respuesta_s()  # meta guardada en Ajustes: sombrea la constante del módulo solo en el Resumen
     mp = Mapas()
     tot = m["total_casos"]
     con_sug = sum(c["con_sugerencia"] for c in m["casos_por_dia"])

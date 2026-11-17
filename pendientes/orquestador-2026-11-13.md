@@ -36,6 +36,8 @@ Si falta uno, crear un script de función fija en `kerna/operaciones/`, commitea
 | Cargar denuncias en Veridy | `kerna/operaciones/cargar_denuncias.sh [N] [--dry-run \| --verificar \| --casos …]` (idempotente; código 3 = límite por hora, repetir después) |
 | Borrar de Veridy los casos que Kerna no puede procesar (sin acceso, sin texto, ilegibles; sin `--aplicar` solo cuenta; tope 10 salvo `--max`) | `kerna/operaciones/borrar_casos_invalidos.sh [--aplicar] [--max N]` |
 | Crear la cuenta `kerna-e2e` de Veridy (destinatario sin permisos extra; clave en Key Vault `veridy-kerna-e2e-password`, nunca impresa; verifica el inicio de sesión; idempotente) | `kerna/operaciones/crear_cuenta_e2e.sh` |
+| Crear las cuentas receptoras de los equipos de «Compartir con» (`kerna-equipo-comite`, `-auditoria`, `-legal`; sin canales; claves en Key Vault de Veridy, nunca impresas; idempotente) | `kerna/operaciones/crear_equipos.sh` |
+| Probar los ajustes del panel de punta a punta en producción (guarda valores de prueba, verifica conector y núcleo, restaura; códigos 0/1/2) | `kerna/operaciones/probar_ajustes.sh` |
 | Ejecutar un script de Python dentro del contenedor de Veridy (base de los dos anteriores; se carga con `source`) | `kerna/operaciones/_veridy_remoto.sh` (`remoto_py archivo.py`) |
 | Historial del ping al front (Logic App cada 15 min) | `kerna/operaciones/ping_front.sh [N]` |
 | TTFB del front, frío y caliente | `kerna/operaciones/ttfb_front.sh` |

@@ -12,10 +12,11 @@ import os
 import signal
 import sys
 import threading
+import time
 
 from kerna_comun import telemetria
 
-from .ajustes import APLICADOS, LectorAjustes, parametros
+from .ajustes import APLICADOS, LectorAjustes, nombres_receptores, parametros
 from .config import Config, ErrorConfiguracion
 from .estado import abrir_estado
 from .nucleo import ClienteNucleo
@@ -44,7 +45,10 @@ def _vivo(estado, r, p, en_reintento: bool) -> dict:
             "enviados": r.enviados, "sugerencias": r.sugerencias, "errores": r.errores, "en_reintento": en_reintento,
             "intervalo_s": int(p.intervalo_s), "ajustes_de_tabla": bool(p.de_ajustes),
             "ajustes_aplicados": ",".join(APLICADOS), "envios_max": p.envios_max, "reintentos_max": p.reintentos_max,
-            "espera_h": int(p.reintento_horas)}
+            "espera_h": int(p.reintento_horas),
+            "sin_sugerencia_alerta": estado.contar_sin_sugerencia_antes(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - p.alerta_h * 3600))),
+            "alerta_h": p.alerta_h, "equipos": ",".join(p.equipos or ()),
+            "equipos_sin_cuenta": ",".join(r.equipos_sin_cuenta)}
 
 
 def main(argv=None) -> int:
@@ -81,7 +85,9 @@ def main(argv=None) -> int:
                     estado.marcar_procesado("_ajustes", "reprocesar", p.reprocesar_marca)
                     solicitud.solicitar("ajustes")  # «Reintentar los de revisión manual»: una vez por guardado
                 corrida = solicitud.activa()
-                r = ejecutar_pasada(veridy, nucleo, estado, cfg.id_empresa, compartir_con=cfg.compartir_con,
+                compartir = (nombres_receptores(p.equipos) if p.equipos is not None
+                             else ((cfg.compartir_con,) if cfg.compartir_con else ()))
+                r = ejecutar_pasada(veridy, nucleo, estado, cfg.id_empresa, compartir_con=compartir,
                                     reprocesar=cfg.reprocesar, reintentos_max=p.reintentos_max,
                                     reintento_horas=p.reintento_horas, envios_max=p.envios_max, corrida=corrida,
                                     en_vuelo_max=en_vuelo_max)

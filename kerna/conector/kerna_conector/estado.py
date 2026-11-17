@@ -112,6 +112,8 @@ class Estado(ABC):
     @abstractmethod
     def contar_modos(self) -> dict: ...
     @abstractmethod
+    def contar_sin_sugerencia_antes(self, limite_iso: str) -> int: ...
+    @abstractmethod
     def archivar_ausentes(self, vigentes: set) -> tuple[int, int]: ...
     @abstractmethod
     def contar_archivados(self) -> int: ...
@@ -239,6 +241,15 @@ class _EstadoSql(Estado):
             k = str(modo) if modo else "desconocido"
             out[k] = out.get(k, 0) + int(n)
         return out
+
+    def contar_sin_sugerencia_antes(self, limite_iso: str) -> int:
+        """Casos no archivados vistos por primera vez hasta `limite_iso` que aún no tienen sugerencia:
+        en estado nuevo, pendiente o error, o con la última sugerencia en revisión manual."""
+        fila = self._uno(
+            "SELECT COUNT(*) FROM correspondencia_caso c WHERE c.creado_en <= ? AND c.id_caso NOT IN (%s) AND "
+            "(c.estado IN ('nuevo', 'pendiente', 'error') OR c.id_caso IN (SELECT id_caso FROM objeto_procesado "
+            "WHERE tipo = 'resultado' AND clave = 'actual' AND id_nota LIKE ?))" % _ARCHIVADOS, (limite_iso, "revision_manual%"))
+        return int(fila[0]) if fila else 0
 
     def _ids_archivados(self) -> set:
         return {f[0] for f in self._ejecutar(_ARCHIVADOS, lectura=True)}

@@ -21,6 +21,17 @@ from .formato import fecha_hora
 TABLA = "reintentosmanuales"
 PK, RK = "kerna", "solicitud"
 HORAS_AUTO = float(os.environ.get("KERNA_REINTENTO_HORAS", "24"))
+
+
+def horas_auto() -> float:
+    """Horas de espera entre reintentos guardadas en Ajustes (`espera`); sin datos, la del defecto."""
+    from . import ajustes, cache
+    try:
+        return float(cache.obtener(("ajustes",), ajustes.cargar, 15, vida_max=86400)["valores"]["espera"])
+    except Exception:
+        return float(ajustes.esq.DEFECTOS["espera"])
+
+
 MOTIVOS = {  # motivo técnico -> (texto simple, ¿se reintenta solo?)
     "cadena_agotada": ("Los modelos de IA no estaban disponibles", True),
     "tiempo_agotado": ("El análisis tardó más de lo permitido", True),
@@ -64,7 +75,7 @@ def resumen(dias: int = 7, ejecutar=None, ahora=None) -> dict:
     proximo = None
     if pendientes and ultimo:
         u = datetime.fromisoformat(str(ultimo).replace("Z", "+00:00"))
-        proximo = max(u + timedelta(hours=HORAS_AUTO), ahora).isoformat()
+        proximo = max(u + timedelta(hours=horas_auto()), ahora).isoformat()
     return {"total": sum(x["casos"] for x in motivos), "reintentables": pendientes, "motivos": motivos,
             "proximo_auto": proximo, "ultimo_reintento": str(ultimo) if ultimo else None}
 
@@ -103,7 +114,8 @@ def con_estado_real(r: dict | None, c: dict | None, ahora=None) -> dict | None:
     # modo de la sugerencia final de cada caso (lo publica el conector): principal + respaldo = con sugerencia; sin el dato (o con casos sin modo conocido) no hay reparto
     repartido = c.get("modo_oficial") is not None and not _num(c.get("modo_desconocido"))
     principal = min(con_sug, _num(c.get("modo_oficial"))) if repartido else None
-    return {"total": man + err, "reintentables": man + err, "motivos": motivos, "proximo_auto": None, "ultimo_reintento": (r or {}).get("ultimo_reintento"),
+    alerta_n, alerta_h = _num(c.get("sin_sugerencia_alerta")), _num(c.get("alerta_h"))
+    return {"total": man + err, "reintentables": man + err, "motivos": motivos, "proximo_auto": None, "alerta_n": alerta_n, "alerta_h": alerta_h, "ultimo_reintento": (r or {}).get("ultimo_reintento"),
             "fuente": "conector", "actualizado_en": c.get("actualizado_en"), "casos": casos, "con_sugerencia": con_sug, "manual": man, "principal": principal, "respaldo": None if principal is None else con_sug - principal,
             "manual_motivos": [(m["texto"], m["casos"]) for m in motivos if m["motivo"] != "error"], "sin_sugerencia": max(0, casos - con_sug), "en_proceso": _num(c.get("nuevo")) + _num(c.get("pendiente"))}
 

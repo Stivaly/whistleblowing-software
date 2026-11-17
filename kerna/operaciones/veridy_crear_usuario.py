@@ -2,6 +2,7 @@
 # Crea un destinatario de Veridy con la misma función que usa la administración (db_create_user): clave de cifrado propia,
 # contraseña leída de Key Vault (nunca se imprime) y asignación a los mismos canales que la cuenta de servicio del conector.
 # Idempotente: si el usuario existe, solo repara su pertenencia a los canales. Imprime únicamente CREADA / EXISTE.
+# Variable opcional CANALES (por defecto True): con False no se asigna a ningún canal (no recibe denuncias nuevas por sí solo).
 import json, os, urllib.parse, urllib.request
 
 from globaleaks import models
@@ -19,6 +20,7 @@ def secreto(nombre):
         "%s/secrets/%s?api-version=7.4" % (kv, nombre), headers={"Authorization": "Bearer " + t}), timeout=30))["value"]
 
 
+CANALES = globals().get("CANALES", True)
 set_db_uri(os.environ["GLOBALEAKS_DB_URI"])
 s = get_session()
 try:
@@ -39,7 +41,7 @@ try:
         u = db_create_user(s, 1, None, req, modelo.language)
         s.flush()
         estado = "CREADA"
-    for (ctx,) in s.query(models.ReceiverContext.context_id).filter(models.ReceiverContext.receiver_id == modelo.id).all():
+    for (ctx,) in (s.query(models.ReceiverContext.context_id).filter(models.ReceiverContext.receiver_id == modelo.id).all() if CANALES else []):
         if not s.query(models.ReceiverContext).filter(models.ReceiverContext.context_id == ctx, models.ReceiverContext.receiver_id == u.id).first():
             s.add(models.ReceiverContext({"context_id": ctx, "receiver_id": u.id, "order": 0}))
     s.commit()

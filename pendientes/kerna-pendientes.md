@@ -455,15 +455,16 @@ Ninguna clave se ve ni se imprime: los scripts las leen de Key Vault por dentro.
 
 Si una tarea no tiene script, no la improvises con comandos sueltos: escribe un script nuevo de función fija en `kerna/operaciones/`, commitéalo y agrégalo a este índice.
 
-## Ajustes de IA que debe leer el núcleo (anotado 2026-11-13 por el agente del conector)
-El conector ya aplica `envios`, `reintentos`, `espera`, `revision` y `reprocesar` (ver `pendientes/contrato-reintento-conector.md`). Falta que el núcleo lea de la tabla `ajustes` (fila `kerna`/`actual`, JSON en `valores`) y aplique: `evaluador` (revisor automático de citas, bool), `candidatos` (artículos por caso, 3 a 20, depende de `evaluador`) y `cadena` (orden y activación de modelos: lista de `{v: azure|gemini, on: bool}`). Las llaves `compartir`, `maxresp` y `alerta` son del panel. Referencia: `kerna/front/app/ajustes.py` (`validar`).
+## Ajustes de IA que lee el núcleo
+Los 11 ajustes de la vista «Ajustes» tienen consumidor. Valores, rangos y validación: `kerna/comun/kerna_comun/ajustes_esquema.py` (lo importan el front, el conector y el núcleo; los defectos son lo desplegado). El núcleo (`kerna/nucleo/kerna_nucleo/ajustes_vivos.py`) lee la fila `ajustes`/`kerna`/`actual` como mucho cada 20 s y aplica a los casos que empiezan después: `evaluador` (revisor automático de citas), `candidatos` (artículos por caso, 10 a 70 de 10 en 10; nunca más de lo que recupera) y `cadena` (orden y activación de Azure y Gemini; el primero queda «oficial»). Sin fila o sin tabla rigen las variables `KERNA_*`. Con `KERNA_ALMACEN=memoria` el lector está apagado. El conector aplica `envios`, `reintentos`, `espera`, `revision`, `reprocesar`, `compartir` y `alerta` (ver `pendientes/contrato-reintento-conector.md`); el panel usa `maxresp` en el Resumen y `espera` en la fecha estimada del próximo reintento. El Informe formal sigue midiendo contra PR-30 (15 s).
+Cuentas de los equipos de «Compartir con»: `kerna/operaciones/crear_equipos.sh` (comité, auditoría y fiscalía; sin canales). Prueba de punta a punta en producción: `kerna/operaciones/probar_ajustes.sh`.
 
 ## Ajustes con movimiento, botón de reintento y «En vivo» (2026-11-13, agente de Ajustes)
 Hecho y desplegado (commits 7cb3fc2af a ff6732151): órbitas que giran (capas SVG y halo WebP `ap-halo.webp`, compositor), satélites y arco con transición, estados guardando/guardado/error con guardado por fetch, insignias «Se aplica ya» (solo Procesamiento) y «Aún no se aplica», restaurar por fila, teclado en selectores, `.aj` a 1.392 px; botón de reintento que nunca desaparece (`reintentos.vista_boton`, `_reintento_accion.html`, `/panel/reintentar/estado`); «En vivo» con hora del último dato (fila `conector`). Prueba: `kerna/operaciones/probar_movimiento.sh`.
 Falta (en orden):
 1. Los nombres de equipos en el panel de «Compartir» se ven a ~8 px a 1366 (el SVG de 480 de ancho se reduce a ~256): pasar los rótulos a HTML o usar un viewBox más angosto (`kerna/front/app/estaticos/ajustes.js`, escena `comp`).
-2. `maxresp`, `alerta` y `compartir` están marcados «Aún no se aplica» (supuesto, a confirmar): ningún componente los lee hoy (`kerna/front/app/ajustes.py`, `APLICA_YA`). Cuando el panel o el núcleo los use, agregarlos a `APLICA_YA`.
-3. Los ajustes de IA (`evaluador`, `candidatos`, `cadena`) siguen siendo del núcleo (ver sección anterior).
+2. Los once ajustes se aplican (`APLICA_YA` completo en `kerna/front/app/ajustes.py`).
+3. Los ajustes de IA (`evaluador`, `candidatos`, `cadena`) los lee el núcleo (ver sección anterior).
 4. El estado «en curso» del botón solo se verificó con respuesta simulada (no se pulsó el reintento real): comprobarlo cuando haya un pedido real.
 5. Arco de «Meta de respuesta»: anima `stroke-dasharray` (no solo transform/opacity) porque es una transición corta de un SVG de 120 px disparada por el control; no hay animación continua.
 

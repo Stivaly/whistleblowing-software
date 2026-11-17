@@ -44,9 +44,9 @@
       const rE = el('circle', { class: 'ao hk', 'data-k': 'evaluador', cx: 150, cy: 150, r: 132 }, l1), C = N(20).map(() => sat(l1, 'cd', 'candidatos', 282, 150, 4, 150, 150)), sE = sat(l1, 'as', 'evaluador', 282, 150, 9, 150, 150);
       const rA = el('circle', { class: 'ao hk', 'data-k': 'cadena', cx: 150, cy: 150, r: 62 }, l2), rB = el('circle', { class: 'ao hk', 'data-k': 'cadena', cx: 150, cy: 150, r: 96 }, l2);
       const sA = sat(l2, 'as', 'cadena', 212, 150, 11, 150, 150), sB = sat(l2, 'as', 'cadena', 246, 150, 8, 150, 150); nucleo(st, 150, 150, 20);
-      return (v) => { const a = v.cadena[0] && v.cadena[0].on, b = v.cadena[1] && v.cadena[1].on, nc = Math.max(3, v.candidatos);
+      return (v) => { const a = v.cadena[0] && v.cadena[0].on, b = v.cadena[1] && v.cadena[1].on, nc = Math.max(3, Math.round(v.candidatos * 20 / items.candidatos.max));
         rE.setAttribute('class', 'ao hk ' + (v.evaluador ? 'solid' : 'dim')); rA.setAttribute('class', 'ao hk ' + (a ? 'solid' : 'dim')); rB.setAttribute('class', 'ao hk ' + (b ? 'solid' : 'dim'));
-        C.forEach((g, i) => poner(g, i * 360 / nc + 9, v.evaluador && i < v.candidatos)); poner(sE, 40, v.evaluador); poner(sA, 200, a); poner(sB, 120, b); };
+        C.forEach((g, i) => poner(g, i * 360 / nc + 9, v.evaluador && i < nc)); poner(sE, 40, v.evaluador); poner(sA, 200, a); poner(sB, 120, b); };
     },
     comp(h) {
       const W = 280, CY = 28, l1 = capa(h, 'ap-l1', '0 0 280 78', '50% 36%'), l2 = capa(h, 'ap-l2', '0 0 280 78', '50% 36%'), st = capa(h, 'ap-s', '0 0 280 78');
@@ -130,7 +130,8 @@
         b.onclick = () => { const a = [...s.cadena]; [a[i], a[i + d]] = [a[i + d], a[i]]; s.cadena = a; c.dataset.foco = m.v + (b.disabled ? (id === 'u' ? 'd' : 'u') : id); pintar(); const f = $('[data-id="' + c.dataset.foco + '"]:not(:disabled)', c) || $('[data-id="' + m.v + (id === 'u' ? 'd' : 'u') + '"]', c); if (f) f.focus(); }; bt.appendChild(b);
       });
       const sw = document.createElement('button'); sw.type = 'button'; sw.setAttribute('role', 'switch'); sw.className = 'sw ml-1'; sw.dataset.id = m.v + 's'; sw.setAttribute('aria-checked', m.on); sw.setAttribute('aria-label', 'Usar ' + M[m.v][0]);
-      sw.onclick = () => { m.on = !m.on; pintar(); const f = $('[data-id="' + m.v + 's"]', c); if (f) f.focus(); }; bt.appendChild(sw);
+      if (m.on && v.filter((x) => x.on).length < 2) { sw.disabled = true; sw.setAttribute('aria-disabled', 'true'); }
+      sw.onclick = () => { if (sw.disabled) return; m.on = !m.on; pintar(); const f = $('[data-id="' + m.v + 's"]', c); if (f) f.focus(); }; bt.appendChild(sw);
       host.appendChild(row);
     });
     if (memo) { const f = $('[data-id="' + memo + '"]:not(:disabled)', host); if (f) f.focus(); }

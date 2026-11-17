@@ -41,7 +41,7 @@ Se reescribe al final de cada pasada (cada `intervalo_s`, 30 s por defecto; 10 s
 
 ## Ajustes que el conector ya aplica
 
-Lee la fila `ajustes`/`kerna`/`actual` en cada pasada (`ajustes_de_tabla` en la fila `conector` indica si la leyó) y aplica de inmediato, sin reiniciar; la fila `conector` también trae los valores en uso (`envios_max`, `reintentos_max`, `espera_h`, `intervalo_s`, `ajustes_aplicados`):
+Lee la fila `ajustes`/`kerna`/`actual` en cada pasada (`ajustes_de_tabla` en la fila `conector` indica si la leyó) y aplica de inmediato, sin reiniciar; la fila `conector` también trae los valores en uso (`envios_max`, `reintentos_max`, `espera_h`, `intervalo_s`, `alerta_h`, `equipos`, `equipos_sin_cuenta`, `ajustes_aplicados`):
 
 | Ajuste del panel | Efecto |
 |---|---|
@@ -50,8 +50,12 @@ Lee la fila `ajustes`/`kerna`/`actual` en cada pasada (`ajustes_de_tabla` en la 
 | `espera` (Esperar entre reintentos) | horas entre reintentos automáticos |
 | `revision` (Revisar Veridy cada) | segundos entre pasadas (5 a 3600) |
 | `reprocesar` (Reintentar los de revisión manual) | por cada guardado con el ajuste activo, el conector crea un pedido `origen=ajustes` y corre el reintento manual |
+| `compartir` (Compartir con) | cada equipo marcado es una cuenta receptora de Veridy (`kerna_comun/ajustes_esquema.py`, `EQUIPOS`; `KERNA_EQUIPOS_RECEPTOR` la anula) con la que se comparte cada caso, una vez por caso y receptor. Lista vacía = nadie. Sin la llave rige `VERIDY_COMPARTIR_CON`. Quitar un equipo no le quita lo ya compartido. Un equipo sin cuenta en Veridy no bloquea a los demás y queda en `equipos_sin_cuenta` (nombres, separados por coma). Cuentas nuevas: `kerna/operaciones/crear_equipos.sh` |
+| `alerta` (Avisar sin sugerencia tras: 1, 6 o 24 h) | `sin_sugerencia_alerta` en la fila `conector`: casos no archivados vistos hace más de `alerta_h` horas que siguen sin sugerencia (nuevo, pendiente, error o revisión manual) |
 
-Valores fuera de rango se ignoran (rige el del entorno). **No son del conector** (los aplica el núcleo, ver `kerna-pendientes.md`): `evaluador`, `candidatos`, `cadena`; `compartir`, `maxresp` y `alerta` son del panel.
+Campos de la fila `conector` para estos dos ajustes: `sin_sugerencia_alerta` (entero), `alerta_h`, `equipos` (ids aplicados, separados por coma) y `equipos_sin_cuenta`. El panel los muestra en «En espera» (chip «Más de N h sin sugerencia»).
+
+Valores fuera de rango se ignoran (rige el del entorno). **No son del conector**: `evaluador`, `candidatos` y `cadena` los aplica el núcleo (lee la tabla cada 20 s); `maxresp` (meta de respuesta del Resumen) y `espera` (fecha estimada del próximo reintento) también los usa el panel.
 
 ## Observaciones de la verificación (2026-11-13)
 - Desde la reconciliación, los conteos de la fila `conector` solo cuentan los casos que existen en Veridy: `completado` ya no supera a `casos` y `resultado_desconocido` no incluye casos borrados. Si Veridy devuelve una lista vacía se trata como fallo de lectura y no se archiva nada. (Antes de ello, 62 casos borrados inflaban los conteos.) El primer pedido real tomó 99 casos de 117 en Veridy y tardó 29 min (el núcleo atiende ~3 casos por minuto con 12 en vuelo).

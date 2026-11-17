@@ -9,7 +9,8 @@
 <p class="mk">En espera{{ tip('pendientes', rei.ayuda) }}</p>
 <div class="cola-l">
 {% if n %}{% for x in rei.r.motivos %}<span class="cola-m s-{{ 'warn' if x.se_reintenta else 'na' }}">{{ ic(motivo_ico(x.texto, x.se_reintenta), px=40) }}<b>{{ miles(x.casos) }}</b><span>{{ x.texto }}</span></span>{% endfor %}
-{% else %}<span class="cola-m s-ok">{{ ic('e-lista', px=40) }}<span>Sin casos en espera</span></span>{% endif %}
+{% elif not rei.r.alerta_n %}<span class="cola-m s-ok">{{ ic('e-lista', px=40) }}<span>Sin casos en espera</span></span>{% endif %}
+{% if rei.r.alerta_n %}<span class="cola-m s-bad">{{ ic('e-contingencia-modelo', px=40) }}<b>{{ miles(rei.r.alerta_n) }}</b><span>Más de {{ rei.r.alerta_h }} h sin sugerencia</span></span>{% endif %}
 <span class="cola-a" data-rei-acc>{{ accion(vb) }}</span>
 </div></div>
 <dialog id="dlg-rei" class="dlg" aria-labelledby="dlg-rei-t"><form method="dialog" class="dlg-f">

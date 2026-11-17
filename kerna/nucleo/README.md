@@ -36,3 +36,6 @@ python3 -m pytest pruebas/integracion/test_nucleo_real.py -m integracion   # ser
 ## Estado
 
 Gemini: `gemini-3.5-flash-lite` y `gemma-4-31b-it` aceptan esquema JSON e instrucción de sistema por REST; si un modelo responde 400, el cliente repite sin esquema y sin instrucción de sistema y el enrutador extrae y valida el JSON. Voyage, Qdrant y el servicio local solo se prueban simulados en las pruebas unitarias.
+
+## Ajustes del panel
+Lee la tabla `ajustes` (fila kerna/actual) cada 20 s (`ajustes_vivos.py`) y aplica a cada caso nuevo `evaluador`, `candidatos` y `cadena` (orden de modelos); sin fila rigen las variables `KERNA_*`.

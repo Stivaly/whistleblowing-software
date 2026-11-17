@@ -16,13 +16,16 @@ from .evaluador import Evaluador
 from .evaluador_ids import EvaluadorIds, segmentar_articulo
 from .reranker_llm import RerankerLLM
 from .revisor import Revisor
-from .enrutador import CadenaAgotada, Enrutador, PlazoAgotado
+from .ajustes_vivos import aplicar_config, aplicar_niveles
+from .enrutador import NIVELES_CASO, CadenaAgotada, Enrutador, PlazoAgotado
 from .retriever import RecuperacionFallida, Retriever
 from .validador import normalizar, validar
 
 _log = logging.getLogger("kerna.nucleo")
 # Orden completo que dejó el evaluador en la cadena en curso (para el reranker LLM y la sonda de evaluación).
 _ORDEN_EVAL: contextvars.ContextVar = contextvars.ContextVar("orden_evaluador", default=None)
+# Configuración efectiva del caso en curso (ajustes del panel); None = la base.
+_CONFIG_CASO: contextvars.ContextVar = contextvars.ContextVar("config_caso", default=None)
 _SIN_REVISION = SimpleNamespace(dictamenes={}, alertas=[])  # revisor activo sin dictámenes: todo «sin_revision»
 
 
@@ -51,10 +54,21 @@ def _norma(f: dict) -> str:
 
 
 class Orquestador:
-    def __init__(self, config, almacen, enrutador: Enrutador, retriever: Retriever, reloj):
-        self.config, self.almacen, self.enrutador, self.retriever, self.reloj = config, almacen, enrutador, retriever, reloj
+    def __init__(self, config, almacen, enrutador: Enrutador, retriever: Retriever, reloj, ajustes=None):
+        self._config = config
+        self.almacen, self.enrutador, self.retriever, self.reloj = almacen, enrutador, retriever, reloj
+        self.ajustes = ajustes
+        self._guardado_visto = None
         # Cadenas simultáneas: el resto espera su turno (los proveedores limitan las peticiones por minuto).
         self._turnos = asyncio.Semaphore(max(1, int(getattr(config, "concurrencia", 2))))
+
+    @property
+    def config(self):
+        return _CONFIG_CASO.get() or self._config
+
+    @config.setter
+    def config(self, valor) -> None:
+        self._config = valor
 
     async def procesar(self, solicitud: dict, texto: str) -> None:
         """Ejecuta la cadena y deja el resultado en el almacén. Nunca propaga errores ni registra el texto."""
@@ -65,6 +79,15 @@ class Orquestador:
         cliente, ref, ids = solicitud["cliente"], solicitud["ref_opaca"], solicitud["id_solicitud"]
         inicio = self.reloj()
         reg: dict = {"tokens_entrada": 0, "tokens_salida": 0, "citas_rechazadas": 0}
+        ef = await self.ajustes.efectivos() if self.ajustes else None
+        tok_cfg = tok_niv = None
+        if ef:
+            tok_cfg = _CONFIG_CASO.set(aplicar_config(self._config, ef, self.retriever.top_k))
+            tok_niv = NIVELES_CASO.set(aplicar_niveles(self.enrutador.niveles, ef["cadena"]))
+            if ef.get("guardado_en") != self._guardado_visto:
+                self._guardado_visto = ef.get("guardado_en")
+                telemetria.evento("ajustes_aplicados", evaluador=ef["evaluador"], candidatos=ef["candidatos"],
+                                  cadena=">".join(m["v"] for m in ef["cadena"] if m["on"]), guardado_en=ef.get("guardado_en"))
         try:
             resultado = await self._cadena(ids, texto, inicio, reg)
         except PlazoAgotado:
@@ -76,6 +99,10 @@ class Orquestador:
             resultado = self._manual("cadena_agotada")
         finally:
             texto = ""  # el texto del caso no sobrevive a la solicitud
+            efectivo = (self.config.evaluador, self.config.evaluador_candidatos)
+            if tok_cfg is not None:
+                _CONFIG_CASO.reset(tok_cfg)
+                NIVELES_CASO.reset(tok_niv)
         articulos = resultado.pop("articulos", [])
         resultado.setdefault("recuperacion", reg.get("recuperacion", "nube"))
         resultado.setdefault("version_corpus", reg.get("version_corpus", 0))
@@ -92,7 +119,8 @@ class Orquestador:
                           recuperacion=resultado["recuperacion"], contingencia=contingencia,
                           modelo=reg.get("modelo"), proveedor=reg.get("proveedor"), articulos=len(articulos), citas_rechazadas=reg["citas_rechazadas"],
                           tokens_entrada=reg["tokens_entrada"], tokens_salida=reg["tokens_salida"],
-                          duracion_ms=round((self.reloj() - inicio) * 1000))
+                          duracion_ms=round((self.reloj() - inicio) * 1000), ajustes_de_tabla=bool(ef),
+                          evaluador=bool(efectivo[0]), candidatos=efectivo[1])
 
     @staticmethod
     def _manual(motivo: str, **extra) -> dict:

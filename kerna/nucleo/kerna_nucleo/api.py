@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 from kerna_comun import anonimizador, telemetria
 
 from . import VERSION
+from .ajustes_vivos import AjustesVivos
 from .almacen import Almacen, crear_almacen
 from .auth import DURACION_S, Autenticador
 from .config import Config
@@ -89,7 +90,7 @@ def _reranker_local(config: Config, proveedores: Proveedores):
 
 
 def crear_app(config: Config | None = None, almacen: Almacen | None = None, proveedores: Proveedores | None = None,
-              reloj=None) -> FastAPI:
+              reloj=None, ajustes=None) -> FastAPI:
     config = config or Config.desde_entorno()
     reloj = reloj or time.time
     almacen = almacen or crear_almacen(config)
@@ -111,7 +112,8 @@ def crear_app(config: Config | None = None, almacen: Almacen | None = None, prov
                           extras_fusion=config.hibrida_extras, enr_bm25=config.enr_bm25,
                           coleccion_aparte=config.enr_coleccion_aparte, peso_aparte=config.enr_peso_aparte,
                           rol_factor=config.enr_rol_factor)
-    orquestador = Orquestador(config, almacen, enrutador, retriever, reloj)
+    ajustes = ajustes if ajustes is not None else (AjustesVivos.desde_config(config) if config.almacen == "tablas" else None)
+    orquestador = Orquestador(config, almacen, enrutador, retriever, reloj, ajustes)
 
     app = FastAPI(title="Kerna AI núcleo", version=VERSION)
     app.state.tareas = set()
