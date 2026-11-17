@@ -2,6 +2,7 @@
 # Prueba de punta a punta los ajustes del panel en producción: guarda valores de prueba, verifica que el conector y el
 # núcleo los apliquen y restaura los originales (también si algo falla). Solo usa az y curl; nunca imprime claves.
 # Uso: kerna/operaciones/probar_ajustes.sh [--solo-panel] [--lote N]
+#   CARGA_CMD="..."  comando que envía un caso nuevo en lugar del lote (p. ej. una denuncia de otro set de evaluación)
 #   --lote N       tras guardar, carga el lote de N denuncias sintéticas para que el núcleo procese un caso nuevo (por defecto 2;
 #                  es idempotente: si ese lote ya existe entero, súbelo en cada repetición: 3, 4, ...)
 #   --solo-panel   solo guarda, comprueba la tabla y que el Resumen use la meta de respuesta guardada; restaura (no necesita Veridy)
@@ -76,7 +77,7 @@ while [ $SECONDS -lt $FIN ]; do conector_ok && { HECHO=1; break; }; sleep 10; do
 KQL='AppTraces | where TimeGenerated > ago(30m) and Message == "ajustes_aplicados" | where tostring(Properties.candidatos) == "40" and tostring(Properties.cadena) == "gemini>azure" | count'
 FIN=$((SECONDS+480)); HECHO=0
 echo "       (el núcleo ve el guardado al procesar un caso: cargo el lote $LOTE; los eventos tardan minutos en la telemetría)"
-"$AQUI/cargar_denuncias.sh" "$LOTE" 2>&1 | tail -2
+if [ -n "${CARGA_CMD:-}" ]; then bash -c "$CARGA_CMD" 2>&1 | tail -2; else "$AQUI/cargar_denuncias.sh" "$LOTE" 2>&1 | tail -2; fi
 while [ $SECONDS -lt $FIN ]; do
   N="$("$AQUI/telemetria.sh" kql "$KQL" 1 2>/dev/null | grep -Eo '[0-9]+' | tail -1)"
   [ "${N:-0}" -gt 0 ] && { HECHO=1; break; }; sleep 20

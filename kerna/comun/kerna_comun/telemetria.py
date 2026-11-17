@@ -15,6 +15,7 @@ ATRIBUTOS_PERMITIDOS = frozenset({
     "embedding", "coleccion", "version_corpus", "estado", "motivo", "codigo", "intento", "duracion_ms",
     "tokens_entrada", "tokens_salida", "articulos", "citas_rechazadas", "json_valido", "contingencia",
     "resultado", "casos", "fragmentos", "tipo", "valoracion",
+    "evaluador", "candidatos", "cadena", "guardado_en",  # ajustes del panel aplicados (configuración, no contenido)
 })
 MAX_TEXTO = 64
 
