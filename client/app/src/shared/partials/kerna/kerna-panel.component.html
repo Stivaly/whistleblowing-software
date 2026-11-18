@@ -38,7 +38,11 @@
                   </label>
                 </div>
                 <p class="kerna-explicacion">{{ a.explicacion }}</p>
-                <blockquote class="kerna-cita">{{ a.cita }}</blockquote>
+                <button type="button" class="kerna-ver" [attr.aria-expanded]="citaAbierta(a.id_sugerencia)" [attr.aria-controls]="'kerna-cita-' + a.id_sugerencia"
+                        (click)="alternarCita(a.id_sugerencia)" data-cy="kerna-ver-cita">{{ t(citaAbierta(a.id_sugerencia) ? 'kerna.cita.ocultar' : 'kerna.cita.ver') }}</button>
+                @if (citaAbierta(a.id_sugerencia)) {
+                  <blockquote class="kerna-cita" [id]="'kerna-cita-' + a.id_sugerencia">{{ a.cita }}</blockquote>
+                }
                 @if (enlaceSeguro(a.enlace_fuente)) {
                   <a class="kerna-enlace" [href]="a.enlace_fuente" target="_blank" rel="noopener noreferrer">{{ t('kerna.enlace') }}</a>
                 }

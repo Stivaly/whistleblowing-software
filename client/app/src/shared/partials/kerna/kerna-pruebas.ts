@@ -245,7 +245,7 @@ caso("materia según la ley, segmentos del anillo y número de artículo", () =>
   assert.equal(formaSimbolo("sin-conexion"), "apagado");
   assert.equal(formaSimbolo("nucleo-no-disponible"), "apagado");
   assert.equal(formaSimbolo("conector-inactivo"), "apagado");
-  assert.equal(formaSimbolo("contingencia"), null);
+  assert.equal(formaSimbolo("contingencia"), "lista");
 });
 
 if (casos.length) {

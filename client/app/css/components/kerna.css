@@ -176,6 +176,9 @@
 .kerna-casilla input { accent-color: var(--k-verde); width: 16px; height: 16px; }
 .kerna-explicacion { margin: .5rem 0 .25rem; font-size: 12.5px; line-height: 1.5; }
 .kerna-cita { margin: .25rem 0; padding: .4rem .75rem; border-left: 3px solid var(--k-verde); background: transparent; color: var(--k-tinta); font-size: 12px; font-style: normal; }
+.kerna-ver { display: inline-block; margin: .1rem 0 .3rem; padding: .15rem .6rem; border: 1px solid var(--k-verde); background: transparent; color: var(--k-verde-txt); font-size: 12px; cursor: pointer; }
+.kerna-ver:hover { background: var(--k-linea); }
+.kerna-ver:focus-visible { outline: 3px solid #0b1020; outline-offset: 2px; }
 .kerna-enlace { display: inline-block; margin: 0 1rem .4rem 0; color: var(--k-verde-txt); font-size: 12px; text-decoration: underline; }
 .kerna-enlace:focus-visible, .kerna-panel a:focus-visible { outline: 3px solid #0b1020; outline-offset: 2px; }
 

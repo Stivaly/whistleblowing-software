@@ -198,12 +198,12 @@ export function claveEscena(id: EstadoId, variante: Variante): string {
 
 /**
  * Forma del símbolo de Kerna que sustituye a la escena en los estados que lo usan como indicador (null: conserva su escena).
- * generando/analizando gira rápido sin satélite; lista y valorada, satélite girando; sin-normativa, roseta quieta; el resto, apagado.
+ * generando/analizando gira rápido sin satélite; lista, valorada y contingencia (modo alternativo), satélite girando; sin-normativa, roseta quieta; el resto, apagado.
  */
 export function formaSimbolo(id: EstadoId): "lista" | "busca" | "vacio" | "apagado" | null {
   switch (id) {
     case "generando": return "busca";
-    case "lista": case "valorada": return "lista";
+    case "lista": case "valorada": case "contingencia": return "lista";
     case "sin-normativa": return "vacio";
     case "sin-conexion": case "nucleo-no-disponible": case "conector-inactivo": return "apagado";
     default: return null;

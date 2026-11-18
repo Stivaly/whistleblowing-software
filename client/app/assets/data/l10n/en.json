@@ -617,6 +617,8 @@
   "kerna.clasificacion.guardar": "Guardar clasificación",
   "kerna.clasificacion.ninguno": "Ninguno aplica",
   "kerna.enlace": "Ver el artículo en la Biblioteca del Congreso Nacional",
+  "kerna.cita.ver": "View verbatim quote",
+  "kerna.cita.ocultar": "Hide verbatim quote",
   "kerna.accion.actualizar": "Actualizar",
   "kerna.accion.reintentar": "Reintentar",
   "kerna.resumen.articulos": "{{norma}} · {{n}} artículos",

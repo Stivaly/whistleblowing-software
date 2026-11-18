@@ -54,6 +54,7 @@ export class KernaPanelComponent {
   }
 
   protected incluidos = new Set<string>();
+  private citasAbiertas = new Set<string>();
   protected agregados: string[] = [];
   protected otro = "";
   protected obsClasificacion = "";
@@ -110,6 +111,7 @@ export class KernaPanelComponent {
     }
     this.claveSincronizada = clave;
     this.incluidos = new Set<string>();
+    this.citasAbiertas = new Set<string>();
     this.agregados = [];
     this.obsClasificacion = "";
     this.valoraciones = {};
@@ -148,6 +150,18 @@ export class KernaPanelComponent {
       return;
     }
     v.enviada = await this.k.guardarValoracion(a.id_sugerencia, v.valor, v.obs);
+  }
+
+  protected citaAbierta(id: string): boolean {
+    return this.citasAbiertas.has(id);
+  }
+
+  protected alternarCita(id: string): void {
+    if (this.citasAbiertas.has(id)) {
+      this.citasAbiertas.delete(id);
+    } else {
+      this.citasAbiertas.add(id);
+    }
   }
 
   protected alternarIncluido(id: string, marcado: boolean): void {
