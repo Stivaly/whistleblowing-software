@@ -1289,3 +1289,13 @@ html,body{max-width:100%}
 .cl-c input:focus-visible,.cl-c select:focus-visible{outline:2px solid var(--brand);outline-offset:1px}.cl-f{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .cl-sec{font-family:ui-monospace,Menlo,monospace;font-size:13px}.cl-l{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink);display:grid;gap:6px}
 @media (max-width:640px){.cli .cl-ac{white-space:normal}.cl-f{grid-template-columns:1fr}}
+
+/* Clientes en pantallas angostas: cada fila es una tarjeta (la tabla dejaba los botones fuera de pantalla) */
+@media (max-width:960px){
+.cli .tabla table,.cli .tabla tbody,.cli .tabla tr,.cli .tabla td{display:block;width:100%}.cli .tabla thead{display:none}
+.cli .tabla tr{border:1px solid var(--line-strong);border-radius:12px;background:#fff;padding:10px 12px;margin-bottom:10px}
+.cli .tabla td{border:0;padding:3px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:right;font-size:13.5px}
+.cli .tabla td[data-l]::before{content:attr(data-l);font-weight:700;color:var(--brand);text-align:left;white-space:nowrap}
+.cli .tabla td:first-child{display:block;text-align:left;font-size:15px;padding-bottom:6px}
+.cli .tabla td.cl-ac{display:flex;flex-wrap:wrap;justify-content:stretch;gap:8px;padding-top:10px}.cli .cl-ac .btn{margin-left:0;flex:1 1 140px}
+}

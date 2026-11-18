@@ -10,20 +10,20 @@
 
 <section class="cl-s" aria-labelledby="cl-a"><h2 id="cl-a" class="mk">Clientes activos{{ tip('cli_activos') }}<span class="mk-r">{{ lista.activos|length }}</span></h2>
 {% if lista.activos %}<div class="tabla"><table><thead><tr><th>Cliente</th><th>Identificador</th><th>Plan</th><th class="n">Casos al mes</th><th>Alta</th><th>Acceso</th><th></th></tr></thead><tbody>
-{% for c in lista.activos %}<tr data-id="{{ c.id }}" data-nombre="{{ c.nombre }}"><td><b>{{ c.nombre }}</b>{% if c.rubro %}<br><small class="muted">{{ c.rubro }}</small>{% endif %}</td><td><code>{{ c.id }}</code></td><td>{{ c.plan_tipo|capitalize }}</td><td class="n">{{ c.cuota }}</td><td>{{ c.alta }}</td>
-<td>{% if c.protegido %}<span class="chip ok">{{ ic('lock', px=14, mini=True) }}<span>Cuenta de la plataforma</span></span>{% elif c.con_clave %}<span class="chip ok">{{ ic('key-round', px=14, mini=True) }}<span>Con clave</span></span>{% else %}<span class="chip">{{ ic('minus', px=14, mini=True) }}<span>Sin clave propia</span></span>{% endif %}</td>
+{% for c in lista.activos %}<tr data-id="{{ c.id }}" data-nombre="{{ c.nombre }}"><td><b>{{ c.nombre }}</b>{% if c.rubro %}<br><small class="muted">{{ c.rubro }}</small>{% endif %}</td><td data-l="Identificador"><code>{{ c.id }}</code></td><td data-l="Plan">{{ c.plan_tipo|capitalize }}</td><td class="n" data-l="Casos al mes">{{ c.cuota }}</td><td data-l="Alta">{{ c.alta }}</td>
+<td data-l="Acceso">{% if c.protegido %}<span class="chip ok">{{ ic('lock', px=14, mini=True) }}<span>Cuenta de la plataforma</span></span>{% elif c.con_clave %}<span class="chip ok">{{ ic('key-round', px=14, mini=True) }}<span>Con clave</span></span>{% else %}<span class="chip">{{ ic('minus', px=14, mini=True) }}<span>Sin clave propia</span></span>{% endif %}</td>
 <td class="cl-ac">{% if not c.protegido %}<button type="button" class="btn btn-sec" data-baja>Dar de baja</button><button type="button" class="btn btn-sec cl-pel" data-ley>Borrar por ley</button>{% endif %}</td></tr>{% endfor %}
 </tbody></table></div>{% else %}<p class="muted">Todavía no hay clientes. Agrega el primero.</p>{% endif %}</section>
 
 {% if lista.bajas %}<section class="cl-s" aria-labelledby="cl-b"><h2 id="cl-b" class="mk">Dados de baja{{ tip('cli_bajas') }}<span class="mk-r">{{ lista.bajas|length }}</span></h2>
 <div class="tabla"><table><thead><tr><th>Cliente</th><th>Identificador</th><th>Plan</th><th>Baja</th><th></th></tr></thead><tbody>
-{% for c in lista.bajas %}<tr data-id="{{ c.id }}" data-nombre="{{ c.nombre }}"><td><b>{{ c.nombre }}</b></td><td><code>{{ c.id }}</code></td><td>{{ c.plan_tipo|capitalize }}</td><td>{{ c.baja_en[:10] }}</td>
+{% for c in lista.bajas %}<tr data-id="{{ c.id }}" data-nombre="{{ c.nombre }}"><td><b>{{ c.nombre }}</b></td><td data-l="Identificador"><code>{{ c.id }}</code></td><td data-l="Plan">{{ c.plan_tipo|capitalize }}</td><td data-l="Baja">{{ c.baja_en[:10] }}</td>
 <td class="cl-ac"><button type="button" class="btn btn-sec" data-reactivar>Reactivar</button><button type="button" class="btn btn-sec cl-pel" data-ley>Borrar por ley</button></td></tr>{% endfor %}
 </tbody></table></div></section>{% endif %}
 
 {% if lista.anonimizados %}<section class="cl-s" aria-labelledby="cl-l"><h2 id="cl-l" class="mk">Borrados por ley{{ tip('cli_ley') }}<span class="mk-r">{{ lista.anonimizados|length }}</span></h2>
 <div class="tabla"><table><thead><tr><th>Código anónimo</th><th>Fecha</th><th class="n">Registros conservados</th><th>Referencia</th></tr></thead><tbody>
-{% for c in lista.anonimizados %}<tr><td><code>{{ c.id }}</code></td><td>{{ c.anonimizado_en[:10] }}</td><td class="n">{{ c.filas_anonimizadas }}</td><td>{{ c.referencia or '—' }}</td></tr>{% endfor %}
+{% for c in lista.anonimizados %}<tr><td><code>{{ c.id }}</code></td><td data-l="Fecha">{{ c.anonimizado_en[:10] }}</td><td class="n" data-l="Registros conservados">{{ c.filas_anonimizadas }}</td><td data-l="Referencia">{{ c.referencia or '—' }}</td></tr>{% endfor %}
 </tbody></table></div></section>{% endif %}
 
 <dialog id="dlg-nuevo" class="dlg" aria-labelledby="dlg-nuevo-t"><form method="dialog" class="dlg-f" data-form="crear">
