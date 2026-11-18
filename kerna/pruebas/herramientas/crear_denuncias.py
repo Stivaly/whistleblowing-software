@@ -349,6 +349,7 @@ def main(argv=None):
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--relato", choices=("completo", "resumen"), default="completo",
                     help="completo (defecto): título + texto_original; resumen: forma antigua de ~180 caracteres")
+    ap.add_argument("--dataset", default=None, help="JSON de casos distinto del público (p. ej. un set de evaluación); usa --registro propio")
     ap.add_argument("--registro", default=None, help="archivo de registro (defecto según --relato)")
     a = ap.parse_args(argv)
     if not (a.casos or a.lote or a.verificar):
@@ -360,7 +361,7 @@ def main(argv=None):
     try:
         if a.verificar:
             return verificar(a.url, reg)
-        casos = cargar_casos()
+        casos = cargar_casos(a.dataset or DATASET)
         ids = a.casos if a.casos else seleccionar_lote(list(casos.values()), a.lote)
         desconocidos = [i for i in ids if i not in casos]
         if desconocidos:

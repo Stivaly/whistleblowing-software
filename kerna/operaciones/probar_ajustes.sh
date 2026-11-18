@@ -5,11 +5,12 @@
 #   CARGA_CMD="..."  comando que envía un caso nuevo en lugar del lote (p. ej. una denuncia de otro set de evaluación)
 #   --lote N       tras guardar, carga el lote de N denuncias sintéticas para que el núcleo procese un caso nuevo (por defecto 2;
 #                  es idempotente: si ese lote ya existe entero, súbelo en cada repetición: 3, 4, ...)
+#   --restaurar-defectos   no prueba nada: deja Ajustes con los valores por defecto del esquema (úsalo si una corrida se cortó sin restaurar)
 #   --solo-panel   solo guarda, comprueba la tabla y que el Resumen use la meta de respuesta guardada; restaura (no necesita Veridy)
 # Requiere el front despierto, Veridy y el conector encendidos. Códigos: 0 todo bien, 1 algo falló, 2 conector o Veridy apagados.
 set -uo pipefail
-SOLO_PANEL=0; LOTE=2
-while [ $# -gt 0 ]; do case "$1" in --solo-panel) SOLO_PANEL=1;; --lote) shift; LOTE="${1:-2}";; esac; shift; done
+SOLO_PANEL=0; LOTE=2; DEFECTOS_SOLO=0
+while [ $# -gt 0 ]; do case "$1" in --solo-panel) SOLO_PANEL=1;; --restaurar-defectos) DEFECTOS_SOLO=1;; --lote) shift; LOTE="${1:-2}";; esac; shift; done
 AQUI="$(dirname "$0")"; . "$AQUI/_comun.sh"
 CLAVE="$(clave_front vigente)" || exit 1
 JAR="$(mktemp)"; ORIG="$(mktemp)"; trap 'restaurar; rm -f "$JAR" "$ORIG"' EXIT; FALLAS=0; RESTAURAR=0
@@ -42,6 +43,11 @@ restaurar() {
 R="$(c -o /dev/null -c "$JAR" -w '%{http_code}' --data-urlencode "clave=$CLAVE" "$FRONT_URL/acceso")"
 [ "$R" = 303 ] && grep -q kerna_panel "$JAR" && ok "inicio de sesión en el panel" || { mal "inicio de sesión dio $R"; exit 1; }
 csrf_y_valores >/dev/null
+if [ "$DEFECTOS_SOLO" = 1 ]; then
+  DEF="$(PYTHONPATH="$AQUI/../comun" python3 -c 'import json; from kerna_comun.ajustes_esquema import DEFECTOS; print(json.dumps(DEFECTOS))')"
+  grep -q '"estado": \?"ok"' <<<"$(guardar "$DEF")" && { ok "Ajustes quedó con los valores por defecto"; exit 0; } || { mal "no se pudieron guardar los valores por defecto"; exit 1; }
+fi
+mkdir -p "$AQUI/salida"; cp "$ORIG" "$AQUI/salida/ajustes_antes_de_prueba.json" 2>/dev/null  # copia que sobrevive a un corte
 [ -s "$ORIG" ] && ok "valores actuales guardados para restaurar" || { mal "no se pudieron leer los valores actuales"; exit 1; }
 RESTAURAR=1
 PRUEBA='{"envios":7,"reintentos":2,"espera":12,"revision":60,"reprocesar":false,"evaluador":true,"candidatos":40,"cadena":[{"v":"gemini","on":true},{"v":"azure","on":true}],"compartir":[],"maxresp":20,"alerta":1}'
