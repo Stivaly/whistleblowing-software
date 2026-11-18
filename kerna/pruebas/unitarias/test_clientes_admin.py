@@ -280,3 +280,16 @@ def test_borrar_por_ley_exige_escribir_el_identificador(web):
     j = ok.json()
     assert j["estado"] == "ok" and j["filas"] == 1 and ("acme-sa", "perfil") not in web.d["clientes"].f and (j["uuid"], "2026-11-01") in web.d["usodiario"].f
     assert "Borrados por ley" in web.get("/panel/clientes", headers=H).text and j["uuid"] in web.get("/panel/clientes", headers=H).text
+
+
+def test_el_despliegue_del_front_empaqueta_cada_modulo_de_kerna_comun_que_importa():
+    """Fallo real: un módulo nuevo de kerna_comun no estaba en el zip y el panel desplegado no arrancó (503)."""
+    import re
+    usados = set()
+    for f in (RAIZ / "front" / "app").glob("*.py"):
+        usados |= set(re.findall(r"from kerna_comun import ([a-z_]+)(?: as \w+)?", f.read_text()))
+        usados |= set(re.findall(r"from kerna_comun\.([a-z_]+) import", f.read_text()))
+    script = (RAIZ / "front" / "desplegar.sh").read_text()
+    assert usados, "el panel usa kerna_comun"
+    faltan = {m for m in usados if f"{m}.py" not in script}
+    assert not faltan, f"desplegar.sh no copia: {sorted(faltan)}"
