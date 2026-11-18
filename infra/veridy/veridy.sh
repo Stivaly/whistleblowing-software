@@ -80,7 +80,7 @@ leer_mantener() {
 
 mantener() {
   local arg="${1:?indicar duración (3d, 12h, 90m) o no}" hasta tmp
-  tmp="$(mktemp)"
+  tmp="$(mktemp -d)"
   if [ "$arg" = "no" ]; then
     hasta="1970-01-01T00:00:00+00:00"
   else
@@ -88,10 +88,11 @@ mantener() {
     case "$u" in d) u=days ;; h) u=hours ;; m) u=minutes ;; *) echo "duración inválida: $arg" >&2; exit 2 ;; esac
     hasta="$(date -u -d "+$n $u" +%Y-%m-%dT%H:%M:%S+00:00)"
   fi
-  printf '%s' "$hasta" > "$tmp"
-  az storage file upload --account-name "$(ST)" --share-name control --path mantener_hasta \
-    --source "$tmp" --only-show-errors -o none
-  : > "$tmp"
+  printf '%s' "$hasta" > "$tmp/mantener_hasta"
+  # upload-batch sube el archivo con su nombre, en la raíz del recurso (con `file upload --path`, el CLI 2.91 lo trata como carpeta)
+  az storage file upload-batch --account-name "$(ST)" --destination control --source "$tmp" --pattern mantener_hasta \
+    --only-show-errors -o none
+  : > "$tmp/mantener_hasta"
   [ "$arg" = "no" ] && echo "Vuelve el apagado por inactividad." || echo "No se apagará por inactividad hasta $hasta (UTC)."
 }
 
