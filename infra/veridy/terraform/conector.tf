@@ -93,7 +93,7 @@ locals {
       VERIDY_RESOLVER_LOCAL            = local.veridy_fqdn
       VERIDY_USUARIO                   = "kerna-conector"
       VERIDY_COMPARTIR_CON             = "Auditor Kerna"
-      VERIDY_COMPARTIR_SIEMPRE         = "kerna-e2e" # recibe todos los casos, aparte de los equipos del panel
+      VERIDY_COMPARTIR_SIEMPRE         = "Kerna e2e (pruebas)" # recibe todos los casos, aparte de los equipos del panel
       KERNA_API_URL                    = var.kerna_api_url
       KERNA_ID_EMPRESA                 = var.kerna_id_empresa
       CONECTOR_INTERVALO_S             = tostring(var.conector_intervalo_s)
