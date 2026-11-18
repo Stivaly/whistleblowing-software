@@ -1281,3 +1281,11 @@ html,body{max-width:100%}
   .ly-l:has(>li:nth-child(4)){grid-template-columns:repeat(2,minmax(0,1fr));justify-items:center}
 }
 .fila-2 .ley-b{display:block}.fila-2 .ley-b .ly-l{flex:none}
+
+/* ---------- Clientes (administración): tablas con acciones y formularios en diálogo ---------- */
+.cli .cl-s{margin-top:22px}.cli .tabla td small{font-size:12px}.cli .cl-ac{white-space:nowrap;text-align:right}.cli .cl-ac .btn{min-height:36px;padding:0 12px;font-size:13px;margin-left:6px}
+.cli .cl-pel{color:#A3262A;border-color:#E3A9AB}.cli .cl-pel:hover{background:#FBEAEA}
+.cl-c{display:grid;gap:4px;font-size:13px;font-weight:600;color:var(--brand)}.cl-c input,.cl-c select{min-height:42px;padding:0 12px;border:1px solid var(--line-strong);border-radius:10px;background:#fff;color:var(--ink);font:500 14px Inter,sans-serif;width:100%}
+.cl-c input:focus-visible,.cl-c select:focus-visible{outline:2px solid var(--brand);outline-offset:1px}.cl-f{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cl-sec{font-family:ui-monospace,Menlo,monospace;font-size:13px}.cl-l{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink);display:grid;gap:6px}
+@media (max-width:640px){.cli .cl-ac{white-space:normal}.cl-f{grid-template-columns:1fr}}

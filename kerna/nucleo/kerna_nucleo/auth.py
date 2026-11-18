@@ -12,14 +12,18 @@ _RELLENO = "0" * 64
 
 
 class Autenticador:
-    def __init__(self, clientes: dict, secreto_jwt: str, reloj):
+    def __init__(self, clientes: dict, secreto_jwt: str, reloj, vivos=None):
         self._clientes = clientes or {}
         self._secreto = secreto_jwt
         self._reloj = reloj
+        self._vivos = vivos  # ClientesVivos: suma los clientes de la tabla y quita los dados de baja
+
+    def _todos(self) -> dict:
+        return self._vivos.aplicar(self._clientes) if self._vivos is not None else self._clientes
 
     def emitir(self, client_id: str, client_secret: str) -> str | None:
         """Token si las credenciales coinciden; el secreto se compara en tiempo constante contra su sha256."""
-        datos = self._clientes.get(client_id)
+        datos = self._todos().get(client_id)
         esperado = (datos or {}).get("secreto_sha256", _RELLENO)
         recibido = hashlib.sha256((client_secret or "").encode()).hexdigest()
         coincide = hmac.compare_digest(recibido.encode(), str(esperado).lower().encode())
@@ -38,6 +42,6 @@ class Autenticador:
             return None
         if self._reloj() >= datos["exp"]:
             return None
-        if datos["sub"] not in self._clientes:
+        if datos["sub"] not in self._todos():
             return None
         return str(datos.get("cliente") or datos["sub"])

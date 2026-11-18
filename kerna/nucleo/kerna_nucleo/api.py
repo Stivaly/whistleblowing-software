@@ -16,6 +16,7 @@ from kerna_comun import anonimizador, telemetria
 
 from . import VERSION
 from .ajustes_vivos import AjustesVivos
+from .clientes_vivos import ClientesVivos
 from .almacen import Almacen, crear_almacen
 from .auth import DURACION_S, Autenticador
 from .config import Config
@@ -95,7 +96,8 @@ def crear_app(config: Config | None = None, almacen: Almacen | None = None, prov
     reloj = reloj or time.time
     almacen = almacen or crear_almacen(config)
     proveedores = proveedores or proveedores_reales(config)
-    auth = Autenticador(config.clientes, config.jwt_secreto, reloj)
+    auth = Autenticador(config.clientes, config.jwt_secreto, reloj,
+                        ClientesVivos.desde_config(config) if config.almacen == "tablas" else None)
     niveles = [Nivel.desde_dict(n) for n in config.cadena]
     enrutador = Enrutador(niveles, proveedores.gemini, reloj=reloj,
                           clientes={"azure-openai": proveedores.azure_openai} if proveedores.azure_openai else None, dormir=proveedores.dormir,
@@ -141,7 +143,7 @@ def crear_app(config: Config | None = None, almacen: Almacen | None = None, prov
     @app.post("/oauth/token")
     async def token(peticion: Request):
         f = {k: v[0] for k, v in parse_qs((await peticion.body()).decode("utf-8", "replace")).items()}
-        t = (auth.emitir(f.get("client_id", ""), f.get("client_secret", ""))
+        t = (await asyncio.to_thread(auth.emitir, f.get("client_id", ""), f.get("client_secret", ""))
              if f.get("grant_type") == "client_credentials" else None)
         if not t:
             raise HTTPException(401, "credenciales inválidas", headers={"WWW-Authenticate": "Bearer"})

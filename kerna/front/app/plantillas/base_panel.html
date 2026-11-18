@@ -11,6 +11,7 @@
 <p class="nav-h">Negocio</p>
 <a href="/panel/negocio"{% if seccion == 'negocio' %} class="on" aria-current="page"{% endif %}>{{ ic('briefcase-business') }} Clientes y márgenes</a>
 <p class="nav-h">Configuración</p>
+<a href="/panel/clientes"{% if seccion == 'clientes' %} class="on" aria-current="page"{% endif %}>{{ ic('building-2') }} Administrar clientes</a>
 <a href="/panel/ajustes"{% if seccion == 'ajustes' %} class="on" aria-current="page"{% endif %}>{{ ic('sliders-horizontal') }} Ajustes</a>
 </nav>
 <div class="mt-auto grid gap-3"><a href="/" class="flex items-center gap-2 text-[15px] font-medium no-underline lnk" style="color:var(--muted)">{{ ic('globe') }} Ver portada pública</a></div></div>
@@ -24,6 +25,7 @@
 <a href="/panel"{% if seccion == 'resumen' %} class="on" aria-current="page"{% endif %}>{{ ic('layout-dashboard') }}Resumen</a>
 <a href="/panel/informe" class="gen{% if seccion == 'informe' %} on{% endif %}"{% if seccion == 'informe' %} aria-current="page"{% endif %}>{{ ic('file-down') }}Informe</a>
 <a href="/panel/negocio"{% if seccion == 'negocio' %} class="on" aria-current="page"{% endif %}>{{ ic('briefcase-business') }}Negocio</a>
+<a href="/panel/clientes"{% if seccion == 'clientes' %} class="on" aria-current="page"{% endif %}>{{ ic('building-2') }}Clientes</a>
 <a href="/panel/ajustes"{% if seccion == 'ajustes' %} class="on" aria-current="page"{% endif %}>{{ ic('sliders-horizontal') }}Ajustes</a>
 </nav>
 </div>

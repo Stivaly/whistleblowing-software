@@ -1,0 +1,59 @@
+{% extends "base_panel.html" %}{% block titulo %}Clientes · Kerna AI{% endblock %}
+{% set seccion = 'clientes' %}
+{% block vista %}
+<div class="cli" data-csrf="{{ csrf }}">
+<header class="bar"><div class="bar-t"><h1 class="h1">Clientes</h1></div>
+<div class="bar-a"><button type="button" class="btn btn-pri" data-abrir="dlg-nuevo">{{ ic('building-2') }}<span>Agregar cliente</span></button></div></header>
+
+{% if error %}<p class="cola-av s-bad" role="alert">{{ ic('e-cadena-agotada', px=40) }}<span>No se pudo leer la lista de clientes. Inténtalo en un momento</span></p>{% endif %}
+<p class="cola-av" data-aviso role="status" aria-live="polite" hidden></p>
+
+<section class="cl-s" aria-labelledby="cl-a"><h2 id="cl-a" class="mk">Clientes activos{{ tip('cli_activos') }}<span class="mk-r">{{ lista.activos|length }}</span></h2>
+{% if lista.activos %}<div class="tabla"><table><thead><tr><th>Cliente</th><th>Identificador</th><th>Plan</th><th class="n">Casos al mes</th><th>Alta</th><th>Acceso</th><th></th></tr></thead><tbody>
+{% for c in lista.activos %}<tr data-id="{{ c.id }}" data-nombre="{{ c.nombre }}"><td><b>{{ c.nombre }}</b>{% if c.rubro %}<br><small class="muted">{{ c.rubro }}</small>{% endif %}</td><td><code>{{ c.id }}</code></td><td>{{ c.plan_tipo|capitalize }}</td><td class="n">{{ c.cuota }}</td><td>{{ c.alta }}</td>
+<td>{% if c.protegido %}<span class="chip ok">{{ ic('lock', px=14, mini=True) }}<span>Cuenta de la plataforma</span></span>{% elif c.con_clave %}<span class="chip ok">{{ ic('key-round', px=14, mini=True) }}<span>Con clave</span></span>{% else %}<span class="chip">{{ ic('minus', px=14, mini=True) }}<span>Sin clave propia</span></span>{% endif %}</td>
+<td class="cl-ac">{% if not c.protegido %}<button type="button" class="btn btn-sec" data-baja>Dar de baja</button><button type="button" class="btn btn-sec cl-pel" data-ley>Borrar por ley</button>{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="muted">Todavía no hay clientes. Agrega el primero.</p>{% endif %}</section>
+
+{% if lista.bajas %}<section class="cl-s" aria-labelledby="cl-b"><h2 id="cl-b" class="mk">Dados de baja{{ tip('cli_bajas') }}<span class="mk-r">{{ lista.bajas|length }}</span></h2>
+<div class="tabla"><table><thead><tr><th>Cliente</th><th>Identificador</th><th>Plan</th><th>Baja</th><th></th></tr></thead><tbody>
+{% for c in lista.bajas %}<tr data-id="{{ c.id }}" data-nombre="{{ c.nombre }}"><td><b>{{ c.nombre }}</b></td><td><code>{{ c.id }}</code></td><td>{{ c.plan_tipo|capitalize }}</td><td>{{ c.baja_en[:10] }}</td>
+<td class="cl-ac"><button type="button" class="btn btn-sec" data-reactivar>Reactivar</button><button type="button" class="btn btn-sec cl-pel" data-ley>Borrar por ley</button></td></tr>{% endfor %}
+</tbody></table></div></section>{% endif %}
+
+{% if lista.anonimizados %}<section class="cl-s" aria-labelledby="cl-l"><h2 id="cl-l" class="mk">Borrados por ley{{ tip('cli_ley') }}<span class="mk-r">{{ lista.anonimizados|length }}</span></h2>
+<div class="tabla"><table><thead><tr><th>Código anónimo</th><th>Fecha</th><th class="n">Registros conservados</th><th>Referencia</th></tr></thead><tbody>
+{% for c in lista.anonimizados %}<tr><td><code>{{ c.id }}</code></td><td>{{ c.anonimizado_en[:10] }}</td><td class="n">{{ c.filas_anonimizadas }}</td><td>{{ c.referencia or '—' }}</td></tr>{% endfor %}
+</tbody></table></div></section>{% endif %}
+
+<dialog id="dlg-nuevo" class="dlg" aria-labelledby="dlg-nuevo-t"><form method="dialog" class="dlg-f" data-form="crear">
+<div class="dlg-h">{{ ic('building-2', px=40) }}<div><h2 id="dlg-nuevo-t" class="dlg-t">Agregar cliente</h2></div></div>
+<label class="cl-c">Nombre<input name="nombre" maxlength="80" required autocomplete="off"></label>
+<label class="cl-c">Identificador<input name="id" maxlength="40" required autocomplete="off" pattern="[a-z0-9][a-z0-9\-]{1,38}[a-z0-9]" placeholder="mi-empresa" title="3 a 40 letras minúsculas, números o guiones"></label>
+<label class="cl-c">Rubro (opcional)<input name="rubro" maxlength="60" autocomplete="off"></label>
+<div class="cl-f"><label class="cl-c">Plan<select name="plan_tipo">{% for k, n in planes %}<option value="{{ k }}">{{ n }}</option>{% endfor %}</select></label>
+<label class="cl-c">Casos al mes<input name="plan_denuncias_mes" type="number" min="1" max="5000" value="100" required></label></div>
+<p class="cola-av s-bad" data-error role="alert" hidden></p>
+<div class="dlg-b"><button type="button" class="btn btn-sec" data-cerrar>Cancelar</button><button type="submit" class="btn btn-pri">Crear cliente</button></div></form></dialog>
+
+<dialog id="dlg-clave" class="dlg" aria-labelledby="dlg-clave-t"><div class="dlg-f">
+<div class="dlg-h">{{ ic('key-round', px=40) }}<div><h2 id="dlg-clave-t" class="dlg-t">Cliente creado{{ tip('cli_clave') }}</h2><p class="dlg-p">Copia la clave ahora: no se vuelve a mostrar</p></div></div>
+<label class="cl-c">Identificador<input readonly data-v="id"></label>
+<label class="cl-c">Clave<input readonly data-v="secreto" class="cl-sec"></label>
+<div class="dlg-b"><button type="button" class="btn btn-sec" data-copiar>Copiar clave</button><button type="button" class="btn btn-pri" data-listo>Ya la guardé</button></div></div></dialog>
+
+<dialog id="dlg-baja" class="dlg" aria-labelledby="dlg-baja-t"><form method="dialog" class="dlg-f" data-form="baja">
+<div class="dlg-h">{{ ic('e-contingencia-modelo', px=40) }}<div><h2 id="dlg-baja-t" class="dlg-t">¿Dar de baja a <span data-n></span>?</h2><p class="dlg-p">Pierde el acceso a Kerna. Su información se conserva y puedes reactivarlo</p></div></div>
+<p class="cola-av s-bad" data-error role="alert" hidden></p>
+<div class="dlg-b"><button type="button" class="btn btn-sec" data-cerrar>Cancelar</button><button type="submit" class="btn btn-pri">Dar de baja</button></div></form></dialog>
+
+<dialog id="dlg-ley" class="dlg" aria-labelledby="dlg-ley-t"><form method="dialog" class="dlg-f" data-form="ley">
+<div class="dlg-h">{{ ic('e-cadena-agotada', px=40) }}<div><h2 id="dlg-ley-t" class="dlg-t">Borrar a <span data-n></span> por ley</h2><p class="dlg-p">No se puede deshacer</p></div></div>
+<ul class="cl-l"><li>Su nombre, su identificador y su clave se reemplazan por un código anónimo</li><li>Se conservan <b data-sol>0</b> denuncias procesadas y <b data-dias>0</b> días de uso, sin forma de saber de quién eran</li></ul>
+<label class="cl-c">Referencia de la solicitud (opcional, sin nombres)<input name="referencia" maxlength="120" autocomplete="off"></label>
+<label class="cl-c">Para confirmar, escribe el identificador: <code data-idl></code><input name="confirmar" autocomplete="off" required></label>
+<p class="cola-av s-bad" data-error role="alert" hidden></p>
+<div class="dlg-b"><button type="button" class="btn btn-sec" data-cerrar>Cancelar</button><button type="submit" class="btn btn-pri" data-ok disabled>Borrar por ley</button></div></form></dialog>
+</div>
+<script src="/estaticos/clientes.js?v={{ ver }}" defer></script>
+{% endblock %}

@@ -53,6 +53,18 @@ Plan F1 sin costo. Las consultas a Log Analytics no tienen cargo para este volum
 
 `sembrar_negocio.py` (idempotente) llena las tablas: Veridy (`veridy-dev`) se calcula desde las tablas reales de solicitudes, valoraciones y clasificaciones; los otros cuatro clientes son datos de demostración (90 días de uso con estacionalidad de días hábiles, uno en riesgo por falta de uso y uno sobre su plan) y las tarifas son de referencia, no contractuales. Re-ejecutarlo actualiza el uso de Veridy.
 
+## Administrar clientes (`/panel/clientes`)
+
+Lista, agrega y quita clientes de Kerna. Todo vive en las tablas del núcleo: `clientes` (un perfil por cliente), `solicitud` y `usodiario`
+(PartitionKey = cliente). Lo hace `app/clientes.py`; las reglas compartidas (identificador, planes, clave) están en
+`kerna/comun/kerna_comun/clientes_esquema.py`. Cada acción exige sesión del panel, mismo origen y token CSRF.
+
+- **Agregar:** nombre, identificador (3 a 40 letras minúsculas, números o guiones), rubro, plan y casos al mes. Crea las credenciales del cliente en el núcleo (client credentials): la clave se muestra una sola vez y solo se guarda su sha256 (`secreto_sha256`).
+- **Dar de baja (la decide Kerna):** el cliente queda en `baja` y pierde el acceso al núcleo en menos de 20 s; Kerna conserva toda su información y se puede **reactivar**.
+- **Borrar por ley (el cliente lo pide expresamente):** se pide escribir su identificador. Su fila sale de `clientes` y todo lo que lo identifica pasa a ser un uuid sustituto: la clave de partición y los campos `cliente` e `id_empresa` de `solicitud`, la de `usodiario`, y su nombre o identificador dentro del texto libre (`observacion`) de `sugerenciaarticulo`, `valoracion` y `clasificacion`. Los datos de ejecución (denuncias procesadas, uso, costos, resultados) se conservan bajo el uuid, sin forma de saber de quién eran. Queda una fila sin nombre como constancia (fecha, filas conservadas y la referencia que se escriba). No se puede deshacer; si se corta, repetirlo reutiliza el mismo uuid. La telemetría de Azure (Log Analytics) no se reescribe: conserva el identificador hasta que vence su retención.
+- **Cuenta de la plataforma:** `veridy-dev` (la que usa el conector de Veridy) no se puede dar de baja ni borrar desde el panel (`PROTEGIDOS`).
+- **Permisos:** la identidad del panel tiene *Storage Table Data Contributor* sobre esas seis tablas (`front_clientes_admin` en `infra/terraform/evaluacion.tf`).
+
 ## Calidad del panel (set desarrollo)
 
 La banda de calidad (Resumen e Informe) muestra siempre el set `desarrollo` (`parametros.particion` en la tabla `evaluaciones`) con la configuración vigente, la desplegada en Veridy. La marca es la fila `vigente`/`desarrollo` de la misma tabla (campo `corrida` = `fecha` de la medición). Sin marca, toma la última medición de desarrollo sobre la colección `normativa_cl`.

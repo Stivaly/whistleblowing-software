@@ -17,7 +17,7 @@ import json
 import re
 import time
 
-from . import ajustes as aj, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
+from . import ajustes as aj, clientes as cli, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
@@ -428,3 +428,73 @@ def guardar_ajustes(request: Request, csrf: str = Form(""), valores: str = Form(
         return fin("ok", guardado_en=g["guardado_en"])
     except Exception:
         return fin("error", 502)
+
+
+# ---- Clientes: listar, agregar, baja suave y borrado por ley (solo JSON; el panel nunca muestra una clave que no sea la recién creada)
+_CODIGOS_CLIENTE = {"invalido": 400, "protegido": 403, "no_existe": 404, "existe": 409, "estado": 409}
+
+
+def _guardia_cliente(request: Request, csrf: str = ""):
+    """None si la petición puede seguir; si no, la respuesta que corresponde."""
+    if not _permitido(request):
+        return JSONResponse({"estado": "sesion"}, status_code=401)
+    if not _origen_ok(request):
+        return JSONResponse({"estado": "origen"}, status_code=403)
+    if csrf is not None and not seguridad.csrf_valido(request.cookies, csrf):
+        return JSONResponse({"estado": "token"}, status_code=403)
+    return None
+
+
+def _accion_cliente(fn, *a, **kw):
+    try:
+        return JSONResponse({"estado": "ok", **(fn(*a, **kw) or {})})
+    except cli.ErrorCliente as e:
+        return JSONResponse({"estado": e.codigo}, status_code=_CODIGOS_CLIENTE.get(e.codigo, 400))
+    except Exception:
+        return JSONResponse({"estado": "error"}, status_code=502)
+
+
+@app.get("/panel/clientes", response_class=HTMLResponse)
+def panel_clientes(request: Request):
+    if not _permitido(request):
+        return RedirectResponse("/acceso", status_code=303)
+    try:
+        lista, error = cli.listar(), None
+    except Exception as e:
+        lista, error = {"activos": [], "bajas": [], "anonimizados": []}, type(e).__name__
+    return plantillas.TemplateResponse(request, "clientes.html", {"lista": lista, "error": error, "csrf": seguridad.token_csrf(request.cookies),
+                                                                    "planes": cli.PLANES_VISTA})
+
+
+@app.post("/panel/clientes/crear")
+def clientes_crear(request: Request, csrf: str = Form(""), id: str = Form(""), nombre: str = Form(""), rubro: str = Form(""),
+                   plan_tipo: str = Form(""), plan_denuncias_mes: str = Form("")):
+    g = _guardia_cliente(request, csrf)
+    return g or _accion_cliente(cli.crear, {"id": id, "nombre": nombre, "rubro": rubro, "plan_tipo": plan_tipo, "plan_denuncias_mes": plan_denuncias_mes})
+
+
+@app.post("/panel/clientes/baja")
+def clientes_baja(request: Request, csrf: str = Form(""), id: str = Form("")):
+    return _guardia_cliente(request, csrf) or _accion_cliente(cli.dar_de_baja, id)
+
+
+@app.post("/panel/clientes/reactivar")
+def clientes_reactivar(request: Request, csrf: str = Form(""), id: str = Form("")):
+    return _guardia_cliente(request, csrf) or _accion_cliente(cli.reactivar, id)
+
+
+@app.get("/panel/clientes/previa")
+def clientes_previa(request: Request, id: str = ""):
+    g = _guardia_cliente(request, None)
+    return g or _accion_cliente(cli.previa, id)
+
+
+@app.post("/panel/clientes/borrar-por-ley")
+def clientes_borrar_por_ley(request: Request, csrf: str = Form(""), id: str = Form(""), confirmar: str = Form(""), referencia: str = Form("")):
+    """Exige escribir el identificador del cliente: es irreversible."""
+    g = _guardia_cliente(request, csrf)
+    if g:
+        return g
+    if confirmar.strip().lower() != id.strip().lower() or not id.strip():
+        return JSONResponse({"estado": "confirmacion"}, status_code=400)
+    return _accion_cliente(cli.anonimizar, id, referencia)

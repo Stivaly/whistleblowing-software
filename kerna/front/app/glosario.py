@@ -96,6 +96,10 @@ def glosario() -> dict:
         "inf_desempeno": ("Rapidez", "Tiempo que tarda cada etapa del análisis."),
         "inf_costo": ("Costos", "Costo de la IA por modelo y por denuncia."),
         "inf_resumen": ("Resumen", "Indicadores clave del período."),
+        "cli_activos": ("Clientes activos", "Pueden enviar denuncias a Kerna con su identificador y su clave."),
+        "cli_bajas": ("Dados de baja", "Sin acceso a Kerna. Kerna conserva toda su información y puedes reactivarlos."),
+        "cli_ley": ("Borrados por ley", "Su identidad se cambió por un código anónimo; el uso se conserva sin nombre."),
+        "cli_clave": ("Clave de acceso", "Se muestra una sola vez. Kerna no la guarda, solo una huella."),
         "aj_estado": ("¿Se aplica ya?", "«Activo» lo usa el conector ya; «Aún no» queda guardado para después."),
     }
     out = {k: {"t": t, "q": q, "c": "", "l": ""} for k, (t, q) in G.items()}

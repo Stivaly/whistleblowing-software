@@ -193,7 +193,7 @@ observación en claro más allá de lo necesario: el texto anonimizado se descar
 
 ### Variables del núcleo
 
-`KERNA_CLIENTES` (JSON `{client_id: {"secreto_sha256": str, "cliente": str}}`), `KERNA_JWT_SECRETO`,
+`KERNA_CLIENTES` (JSON `{client_id: {"secreto_sha256": str, "cliente": str}}`; se le suman los clientes activos de la tabla `clientes` que traen `secreto_sha256`, y se le quitan los dados de baja), `KERNA_JWT_SECRETO`,
 `GEMINI_API_KEY`, `VOYAGE_API_KEY`, `QDRANT_URL`, `QDRANT_API_KEY`, `KERNA_COLECCION` (`normativa_cl`),
 `KERNA_EMBEDDING` (`voyage-4-large`), `KERNA_DIMS` (1024), `KERNA_LOCAL_URL`, `KERNA_LOCAL_TOKEN`, `KERNA_TOP_K`, `KERNA_CONCURRENCIA` (2),
 `KERNA_UMBRAL_SIMILITUD`, `KERNA_REVISOR` (`1` enciende la revisión jurídica; apagado por defecto), `KERNA_HIBRIDA` (`1` suma BM25 a la búsqueda densa por RRF; apagado por defecto; ajustes `KERNA_HIBRIDA_PROFUNDIDAD`, `KERNA_HIBRIDA_STEMMING`, `KERNA_HIBRIDA_EXTRAS`), `KERNA_MULTIQUERY` (`1` usa las conductas del perfil del evaluador por IDs, variante `3*` con perfil, como consultas adicionales; apagado por defecto; ajustes `KERNA_MULTIQUERY_MAX`, `KERNA_MULTIQUERY_RELATO`, `KERNA_MULTIQUERY_PESO_RELATO`), `KERNA_CADENA` (JSON opcional), `KERNA_ALMACEN` (`memoria` \| `tablas`),

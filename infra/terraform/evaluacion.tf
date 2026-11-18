@@ -298,3 +298,14 @@ resource "azurerm_role_assignment" "front_ajustes" {
   role_definition_name = "Storage Table Data Contributor"
   principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
 }
+
+# Administración de clientes desde el panel (vista «Clientes»): agregar y dar de baja escribe en `clientes`; el borrado por ley
+# reemplaza el identificador del cliente por un uuid en `usodiario` y `solicitud` (copia la fila y retira la original) y limpia el
+# texto libre de las tablas de respuestas. Las tablas `solicitud`, `sugerenciaarticulo`, `valoracion` y `clasificacion` las crea el
+# núcleo al arrancar, no Terraform: el permiso apunta a ellas por nombre.
+resource "azurerm_role_assignment" "front_clientes_admin" {
+  for_each             = var.crear_front ? toset(["clientes", "usodiario", "solicitud", "sugerenciaarticulo", "valoracion", "clasificacion"]) : toset([])
+  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${each.value}"
+  role_definition_name = "Storage Table Data Contributor"
+  principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
+}
