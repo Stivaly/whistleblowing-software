@@ -158,3 +158,10 @@ def test_fila_en_vivo_publica_alerta_y_equipos():
     assert f["sin_sugerencia_alerta"] == 1 and f["alerta_h"] == 1
     assert f["equipos"] == "analista,comite" and f["equipos_sin_cuenta"] == "kerna-equipo-comite"
     assert "compartir" in f["ajustes_aplicados"] and "alerta" in f["ajustes_aplicados"]
+
+
+def test_compartir_siempre_se_lee_del_entorno_como_lista():
+    base = {"VERIDY_URL": "http://v", "VERIDY_USUARIO": "u", "VERIDY_PASSWORD": "p", "KERNA_API_URL": "http://n",
+            "KERNA_CLIENT_ID": "i", "KERNA_CLIENT_SECRET": "s"}
+    assert Config.desde_entorno(base).compartir_siempre == ()
+    assert Config.desde_entorno({**base, "VERIDY_COMPARTIR_SIEMPRE": " kerna-e2e , otra ,"}).compartir_siempre == ("kerna-e2e", "otra")

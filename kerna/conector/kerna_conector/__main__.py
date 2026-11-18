@@ -87,6 +87,7 @@ def main(argv=None) -> int:
                 corrida = solicitud.activa()
                 compartir = (nombres_receptores(p.equipos) if p.equipos is not None
                              else ((cfg.compartir_con,) if cfg.compartir_con else ()))
+                compartir = tuple(dict.fromkeys(compartir + cfg.compartir_siempre))  # cuentas fijas (p. ej. la de pruebas e2e)
                 r = ejecutar_pasada(veridy, nucleo, estado, cfg.id_empresa, compartir_con=compartir,
                                     reprocesar=cfg.reprocesar, reintentos_max=p.reintentos_max,
                                     reintento_horas=p.reintento_horas, envios_max=p.envios_max, corrida=corrida,

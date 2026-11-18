@@ -33,6 +33,7 @@ class Config:
     intervalo_s: float = 30.0
     estado: str = "sqlite:///conector.db"
     compartir_con: str = ""
+    compartir_siempre: tuple = ()  # cuentas que reciben todos los casos, además de los equipos del panel (VERIDY_COMPARTIR_SIEMPRE, separadas por coma)
     reprocesar: bool = False
     reintentos_max: int = 3
     reintento_horas: float = 24.0
@@ -65,6 +66,7 @@ class Config:
             intervalo_s=intervalo,
             estado=e.get("CONECTOR_ESTADO", "sqlite:///conector.db"),
             compartir_con=e.get("VERIDY_COMPARTIR_CON", "").strip(),
+            compartir_siempre=tuple(n.strip() for n in e.get("VERIDY_COMPARTIR_SIEMPRE", "").split(",") if n.strip()),
             envios_por_pasada=_entero(e.get("KERNA_ENVIOS_POR_PASADA"), 5),
             reintentos_max=maxr,
             reintento_horas=horas,

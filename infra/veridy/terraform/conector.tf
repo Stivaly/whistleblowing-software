@@ -86,18 +86,19 @@ locals {
   conector = var.crear_conector ? {
     imagen = "${data.azurerm_container_registry.acr.login_server}/kerna-conector:${var.conector_tag}"
     entorno = {
-      AZURE_CLIENT_ID       = azurerm_user_assigned_identity.veridy.client_id
-      VERIDY_KV_URL         = azurerm_key_vault.kv.vault_uri
-      VERIDY_PG_FQDN        = local.pg_fqdn
-      VERIDY_URL            = "https://${local.veridy_fqdn}:8443"
-      VERIDY_RESOLVER_LOCAL = local.veridy_fqdn
-      VERIDY_USUARIO        = "kerna-conector"
-      VERIDY_COMPARTIR_CON = "Auditor Kerna"
-      KERNA_API_URL         = var.kerna_api_url
-      KERNA_ID_EMPRESA      = var.kerna_id_empresa
-      CONECTOR_INTERVALO_S  = tostring(var.conector_intervalo_s)
+      AZURE_CLIENT_ID                  = azurerm_user_assigned_identity.veridy.client_id
+      VERIDY_KV_URL                    = azurerm_key_vault.kv.vault_uri
+      VERIDY_PG_FQDN                   = local.pg_fqdn
+      VERIDY_URL                       = "https://${local.veridy_fqdn}:8443"
+      VERIDY_RESOLVER_LOCAL            = local.veridy_fqdn
+      VERIDY_USUARIO                   = "kerna-conector"
+      VERIDY_COMPARTIR_CON             = "Auditor Kerna"
+      VERIDY_COMPARTIR_SIEMPRE         = "kerna-e2e" # recibe todos los casos, aparte de los equipos del panel
+      KERNA_API_URL                    = var.kerna_api_url
+      KERNA_ID_EMPRESA                 = var.kerna_id_empresa
+      CONECTOR_INTERVALO_S             = tostring(var.conector_intervalo_s)
       KERNA_REPROCESAR_REVISION_MANUAL = var.conector_reprocesar ? "1" : "0"
-      KERNA_TABLAS_URL      = var.kerna_tablas_cuenta == null ? "" : data.azurerm_storage_account.kerna_tablas[0].primary_table_endpoint
+      KERNA_TABLAS_URL                 = var.kerna_tablas_cuenta == null ? "" : data.azurerm_storage_account.kerna_tablas[0].primary_table_endpoint
     }
     entorno_seguro = var.kerna_appinsights_conexion == "" ? {} : {
       APPLICATIONINSIGHTS_CONNECTION_STRING = var.kerna_appinsights_conexion
