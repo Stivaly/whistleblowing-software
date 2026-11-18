@@ -22,8 +22,8 @@ if [ "$PRUEBAS" = 1 ]; then
   (cd "$RAIZ_PRUEBAS" && python3 -m pytest -q kerna/pruebas/unitarias/test_front*.py -p no:cacheprovider) || { echo "Pruebas del front fallaron: no se despliega." >&2; exit 1; }
 fi
 cp -r "$AQUI/app/." "$TMP/app/"; cp "$AQUI/requirements.txt" "$TMP/"
-# solo el esquema de ajustes de kerna_comun (el resto trae dependencias de Azure que el front no necesita)
-mkdir -p "$TMP/kerna_comun"; cp "$COMUN/ajustes_esquema.py" "$COMUN/__init__.py" "$TMP/kerna_comun/"
+# solo los esquemas de ajustes y de clientes de kerna_comun (el resto trae dependencias de Azure que el front no necesita)
+mkdir -p "$TMP/kerna_comun"; cp "$COMUN/ajustes_esquema.py" "$COMUN/clientes_esquema.py" "$COMUN/__init__.py" "$TMP/kerna_comun/"
 rm -rf "$TMP/app/__pycache__" "$TMP/app/kql"; mkdir "$TMP/app/kql"
 for k in informe_revision_manual latencia_por_etapa disponibilidad_efectiva errores_por_proveedor solicitudes_por_modo tokens_por_solicitud front_casos_por_dia front_articulos_por_ley front_valoraciones front_latencia front_reintentos front_tokens_por_modelo front_pendientes_motivos front_reintentos_resumen front_horarios; do
   cp "$RAIZ_KQL/kerna/docs/observabilidad/consultas/$k.kql" "$TMP/app/kql/"
