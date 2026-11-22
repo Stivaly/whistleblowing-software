@@ -102,6 +102,9 @@ def glosario() -> dict:
         "cli_clave": ("Clave de acceso", "Se muestra una sola vez. Kerna no la guarda, solo una huella."),
         "demo_texto": ("Anonimizador", "Oculta nombres, RUT y teléfonos antes de que el texto llegue a la IA."),
         "demo_alcance": ("Qué se ocultó", "Datos distintos reemplazados por un marcador y cuántas veces aparecían."),
+        "cu_cuentas": ("Cuentas", "Quién puede entrar al panel y qué puede hacer según su rol."),
+        "cu_historial": ("Historial", "Altas, cambios de clave y de rol, bajas y accesos; lo nuevo primero."),
+        "cu_clave_propia": ("Contraseña", "Al cambiarla se cierran tus otras sesiones; esta sigue abierta."),
         "aj_estado": ("¿Se aplica ya?", "«Activo» lo usa el conector ya; «Aún no» queda guardado para después."),
     }
     out = {k: {"t": t, "q": q, "c": "", "l": ""} for k, (t, q) in G.items()}

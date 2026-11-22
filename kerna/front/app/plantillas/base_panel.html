@@ -4,32 +4,39 @@
 <div id="app" class="lg:flex">
 <aside class="hidden lg:block w-64 shrink-0 bg-white border-r" style="border-color:var(--line)" aria-label="Menú lateral"><div class="flex flex-col h-screen sticky top-0 p-5 gap-5 overflow-y-auto">
 <a href="/" class="brand-lk" aria-label="Kerna AI, ir a la portada"><img class="kl" src="/estaticos/img/simbolo.webp?v={{ ver }}" width="64" height="64" alt="" decoding="async"><span class="brand-t disp" style="font-size:24px">KERNA<small>AI</small></span></a>
+{% set S = sesion_de(request) %}{% set menu = not (S and S.cambiar) %}
 <nav class="nav grid gap-2" aria-label="Principal">
-<a href="/panel/informe" class="gen"{% if seccion == 'informe' %} aria-current="page"{% endif %}><img class="kl" src="/estaticos/img/simbolo.webp?v={{ ver }}" width="36" height="36" alt="" decoding="async"><span>Generar informe</span></a>
-<p class="nav-h">Operación</p>
-<a href="/panel"{% if seccion == 'resumen' %} class="on" aria-current="page"{% endif %}>{{ ic('layout-dashboard') }} Resumen</a>
-<p class="nav-h">Negocio</p>
-<a href="/panel/negocio"{% if seccion == 'negocio' %} class="on" aria-current="page"{% endif %}>{{ ic('briefcase-business') }} Clientes y márgenes</a>
-<p class="nav-h">Configuración</p>
-<a href="/panel/clientes"{% if seccion == 'clientes' %} class="on" aria-current="page"{% endif %}>{{ ic('building-2') }} Administrar clientes</a>
-<a href="/panel/ajustes"{% if seccion == 'ajustes' %} class="on" aria-current="page"{% endif %}>{{ ic('sliders-horizontal') }} Ajustes</a>
-<p class="nav-h">Pruebas</p>
-<a href="/panel/demo"{% if seccion == 'demo' %} class="on" aria-current="page"{% endif %}>{{ ic('play') }} Demo</a>
+{% if menu and puede_ver(request, 'informe') %}<a href="/panel/informe" class="gen"{% if seccion == 'informe' %} aria-current="page"{% endif %}><img class="kl" src="/estaticos/img/simbolo.webp?v={{ ver }}" width="36" height="36" alt="" decoding="async"><span>Generar informe</span></a>{% endif %}
+{% if menu and puede_ver(request, 'resumen') %}<p class="nav-h">Operación</p>
+<a href="/panel"{% if seccion == 'resumen' %} class="on" aria-current="page"{% endif %}>{{ ic('layout-dashboard') }} Resumen</a>{% endif %}
+{% if menu and puede_ver(request, 'negocio') %}<p class="nav-h">Negocio</p>
+<a href="/panel/negocio"{% if seccion == 'negocio' %} class="on" aria-current="page"{% endif %}>{{ ic('briefcase-business') }} Clientes y márgenes</a>{% endif %}
+{% if menu and (puede_ver(request, 'clientes') or puede_ver(request, 'ajustes') or puede_ver(request, 'cuentas')) %}<p class="nav-h">Configuración</p>
+{% if puede_ver(request, 'clientes') %}<a href="/panel/clientes"{% if seccion == 'clientes' %} class="on" aria-current="page"{% endif %}>{{ ic('building-2') }} Administrar clientes</a>{% endif %}
+{% if puede_ver(request, 'ajustes') %}<a href="/panel/ajustes"{% if seccion == 'ajustes' %} class="on" aria-current="page"{% endif %}>{{ ic('sliders-horizontal') }} Ajustes</a>{% endif %}
+{% if puede_ver(request, 'cuentas') %}<a href="/panel/cuentas"{% if seccion == 'cuentas' %} class="on" aria-current="page"{% endif %}>{{ ic('users') }} Cuentas</a>{% endif %}{% endif %}
+{% if menu and puede_ver(request, 'demo') %}<p class="nav-h">Pruebas</p>
+<a href="/panel/demo"{% if seccion == 'demo' %} class="on" aria-current="page"{% endif %}>{{ ic('play') }} Demo</a>{% endif %}
 </nav>
-<div class="mt-auto grid gap-3"><a href="/" class="flex items-center gap-2 text-[15px] font-medium no-underline lnk" style="color:var(--muted)">{{ ic('globe') }} Ver portada pública</a></div></div>
+<div class="mt-auto grid gap-3">
+{% if S %}<div class="yo" aria-label="Tu sesión"><a class="yo-n{% if seccion == 'cuenta' %} on{% endif %}" href="/cuenta" title="Mi cuenta">{{ ic('user', px=22) }}<span class="yo-t"><b>{{ S.nombre }}</b><small>{{ nombre_rol(S.rol) }}</small></span></a><a class="yo-s" href="/salir" aria-label="Salir">{{ ic('log-out', px=20) }}<span>Salir</span></a></div>{% endif %}
+<a href="/" class="flex items-center gap-2 text-[15px] font-medium no-underline lnk" style="color:var(--muted)">{{ ic('globe') }} Ver portada pública</a></div></div>
 </aside>
 <div class="flex-1 min-w-0 pb-24 lg:pb-10">
-<header class="hdr lg:hidden sticky top-0 z-30 h-[72px] px-4 flex items-center justify-between"><a href="/" class="brand-lk" aria-label="Kerna AI, portada"><img class="kl" src="/estaticos/img/simbolo.webp?v={{ ver }}" width="46" height="46" alt="" decoding="async"><span class="brand-t disp">KERNA</span></a></header>
-<main id="main" class="vw-main"><div class="vw">
+<header class="hdr lg:hidden sticky top-0 z-30 h-[72px] px-4 flex items-center justify-between"><a href="/" class="brand-lk" aria-label="Kerna AI, portada"><img class="kl" src="/estaticos/img/simbolo.webp?v={{ ver }}" width="46" height="46" alt="" decoding="async"><span class="brand-t disp">KERNA</span></a>{% if S %}<span class="yo-m"><a href="/cuenta" aria-label="Mi cuenta: {{ S.nombre }}, {{ nombre_rol(S.rol) }}"{% if seccion == 'cuenta' %} aria-current="page"{% endif %}>{{ ic('user', px=22) }}</a><a href="/salir" aria-label="Salir">{{ ic('log-out', px=22) }}</a></span>{% endif %}</header>
+{% set solo_ver = seccion in ('clientes', 'ajustes', 'cuentas') and nivel_de(request, seccion) == 'ver' %}
+<main id="main" class="vw-main"><div class="vw"{% if solo_ver %} data-ro{% endif %}>
+{% if solo_ver %}<p class="ro-av" role="status">{{ ic('lock', px=18, mini=True) }}<span>Tu rol solo puede ver esta sección</span></p>{% endif %}
 {% block vista %}{% endblock %}
 </div></main></div>
-<nav class="tabbar lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t flex" style="border-color:var(--line)" aria-label="Principal">
-<a href="/panel"{% if seccion == 'resumen' %} class="on" aria-current="page"{% endif %}>{{ ic('layout-dashboard') }}Resumen</a>
-<a href="/panel/informe" class="gen{% if seccion == 'informe' %} on{% endif %}"{% if seccion == 'informe' %} aria-current="page"{% endif %}>{{ ic('file-down') }}Informe</a>
-<a href="/panel/negocio"{% if seccion == 'negocio' %} class="on" aria-current="page"{% endif %}>{{ ic('briefcase-business') }}Negocio</a>
-<a href="/panel/clientes"{% if seccion == 'clientes' %} class="on" aria-current="page"{% endif %}>{{ ic('building-2') }}Clientes</a>
-<a href="/panel/ajustes"{% if seccion == 'ajustes' %} class="on" aria-current="page"{% endif %}>{{ ic('sliders-horizontal') }}Ajustes</a>
-<a href="/panel/demo"{% if seccion == 'demo' %} class="on" aria-current="page"{% endif %}>{{ ic('play') }}Demo</a>
-</nav>
+{% if menu %}<nav class="tabbar lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t flex" style="border-color:var(--line)" aria-label="Principal">
+{% if puede_ver(request, 'resumen') %}<a href="/panel"{% if seccion == 'resumen' %} class="on" aria-current="page"{% endif %}>{{ ic('layout-dashboard') }}Resumen</a>{% endif %}
+{% if puede_ver(request, 'informe') %}<a href="/panel/informe" class="gen{% if seccion == 'informe' %} on{% endif %}"{% if seccion == 'informe' %} aria-current="page"{% endif %}>{{ ic('file-down') }}Informe</a>{% endif %}
+{% if puede_ver(request, 'negocio') %}<a href="/panel/negocio"{% if seccion == 'negocio' %} class="on" aria-current="page"{% endif %}>{{ ic('briefcase-business') }}Negocio</a>{% endif %}
+{% if puede_ver(request, 'clientes') %}<a href="/panel/clientes"{% if seccion == 'clientes' %} class="on" aria-current="page"{% endif %}>{{ ic('building-2') }}Clientes</a>{% endif %}
+{% if puede_ver(request, 'ajustes') %}<a href="/panel/ajustes"{% if seccion == 'ajustes' %} class="on" aria-current="page"{% endif %}>{{ ic('sliders-horizontal') }}Ajustes</a>{% endif %}
+{% if puede_ver(request, 'cuentas') %}<a href="/panel/cuentas"{% if seccion == 'cuentas' %} class="on" aria-current="page"{% endif %}>{{ ic('users') }}Cuentas</a>{% endif %}
+{% if puede_ver(request, 'demo') %}<a href="/panel/demo"{% if seccion == 'demo' %} class="on" aria-current="page"{% endif %}>{{ ic('play') }}Demo</a>{% endif %}
+</nav>{% endif %}
 </div>
 {% endblock %}

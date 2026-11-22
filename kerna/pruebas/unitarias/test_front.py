@@ -71,8 +71,8 @@ def test_api_con_clave(cliente):
 
 
 def test_acceso_cookie_y_panel(cliente):
-    assert cliente.post("/acceso", data={"clave": "mala"}).status_code == 401
-    r = cliente.post("/acceso", data={"clave": "clave-de-prueba"})
+    assert cliente.post("/acceso", data={"usuario": "admin", "clave": "mala"}).status_code == 401
+    r = cliente.post("/acceso", data={"usuario": "admin", "clave": "clave-de-prueba"})
     assert r.status_code == 303 and "httponly" in r.headers["set-cookie"].lower()
     p = cliente.get("/panel", cookies={seguridad.COOKIE: seguridad.emitir_cookie()})
     assert p.status_code == 200 and "Ley 21643" in p.text and "Resumen" in p.text and 'class="bn z-kb kbs"' in p.text
@@ -94,4 +94,6 @@ def test_referencia_keyvault_sin_resolver_no_sirve(monkeypatch):
 
 def test_modo_entra(monkeypatch):
     monkeypatch.setenv("FRONT_AUTH", "entra")
-    assert not seguridad.autorizado({}, {}) and seguridad.autorizado({"x-ms-client-principal-id": "abc"}, {})
+    assert seguridad.sesion_de({}, {}, "/panel") is None
+    s = seguridad.sesion_de({"x-ms-client-principal-id": "abc"}, {}, "/panel")
+    assert s.rol == "direccion" and s.via == "entra" and not s.propia

@@ -5,6 +5,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from starlette.concurrency import run_in_threadpool
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.gzip import GZipMiddleware
 from fastapi.templating import Jinja2Templates
@@ -14,10 +15,13 @@ from datetime import datetime, timedelta, timezone
 from fastapi.responses import Response
 
 import json
+import logging
 import re
 import time
 
-from . import ajustes as aj, clientes as cli, costo_ia, demo_anon, errores, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
+from . import ajustes as aj, clientes as cli, costo_ia, demo_anon, errores, orbital, cache, consultas, cuentas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, permisos, proveedores, reintentos, seguridad, vistas
+
+log = logging.getLogger("kerna.front")
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
@@ -44,10 +48,56 @@ def _sprites() -> str:
 
 plantillas.env.globals["sprites"] = _sprites()
 
+
+def _sesion_en(request):
+    return getattr(request.state, "sesion", None)
+
+
+def _nivel_de(request, seccion: str):
+    """«editar», «ver» o None: lo que la sesión de esta petición puede hacer en una sección (para menús y formularios)."""
+    s = _sesion_en(request)
+    return permisos.nivel(s.rol, seccion) if s else None
+
+
+plantillas.env.globals.update(
+    sesion_de=_sesion_en, nivel_de=_nivel_de, csrf_de=lambda request: seguridad.token_csrf(request.cookies), SECCIONES=permisos.SECCIONES,
+    ROLES=permisos.ROLES, nombre_rol=permisos.nombre_rol, puede_ver=lambda request, seccion: _nivel_de(request, seccion) is not None,
+    puede_editar=lambda request, seccion: _nivel_de(request, seccion) == permisos.EDITAR)
+
 CABECERAS = {
     "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer", "X-Frame-Options": "DENY",
     "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; form-action 'self'",
 }
+
+
+@app.middleware("http")
+async def control_acceso(request: Request, call_next):
+    """Aplica la tabla de permisos (permisos.py) a TODA ruta /panel, /api y /cuenta: sesión, cambio de clave obligatorio y rol.
+    Sin sesión deja pasar la petición: cada ruta responde con su propio rechazo (redirección a /acceso o 401 en JSON)."""
+    ruta = request.url.path
+    request.state.sesion = None
+    if not permisos.protegida(ruta):
+        return await call_next(request)
+    try:
+        sesion = await run_in_threadpool(seguridad.sesion_de, request.headers, request.cookies, ruta)
+    except Exception as e:  # tabla de cuentas caída: sin poder comprobar la sesión no se deja pasar a nadie
+        log.error("sesion_no_comprobada tipo=%s ruta=%s", type(e).__name__, ruta)
+        return pantalla_error(request, 503)
+    request.state.sesion = sesion
+    if sesion is None:
+        return await call_next(request)
+    seccion = permisos.seccion_de(ruta)
+    if seccion is None:
+        return pantalla_error(request, 404)
+    quiere_json = _quiere_json(request) or ruta.startswith("/api/")
+    if sesion.cambiar and seccion != "propia":
+        return JSONResponse({"estado": "cambiar_clave"}, status_code=403) if quiere_json else RedirectResponse("/cuenta/clave", status_code=303)
+    if not permisos.permite(sesion.rol, seccion, permisos.requerido(request.method)):
+        solo_ver = permisos.puede_ver(sesion.rol, seccion)
+        return pantalla_error(request, 403, "No puedes cambiar nada aquí. Si lo necesitas, pídele a Dirección que cambie tu rol." if solo_ver
+                              else "Pídele a Dirección que cambie tu rol si lo necesitas.", estado="permiso",
+                              titulo="Tu rol solo puede ver esta sección" if solo_ver else "Tu rol no tiene acceso a esta sección")
+    return await call_next(request)
 
 
 @app.middleware("http")
@@ -79,26 +129,101 @@ def salud():
 
 
 def _permitido(request: Request) -> bool:
-    return seguridad.autorizado(request.headers, request.cookies)
+    """Hay una sesión válida (la resolvió `control_acceso`; los permisos por rol también los aplica él)."""
+    return _sesion_en(request) is not None
+
+
+def _ip(request: Request) -> str:
+    return request.headers.get("x-forwarded-for", request.client.host if request.client else "?").split(",")[0].strip()
+
+
+def _poner_cookie(r, usuario: str, version: int, rol: str):
+    r.set_cookie(seguridad.COOKIE, seguridad.emitir_cookie(usuario, version, rol), max_age=seguridad.VIDA_S, httponly=True, secure=True,
+                 samesite="strict", path="/")
+    return r
+
+
+def _login(request: Request, error: str = "", usuario: str = "", codigo: int = 200):
+    return plantillas.TemplateResponse(request, "acceso.html", {"error": error, "usuario": usuario}, status_code=codigo)
 
 
 @app.get("/acceso", response_class=HTMLResponse)
 def acceso(request: Request):
-    return plantillas.TemplateResponse(request, "acceso.html", {"error": False})
+    return _login(request)
 
 
 @app.post("/acceso")
-def entrar(request: Request, clave: str = Form("")):
-    ip = request.headers.get("x-forwarded-for", request.client.host if request.client else "?").split(",")[0].strip()
+def entrar(request: Request, usuario: str = Form(""), clave: str = Form("")):
+    ip = _ip(request)
     if not seguridad.limitar(ip):
         return pantalla_error(request, 429, espera_s=seguridad.espera_s(ip))
-    if not seguridad.clave_valida(clave):
+    if not _origen_ok(request):
+        return pantalla_error(request, 403)
+    try:
+        estado, cuenta = cuentas.autenticar(usuario[:64], clave[:cuentas.CLAVE_MAX + 1])
+    except Exception as e:
+        log.error("acceso_sin_tabla tipo=%s", type(e).__name__)
+        return pantalla_error(request, 503)
+    if estado != "ok":
         seguridad.fallo(ip)
-        return plantillas.TemplateResponse(request, "acceso.html", {"error": True}, status_code=401)
-    r = RedirectResponse("/panel", status_code=303)
-    r.set_cookie(seguridad.COOKIE, seguridad.emitir_cookie(), max_age=seguridad.VIDA_S, httponly=True, secure=True,
-                 samesite="strict", path="/")
+        return _login(request, "No pudimos entrar. Revisa tu usuario y contraseña, o espera unos minutos si lo intentaste varias veces.", usuario[:64].strip(), 401)
+    destino = "/cuenta/clave" if cuenta.get("debe_cambiar_clave") else permisos.inicio(cuenta.get("rol") or "invitado")
+    return _poner_cookie(RedirectResponse(destino, status_code=303), cuenta["RowKey"], int(cuenta.get("sesion") or 1), cuenta.get("rol") or "invitado")
+
+
+@app.api_route("/salir", methods=["GET", "POST"])
+def salir():
+    """Cierra la sesión de este navegador. (Con la cookie SameSite=Strict, un GET desde otro sitio no trae sesión: no hace falta token.)"""
+    r = RedirectResponse("/acceso", status_code=303)
+    r.delete_cookie(seguridad.COOKIE, path="/", secure=True, httponly=True, samesite="strict")
     return r
+
+
+# ---- Mi cuenta: cada persona cambia su propia contraseña
+_MENSAJES_CLAVE = {
+    "clave_corta": f"La contraseña nueva necesita al menos {cuentas.CLAVE_MIN} caracteres.", "clave_larga": f"La contraseña nueva admite hasta {cuentas.CLAVE_MAX} caracteres.",
+    "clave_obvia": "Elige una contraseña que no sea tu usuario ni tu nombre y que no repita siempre el mismo carácter.", "clave_igual": "La contraseña nueva debe ser distinta de la actual.",
+    "clave_actual": "La contraseña actual no es correcta.", "repetida": "Las dos contraseñas nuevas no coinciden.", "invalido": "Revisa los datos e inténtalo otra vez.",
+    "externa": "Tu acceso lo gestiona Microsoft Entra: la contraseña se cambia allí.", "no_existe": "Tu cuenta ya no existe. Vuelve a entrar."}
+
+
+def _pagina_cuenta(request: Request, error: str = "", aviso: str = "", codigo: int = 200):
+    s = _sesion_en(request)
+    f = cuentas.obtener(s.usuario) if s.propia else None
+    return plantillas.TemplateResponse(request, "cuenta.html", {
+        "perfil": cuentas.publica(f) if f else {"usuario": s.usuario, "nombre": s.nombre, "correo": "", "rol": s.rol, "rol_nombre": permisos.nombre_rol(s.rol)},
+        "obligada": s.cambiar, "propia": s.propia, "error": _MENSAJES_CLAVE.get(error, error), "aviso": aviso, "min": cuentas.CLAVE_MIN, "seccion": "cuenta"}, status_code=codigo)
+
+
+@app.get("/cuenta", response_class=HTMLResponse)
+@app.get("/cuenta/clave", response_class=HTMLResponse)
+def mi_cuenta(request: Request):
+    if not _permitido(request):
+        return RedirectResponse("/acceso", status_code=303)
+    return _pagina_cuenta(request, aviso=request.query_params.get("clave", ""))
+
+
+@app.post("/cuenta/clave")
+def cambiar_mi_clave(request: Request, csrf: str = Form(""), actual: str = Form(""), nueva: str = Form(""), repetir: str = Form("")):
+    if not _permitido(request):
+        return RedirectResponse("/acceso", status_code=303)
+    if not _origen_ok(request) or not seguridad.csrf_valido(request.cookies, csrf):
+        return pantalla_error(request, 403)
+    s = _sesion_en(request)
+    if not s.propia:
+        return _pagina_cuenta(request, "externa", codigo=400)
+    if nueva != repetir:
+        return _pagina_cuenta(request, "repetida", codigo=400)
+    try:
+        f = cuentas.cambiar_clave(s.usuario, actual, nueva)
+    except cuentas.ErrorCuenta as e:
+        return _pagina_cuenta(request, e.codigo, codigo=400)
+    except Exception as e:
+        log.error("clave_no_cambiada tipo=%s", type(e).__name__)
+        return pantalla_error(request, 503)
+    # la versión de sesión subió: las demás sesiones de esta cuenta dejan de valer y esta sigue con una cookie nueva
+    return _poner_cookie(RedirectResponse(permisos.inicio(f.get("rol") or "invitado") if s.cambiar else "/cuenta?clave=ok", status_code=303), f["RowKey"],
+                         int(f["sesion"]), f.get("rol") or "invitado")
 
 
 _extra_cache: dict = {}
@@ -200,7 +325,7 @@ def reintentar_estado(request: Request, dias: int = 7):
     except Exception:
         return JSONResponse({"estado": "error"}, status_code=502)
     vm = reintentos.vista_boton(s)
-    return JSONResponse({"estado": s.get("estado", "ninguna"), **vm, "html": str(plantillas.get_template("_reintento_accion.html").module.accion(vm)), **_dato_en_vivo(dias)},
+    return JSONResponse({"estado": s.get("estado", "ninguna"), **vm, "html": str(plantillas.get_template("_reintento_accion.html").module.accion(vm, _nivel_de(request, "ajustes"))), **_dato_en_vivo(dias)},
                         headers={"Cache-Control": "no-store"})
 
 
@@ -300,6 +425,10 @@ def _informe_directo(dias):
 
 @app.on_event("startup")
 def _arranque():
+    try:
+        cuentas.asegurar_admin()  # tabla de cuentas vacía: crea `admin` (Dirección) con la clave actual del panel
+    except Exception as e:
+        log.error("cuenta_admin_no_creada tipo=%s", type(e).__name__)
     precalentar()
 
 
@@ -513,6 +642,68 @@ def clientes_borrar_por_ley(request: Request, csrf: str = Form(""), id: str = Fo
     if confirmar.strip().lower() != id.strip().lower() or not id.strip():
         return JSONResponse({"estado": "confirmacion"}, status_code=400)
     return _accion_cliente(cli.anonimizar, id, referencia)
+
+
+# ---- Cuentas: alta, edición, restablecer clave y baja (solo Dirección; Evaluación las ve con su historial). Todo va por fetch (JSON).
+_CODIGOS_CUENTA = {"invalido": 400, "existe": 409, "no_existe": 404, "ultima_direccion": 409, "propia": 409}
+
+
+def _url_panel(request: Request) -> str:
+    host = (request.headers.get("x-forwarded-host") or request.headers.get("host") or "").split(",")[0].strip()
+    return f"https://{host}/acceso" if host else ""
+
+
+def _accion_cuenta(fn, *a, **kw):
+    try:
+        r = fn(*a, **kw) or {}
+        return JSONResponse({"estado": "ok", **r})
+    except cuentas.ErrorCuenta as e:
+        return JSONResponse({"estado": e.codigo}, status_code=_CODIGOS_CUENTA.get(e.codigo, 400))
+    except Exception as e:
+        log.error("cuentas_accion_fallida tipo=%s", type(e).__name__)
+        return JSONResponse({"estado": "error"}, status_code=502)
+
+
+@app.get("/panel/cuentas", response_class=HTMLResponse)
+def panel_cuentas(request: Request):
+    if not _permitido(request):
+        return RedirectResponse("/acceso", status_code=303)
+    try:
+        lista, historial, error = cuentas.listar(), cuentas.eventos(100), None
+    except Exception as e:
+        lista, historial, error = [], [], type(e).__name__
+    return plantillas.TemplateResponse(request, "cuentas.html", {"lista": lista, "historial": historial, "error": error, "csrf": seguridad.token_csrf(request.cookies),
+                                                                   "roles": permisos.ROLES, "yo": _sesion_en(request).usuario, "min": cuentas.CLAVE_MIN})
+
+
+@app.post("/panel/cuentas/crear")
+def cuentas_crear(request: Request, csrf: str = Form(""), usuario: str = Form(""), nombre: str = Form(""), correo: str = Form(""), rol: str = Form("")):
+    g = _guardia_cliente(request, csrf)
+    return g or _accion_cuenta(cuentas.crear, _sesion_en(request).usuario, {"usuario": usuario, "nombre": nombre, "correo": correo, "rol": rol}, _url_panel(request))
+
+
+@app.post("/panel/cuentas/editar")
+def cuentas_editar(request: Request, csrf: str = Form(""), usuario: str = Form(""), nombre: str = Form(""), correo: str = Form(""), rol: str = Form(""),
+                   activa: str = Form("1")):
+    g = _guardia_cliente(request, csrf)
+    return g or _accion_cuenta(cuentas.editar, _sesion_en(request).usuario, usuario, {"nombre": nombre, "correo": correo, "rol": rol}, activa == "1")
+
+
+@app.post("/panel/cuentas/restablecer")
+def cuentas_restablecer(request: Request, csrf: str = Form(""), usuario: str = Form("")):
+    g = _guardia_cliente(request, csrf)
+    return g or _accion_cuenta(cuentas.restablecer, _sesion_en(request).usuario, usuario, _url_panel(request))
+
+
+@app.post("/panel/cuentas/eliminar")
+def cuentas_eliminar(request: Request, csrf: str = Form(""), usuario: str = Form(""), confirmar: str = Form("")):
+    """Exige escribir el usuario: es una baja definitiva."""
+    g = _guardia_cliente(request, csrf)
+    if g:
+        return g
+    if not usuario.strip() or confirmar.strip().lower() != usuario.strip().lower():
+        return JSONResponse({"estado": "confirmacion"}, status_code=400)
+    return _accion_cuenta(cuentas.eliminar, _sesion_en(request).usuario, usuario)
 
 
 # ---- Demo: «Anonimizador» (este archivo) y «Denuncias» (módulo aparte `demo_denuncias`).

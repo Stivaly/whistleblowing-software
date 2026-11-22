@@ -14,8 +14,9 @@ os.environ["FRONT_CLAVE"] = "clave-de-prueba"
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app import demo_anon, principal, seguridad  # noqa: E402
+import sesion_prueba  # noqa: E402
 
-H = {"x-clave": "clave-de-prueba"}
+from sesion_prueba import H  # noqa: E402  (cookie de la sesión de Dirección)
 RELATO = "Me llamo Marcela Fuentes Araya, RUT 14.567.890-1, escríbeme a marcela.fuentes@gmail.com o al +56 9 8123 4567."
 
 
@@ -25,7 +26,7 @@ def c():
 
 
 def _csrf():
-    return seguridad.token_csrf({})  # con la clave por cabecera no hay cookie: el token se liga a «sin-cookie»
+    return sesion_prueba.csrf()  # el token va ligado a la cookie de la sesión de prueba
 
 
 def _post(c, texto=RELATO, **extra):

@@ -13,6 +13,7 @@ sys.path.insert(0, str(RAIZ / "front"))
 os.environ["FRONT_CLAVE"] = "clave-de-prueba"
 
 from app import clientes as cl  # noqa: E402
+import sesion_prueba  # noqa: E402
 from kerna_comun import clientes_esquema as esq  # noqa: E402
 from kerna_nucleo.auth import Autenticador  # noqa: E402
 from kerna_nucleo.clientes_vivos import ClientesVivos  # noqa: E402
@@ -232,7 +233,7 @@ def web(tablas, monkeypatch):
     c = TestClient(principal.app, base_url="https://t")
     c.d = d
     c.hj = {**H, "Accept": "application/json", "Origin": "https://t"}
-    c.tok = seguridad.token_csrf({})
+    c.tok = sesion_prueba.csrf()
     return c
 
 

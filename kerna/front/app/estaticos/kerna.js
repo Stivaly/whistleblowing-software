@@ -380,3 +380,18 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - ultimo > 60000) refrescar(); });
   }
 })();
+/* Entrada: mostrar u ocultar la contraseña */
+document.addEventListener('click', (e) => {
+  const b = e.target.closest && e.target.closest('[data-ver-clave]'); if (!b) return;
+  const i = b.parentElement.querySelector('input'), ver = i.type === 'password';
+  i.type = ver ? 'text' : 'password'; b.setAttribute('aria-pressed', String(ver)); b.setAttribute('aria-label', ver ? 'Ocultar la contraseña' : 'Mostrar la contraseña');
+});
+/* Solo lectura (rol Evaluación): deja sin uso los controles de una sección con [data-ro]; el servidor rechaza igual cualquier envío */
+(() => {
+  const zonas = document.querySelectorAll('[data-ro]'); if (!zonas.length) return;
+  const apagar = (z) => z.querySelectorAll('button:not([data-ro-ok]):not([data-cerrar]):not([data-copiar]), input:not([type=hidden]), select, textarea').forEach((c) => {
+    if (c.disabled || c.closest('dialog') || c.closest('k-tip')) return;
+    c.disabled = true; c.setAttribute('aria-disabled', 'true');
+  });
+  zonas.forEach((z) => { apagar(z); new MutationObserver(() => apagar(z)).observe(z, { childList: true, subtree: true }); });
+})();

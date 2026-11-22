@@ -1,14 +1,16 @@
-{% extends "base_pub.html" %}{% block titulo %}Acceso al panel · Kerna AI{% endblock %}
-{% block navpub %}{% endblock %}
-{% block cuerpo %}
-<section class="max-w-7xl mx-auto px-4 md:px-8 pt-10 md:pt-20 pb-20">
-<form class="card card-hi p-5 md:p-8 acc-card grid gap-4" method="post" action="/acceso" aria-labelledby="acc-t">
-<div class="flex items-center gap-3"><span class="orb-ic grid place-items-center w-12 h-12 shrink-0" style="background:var(--brand-soft);color:var(--brand)"><span style="width:24px;height:24px;display:inline-flex">{{ ic('key-round') }}</span></span>
-<div><h1 id="acc-t" class="disp m-0" style="font-size:22px;line-height:1.1;color:var(--brand)">Panel de Kerna AI</h1><p class="pg-s">Entra con la clave de acceso</p></div></div>
-<div><label class="text-sm font-semibold block mb-1" for="c">Clave de acceso</label>
-<input id="c" class="field" type="password" name="clave" autocomplete="current-password" required autofocus aria-describedby="{% if error %}acc-e{% endif %}"></div>
-{% if error %}<p id="acc-e" role="alert" class="m-0 flex items-center gap-2 text-sm font-semibold t-bad">{{ ic('e-cadena-agotada') }}<span>Clave incorrecta o demasiados intentos.</span></p>{% endif %}
+{% extends "base.html" %}{% block titulo %}Entrar · Kerna AI{% endblock %}
+{% block pagina %}
+<main id="main" class="lg">
+<a href="/" class="brand-lk lg-m" aria-label="Kerna AI, ir a la portada"><img class="kl" src="/estaticos/img/simbolo.webp?v={{ ver }}" width="64" height="64" alt="" decoding="async"><span class="brand-t disp" style="font-size:26px">KERNA<small>AI</small></span></a>
+<form class="card card-hi lg-c grid gap-4" method="post" action="/acceso" aria-labelledby="lg-t" novalidate>
+<div class="flex items-center gap-3"><span class="orb-ic grid place-items-center w-12 h-12 shrink-0" style="background:var(--brand-soft);color:var(--brand)"><span style="width:26px;height:26px;display:inline-flex">{{ ic('key-round') }}</span></span>
+<h1 id="lg-t" class="disp m-0" style="font-size:22px;line-height:1.1;color:var(--brand)">Entra a tu cuenta</h1></div>
+<label class="cl-c" for="lg-u">Usuario<input id="lg-u" name="usuario" value="{{ usuario }}" maxlength="64" autocomplete="username" autocapitalize="none" spellcheck="false" required{% if not usuario %} autofocus{% endif %}{% if error %} aria-describedby="lg-e"{% endif %}></label>
+<div class="cl-c"><label for="lg-c">Contraseña</label><span class="lg-pw"><input id="lg-c" type="password" name="clave" maxlength="130" autocomplete="current-password" required{% if usuario %} autofocus{% endif %}{% if error %} aria-describedby="lg-e"{% endif %}>
+<button type="button" class="lg-ojo" data-ver-clave aria-label="Mostrar la contraseña" aria-pressed="false">{{ ic('eye', px=20) }}</button></span></div>
+{% if error %}<p id="lg-e" role="alert" class="m-0 flex items-start gap-2 text-sm font-semibold t-bad">{{ ic('e-cadena-agotada', px=24) }}<span>{{ error }}</span></p>{% endif %}
 <button class="btn btn-go" type="submit">Entrar {{ ic('log-in') }}</button>
-<p class="m-0 text-xs muted">El panel muestra solo cifras agregadas: nunca textos de denuncias ni datos de personas.</p>
-</form></section>
+</form>
+<p class="lg-n">¿Olvidaste tu contraseña? Pídele a Dirección que la restablezca.</p>
+</main>
 {% endblock %}

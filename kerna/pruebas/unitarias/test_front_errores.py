@@ -15,7 +15,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 
 from app import principal, seguridad  # noqa: E402
 
-H = {"x-clave": "clave-de-prueba"}
+from sesion_prueba import H  # noqa: E402  (cookie de la sesión de Dirección)
 SECRETO = "secreto-que-no-debe-salir"
 
 
@@ -36,9 +36,12 @@ def _validar(n: int):
 for _c in (400, 401, 403, 404, 429, 500, 502, 503, 504):
     principal.app.add_api_route(f"/_prueba/http/{_c}", _http(_c))
     principal.app.add_api_route(f"/api/_prueba/http/{_c}", _http(_c))
+import re  # noqa: E402
+from app import permisos  # noqa: E402
+permisos.RUTAS.insert(0, (re.compile(r"^/api/_prueba/.*$"), "resumen"))   # las rutas de prueba de /api también pasan por los permisos
 principal.app.add_api_route("/_prueba/boom", _falla_inesperada)
 principal.app.add_api_route("/api/_prueba/boom", _falla_inesperada)
-principal.app.add_api_route("/panel/_prueba/boom", _falla_inesperada)
+principal.app.add_api_route("/panel/demo/_prueba/boom", _falla_inesperada)
 principal.app.add_api_route("/_prueba/tiempo", lambda: (_ for _ in ()).throw(TimeoutError(SECRETO)))
 principal.app.add_api_route("/_prueba/conexion", lambda: (_ for _ in ()).throw(ConnectionError(SECRETO)))
 principal.app.add_api_route("/_prueba/valida", _validar)
@@ -118,14 +121,14 @@ def test_400_y_401_403_con_enlace_al_acceso(c):
     assert r.status_code == 400 and "No entendimos" in r.text
     for cod in (401, 403):
         r = c.get(f"/_prueba/http/{cod}")
-        assert r.status_code == cod and 'href="/acceso"' in r.text and "Entrar con la clave" in r.text
+        assert r.status_code == cod and 'href="/acceso"' in r.text and "Entrar con tu cuenta" in r.text
         _seguras(r), _limpio(r)
 
 
 def test_403_con_sesion_vuelve_al_panel(c):
-    principal.app.add_api_route("/panel/_prueba/403", _http(403))
-    r = c.get("/panel/_prueba/403", headers=H)
-    assert r.status_code == 403 and "Volver al panel" in r.text and "Entrar con la clave" not in r.text
+    principal.app.add_api_route("/panel/demo/_prueba/403", _http(403))
+    r = c.get("/panel/demo/_prueba/403", headers=H)
+    assert r.status_code == 403 and "Volver al panel" in r.text and "Entrar con tu cuenta" not in r.text
 
 
 def test_429_dice_cuanto_esperar(c):
@@ -162,7 +165,7 @@ def test_500_no_filtra_traza_y_registra_solo_el_tipo(c, caplog):
 
 
 def test_500_dentro_del_panel_usa_el_marco_del_panel(c):
-    r = c.get("/panel/_prueba/boom", headers=H)
+    r = c.get("/panel/demo/_prueba/boom", headers=H)
     assert r.status_code == 500 and 'aria-label="Menú lateral"' in r.text and "Volver al panel" in r.text
     _limpio(r)
 

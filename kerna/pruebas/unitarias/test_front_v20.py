@@ -12,7 +12,7 @@ os.environ["LOG_ANALYTICS_WORKSPACE_ID"] = "ws-prueba"
 from app import principal  # noqa: E402
 
 EST = Path(__file__).resolve().parents[2] / "front" / "app" / "estaticos"
-H = {"X-Clave": "clave-de-prueba"}
+from sesion_prueba import H  # noqa: E402  (cookie de la sesión de Dirección)
 
 
 def test_los_iconos_van_dentro_de_cada_pagina_y_sin_sprites_externos():

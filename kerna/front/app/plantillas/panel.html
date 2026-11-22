@@ -11,7 +11,7 @@
 {% if n %}{% for x in rei.r.motivos %}<span class="cola-m s-{{ 'warn' if x.se_reintenta else 'na' }}">{{ ic(motivo_ico(x.texto, x.se_reintenta), px=40) }}<b>{{ miles(x.casos) }}</b><span>{{ x.texto }}</span></span>{% endfor %}
 {% elif not rei.r.alerta_n %}<span class="cola-m s-ok">{{ ic('e-lista', px=40) }}<span>Sin casos en espera</span></span>{% endif %}
 {% if rei.r.alerta_n %}<span class="cola-m s-bad">{{ ic('e-contingencia-modelo', px=40) }}<b>{{ miles(rei.r.alerta_n) }}</b><span>Más de {{ rei.r.alerta_h }} h sin sugerencia</span></span>{% endif %}
-<span class="cola-a" data-rei-acc>{{ accion(vb) }}</span>
+<span class="cola-a" data-rei-acc>{{ accion(vb, nivel_de(request, 'ajustes')) }}</span>
 </div></div>
 <dialog id="dlg-rei" class="dlg" aria-labelledby="dlg-rei-t"><form method="dialog" class="dlg-f">
 <div class="dlg-h">{{ ic('e-contingencia-modelo', px=48) }}<div><h2 id="dlg-rei-t" class="dlg-t">¿Reintentar <span data-dlg-n>{{ n }}</span> casos?</h2><p class="dlg-p">Los casos con revisión humana no se tocan</p></div></div>

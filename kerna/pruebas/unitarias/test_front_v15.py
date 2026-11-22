@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "front"))
 from test_front_ajustes import H, TablaFalsa  # noqa: E402,F401
 from app import ajustes, cache, principal, seguridad  # noqa: E402
+import sesion_prueba  # noqa: E402
 
 EST = Path(__file__).resolve().parents[2] / "front" / "app"
 CSS = (EST / "estaticos" / "kerna.css").read_text()
@@ -39,7 +40,7 @@ def test_ajustes_en_caliente_no_leen_la_tabla(cli, monkeypatch):
 def test_tras_guardar_no_se_sirve_el_valor_anterior(cli):
     cli.get("/panel/ajustes", headers=H)
     hj = {**H, "Accept": "application/json", "Origin": "https://t"}
-    r = cli.post("/panel/ajustes", headers=hj, data={"csrf": seguridad.token_csrf({}), "valores": json.dumps({**ajustes.RECOMENDADO, "envios": 9})})
+    r = cli.post("/panel/ajustes", headers=hj, data={"csrf": sesion_prueba.csrf(), "valores": json.dumps({**ajustes.RECOMENDADO, "envios": 9})})
     assert r.json()["estado"] == "ok"
     assert cache.obtener(("ajustes",), lambda: pytest.fail("recalculó"), 15)["valores"]["envios"] == 9
     assert '"envios": 9' in cli.get("/panel/ajustes", headers=H).text or '"envios":9' in cli.get("/panel/ajustes", headers=H).text

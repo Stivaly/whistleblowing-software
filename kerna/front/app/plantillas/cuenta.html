@@ -1,0 +1,21 @@
+{% extends "base_panel.html" %}{% block titulo %}Mi cuenta · Kerna AI{% endblock %}
+{% set seccion = 'cuenta' %}
+{% block vista %}
+<div class="cli">
+<header class="bar"><div class="bar-t"><h1 class="h1">{% if obligada %}Elige tu contraseña{% else %}Mi cuenta{% endif %}</h1></div></header>
+{% if aviso == 'ok' %}<p class="cola-av s-ok" role="status">{{ ic('e-valorada', px=40) }}<span>Contraseña cambiada. Las demás sesiones de tu cuenta se cerraron</span></p>{% endif %}
+{% if obligada %}<p class="cola-av s-warn" role="status">{{ ic('e-contingencia-modelo', px=40) }}<span>Tu contraseña es temporal: cámbiala para seguir</span></p>{% endif %}
+<section class="cl-s" aria-labelledby="mc-d"><h2 id="mc-d" class="mk">Tus datos</h2>
+<dl class="mc-dl"><div><dt>Usuario</dt><dd><code>{{ perfil.usuario }}</code></dd></div><div><dt>Nombre</dt><dd>{{ perfil.nombre }}</dd></div>{% if perfil.correo %}<div><dt>Correo</dt><dd>{{ perfil.correo }}</dd></div>{% endif %}<div><dt>Rol</dt><dd><span class="chip brand">{{ ic('user', px=14, mini=True) }}<span>{{ perfil.rol_nombre }}</span></span></dd></div></dl></section>
+{% if propia %}
+<section class="cl-s" aria-labelledby="mc-c"><h2 id="mc-c" class="mk">Cambiar contraseña{{ tip('cu_clave_propia') }}</h2>
+<form method="post" action="/cuenta/clave" class="mc-f" autocomplete="off"><input type="hidden" name="csrf" value="{{ csrf_de(request) }}">
+<label class="cl-c">Contraseña actual<input type="password" name="actual" autocomplete="current-password" maxlength="130" required></label>
+<label class="cl-c">Contraseña nueva<input type="password" name="nueva" autocomplete="new-password" minlength="{{ min }}" maxlength="128" required aria-describedby="mc-h"></label>
+<p id="mc-h" class="mc-h">Al menos {{ min }} caracteres</p>
+<label class="cl-c">Repite la contraseña nueva<input type="password" name="repetir" autocomplete="new-password" minlength="{{ min }}" maxlength="128" required></label>
+{% if error %}<p class="cola-av s-bad" role="alert">{{ ic('e-cadena-agotada', px=32) }}<span>{{ error }}</span></p>{% endif %}
+<div><button type="submit" class="btn btn-pri">{{ ic('key-round') }}<span>Cambiar contraseña</span></button></div></form></section>
+{% else %}<p class="muted">Tu acceso lo gestiona Microsoft Entra: la contraseña se cambia allí.</p>{% endif %}
+</div>
+{% endblock %}

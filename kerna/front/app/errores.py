@@ -16,7 +16,7 @@ log = logging.getLogger("kerna.front.errores")
 # código: (ilustración de estado, título, una línea). Los títulos se explican solos.
 CATALOGO = {
     400: ("cadena-agotada", "No entendimos lo que enviaste", "Revisa los datos e inténtalo de nuevo."),
-    401: ("revision-citas", "Necesitas entrar para ver esto", "Entra con la clave de acceso y vuelve a intentarlo."),
+    401: ("revision-citas", "Necesitas entrar para ver esto", "Entra con tu usuario y contraseña y vuelve a intentarlo."),
     403: ("revision-citas", "No pudimos confirmar tu solicitud", "Vuelve atrás, recarga la página e inténtalo otra vez."),
     404: ("sin-info", "No encontramos esta página", "La dirección no existe o cambió de lugar."),
     405: ("sin-info", "Esta acción no está disponible aquí", "Vuelve atrás y usa los botones de la página."),
@@ -76,17 +76,19 @@ def _json(request) -> bool:
 def registrar(app, plantillas, hay_sesion, cabeceras: dict):
     """Instala los manejadores. `hay_sesion(request)` dice si hay sesión de panel (decide el marco de la pantalla)."""
 
-    def pantalla(request, codigo: int, linea: str = "", espera_s: float | None = None, headers: dict | None = None):
+    def pantalla(request, codigo: int, linea: str = "", espera_s: float | None = None, headers: dict | None = None, titulo: str = "", estado: str = ""):
+        """`titulo` y `estado` reemplazan el título del catálogo y suman «estado» al JSON (p. ej. un 403 por falta de permiso)."""
         codigo = _normal(codigo)
-        ico, titulo, texto = CATALOGO[codigo]
+        ico, titulo_c, texto = CATALOGO[codigo]
+        titulo = titulo or titulo_c
         texto = " ".join(x for x in (linea or texto, _espera(espera_s) if codigo == 429 else "") if x)
         h = {**cabeceras, "Cache-Control": "no-store", **(headers or {})}
         ruta = request.url.path
         if ruta.startswith("/estaticos/"):
             return PlainTextResponse("No encontrado" if codigo == 404 else titulo, status_code=codigo, headers=h)
         if _json(request):
-            return JSONResponse({"error": titulo, "mensaje": texto}, status_code=codigo, headers=h)
-        en_panel = ruta.startswith("/panel") and bool(hay_sesion(request))
+            return JSONResponse({"error": titulo, "mensaje": texto, **({"estado": estado} if estado else {})}, status_code=codigo, headers=h)
+        en_panel = ruta.startswith(("/panel", "/cuenta")) and bool(hay_sesion(request))
         ctx = {"codigo": codigo, "ico": ico, "titulo": titulo, "texto": texto, "en_panel": en_panel, "seccion": "",
                "sin_sesion": codigo in (401, 403) and not hay_sesion(request), "reintentar": codigo in REINTENTABLES or codigo == 429,
                "dependencia": codigo in DEPENDENCIA_CAIDA, "reintento": _destino_reintento(request, en_panel)}

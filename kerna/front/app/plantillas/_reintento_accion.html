@@ -1,7 +1,8 @@
-{% macro accion(vm) -%}
+{% macro accion(vm, nivel='editar') -%}
 {% if vm.modo == 'curso' %}<span class="rei-w{% if vm.detenido %} rei-det{% endif %}" data-tip="reintento_estado" x="{{ vm.ayuda }}" tabindex="0" role="status" aria-label="Reintentando. {{ vm.ayuda }}">
 <button type="button" class="btn btn-off" disabled aria-disabled="true" tabindex="-1"><span class="rei-sp">{{ ic('e-conector-en-proceso', px=28, mini=True) }}</span><span>{{ vm.texto }}</span>{% if vm.sub %}<small>{{ vm.sub }}</small>{% endif %}</button>
 {% if vm.avance is not none %}<i class="rei-bar" aria-hidden="true"><b style="transform:scaleX({{ (vm.avance / 100)|round(3) }})"></b></i>{% endif %}</span>
-{% else %}<a class="btn btn-pri" href="/panel/reintentar" data-reintentar>{{ ic('rotate-cw') }}<span>{{ vm.texto }}</span></a>
+{% else %}{% if nivel == 'editar' %}<a class="btn btn-pri" href="/panel/reintentar" data-reintentar>{{ ic('rotate-cw') }}<span>{{ vm.texto }}</span></a>
+{% elif nivel == 'ver' %}<button type="button" class="btn btn-off" disabled aria-disabled="true" title="Tu rol solo puede ver">{{ ic('rotate-cw') }}<span>{{ vm.texto }}</span></button>{% endif %}
 {% if vm.resultado %}<span class="rei-ok" role="status">{{ ic('e-lista', px=28, mini=True) }}<span><b>{{ vm.resultado }}</b>{% if vm.resultado_en %}<small>{{ vm.resultado_en }}</small>{% endif %}</span></span>{% endif %}{% endif %}
 {%- endmacro %}

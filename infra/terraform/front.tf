@@ -54,6 +54,7 @@ resource "azurerm_linux_web_app" "front" {
     LOG_ANALYTICS_WORKSPACE_ID     = azurerm_log_analytics_workspace.logs.workspace_id
     EVALUACIONES_TABLA_URL         = azurerm_storage_account.nucleo.primary_table_endpoint
     NEGOCIO_TABLA_URL              = azurerm_storage_account.nucleo.primary_table_endpoint
+    CUENTAS_TABLA_URL              = azurerm_storage_account.nucleo.primary_table_endpoint # cuentas y cuentaseventos (usuarios, roles y auditoría del panel)
     REINTENTOS_TABLA_URL           = azurerm_storage_account.nucleo.primary_table_endpoint
     # Costo de IA: tokens de todas las llamadas a Azure OpenAI (producción, pruebas y mediciones) desde las métricas de la cuenta.
     OPENAI_RECURSO_ID = azurerm_cognitive_account.openai.id

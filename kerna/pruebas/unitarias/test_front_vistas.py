@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 
 from app import consultas, evaluaciones, formato, negocio, principal, proveedores, vistas  # noqa: E402
 
-H = {"X-Clave": "clave-de-prueba"}
+from sesion_prueba import H  # noqa: E402  (cookie de la sesión de Dirección)
 M = {"dias": 7, "total_casos": 20, "casos_por_dia": [{"dia": "2026-11-10", "casos": 8, "con_sugerencia": 6}, {"dia": "2026-11-11", "casos": 12, "con_sugerencia": 11}],
      "modos": {"oficial": 15, "respaldo": 3, "local": 0, "manual": 2}, "leyes": [{"norma": "Ley 21643", "articulos": 5}],
      "valoraciones": {"util": 3, "no_util": 1, "ninguno_aplica": 0},
@@ -93,8 +93,8 @@ def test_api_metricas_lleva_vista(cliente):
 
 def test_render_portada_acceso_informe(cliente):
     assert "Entrar al panel" in cliente.get("/").text
-    r = cliente.post("/acceso", data={"clave": "mala"})
-    assert r.status_code == 401 and "Clave incorrecta" in r.text
+    r = cliente.post("/acceso", data={"usuario": "admin", "clave": "mala"})
+    assert r.status_code == 401 and "Revisa tu usuario y contraseña" in r.text
     t = cliente.get("/panel/informe?dias=7", headers=H).text
     assert "Informe de gestión" in t and "descargar.pdf" in t and 'id="inf-cuerpo"' in t and 'class="card doc' not in t
 

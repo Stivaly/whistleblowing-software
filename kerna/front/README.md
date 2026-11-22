@@ -25,16 +25,43 @@ Artículos por ley salen del evento `articulo_sugerido` (solo el nombre público
 ## Infraestructura (`infra/terraform/front.tf`)
 App Service Plan Linux F1 (gratis) y Linux Web App Python 3.12 en `rg-kerna-dev`, HTTPS only, TLS 1.2, FTPS desactivado, identidad administrada de sistema con `Log Analytics Reader` sobre `log-kerna-dev` y `Key Vault Secrets User` sobre el Key Vault de Kerna. Inicio: `gunicorn -k uvicorn.workers.UvicornWorker app.principal:app`. F1 no admite always-on: la primera visita tras inactividad tarda unos segundos.
 
-## Protección
-La cuenta de estudiante no puede crear registros de aplicación de Entra (`allowedToCreateApps = false`), por eso `/panel` y `/api/*` usan una clave compartida (`FRONT_AUTH=clave`):
-- La clave es el secreto `front-clave-panel` del Key Vault; la app la recibe como referencia de Key Vault en `FRONT_CLAVE`. Nunca pasa por Terraform ni por el repo.
-- `/panel` redirige a `/acceso`; el formulario entrega una cookie firmada (HttpOnly, Secure, SameSite=Strict, 8 h). Para `/api/*` se usa la cabecera `X-Clave`. Comparación en tiempo constante y límite de 5 fallos por IP cada 5 minutos.
-- Leer la clave: `az keyvault secret show --vault-name <kv> --name front-clave-panel --query value -o tsv`. Rotar: `az keyvault secret set` con otro valor y reiniciar la app.
+## Accesos y roles
+Cada persona entra en `/acceso` con su usuario y contraseña (`FRONT_AUTH=clave`). `/panel/*` y `/cuenta` exigen una sesión; `/api/*` también acepta la clave compartida por cabecera `X-Clave`.
+
+**Roles y permisos** (tabla única en `app/permisos.py`, aplicada en el servidor a toda ruta GET y POST por el middleware `control_acceso`; el menú solo la refleja):
+
+| Sección | Dirección | Operación de IA | Comercial | Evaluación | Invitado |
+| --- | --- | --- | --- | --- | --- |
+| Resumen (`/panel`) | editar | editar | editar | ver | no |
+| Informe (`/panel/informe`, descargas) | editar | editar | editar | ver | no |
+| Negocio (`/panel/negocio`) | editar | no | editar | ver | no |
+| Administrar clientes (`/panel/clientes`) | editar | no | editar | ver | no |
+| Ajustes y reintentos (`/panel/ajustes`, `/panel/reintentar`) | editar | editar | no | ver | no |
+| Cuentas (`/panel/cuentas`, con historial) | editar | no | no | ver | no |
+| Demo (`/panel/demo`) | editar | editar | editar | editar | editar |
+
+Evaluación ve todo y no modifica nada: sus formularios salen deshabilitados y cualquier POST responde 403 con la pantalla de Kerna (la Demo no guarda nada del sistema, por eso puede usarla). Sin permiso, un GET responde 403 con la misma pantalla. Una ruta nueva debe agregarse a `permisos.RUTAS`: sin sección no se atiende (404) y `test_front_cuentas.py` lo comprueba. «Mi cuenta» (`/cuenta`) y `/salir` son de cualquier persona con sesión.
+
+**Almacenamiento:** tablas `cuentas` y `cuentaseventos` del Storage del núcleo (URL en `CUENTAS_TABLA_URL`, o `NEGOCIO_TABLA_URL` si falta), con la identidad administrada de la app (rol Storage Table Data Contributor, `infra/terraform/evaluacion.tf`).
+- `cuentas`: `usuario` (RowKey), `nombre`, `correo`, `rol`, `hash`, `activa`, `debe_cambiar_clave`, `creada`, `actualizada`, `ultimo_acceso`, `intentos_fallidos`, `bloqueada_hasta`, `sesion` (versión de sesión).
+- `cuentaseventos`: `fecha`, `actor`, `accion` (creada, editada, rol_cambiado, clave_restablecida, clave_cambiada, eliminada, desactivada, acceso_ok, acceso_fallido, bloqueada), `cuenta`, `detalle`. Nunca contiene contraseñas, claves temporales ni huellas. Los intentos con un usuario que no existe no dejan evento.
+
+**Contraseñas:** hash argon2id con sal (`argon2-cffi`, parámetros por defecto: 3 pasadas, 64 MiB). Política: de 12 a 128 caracteres y distinta del usuario y del nombre. Nunca se guardan ni se registran en claro.
+
+**Sesión:** cookie `kerna_panel` firmada con HMAC (HttpOnly, Secure, SameSite=Strict, 8 h) con usuario, rol y versión de sesión. En cada petición se comprueba contra la cuenta (existe, activa, misma versión y rol; se recuerda 10 s). Cambiar la clave, restablecerla, cambiar el rol, desactivar o eliminar la cuenta sube la versión y cierra sus sesiones; quien cambia su propia clave sigue con una cookie nueva. Si la tabla no responde, el panel responde 503 y no deja pasar a nadie.
+
+**Intentos:** 5 fallos seguidos bloquean la cuenta 15 minutos (se guarda en la tabla) y la IP tiene un límite aparte de 5 fallos cada 5 minutos. El mensaje es siempre el mismo, exista o no el usuario. Una cuenta con `debe_cambiar_clave` solo puede abrir `/cuenta/clave` hasta elegir su contraseña.
+
+**Cuentas (solo Dirección edita):** crear, editar (nombre, correo, rol, activar o desactivar), restablecer contraseña y eliminar (se escribe el usuario para confirmar). No se puede eliminar, desactivar ni restablecer la propia cuenta, ni dejar el sistema sin una cuenta Dirección activa. Crear y restablecer generan una contraseña temporal aleatoria y la envían por correo (`app/correo.py`, tipos `cuenta_creada`, `clave_restablecida`, `cuenta_eliminada`, `rol_cambiado`, `clave_cambiada`). Si el correo no sale, la contraseña se muestra una vez a quien la creó y el evento lo registra sin ella.
+
+**Cuenta `admin`:** si `cuentas` está vacía al arrancar (o en el primer acceso), se crea `admin`, rol Dirección, con la contraseña actual `FRONT_CLAVE` (hash argon2) y sin obligación de cambiarla. Esa es la primera cuenta: entrar como `admin`, abrir Cuentas y crear las demás (conviene cambiar la contraseña de `admin` en «Mi cuenta»).
+
+**Clave compartida (`X-Clave`):** secreto `front-clave-panel` del Key Vault, entregado como referencia en `FRONT_CLAVE`. Solo vale en `/api/*` (`/api/metricas`, `/api/proveedores`, `/api/negocio`) y da lectura de Resumen y Negocio; no abre `/panel` ni modifica nada. También firma las cookies de sesión: rotarla cierra todas las sesiones. Leerla: `az keyvault secret show --vault-name <kv> --name front-clave-panel --query value -o tsv`.
 
 ### Pasar a Entra ID
 1. Con una cuenta que pueda crear registros de aplicación: crear el registro (web, redirect `https://<app>/.auth/login/aad/callback`, tokens de ID activados).
 2. Activar autenticación integrada: `az webapp auth microsoft update` (o `azurerm_linux_web_app.auth_settings_v2` con `active_directory_v2`) con `require_authentication`, acción `Return401` y exclusión de rutas para `/`, `/estaticos/*` y `/salud`, de modo que solo `/panel` y `/api/*` exijan sesión.
-3. Cambiar `FRONT_AUTH` a `entra`: la app pasa a exigir la cabecera `X-MS-CLIENT-PRINCIPAL-ID` que inyecta Easy Auth.
+3. Cambiar `FRONT_AUTH` a `entra`: la app pasa a exigir la cabecera `X-MS-CLIENT-PRINCIPAL-ID` que inyecta Easy Auth; cada persona entra con rol Dirección y no usa cuentas propias.
 
 ## Despliegue y pruebas
 - `kerna/front/desplegar.sh`: empaqueta el front con las consultas y lo sube con `az webapp deploy` (zip; el build de `requirements.txt` lo hace App Service).

@@ -15,6 +15,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, Re
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app import consultas, principal, proveedores, reintentos, seguridad  # noqa: E402
+import sesion_prueba  # noqa: E402
 
 
 class TablaFalsa:
@@ -82,11 +83,11 @@ def cliente(monkeypatch):
     return c
 
 
-H = {"X-Clave": "clave-de-prueba"}
+from sesion_prueba import H  # noqa: E402  (cookie de la sesión de Dirección)
 
 
 def token():
-    return seguridad.token_csrf({})
+    return sesion_prueba.csrf()
 
 
 def test_post_exige_sesion_csrf_y_mismo_origen(cliente):

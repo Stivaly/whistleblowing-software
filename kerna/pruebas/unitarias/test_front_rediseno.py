@@ -18,7 +18,7 @@ from app import cache, informe, negocio, principal, seguridad, vistas  # noqa: E
 import construir_iconos_estado as iconos  # noqa: E402
 
 EST = Path(__file__).resolve().parents[2] / "front" / "app" / "estaticos"
-H = {"X-Clave": "clave-de-prueba"}
+from sesion_prueba import H  # noqa: E402  (cookie de la sesión de Dirección)
 
 
 # ---- caché -------------------------------------------------------------------------------------------------------------

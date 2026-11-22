@@ -19,16 +19,17 @@ os.environ["FRONT_CLAVE"] = "clave-de-prueba"
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app import demo_denuncias as dd, principal, seguridad  # noqa: E402
+import sesion_prueba  # noqa: E402
 from app.demo_denuncias_casos import CASOS, POR_ID  # noqa: E402
 
-H = {"x-clave": "clave-de-prueba"}
+from sesion_prueba import H  # noqa: E402  (cookie de la sesión de Dirección)
 HJ = {**H, "Accept": "application/json"}
 CORPUS = RAIZ / "evaluacion" / "datos" / "corpus_texto_20261115.md"
 CASO = CASOS[0]
 
 
 def _csrf():
-    return seguridad.token_csrf({})
+    return sesion_prueba.csrf()
 
 
 # ---- núcleo simulado por HTTP (OAuth client credentials, POST /v1/casos, GET /v1/casos/{ref}/sugerencia) ------------------------------

@@ -6,5 +6,5 @@
 <p class="m-0">Kerna volverá a analizar {% if ctx %}{{ ctx.r.reintentables }} {% if ctx.r.reintentables == 1 %}caso{% else %}casos{% endif %}{% else %}los casos{% endif %} que fallaron por problemas de los modelos, sin esperar la próxima ronda automática. Los casos que necesitan a una persona no se tocan.</p>
 <p class="m-0 text-sm muted">El texto de las denuncias no pasa por este panel: el conector lo lee de Veridy con su propia sesión, como siempre.</p>
 <form method="post" action="/panel/reintentar" class="flex flex-wrap gap-3"><input type="hidden" name="csrf" value="{{ csrf }}">
-<button class="btn btn-pri" type="submit">Sí, reintentar</button><a class="btn btn-sec" href="/panel">Cancelar</a></form></section>
+{% if nivel_de(request, 'ajustes') == 'editar' %}<button class="btn btn-pri" type="submit">Sí, reintentar</button>{% else %}<button class="btn btn-off" type="button" disabled aria-disabled="true" title="Tu rol solo puede ver">Sí, reintentar</button>{% endif %}<a class="btn btn-sec" href="/panel">Cancelar</a></form></section>
 {% endblock %}

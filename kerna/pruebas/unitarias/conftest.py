@@ -11,3 +11,14 @@ def _cache_front_limpia():
     cache.vaciar()
     yield
     cache.vaciar()
+
+
+@pytest.fixture(autouse=True)
+def _cuentas_simuladas(request, monkeypatch):
+    """Las pruebas del front (y las de clientes) corren con tablas de cuentas simuladas que ya tienen la cuenta `admin` (Dirección)."""
+    if not request.module.__name__.startswith(("test_front", "test_clientes_admin")):
+        yield
+        return
+    import sesion_prueba
+    sesion_prueba.instalar(monkeypatch)
+    yield

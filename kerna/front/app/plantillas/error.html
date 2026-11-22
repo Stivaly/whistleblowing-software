@@ -8,7 +8,7 @@
 <p class="err-p">{{ texto }}</p>
 <div class="err-a">
 {% if reintentar %}<a class="btn btn-pri" href="{{ reintento }}">{{ ic('rotate-cw') }} Reintentar</a>{% endif %}
-{% if sin_sesion %}<a class="btn {{ 'btn-sec' if reintentar else 'btn-pri' }}" href="/acceso">{{ ic('key-round') }} Entrar con la clave</a>{% endif %}
+{% if sin_sesion %}<a class="btn {{ 'btn-sec' if reintentar else 'btn-pri' }}" href="/acceso">{{ ic('key-round') }} Entrar con tu cuenta</a>{% endif %}
 {% if en_panel %}<a class="btn {{ 'btn-sec' if reintentar else 'btn-pri' }}" href="/panel">{{ ic('layout-dashboard') }} Volver al panel</a>{% endif %}
 {% if not en_panel %}<a class="btn btn-sec" href="/">{{ ic('globe') }} Ir a la portada</a>{% endif %}
 </div></div></section>

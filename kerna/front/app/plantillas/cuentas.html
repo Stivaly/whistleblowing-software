@@ -1,0 +1,65 @@
+{% extends "base_panel.html" %}{% block titulo %}Cuentas · Kerna AI{% endblock %}
+{% set seccion = 'cuentas' %}
+{% set ed = puede_editar(request, 'cuentas') %}
+{% set ACC = {'creada': 'Cuenta creada', 'editada': 'Cuenta editada', 'rol_cambiado': 'Rol cambiado', 'clave_restablecida': 'Clave restablecida', 'clave_cambiada': 'Clave cambiada', 'eliminada': 'Cuenta eliminada', 'desactivada': 'Cuenta desactivada', 'acceso_ok': 'Entró al panel', 'acceso_fallido': 'Intento fallido', 'bloqueada': 'Cuenta bloqueada'} %}
+{% block vista %}
+<div class="cli cue" data-csrf="{{ csrf }}" data-yo="{{ yo }}">
+<header class="bar"><div class="bar-t"><h1 class="h1">Cuentas</h1></div>
+<div class="bar-a">{% if ed %}<button type="button" class="btn btn-pri" data-abrir="dlg-nueva">{{ ic('user-plus') }}<span>Crear cuenta</span></button>{% endif %}</div></header>
+
+{% if error %}<p class="cola-av s-bad" role="alert">{{ ic('e-cadena-agotada', px=40) }}<span>No se pudo leer la lista de cuentas. Inténtalo en un momento</span></p>{% endif %}
+<p class="cola-av" data-aviso role="status" aria-live="polite" hidden></p>
+
+<section class="cl-s" aria-labelledby="cu-l"><h2 id="cu-l" class="mk">Quién puede entrar{{ tip('cu_cuentas') }}<span class="mk-r">{{ lista|length }}</span></h2>
+{% if lista %}<div class="tabla"><table><thead><tr><th>Usuario</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Último acceso</th>{% if ed %}<th></th>{% endif %}</tr></thead><tbody>
+{% for c in lista %}<tr data-usuario="{{ c.usuario }}" data-nombre="{{ c.nombre }}" data-correo="{{ c.correo }}" data-rol="{{ c.rol }}" data-activa="{{ '1' if c.activa else '0' }}"><td><b>{{ c.nombre }}</b><br><small class="muted"><code>{{ c.usuario }}</code>{% if c.usuario == yo %} · eres tú{% endif %}</small></td>
+<td data-l="Correo">{{ c.correo or '—' }}</td><td data-l="Rol"><span class="chip brand">{{ ic('user', px=14, mini=True) }}<span>{{ c.rol_nombre }}</span></span></td>
+<td data-l="Estado">{% if not c.activa %}<span class="chip na">{{ ic('minus', px=14, mini=True) }}<span>Desactivada</span></span>{% elif c.bloqueada %}<span class="chip bad">{{ ic('lock', px=14, mini=True) }}<span>Bloqueada un rato</span></span>{% elif c.debe_cambiar_clave %}<span class="chip warn">{{ ic('key-round', px=14, mini=True) }}<span>Clave temporal</span></span>{% else %}<span class="chip ok">{{ ic('check', px=14, mini=True) }}<span>Activa</span></span>{% endif %}</td>
+<td data-l="Último acceso">{{ fecha_hora(c.ultimo_acceso) if c.ultimo_acceso else 'Nunca' }}</td>
+{% if ed %}<td class="cl-ac"><button type="button" class="btn btn-sec" data-editar>Editar</button>{% if c.usuario != yo %}<button type="button" class="btn btn-sec" data-restablecer>Restablecer clave</button><button type="button" class="btn btn-sec cl-pel" data-eliminar>Eliminar</button>{% endif %}</td>{% endif %}</tr>{% endfor %}
+</tbody></table></div>{% elif not error %}<p class="muted">Todavía no hay cuentas.</p>{% endif %}</section>
+
+<section class="cl-s" aria-labelledby="cu-h"><h2 id="cu-h" class="mk">Historial{{ tip('cu_historial') }}<span class="mk-r">{{ historial|length }}</span></h2>
+{% if historial %}<div class="tabla"><table><thead><tr><th>Fecha</th><th>Qué pasó</th><th>Cuenta</th><th>Quién</th><th>Detalle</th></tr></thead><tbody>
+{% for e in historial %}<tr><td data-l="Fecha">{{ fecha_hora(e.fecha) }}</td><td data-l="Qué pasó"><span class="chip {{ 'bad' if e.accion in ('acceso_fallido', 'bloqueada', 'eliminada', 'desactivada') else 'ok' if e.accion == 'acceso_ok' else 'brand' }}">{{ ACC.get(e.accion, e.accion) }}</span></td><td data-l="Cuenta"><code>{{ e.cuenta or '—' }}</code></td><td data-l="Quién"><code>{{ e.actor or '—' }}</code></td><td data-l="Detalle">{{ e.detalle or '—' }}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="muted">Todavía no hay movimientos.</p>{% endif %}</section>
+
+{% if ed %}
+<dialog id="dlg-nueva" class="dlg" aria-labelledby="dlg-nueva-t"><form method="dialog" class="dlg-f" data-form="crear">
+<div class="dlg-h">{{ ic('user-plus', px=40) }}<div><h2 id="dlg-nueva-t" class="dlg-t">Crear cuenta</h2><p class="dlg-p">Le llega una contraseña temporal por correo</p></div></div>
+<label class="cl-c">Nombre<input name="nombre" maxlength="80" required autocomplete="off"></label>
+<label class="cl-c">Usuario<input name="usuario" maxlength="32" required autocomplete="off" autocapitalize="none" pattern="[a-z0-9][a-z0-9._\-]{2,31}" placeholder="maria.perez" title="3 a 32 letras minúsculas, números, punto, guion o guion bajo"></label>
+<label class="cl-c">Correo<input name="correo" type="email" maxlength="120" required autocomplete="off"></label>
+<label class="cl-c">Rol<select name="rol">{% for k, (n, d) in roles.items() %}<option value="{{ k }}"{% if k == 'invitado' %} selected{% endif %}>{{ n }}: {{ d }}</option>{% endfor %}</select></label>
+<p class="cola-av s-bad" data-error role="alert" hidden></p>
+<div class="dlg-b"><button type="button" class="btn btn-sec" data-cerrar>Cancelar</button><button type="submit" class="btn btn-pri">Crear cuenta</button></div></form></dialog>
+
+<dialog id="dlg-editar" class="dlg" aria-labelledby="dlg-editar-t"><form method="dialog" class="dlg-f" data-form="editar">
+<div class="dlg-h">{{ ic('pencil', px=40) }}<div><h2 id="dlg-editar-t" class="dlg-t">Editar a <span data-n></span></h2><p class="dlg-p">Usuario <code data-u></code></p></div></div>
+<label class="cl-c">Nombre<input name="nombre" maxlength="80" required autocomplete="off"></label>
+<label class="cl-c">Correo<input name="correo" type="email" maxlength="120" required autocomplete="off"></label>
+<label class="cl-c">Rol<select name="rol">{% for k, (n, d) in roles.items() %}<option value="{{ k }}">{{ n }}: {{ d }}</option>{% endfor %}</select></label>
+<label class="cl-c">Estado<select name="activa"><option value="1">Activa</option><option value="0">Desactivada: no puede entrar</option></select></label>
+<p class="cola-av s-bad" data-error role="alert" hidden></p>
+<div class="dlg-b"><button type="button" class="btn btn-sec" data-cerrar>Cancelar</button><button type="submit" class="btn btn-pri">Guardar</button></div></form></dialog>
+
+<dialog id="dlg-restablecer" class="dlg" aria-labelledby="dlg-restablecer-t"><form method="dialog" class="dlg-f" data-form="restablecer">
+<div class="dlg-h">{{ ic('key-round', px=40) }}<div><h2 id="dlg-restablecer-t" class="dlg-t">¿Restablecer la clave de <span data-n></span>?</h2><p class="dlg-p">Se cierran sus sesiones y recibe una contraseña temporal por correo</p></div></div>
+<p class="cola-av s-bad" data-error role="alert" hidden></p>
+<div class="dlg-b"><button type="button" class="btn btn-sec" data-cerrar>Cancelar</button><button type="submit" class="btn btn-pri">Restablecer</button></div></form></dialog>
+
+<dialog id="dlg-eliminar" class="dlg" aria-labelledby="dlg-eliminar-t"><form method="dialog" class="dlg-f" data-form="eliminar">
+<div class="dlg-h">{{ ic('e-cadena-agotada', px=40) }}<div><h2 id="dlg-eliminar-t" class="dlg-t">Eliminar a <span data-n></span></h2><p class="dlg-p">Pierde el acceso para siempre. No se puede deshacer</p></div></div>
+<label class="cl-c">Para confirmar, escribe el usuario: <code data-idl></code><input name="confirmar" autocomplete="off" autocapitalize="none" required></label>
+<p class="cola-av s-bad" data-error role="alert" hidden></p>
+<div class="dlg-b"><button type="button" class="btn btn-sec" data-cerrar>Cancelar</button><button type="submit" class="btn btn-pri" data-ok disabled>Eliminar cuenta</button></div></form></dialog>
+
+<dialog id="dlg-clave" class="dlg" aria-labelledby="dlg-clave-t"><div class="dlg-f">
+<div class="dlg-h">{{ ic('key-round', px=40) }}<div><h2 id="dlg-clave-t" class="dlg-t">No se pudo enviar el correo</h2><p class="dlg-p">Entrégale esta contraseña temporal: no se vuelve a mostrar</p></div></div>
+<label class="cl-c">Usuario<input readonly data-v="usuario"></label>
+<label class="cl-c">Contraseña temporal<input readonly data-v="clave" class="cl-sec"></label>
+<div class="dlg-b"><button type="button" class="btn btn-sec" data-copiar>Copiar contraseña</button><button type="button" class="btn btn-pri" data-listo>Ya la guardé</button></div></div></dialog>
+{% endif %}
+</div>
+{% if ed %}<script src="/estaticos/cuentas.js?v={{ ver }}" defer></script>{% endif %}
+{% endblock %}

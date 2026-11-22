@@ -12,6 +12,7 @@ os.environ["LOG_ANALYTICS_WORKSPACE_ID"] = "ws-prueba"
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app import consultas, principal, proveedores as pv  # noqa: E402
+from sesion_prueba import H  # noqa: E402  (cookie de la sesión de Dirección)
 
 DATOS = Path(__file__).resolve().parents[1] / "datos" / "estado_proveedores"
 
@@ -86,15 +87,15 @@ def test_endpoint_y_panel_con_fuentes_caidas(cliente, monkeypatch):
     def caida(url):
         raise TimeoutError
     monkeypatch.setattr(pv, "_get", caida)
-    h = {"X-Clave": "clave-de-prueba"}
+    h = {"X-Clave": "clave-de-prueba"}   # los scripts siguen usando la clave compartida en /api
     assert cliente.get("/api/proveedores").status_code == 401
     r = cliente.get("/api/proveedores", headers=h)
     assert r.status_code == 200 and r.json()["proveedores"][0]["estado"] == "sin_informacion"
-    p = cliente.get("/panel", headers=h)
+    p = cliente.get("/panel", headers=H)
     assert p.status_code == 200 and "Sin información" in p.text
 
 
 def test_panel_muestra_proveedor_caido(cliente, monkeypatch):
     monkeypatch.setattr(pv, "_get", lambda u: guardado({pv.URL_AZURE: "azure_incidente_nuestro.xml", pv.URL_GOOGLE: "google_operativo.json", pv.URL_VOYAGE: "voyage_operativo.json"}[u]).encode())
-    p = cliente.get("/panel", headers={"X-Clave": "clave-de-prueba"})
+    p = cliente.get("/panel", headers=H)
     assert "Caído" in p.text and "Azure OpenAI" in p.text and "¿Está todo bien?" not in p.text

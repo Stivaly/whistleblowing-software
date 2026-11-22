@@ -309,3 +309,27 @@ resource "azurerm_role_assignment" "front_clientes_admin" {
   role_definition_name = "Storage Table Data Contributor"
   principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
 }
+
+# Cuentas del panel (usuario, contraseña con hash argon2id, rol) y su auditoría (altas, cambios de clave y de rol, bajas, accesos).
+# Sin textos de denuncias ni contraseñas. El front las lee y escribe con su identidad administrada (kerna/front/app/cuentas.py);
+# si `cuentas` está vacía al arrancar, crea la cuenta `admin` (Dirección) con la clave actual del panel.
+resource "azapi_resource" "tabla_cuentas" {
+  type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2023-05-01"
+  name      = "cuentas"
+  parent_id = "${azurerm_storage_account.nucleo.id}/tableServices/default"
+  body      = { properties = {} }
+}
+
+resource "azapi_resource" "tabla_cuentas_eventos" {
+  type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2023-05-01"
+  name      = "cuentaseventos"
+  parent_id = "${azurerm_storage_account.nucleo.id}/tableServices/default"
+  body      = { properties = {} }
+}
+
+resource "azurerm_role_assignment" "front_cuentas" {
+  for_each             = var.crear_front ? { cuentas = azapi_resource.tabla_cuentas.name, cuentaseventos = azapi_resource.tabla_cuentas_eventos.name } : {}
+  scope                = "${azurerm_storage_account.nucleo.id}/tableServices/default/tables/${each.value}"
+  role_definition_name = "Storage Table Data Contributor"
+  principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
+}
