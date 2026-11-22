@@ -338,7 +338,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     # --- Costo por modelo
     costo_v = None
     if costo:
-        costo_v = {"total": f.usd(costo["total"]), "por_caso": costo["periodo"] if costo.get("real") else f.usd(costo["por_caso"], 4),
+        costo_v = {"total": f.usd(costo["total"]), "por_caso": costo["periodo"] if costo.get("real") else f.usd(costo["por_caso"], 4), "real": bool(costo.get("real")),
                    "ref": ", ".join(sorted({x["ref"] for x in costo["modelos"]})),
                    "modelos": [{"n": x["modelo"], "usd": f.usd(x["usd"]), "w": round(100 * x["usd"] / costo["total"], 1) if costo["total"] else 0} for x in costo["modelos"]]}
         mp.t["costo.total"], mp.t["costo.caso"] = costo_v["total"], costo_v["por_caso"]
@@ -604,7 +604,7 @@ PESTANAS = [  # id, título, ícono utilitario, glosario, KPI de la pestaña (et
     ("resumen", "Resumen", "layout-dashboard", "inf_resumen", [("Disponibilidad efectiva", "Casos con sugerencia sobre los válidos"), ("% de sugerencias valoradas útiles", "Sugerencias útiles"), ("Revisión manual", "En revisión manual")]),
     ("calidad", "Calidad", "target", "inf_calidad", [("Recall@5 por artículo (global)", "Acierto con el artículo exacto"), ("Recall por ley (global)", "Acierto con la ley"), ("Pruebas automáticas (unitarias): pasadas/total", "Pruebas automáticas pasadas")]),
     ("desempeno", "Rapidez", "timer", "inf_desempeno", [("Latencia P50 (ponderada por día)", "Tiempo típico de un caso"), ("Latencia P95 (máximo diario)", "9 de 10 casos, peor día"), ("Casos fuera del modo oficial", "Con respaldo o manual")]),
-    ("costo", "Costos", "coins", "inf_costo", [("Costo del período", "Costo del período"), ("Costo por denuncia", "Costo por denuncia"), ("Costo total mensual proyectado, 1.000 denuncias", "Costo por 1.000 denuncias")]),
+    ("costo", "Costos", "coins", "inf_costo", [("Costo del período", "Costo del período"), ("Costo de IA por denuncia, estimado con tarifas de Anthropic", "Costo de IA por denuncia"), ("Costo total mensual proyectado, 1.000 denuncias", "Costo por 1.000 denuncias")]),
     ("rentabilidad", "Rentabilidad", "wallet", "inf_rent", [("Ingreso del período", "Ingreso del período"), ("Margen operativo", "Ganancia sobre el ingreso"), ("Utilidad después de impuestos", "Utilidad del período"), ("Retorno anual del proyecto", "Rentabilidad anual")]),
     ("incidentes", "Incidentes", "triangle-alert", "inf_incid", [("Casos en revisión manual", "En revisión manual"), ("Eventos de falla de proveedor o modelo", "Fallas de proveedores")]),
 ]
@@ -897,7 +897,7 @@ def presentacion_resumen(V: dict, rei: dict | None, dias: int) -> dict:
     for key in ("calidad", "tiempo"):
         kb.append(_kb(kp[key], sub=SET_PANEL if key == "calidad" and V.get("con_recall") else ""))
     c = kp["costo_k"]
-    kb.append(_kb(c, sub=(f"US$ {V['costo']['por_caso']} por denuncia" if V.get("costo") else "")))
+    kb.append(_kb(c, sub=((V["costo"]["por_caso"] if V["costo"].get("real") else f"US$ {V['costo']['por_caso']} por denuncia") if V.get("costo") else "")))
     vv = {x["t"]: x for x in V["valoraciones"]}
     n_val = V["n_val"]
     util = vv.get("Útil", {}).get("p")

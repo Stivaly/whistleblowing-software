@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import json
 import os
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -79,7 +81,22 @@ NOMBRE_SERVICIO = {"Foundry Models": "IA (Azure OpenAI)", "Container Instances":
                    "Azure Database for PostgreSQL": "Base de datos de Veridy"}
 
 
+_CACHE: dict = {}
+
+
 def costo_azure(inicio: datetime, fin: datetime) -> dict | None:
+    """Igual que _costo_azure, con caché de 10 minutos por par de fechas (el panel y el informe piden lo mismo)."""
+    clave = (f"{inicio:%Y-%m-%d}", f"{fin:%Y-%m-%d}")
+    hit = _CACHE.get(clave)
+    if hit and time.time() - hit[0] < 600:
+        return hit[1]
+    r = _costo_azure(inicio, fin)
+    if r is not None:
+        _CACHE[clave] = (time.time(), r)
+    return r
+
+
+def _costo_azure(inicio: datetime, fin: datetime) -> dict | None:
     """Lo que Azure cobró entre inicio y fin, por servicio: {"total", "ia", "moneda", "servicios": [(nombre, monto)],
     "desde", "hasta"}. None si no se pudo leer. Azure publica el costo con hasta 24 h de atraso."""
     sub = os.environ.get("AZ_SUSCRIPCION_ID", "")
@@ -91,10 +108,20 @@ def costo_azure(inicio: datetime, fin: datetime) -> dict | None:
                                      "grouping": [{"type": "Dimension", "name": "ServiceName"}]}}).encode()
     pet = urllib.request.Request(f"{API}/subscriptions/{sub}/providers/Microsoft.CostManagement/query?api-version=2023-11-01", data=cuerpo, method="POST",
                                  headers={"Authorization": "Bearer " + _token(), "Content-Type": "application/json"})
-    try:
-        with urllib.request.urlopen(pet, timeout=30) as r:
-            d = json.load(r)
-    except Exception:
+    d = None
+    for intento in range(3):   # Cost Management admite pocas consultas por minuto: si responde 429, espera lo que pide
+        try:
+            with urllib.request.urlopen(pet, timeout=30) as r:
+                d = json.load(r)
+            break
+        except urllib.error.HTTPError as e:
+            if e.code != 429 or intento == 2:
+                return None
+            espera = next((e.headers.get(h) for h in e.headers.keys() if "retry-after" in h.lower()), None)
+            time.sleep(min(float(espera or 5), 20))
+        except Exception:
+            return None
+    if d is None:
         return None
     cols = [c["name"] for c in d["properties"]["columns"]]
     ic, isv, imo = cols.index("Cost"), cols.index("ServiceName"), cols.index("Currency")
