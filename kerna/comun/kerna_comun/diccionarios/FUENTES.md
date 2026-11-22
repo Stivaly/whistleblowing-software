@@ -6,8 +6,8 @@ descargar las fuentes en carpetas aparte y correr el script con sus rutas (ver s
 | Archivo | Fuente | Licencia |
 |---|---|---|
 | nombres.txt | Paquete R `guaguas` 0.3.0 (CRAN): nombres inscritos en el Registro Civil de Chile 1920-2021, ≥ 200 inscripciones; `nombres-propios-es.txt` y `nombres-propios-ar.txt` de github.com/olea/lemarios | guaguas: GPL-3 (datos públicos del Registro Civil); olea/lemarios: dominio público |
-| apellidos.txt | https://forebears.io/chile/surnames (rangos 1-793) y `apellidos-es.txt` de olea/lemarios (INE España) | Datos públicos del sitio; dominio público |
-| otros.txt | github.com/smashew/NameDatabases (`first names/all.txt`, `surnames/all.txt`: varios países y culturas) y nombres de `guaguas` con 20 a 199 inscripciones | Dominio público; GPL-3 |
+| apellidos.txt, apellidos_frecuentes.txt | https://forebears.io/chile/surnames (rangos 1-793), `apellidos-es.txt` de olea/lemarios y `apellidos_frecuencia.xls` del INE de España (https://www.ine.es/daco/daco42/nombyapel/apellidos_frecuencia.xls, ≥ 100 personas, sin palabras ni ciudades) | Datos públicos; dominio público; INE: reutilización libre con cita de la fuente |
+| otros.txt | github.com/smashew/NameDatabases (`first names/all.txt`, `surnames/all.txt`: varios países y culturas) nombres de `guaguas` con 20 a 199 inscripciones y el resto de apellidos del INE | Dominio público; GPL-3 |
 | palabras.txt, verbos.txt, lemario.txt.gz | `lemario-general-del-espanol.txt` y `verbos-espanol-conjugaciones.txt` de olea/lemarios | Dominio público |
 | calles.txt | OpenStreetMap: vías `highway` con `name` dentro de Chile, vía Overpass API | © colaboradores de OpenStreetMap, ODbL 1.0 |
 | lugares.txt | GeoNames `cities15000` (nombres y nombres alternativos) y `countryInfo` | CC BY 4.0, geonames.org |
