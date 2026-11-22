@@ -123,6 +123,10 @@ def test_el_desplegador_empaqueta_el_anonimizador():
     # el anonimizador solo usa la biblioteca estándar: el front desplegado (sin el resto de kerna_comun) puede importarlo
     fuente = (RAIZ / "comun/kerna_comun/anonimizador.py").read_text()
     assert set(re.findall(r"^(?:from|import) (\w+)", fuente, re.M)) <= {"__future__", "re", "unicodedata", "dataclasses"}
+    # sus diccionarios (nombres, apellidos, calles, lemario) viajan con él
+    assert "$COMUN/nombres_cl.py" in linea and 'cp -r "$COMUN/diccionarios"' in linea
+    dicc = (RAIZ / "comun/kerna_comun/nombres_cl.py").read_text()
+    assert set(re.findall(r"^(?:from|import) (\w+)", dicc, re.M)) <= {"__future__", "re", "gzip", "pathlib"}
 
 
 def test_contrato_con_demo_denuncias(c, monkeypatch):

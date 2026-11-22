@@ -137,3 +137,34 @@ def test_denuncias_sinteticas_sin_fuga():
         detalle += [(d.get("id"), p) for p in perdidos]
     tasa = fugas / sembrados if sembrados else 0.0
     assert fugas == 0, f"tasa de fuga {tasa:.1%} ({fugas}/{sembrados}): {detalle}"
+
+
+# --- Diccionarios (nombres, apellidos, calles) y formatos libres de RUT, 2026-11-22 ---
+
+@pytest.mark.parametrize("texto,tipo", [
+    ("carolina", "PERSONA"),                       # nombre suelto en minúscula
+    ("Ayer Carolina me dijo que no", "PERSONA"),   # nombre suelto con mayúscula, sin apellido ni contexto
+    ("hola, soy carolina", "PERSONA"),
+    ("ayer karlos me gritó", "PERSONA"),           # escrito distinto (suena igual que carlos)
+    ("hablé con frnando ayer", "PERSONA"),         # error de una letra
+    ("el jefe, Jhonatan Gonsales, me gritó", "PERSONA"),
+    ("Mi colega Svetlana Ivanova lo vio", "PERSONA"),   # nombre de otro país
+    ("mi rut es 123456785", "RUT"),                # pegado (verificador módulo 11)
+    ("mi rut es 12 345 678 5", "RUT"),             # separado por espacios
+    ("mi rut es 12.345.678 5", "RUT"),
+    ("vivo en los aromos 123", "DIRECCION"),       # calle de Chile sin tipo de vía
+    ("Teatinos 950, Santiago", "DIRECCION"),
+])
+def test_diccionarios_y_formatos_libres_detectan(texto, tipo):
+    assert anonimizar(texto).conteos.get(tipo), texto
+
+
+@pytest.mark.parametrize("texto", [
+    "Compré una rosa en la plaza", "dar a luz", "el marco legal", "yo marco tarjeta", "me dieron 50 lucas",
+    "me lo dijo ella", "Bueno, eso pasó", "Santiago, 3 de mayo", "la Corte de Apelaciones de Rancagua rechazó el recurso",
+    "según el artículo 5 de la ley", "el día 30 fui", "la línea 6 del metro", "pagué 12.345.678 pesos", "Viajé a Colombia",
+    "el folio 123456789 no", "la casa de mi tía",
+])
+def test_diccionarios_no_toman_palabras_comunes(texto):
+    r = anonimizar(texto)
+    assert r.texto == texto, (texto, r.texto)

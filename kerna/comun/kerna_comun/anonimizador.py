@@ -13,6 +13,11 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
+try:
+    from .nombres_cl import APELLIDOS, CALLES, LEMARIO, LUGARES, NOMBRES, OTROS, PALABRAS, VERBOS, es_palabra, fonetica, parecido
+except ImportError:  # cargado como módulo suelto
+    from nombres_cl import APELLIDOS, CALLES, LEMARIO, LUGARES, NOMBRES, OTROS, PALABRAS, VERBOS, es_palabra, fonetica, parecido
+
 TIPOS = ("PERSONA", "RUT", "CORREO", "TELEFONO", "DIRECCION", "PATENTE", "CUENTA", "URL")
 
 
@@ -48,6 +53,8 @@ gracias saludos estimado estimada estimados estimadas atentamente cordialmente b
 usted ustedes yo
 general directo directa titular
 whatsapp facebook instagram google microsoft teams zoom tiktok linkedin twitter
+apelaciones suprema letras garantia oral civil familia cobranza rol rit ruc causa recurso recurrente recurrido recurrida
+demandante demandado demandada querellante querellado rut run dni
 """.split())
 
 # Frases (varias palabras) que se tratan como excepcion completa.
@@ -116,6 +123,29 @@ COMUNAS = [
     "punta arenas", "padre hurtado", "peñaflor", "talagante", "melipilla", "buin", "paine", "calera de tango",
 ]
 
+
+# Comunas de una palabra que no son también nombre o apellido («Rancagua», no «Valdivia»): nunca forman un nombre.
+EXCEPCIONES_PALABRAS |= {unicodedata.normalize("NFKD", c).encode("ascii", "ignore").decode() for c in COMUNAS if " " not in c} - NOMBRES - APELLIDOS
+_DICC = NOMBRES | APELLIDOS
+
+
+_FON_NOMBRES = {fonetica(w) for w in NOMBRES - LEMARIO if len(w) >= 4}  # en minúscula, solo lo que suena a nombre de pila
+
+
+_FUNCIONALES = INICIOS_DE_ORACION | {"ella", "ellas", "ellos", "nosotros", "nosotras", "ustedes", "usted", "eso", "aquello"}
+
+
+def _es_nombre(t: str) -> bool:
+    """Nombre o apellido: frecuente, de otro país (si no es palabra del español) o parecido a uno frecuente («karlos»)."""
+    return t in _DICC or (t not in LUGARES and ((t in OTROS and not es_palabra(t)) or parecido(t)))
+
+
+_COMUNAS_NORM = {unicodedata.normalize("NFKD", c).encode("ascii", "ignore").decode() for c in COMUNAS}  # solas: lugar
+# Al inicio de oración solo cuenta un nombre que no sea también palabra común, o uno de la lista curada.
+NOMBRES_CONOCIDOS |= _DICC - PALABRAS - VERBOS
+# Antes de un nombre en minúscula que también es sustantivo («una rosa», «en paz»): entonces es la palabra, no el nombre.
+# Un nombre en minúscula que también es palabra común («clara», «luz», «carolina») solo cuenta tras estas palabras.
+_ANTES_DE_PERSONA = {"soy", "con", "y", "e", "le", "dijo", "llama", "llamo", "llamada", "llamado"} | TRATAMIENTOS
 
 # ---------------------------------------------------------------------------
 # Utilidades
@@ -186,8 +216,11 @@ _URL_DOMINIO = re.compile(
 _RUT_PUNTOS = re.compile(r"(?<![\w$.,-])\d{1,2}(?:\.\d{3}){2}[ ]?-[ ]?[\dkK](?!\w)")
 _RUT_GUION = re.compile(r"(?<![\w$.,-])\d{7,8}[ ]?-[ ]?[\dkK](?!\w)")
 _RUT_CONTEXTO = re.compile(
-    r"(?i:\b(?:rut|run|r\.u\.t\.?|c[eé]dula|c\.i\.?|dni)\b)[ \t:.n°º#]*"
-    r"(\d{1,2}(?:\.?\d{3}){2}(?:[ ]?-?[ ]?[\dkK])?)(?![\w])")
+    r"(?i:\b(?:rut|run|r\.u\.t\.?|c[eé]dula|c\.i\.?|dni)\b)[ \t:.n°º#]*(?i:(?:es|era|numero|número)[ \t:]+)?"
+    r"(\d{1,2}(?:[. ]?\d{3}){2}(?:[ .]?-?[ ]?[\dkK])?)(?![\w])")
+# RUT sin formato fijo: pegado (123456785), con espacios (12 345 678 5) o mezclado (12.345.678 5); vale solo si el
+# dígito verificador cuadra (módulo 11).
+_RUT_LIBRE = re.compile(r"(?<![\w$.,-])(?:\d{1,2}[. ]\d{3}[. ]\d{3}|\d{7,8})[ .-]?[\dkK](?![\w]|[.,]\d)")
 
 _CUENTA_FILL = (r"(?i:corriente|cte|vista|rut|ahorro|bancaria|bancario|de|del|numero|número|nro|n[°º]|no|"
                 r"credito|crédito|debito|débito|banco|estado|santander|chile|bci|itau|itaú|scotiabank|"
@@ -223,7 +256,7 @@ _EXTRA = (r"(?:[ \t]*,?[ \t]*(?i:depto|dpto|departamento|oficina|of|casa|block|t
 _COMUNA_OPC = r"(?:[ \t]*,?[ \t]*(?i:comuna[ \t]+de[ \t]+)?(?i:" + _COMUNAS_RE + r")\b)?"
 _COLA = _NUMERO + _EXTRA + _COMUNA_OPC
 _DIRECCION = re.compile(
-    r"(?<!\w)(?i:calle|avenida|avda?\.?|av\.?|pasaje|psje\.?|pje\.?|camino|poblaci[oó]n|pobl\.?|villa|condominio|parcela)[ \t]+" + _NOMBRE_CALLE + _COLA)
+    r"(?<!\w)(?i:gran[ \t]+avenida|calle|avenida|avda?\.?|av\.?|pasaje|psje\.?|pje\.?|camino|poblaci[oó]n|pobl\.?|villa|condominio|parcela)[ \t]+" + _NOMBRE_CALLE + _COLA)
 _DIRECCION_CTX = re.compile(
     r"(?i:domicilio|direcci[oó]n)[ \t]*(?i:es|:|en)[ \t]+(?P<d>" + _NOMBRE_CALLE + _COLA + r")")
 
@@ -285,6 +318,7 @@ _REGLAS = [
     ("CUENTA", _CUENTA_CONTEXTO, 1, None, _clave_digitos),
     ("TELEFONO", _TEL_CL, 0, None, _clave_tel),
     ("TELEFONO", _TEL_INT, 0, _tel_int_valido, _clave_digitos),
+    ("RUT", _RUT_LIBRE, 0, rut_valido, _clave_rut),
     ("PATENTE", _PATENTE_CONTEXTO, 1, None, _clave_patente),
     ("PATENTE", _PATENTE, 0, None, _clave_patente),
     ("DIRECCION", _DIRECCION, 0, None, _clave_texto),
@@ -303,6 +337,47 @@ def _aplicar_reglas(texto: str, mapa: _Mapa, spans: list) -> None:
                 continue
             mapa.tomar(i, f)
             spans.append((i, f, tipo, clave(valor)))
+
+
+# Direcciones sin tipo de vía («Teatinos 950», «vivo en los aromos 123»): nombre de calle de Chile (OpenStreetMap) + número.
+_LARGO_CALLE = 7
+_COLA_RE = re.compile(_COLA)
+_ANTES_NUMERO_NO = {"art", "articulo", "articulos", "ley", "leyes", "decreto", "inciso", "numero", "rol", "rit", "ruc", "capitulo",
+                    "pagina", "piso", "sala", "edad", "folio", "letra", "linea", "dia", "temporada", "semana", "hora", "horas", "ano", "anos"}
+
+
+def _direcciones_calles(texto: str, mapa: _Mapa, spans: list) -> None:
+    pal = [(m.start(), m.end(), _sin_tildes(m.group(0))) for m in re.finditer(r"[^\W_]+", texto)]
+    n, i = len(pal), 0
+    while i < n:
+        hecho = False
+        for largo in range(min(_LARGO_CALLE, n - i), 0, -1):
+            nombre = " ".join(p[2] for p in pal[i:i + largo])
+            if nombre not in CALLES or nombre.isdigit():
+                continue
+            ini, fin = pal[i][0], pal[i + largo - 1][1]
+            previo = pal[i - 1][2] if i else ""
+            if previo in _ANTES_NUMERO_NO or pal[i + largo - 1][2] in _ANTES_NUMERO_NO:
+                continue
+            if largo == 1 and nombre in EXCEPCIONES_PALABRAS:
+                continue
+            if pal[i][2].isdigit() and (largo < 2 or pal[i + 1][2] != "de"):
+                continue
+            if not texto[ini].isupper() and previo not in ("en", "a", "calle"):
+                continue
+            if not re.match(r"[ \t]+(?:(?i:n[°º]|n\.°|nro\.?|#)[ \t]*)?\d", texto[fin:fin + 8]):
+                continue
+            m = _COLA_RE.match(texto, fin)
+            if not m or not mapa.libre(ini, m.end()):
+                continue
+            mapa.tomar(ini, m.end())
+            spans.append((ini, m.end(), "DIRECCION", _clave_texto(texto[ini:m.end()])))
+            while i < n and pal[i][0] < m.end():
+                i += 1
+            hecho = True
+            break
+        if not hecho:
+            i += 1
 
 
 # ---------------------------------------------------------------------------
@@ -394,13 +469,53 @@ def _personas(texto: str, mapa: _Mapa, spans: list) -> None:
             continue
         if not contexto:
             if len(nombres) < 2:
-                continue
+                t = norm[nombres[0]]
+                al_inicio = _inicio_de_oracion(texto, pal[nombres[0]][0])
+                sigla = pal[nombres[0]][2].isupper() and t not in _DICC
+                if sigla or t in _COMUNAS_NORM or not _es_nombre(t) or (al_inicio and t not in NOMBRES_CONOCIDOS and t in LEMARIO):
+                    continue
+                k = nombres[0]
+                if k >= 2 and norm[k - 1] in ("de", "del") and excl[k - 2] and (t in PALABRAS or t in VERBOS):
+                    continue
             if any(pal[x][2].isupper() for x in nombres) and not any(norm[x] in NOMBRES_CONOCIDOS for x in nombres):
                 continue
         candidatos.append((pal[run[0]][0], pal[run[-1]][1], frozenset(norm[x] for x in nombres)))
         usado.update(run)
         if len(nombres) >= 2:
             secuencias.add(tuple(norm[x] for x in nombres))
+
+    # Nombres de pila del diccionario escritos en minúscula ("carolina", "carolina soto").
+    for x in range(n):
+        if x in usado or excl[x] or not pal[x][2].islower() or norm[x] in VERBOS or norm[x] in _FUNCIONALES or len(norm[x]) < 4:
+            continue
+        if norm[x] not in NOMBRES:
+            # en minúscula y fuera del diccionario: solo si no es palabra del español y suena a un nombre de pila
+            # («karlos»), o se parece a un nombre o apellido y va tras «con», «soy», «a»… («hablé con frnando»)
+            previo_x = norm[x - 1] if x else ""
+            if es_palabra(norm[x]) or not (fonetica(norm[x]) in _FON_NOMBRES
+                                           or (parecido(norm[x]) and previo_x in _ANTES_DE_PERSONA | {"", "a", "al", "que"})):
+                continue
+        previo = norm[x - 1] if x > 0 else ""
+        if (norm[x] in PALABRAS or es_palabra(norm[x])) and previo not in _ANTES_DE_PERSONA and not _inicio_de_oracion(texto, pal[x][0]):
+            continue
+        if re.search(r"\d[ \t]*$", texto[:pal[x][0]]):
+            continue  # «50 lucas»
+        run, y = [x], x
+        while True:
+            c = y + 1
+            while c < n and c - y <= 2 and es_conector[c] and contiguo(c - 1, c):
+                c += 1
+            if c < n and c not in usado and not excl[c] and contiguo(c - 1, c) and pal[c][2].islower() \
+                    and norm[c] not in VERBOS and (norm[c] in _DICC or (not es_palabra(norm[c]) and _es_nombre(norm[c]))):
+                run.extend(range(y + 1, c + 1))
+                y = c
+                continue
+            break
+        nombres = [z for z in run if not es_conector[z]]
+        candidatos.append((pal[run[0]][0], pal[run[-1]][1], frozenset(norm[z] for z in nombres)))
+        usado.update(run)
+        if len(nombres) >= 2:
+            secuencias.add(tuple(norm[z] for z in nombres))
 
     # Mismo nombre completo escrito sin mayusculas iniciales ("pedro soto").
     extra = []
@@ -486,6 +601,7 @@ def anonimizar_detallado(texto: str) -> tuple:
 
     spans: list = []
     _aplicar_reglas(texto, mapa, spans)
+    _direcciones_calles(texto, mapa, spans)
     _personas(texto, mapa, spans)
     spans.sort()
 
