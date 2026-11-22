@@ -49,10 +49,10 @@
     if (r.clave) {
       const c = $('#dlg-clave'); $('[data-v=usuario]', c).value = r.usuario; $('[data-v=clave]', c).value = r.clave;
       const limite = !r.correo_enviado && r.correo_motivo === 'limite';
-      const espera = r.correo_espera_min ? (r.correo_espera_min === 1 ? '1 minuto' : r.correo_espera_min + ' minutos') : 'hasta una hora';
+      const espera = r.correo_espera_min ? 'en ' + (r.correo_espera_min === 1 ? '1 minuto' : r.correo_espera_min + ' minutos') : 'dentro de una hora';
       $('[data-v=titulo]', c).textContent = r.correo_enviado ? 'Se envió por correo' : limite ? 'Se alcanzó el límite de correos de la demo' : 'No se pudo enviar el correo';
       $('[data-v=nota]', c).textContent = r.correo_enviado ? 'También la puedes entregar tú si el correo no llega: no se vuelve a mostrar'
-        : limite ? 'Esta demo envía pocos correos por hora y ya se usaron. Entrégale tú esta contraseña, o restablécela en ' + espera + ' para que le llegue por correo. No se vuelve a mostrar'
+        : limite ? 'Esta demo envía pocos correos por hora y ya se usaron. Entrégale tú esta contraseña, o restablécela ' + espera + ' para que le llegue por correo. No se vuelve a mostrar'
         : 'Entrégale esta contraseña temporal: no se vuelve a mostrar';
       c.showModal();
     } else location.reload();
