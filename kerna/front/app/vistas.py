@@ -70,26 +70,36 @@ def zonas(zs):
     return [{"a": a, "b": b, "e": e, "d": graficos.g_arc(a, b)} for a, b, e in zs]
 
 
-def costo_modelos(filas: list[dict]) -> dict | None:
-    """Costo en USD a precios de la API de Anthropic con el equivalente Claude de cada modelo usado (misma regla que el informe)."""
-    tot, n = {}, 0
+def _usd_fila(r: dict) -> tuple[str, float]:
+    """(equivalente Claude, USD) de una fila de tokens, a precios de la API de Anthropic (misma regla que el informe)."""
+    cl = inf.EQUIVALENCIA.get(str(r.get("modelo")), inf.POR_DEFECTO)
+    pe, ps, pe2, ps2 = inf.PRECIOS_CLAUDE[cl]
+    c, ent, sal = int(_n(r.get("solicitudes"))), _n(r.get("tokens_entrada_total")), _n(r.get("tokens_salida_total"))
+    prom = _n(r.get("tokens_entrada_prom")) or (ent / c if c else 0)
+    alto = pe2 is not None and prom > inf.UMBRAL_PROMPT
+    return cl, ent * (pe2 if alto else pe) / 1e6 + sal * (ps2 if alto else ps) / 1e6
+
+
+def costo_modelos(filas: list[dict], por_denuncia: list[dict] | None = None, completo: bool = False) -> dict | None:
+    """Costo de IA en USD a precios de la API de Anthropic con el equivalente Claude de cada modelo usado.
+    `filas`: todo lo gastado en el período (métricas de Azure OpenAI + Gemini, ver costo_ia; `completo`=True) o, sin
+    métricas, solo las etapas registradas. `por_denuncia`: toda la cadena de cada denuncia real (costo por denuncia)."""
+    tot = {}
     for r in filas:
-        cl = inf.EQUIVALENCIA.get(str(r.get("modelo")), inf.POR_DEFECTO)
-        pe, ps, pe2, ps2 = inf.PRECIOS_CLAUDE[cl]
-        c, ent, sal = int(_n(r.get("solicitudes"))), _n(r.get("tokens_entrada_total")), _n(r.get("tokens_salida_total"))
-        prom = _n(r.get("tokens_entrada_prom")) or (ent / c if c else 0)
-        alto = pe2 is not None and prom > inf.UMBRAL_PROMPT
-        usd = ent * (pe2 if alto else pe) / 1e6 + sal * (ps2 if alto else ps) / 1e6
+        cl, usd = _usd_fila(r)
         real = str(r.get("modelo") or "sin nombre")
         d = tot.setdefault(real, {"modelo": real, "ref": cl, "casos": 0, "usd": 0.0})  # el modelo real; el equivalente Claude es solo precio de referencia
-        d["casos"] += c
+        d["casos"] += int(_n(r.get("solicitudes")))
         d["usd"] += usd
-        n += c
-    if not n:
-        return None
-    lista = sorted(tot.values(), key=lambda x: -x["usd"])
+    lista = sorted((x for x in tot.values() if x["usd"] > 0), key=lambda x: -x["usd"])
     total = sum(x["usd"] for x in lista)
-    return {"total": total, "por_caso": total / n, "casos": n, "modelos": lista}
+    den = por_denuncia if por_denuncia is not None else filas
+    n = sum(int(_n(r.get("solicitudes"))) for r in den)
+    prod = sum(_usd_fila(r)[1] for r in den)
+    if not total and not n:
+        return None
+    return {"total": total, "por_caso": (prod / n) if n else 0.0, "casos": n, "modelos": lista, "completo": completo,
+            "denuncias": prod, "pruebas": max(total - prod, 0.0) if completo else 0.0}
 
 
 def heat(filas: list[dict]) -> dict | None:
@@ -191,7 +201,10 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
         k.append({"k": "costo_k", "i": "coins", "l": "Costo del período", "form": "costo", "e": "na", "p": "US$", "u": "", "num": round(costo["total"], 2), "v": f.usd(costo["total"]),
                   "et": "", "tr": "", "te": "na", "ta": "minus", "s": serie, "por_caso": f.usd(costo["por_caso"], 3),
                   "stack": [{"n": x["modelo"], "usd": f.usd(x["usd"]), "w": round(100 * x["usd"] / costo["total"], 1) if costo["total"] else 0} for x in costo["modelos"][:4]],  # sin meta de costo en la configuración: sin estado
-                  "x": f"Costo por denuncia: US$ {f.usd(costo['por_caso'], 4)}. " + " · ".join(f"{x['modelo']} US$ {f.usd(x['usd'])}" for x in costo["modelos"]) + ". Precio de referencia: " + ", ".join(refs) + "."})
+                  "x": ((f"Todo lo gastado en IA: denuncias reales US$ {f.usd(costo['denuncias'])} y pruebas, mediciones y demo US$ {f.usd(costo['pruebas'])}. "
+                         if costo.get("completo") else "Solo las denuncias reales: no se pudieron leer las métricas de Azure OpenAI. ")
+                        + f"Costo por denuncia: US$ {f.usd(costo['por_caso'], 4)}. " + " · ".join(f"{x['modelo']} US$ {f.usd(x['usd'])}" for x in costo["modelos"])
+                        + ". Tarifas de la API de Anthropic: " + ", ".join(refs) + ". Sin servidores de Azure ni embeddings.")})
     else:
         k.append({"k": "costo_k", "i": "coins", "l": "Costo del período", "form": "spark", "e": "na", "p": "", "u": "", "num": None, "v": "—", "et": "Sin datos", "tr": "", "te": "na",
                   "ta": "minus", "s": serie, "x": "No hay tokens medidos en el período."})

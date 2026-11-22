@@ -17,7 +17,7 @@ import json
 import re
 import time
 
-from . import ajustes as aj, clientes as cli, demo_anon, errores, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
+from . import ajustes as aj, clientes as cli, costo_ia, demo_anon, errores, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
@@ -122,10 +122,20 @@ def _vista_resumen(m: dict, dias: int, prov, rei) -> dict:
             return cache.obtener(("ev",), evaluaciones.cargar, 120)
         except Exception:
             return None
-    r = cache.paralelo({"ev": ev, **{k: (lambda k=k: _extra(k, dias)) for k in ("front_tokens_por_modelo", "latencia_por_etapa", "front_horarios")}})
+    r = cache.paralelo({"ev": ev, **{k: (lambda k=k: _extra(k, dias)) for k in ("front_tokens_por_modelo", "front_tokens_por_denuncia", "latencia_por_etapa", "front_horarios")}})
     g = lambda k: [] if isinstance(r[k], Exception) else r[k]  # noqa: E731
-    return vistas.resumen(m, None if isinstance(r["ev"], Exception) else r["ev"], prov, rei, vistas.costo_modelos(g("front_tokens_por_modelo")),
+    return vistas.resumen(m, None if isinstance(r["ev"], Exception) else r["ev"], prov, rei, _costo(g("front_tokens_por_modelo"), g("front_tokens_por_denuncia"), dias),
                           vistas.etapas_lista(g("latencia_por_etapa")), vistas.heat(g("front_horarios")), dias, conector=reintentos.con_estado_real(None, _conector()))
+
+
+def _costo(etapas: list[dict], por_denuncia: list[dict], dias: int) -> dict | None:
+    """Costo de IA del período: todo lo gastado (métricas de Azure OpenAI, con pruebas y mediciones, más Gemini) y el costo
+    por denuncia real. Si las métricas no responden, solo las denuncias reales; nunca rompe el panel."""
+    try:
+        filas, completo = cache.obtener(("costo_az", dias), lambda: costo_ia.filas_totales(etapas, *costo_ia.ultimos(dias)), consultas.TTL_S)
+    except Exception:
+        filas, completo = por_denuncia, False
+    return vistas.costo_modelos(filas if completo else por_denuncia, por_denuncia, completo)
 
 
 def _metricas(dias: int) -> dict:
@@ -276,7 +286,7 @@ def precalentar():
     cache.precalentar([(("metricas", 7), lambda: consultas.metricas(7), 60), (("prov",), proveedores.estado_proveedores, 60),
                        (("informe", 30, None, None), lambda: _informe_directo(30), 120), (("rei",), reintentos.resumen, 60), (("ev",), evaluaciones.cargar, 120),
                        (("negocio", 30), lambda: negocio.cargar(dias=30), 120), (("ajustes",), aj.cargar, 15)]
-                      + [(("extra", k, 7), (lambda k=k: _extra_directo(k, 7)), consultas.TTL_S) for k in ("front_tokens_por_modelo", "latencia_por_etapa", "front_horarios")])
+                      + [(("extra", k, 7), (lambda k=k: _extra_directo(k, 7)), consultas.TTL_S) for k in ("front_tokens_por_modelo", "front_tokens_por_denuncia", "latencia_por_etapa", "front_horarios")])
 
 
 def _informe_directo(dias):

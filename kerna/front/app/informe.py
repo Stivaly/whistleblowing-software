@@ -34,6 +34,7 @@ CONSULTAS_INFORME = {
     "latencia": "front_latencia", "etapas": "latencia_por_etapa", "disponibilidad": "disponibilidad_efectiva",
     "leyes": "front_articulos_por_ley", "valoraciones": "front_valoraciones", "errores": "errores_por_proveedor",
     "revision": "informe_revision_manual", "reintentos": "front_reintentos", "por_modelo": "front_tokens_por_modelo",
+    "por_denuncia": "front_tokens_por_denuncia",
 }
 MODOS = ("oficial", "respaldo", "local", "manual")
 NOMBRE_19628 = "Ley 19.628 (datos personales), reformada por la Ley 21.719"
@@ -296,9 +297,16 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
     nsol = sum(int(_n(f["solicitudes"])) for f in crudo["tokens"])
 
     anio_op = finanzas.anio_operacion(fin.date())
+    from . import costo_ia
+    try:  # todo lo gastado: métricas de Azure OpenAI (denuncias, pruebas, mediciones y demo) + Gemini
+        filas_costo, completo = costo_ia.filas_totales(crudo["por_modelo"], ini, fin)
+    except Exception:
+        filas_costo, completo = crudo["por_modelo"], False
+    if not completo:
+        filas_costo = crudo["por_denuncia"] or crudo["por_modelo"]
     desglose = {}  # modelo Claude -> [solicitudes, entrada, salida, USD, modelos usados]
     sin_equiv = []
-    for f in crudo["por_modelo"]:
+    for f in filas_costo:
         usado = str(f["modelo"])
         cl = EQUIVALENCIA.get(usado)
         if cl is None:
@@ -313,25 +321,36 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
         d[0] += n; d[1] += int(ent); d[2] += int(sal); d[3] += usd
         if usado not in d[4]:
             d[4].append(usado)
-    nmod = sum(d[0] for d in desglose.values())
-    hay = bool(nmod)
     total = sum(d[3] for d in desglose.values())
-    por_caso = total / nmod if hay else None
+    den = crudo["por_denuncia"] or crudo["por_modelo"]
+    nmod = sum(int(_n(f["solicitudes"])) for f in den)
+    costo_den = 0.0
+    for f in den:
+        pe, ps, pe2, ps2 = PRECIOS_CLAUDE[EQUIVALENCIA.get(str(f["modelo"]), POR_DEFECTO)]
+        ent, sal, n = _n(f["tokens_entrada_total"]), _n(f["tokens_salida_total"]), int(_n(f["solicitudes"]))
+        alto = pe2 is not None and (_n(f.get("tokens_entrada_prom")) or (ent / n if n else 0)) > UMBRAL_PROMPT
+        costo_den += ent * (pe2 if alto else pe) / 1e6 + sal * (ps2 if alto else ps) / 1e6
+    hay = bool(total or nmod)
+    por_caso = costo_den / nmod if nmod else None
     desg = [[cl, ", ".join(d[4]), d[0], d[1], d[2], round(d[3], 4)] for cl, d in desglose.items()]
     costo = {"id": "costo", "titulo": "Costo y consumo",
-             "justificacion": "Muestra el costo del período a precios de la API de Anthropic, según los tokens medidos por modelo y su equivalente Claude.",
+             "justificacion": "Muestra todo lo gastado en IA en el período (denuncias reales, pruebas, mediciones y demo) a precios de la API de Anthropic, según los tokens por modelo y su equivalente Claude.",
              "kpis": [{"etiqueta": "Solicitudes con tokens medidos", "valor": nsol, "unidad": "solicitudes", "fuente": LF_LA},
                       {"etiqueta": "Tokens de entrada", "valor": int(te), "unidad": "tokens", "fuente": LF_LA + ", tokens_entrada de solicitud_terminada"},
                       {"etiqueta": "Tokens de salida", "valor": int(ts), "unidad": "tokens", "fuente": LF_LA},
-                      {"etiqueta": "Costo del período", "valor": round(total, 4) if hay else None, "unidad": "USD", "fuente": "tokens por modelo x precios de la API de Anthropic"},
-                      {"etiqueta": "Costo por denuncia", "valor": round(por_caso, 6) if hay else None, "unidad": "USD", "fuente": "costo del período / solicitudes"}]
+                      {"etiqueta": "Costo del período", "valor": round(total, 4) if hay else None, "unidad": "USD",
+                       "fuente": ("tokens de todas las llamadas a Azure OpenAI (métricas de la cuenta) y de Gemini (Log Analytics) x precios de la API de Anthropic"
+                                  if completo else "tokens de las denuncias reales x precios de la API de Anthropic (métricas de Azure OpenAI no disponibles)")},
+                      {"etiqueta": "Costo de las denuncias reales", "valor": round(costo_den, 4) if hay else None, "unidad": "USD", "fuente": LF_LA + ", toda la cadena de cada solicitud_terminada"},
+                      {"etiqueta": "Costo de pruebas, mediciones y demo", "valor": round(max(total - costo_den, 0), 4) if (hay and completo) else None, "unidad": "USD", "fuente": "costo del período - costo de las denuncias reales"},
+                      {"etiqueta": "Costo por denuncia", "valor": round(por_caso, 6) if por_caso is not None else None, "unidad": "USD", "fuente": "costo de las denuncias reales / denuncias"}]
              + [{"etiqueta": f"Costo de IA del período en UF", "valor": round(finanzas.usd_a_uf(total, anio_op), 4) if hay else None, "unidad": "UF", "fuente": f"USD convertidos con dólar a {finanzas.parametros()['usd_clp']} y UF a {round(finanzas.uf_del_anio(anio_op))} pesos"}]
-             + [{"etiqueta": f"Costo de IA mensual proyectado, {format(k, ',d').replace(',', '.')} denuncias", "valor": round(por_caso * k, 2) if hay else None, "unidad": "USD", "fuente": "costo por denuncia x volumen mensual (solo IA)"} for k in PROYECCION]
-             + [{"etiqueta": f"Costo total mensual proyectado, {format(k, ',d').replace(',', '.')} denuncias", "valor": round(finanzas.usd_a_uf(por_caso * k, anio_op) + finanzas.a_uf(finanzas.total_fijos_clp(anio_op) / 12, anio_op), 2) if hay else None, "unidad": "UF",
+             + [{"etiqueta": f"Costo de IA mensual proyectado, {format(k, ',d').replace(',', '.')} denuncias", "valor": round(por_caso * k, 2) if por_caso is not None else None, "unidad": "USD", "fuente": "costo por denuncia x volumen mensual (solo IA)"} for k in PROYECCION]
+             + [{"etiqueta": f"Costo total mensual proyectado, {format(k, ',d').replace(',', '.')} denuncias", "valor": round(finanzas.usd_a_uf(por_caso * k, anio_op) + finanzas.a_uf(finanzas.total_fijos_clp(anio_op) / 12, anio_op), 2) if por_caso is not None else None, "unidad": "UF",
                  "fuente": "IA del volumen + costos fijos mensuales del plan de negocio; sin el costo de servir por cliente"} for k in PROYECCION],
              "tablas": [{"id": "costo_modelo", "titulo": "Costo por modelo (precios USD por millón de tokens: Haiku 5.5 0,10/0,50; Sonnet 5.5 2,00/10,00)",
                          "cols": ["Modelo Claude", "Modelo usado", "Solicitudes", "Tokens entrada", "Tokens salida", "Costo (USD)"],
-                         "filas": desg, "fuente": f"{PRECIOS_FUENTE}; tokens medidos en {LF_LA}"},
+                         "filas": desg, "fuente": f"{PRECIOS_FUENTE}; tokens: " + ("métricas de Azure OpenAI y " + LF_LA if completo else LF_LA)},
                         {"id": "tokens_modo", "titulo": "Tokens por modo", "cols": ["Modo", "Solicitudes", "Tokens entrada", "Tokens salida", "Entrada prom.", "Salida prom."],
                          "filas": [[str(f["modo"]), int(_n(f["solicitudes"])), int(_n(f["tokens_entrada_total"])), int(_n(f["tokens_salida_total"])), round(_n(f["tokens_entrada_prom"])), round(_n(f["tokens_salida_prom"]))] for f in crudo["tokens"]], "fuente": LF_LA},
                         {"id": "tokens_modelo", "titulo": "Consumo por modelo exacto", "cols": ["Modelo", "Solicitudes", "Tokens entrada", "Tokens salida"],

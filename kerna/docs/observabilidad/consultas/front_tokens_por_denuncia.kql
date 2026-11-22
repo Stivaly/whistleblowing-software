@@ -1,0 +1,10 @@
+// Resumen e informe: tokens de toda la cadena de cada denuncia real (clasificación, búsqueda, perfil, evaluación, reordenamiento,
+// redacción y revisión), por modelo final. solicitud_terminada acumula los tokens de todas las etapas. Solo conteos.
+// Sirve para el costo por denuncia; el costo total del período sale de las métricas de Azure OpenAI (app/costo_ia.py).
+AppTraces
+| where TimeGenerated > ago(7d) and AppRoleName == "kerna.kerna-nucleo" and Message == "solicitud_terminada"
+| extend modelo = tostring(Properties.modelo), entrada = todouble(Properties.tokens_entrada), salida = todouble(Properties.tokens_salida)
+| where isnotnull(entrada)
+| extend modelo = iff(modelo == "", "sin modelo final", modelo)
+| summarize solicitudes = count(), tokens_entrada_total = sum(entrada), tokens_salida_total = sum(salida), tokens_entrada_prom = round(avg(entrada)) by modelo
+| order by solicitudes desc

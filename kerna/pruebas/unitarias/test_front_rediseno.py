@@ -175,7 +175,7 @@ def test_costo_muestra_el_modelo_real_y_la_referencia_va_en_el_tooltip():
     from test_front_vistas import EV, M
     v = vistas.resumen(M, EV, None, None, c, [], None, 7)
     k = next(x for x in v["kpis"] if x["k"] == "costo_k")
-    assert k["et"] == "" and "Precio de referencia: Claude Haiku 5.5" in k["x"]  # sin chip: no hay meta de costo
+    assert k["et"] == "" and "Tarifas de la API de Anthropic: Claude Haiku 5.5" in k["x"]  # sin chip: no hay meta de costo
     assert v["costo"]["modelos"][0]["n"] == "gpt-5-nano" and v["costo"]["ref"] == "Claude Haiku 5.5"
 
 
@@ -450,3 +450,29 @@ def test_compartir_muestra_nombres_completos_y_no_siglas():
         assert sigla not in js
     for nombre in ("Analistas", "Comité", "Auditoría", "Fiscalía"):
         assert nombre in js
+
+
+def test_costo_incluye_pruebas_y_mediciones_y_el_costo_por_denuncia_sale_de_las_denuncias_reales():
+    """El costo del período es todo lo gastado (métricas de Azure OpenAI + Gemini); el costo por denuncia, solo las denuncias reales."""
+    total = [{"modelo": "gpt-5-nano", "solicitudes": 0, "tokens_entrada_total": 10_000_000, "tokens_salida_total": 1_000_000},
+             {"modelo": "gpt-5-mini", "solicitudes": 0, "tokens_entrada_total": 1_000_000, "tokens_salida_total": 100_000}]
+    den = [{"modelo": "gpt-5-nano", "solicitudes": 10, "tokens_entrada_total": 1_000_000, "tokens_salida_total": 100_000}]
+    c = vistas.costo_modelos(total, den, completo=True)
+    # nano = Haiku 5.5 (0,10/0,50): 1,00 + 0,50; mini = Sonnet 5.5 (2/10): 2,00 + 1,00
+    assert round(c["total"], 2) == 4.50 and round(c["denuncias"], 2) == 0.15 and round(c["pruebas"], 2) == 4.35
+    assert round(c["por_caso"], 3) == 0.015 and c["casos"] == 10
+    from test_front_vistas import EV, M
+    k = next(x for x in vistas.resumen(M, EV, None, None, c, [], None, 7)["kpis"] if x["k"] == "costo_k")
+    assert "pruebas, mediciones y demo" in k["x"]
+
+
+def test_costo_ia_suma_azure_y_solo_gemini_de_las_etapas(monkeypatch):
+    from app import costo_ia
+    monkeypatch.setattr(costo_ia, "tokens_azure", lambda i, f: {"gpt-5-nano": [100.0, 10.0]})
+    etapas = [{"modelo": "gpt-5-nano", "solicitudes": 3, "tokens_entrada_total": 50, "tokens_salida_total": 5},
+              {"modelo": "gemini-3.6-flash", "solicitudes": 1, "tokens_entrada_total": 7, "tokens_salida_total": 1}]
+    filas, completo = costo_ia.filas_totales(etapas, *costo_ia.ultimos(7))
+    assert completo and {f["modelo"] for f in filas} == {"gpt-5-nano", "gemini-3.6-flash"}
+    assert next(f for f in filas if f["modelo"] == "gpt-5-nano")["tokens_entrada_total"] == 100.0   # no se suma dos veces
+    monkeypatch.setattr(costo_ia, "tokens_azure", lambda i, f: None)
+    assert costo_ia.filas_totales(etapas, *costo_ia.ultimos(7)) == (etapas, False)
