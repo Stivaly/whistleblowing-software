@@ -40,7 +40,7 @@ restaurar() {
   else echo "FALLA  no se pudieron restaurar los valores originales (revisa Ajustes en el panel)"; FALLAS=$((FALLAS+1)); fi
 }
 
-R="$(c -o /dev/null -c "$JAR" -w '%{http_code}' --data-urlencode "clave=$CLAVE" "$FRONT_URL/acceso")"
+R="$(c -o /dev/null -c "$JAR" -w '%{http_code}' --data-urlencode "usuario=admin" --data-urlencode "clave=$CLAVE" "$FRONT_URL/acceso")"
 [ "$R" = 303 ] && grep -q kerna_panel "$JAR" && ok "inicio de sesión en el panel" || { mal "inicio de sesión dio $R"; exit 1; }
 csrf_y_valores >/dev/null
 if [ "$DEFECTOS_SOLO" = 1 ]; then

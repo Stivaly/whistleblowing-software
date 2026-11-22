@@ -106,7 +106,7 @@ def main():
         for w in ANCHOS:
             ANCHO_ACTUAL[0] = w
             ctx = nav.new_context(viewport={"width": w, "height": 850 if w > 600 else 800}, **({"is_mobile": w < 600} if nombre_nav != "firefox" else {}), has_touch=w < 600); pg = ctx.new_page()
-            pg.goto(BASE + "/acceso"); pg.fill("input[name=clave]", CLAVE); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
+            pg.goto(BASE + "/acceso"); pg.fill("input[name=usuario]", "admin"); pg.fill("input[name=clave]", CLAVE); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
             assert "/panel" in pg.url, f"el login no entró al panel ({pg.url})"
             for nom, ruta, tabs, _ in VISTAS:
                 pg.goto(BASE + ruta, wait_until="load"); pg.wait_for_load_state("networkidle"); pg.wait_for_timeout(1000)

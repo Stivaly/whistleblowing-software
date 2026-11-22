@@ -10,7 +10,7 @@ accion, base, salida = sys.argv[1:4]
 confirmar = "--confirmar" in sys.argv
 with sync_playwright() as p:
     nav = p.chromium.launch(); ctx = nav.new_context(viewport={"width": 1366, "height": 850}, accept_downloads=True); pg = ctx.new_page()
-    pg.goto(base + "/acceso"); pg.fill("input[name=clave]", os.environ["FRONT_CLAVE"]); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
+    pg.goto(base + "/acceso"); pg.fill("input[name=usuario]", "admin"); pg.fill("input[name=clave]", os.environ["FRONT_CLAVE"]); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
     assert "/panel" in pg.url, f"el login no entró al panel ({pg.url})"
     if accion == "pdf":
         r = ctx.request.get(base + "/panel/informe/descargar.pdf?dias=7", timeout=90000)

@@ -10,3 +10,4 @@ reportlab>=4.2
 Pillow>=10
 azure-data-tables>=12.5
 argon2-cffi>=23.1
+azure-communication-email>=1.1

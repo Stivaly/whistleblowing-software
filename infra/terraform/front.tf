@@ -65,13 +65,9 @@ resource "azurerm_linux_web_app" "front" {
     # Demo «Denuncias»: el panel es un cliente del núcleo con su cuenta propia (ver secretos.tf).
     DEMO_CLIENT_ID     = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/${azurerm_key_vault_secret.demo_client_id.name}/)"
     DEMO_CLIENT_SECRET = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/${azurerm_key_vault_secret.demo_client_secret.name}/)"
-    # Correo del panel (app/correo.py): la cuenta SMTP de Veridy, copiada al Key Vault con kerna/operaciones/copiar_smtp_veridy.sh.
-    SMTP_SERVIDOR  = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-servidor/)"
-    SMTP_PUERTO    = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-puerto/)"
-    SMTP_USUARIO   = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-usuario/)"
-    SMTP_CLAVE     = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-clave/)"
-    SMTP_REMITENTE = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-remitente/)"
-    SMTP_SEGURIDAD = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-seguridad/)"
+    # Correo propio (correo.tf): Azure Communication Services Email.
+    CORREO_ACS_CONEXION = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/${azurerm_key_vault_secret.correo_acs_conexion.name}/)"
+    CORREO_REMITENTE    = "DoNotReply@${azurerm_email_communication_service_domain.correo.from_sender_domain}"
     }, var.crear_nucleo ? {
     KERNA_NUCLEO_URL = "https://${azurerm_container_app.nucleo[0].ingress[0].fqdn}"
   } : {})

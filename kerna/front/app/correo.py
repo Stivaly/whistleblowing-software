@@ -1,13 +1,16 @@
 """Correo del panel de Kerna AI: avisos de cuentas (creada, clave restablecida o cambiada, rol cambiado, eliminada).
 
-La cuenta SMTP es la misma de Veridy y llega por variables de entorno (referencias de Key Vault en infra/terraform/front.tf):
-SMTP_SERVIDOR, SMTP_PUERTO, SMTP_USUARIO, SMTP_CLAVE, SMTP_REMITENTE y SMTP_SEGURIDAD («TLS» = STARTTLS, «SSL» = conexión cifrada).
+Envía con el correo propio de Kerna en Azure Communication Services Email (infra/terraform/correo.tf): la cadena de
+conexión llega en CORREO_ACS_CONEXION (referencia de Key Vault) y el remitente en CORREO_REMITENTE
+(DoNotReply@<dominio administrado>.azurecomm.net). Si no está configurado, sirve un SMTP por variables de entorno
+(SMTP_SERVIDOR, SMTP_PUERTO, SMTP_USUARIO, SMTP_CLAVE, SMTP_REMITENTE, SMTP_SEGURIDAD), útil en desarrollo.
 
 `enviar(tipo, para, datos)` devuelve True si el servidor aceptó el mensaje y False ante cualquier falla. Nunca registra el
 contenido del correo, la contraseña temporal ni las claves del SMTP: el log solo dice el tipo y la clase del error.
 """
 from __future__ import annotations
 
+import base64
 import logging
 import os
 import smtplib
@@ -115,19 +118,43 @@ def _entregar(cfg: dict, m: EmailMessage, para: str) -> int:
         return codigo
 
 
+def _acs() -> dict | None:
+    """Configuración de Azure Communication Services Email, o None si no está (o si la referencia de Key Vault no se resolvió)."""
+    conexion, remitente = os.environ.get("CORREO_ACS_CONEXION", "").strip(), os.environ.get("CORREO_REMITENTE", "").strip()
+    if not conexion or not remitente or conexion.startswith("@Microsoft.KeyVault"):
+        return None
+    return {"conexion": conexion, "remitente": remitente}
+
+
+def _entregar_acs(cfg: dict, para: str, asunto: str, html: str, texto: str) -> int:
+    """Envía por Azure Communication Services. 202 si Azure aceptó y entregó el envío; 500 si no."""
+    from azure.communication.email import EmailClient
+    mensaje = {"senderAddress": cfg["remitente"], "recipients": {"to": [{"address": para}]},
+               "content": {"subject": asunto, "plainText": texto, "html": html}}
+    png = _logo_png()
+    if png and f"cid:{CID_LOGO}" in html:   # el logo viaja como imagen en línea, igual que por SMTP
+        mensaje["attachments"] = [{"name": "kerna.png", "contentType": "image/png", "contentInBase64": base64.b64encode(png).decode(),
+                                   "contentId": CID_LOGO}]
+    r = EmailClient.from_connection_string(cfg["conexion"]).begin_send(mensaje).result(timeout=4 * TIMEOUT)
+    return 202 if str((r or {}).get("status", "")).lower() == "succeeded" else 500
+
+
 def enviar(tipo: str, para: str, datos: dict) -> bool:
     """Envía el correo `tipo` a `para`. True si el servidor lo aceptó; False ante cualquier falla (sin excepciones)."""
     global ultimo_codigo
     ultimo_codigo = None
     try:
-        cfg = _config()
-        if cfg is None:
-            log.warning("correo %s no enviado: SMTP sin configurar", tipo)
+        acs, cfg = _acs(), _config()
+        if acs is None and cfg is None:
+            log.warning("correo %s no enviado: correo sin configurar", tipo)
             return False
         asunto, html, texto = armar(tipo, datos)
-        ultimo_codigo = _entregar(cfg, _mensaje(cfg, para.strip(), asunto, html, texto), para.strip())
+        if acs is not None:
+            ultimo_codigo = _entregar_acs(acs, para.strip(), asunto, html, texto)
+        else:
+            ultimo_codigo = _entregar(cfg, _mensaje(cfg, para.strip(), asunto, html, texto), para.strip())
         ok = 200 <= ultimo_codigo < 300
-        log.info("correo %s %s (SMTP %s)", tipo, "enviado" if ok else "rechazado", ultimo_codigo)
+        log.info("correo %s %s (%s %s)", tipo, "enviado" if ok else "rechazado", "ACS" if acs is not None else "SMTP", ultimo_codigo)
         return ok
     except Exception as e:  # nunca el mensaje de la excepción: puede traer la dirección o el servidor
         log.warning("correo %s no enviado (%s)", tipo, type(e).__name__)

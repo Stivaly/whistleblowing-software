@@ -15,9 +15,9 @@ ok() { echo "OK     $1"; }; mal() { echo "FALLA  $1"; FALLAS=$((FALLAS+1)); }
 codigo() { c -o /dev/null -w '%{http_code}' "$@"; }
 
 [ "$(codigo "$FRONT_URL/salud")" = 200 ] && ok "/salud responde 200" || mal "/salud no responde 200 (¿dormido? usa despertar_front.sh)"
-[ "$(codigo -X POST -d clave=incorrecta "$FRONT_URL/acceso")" = 401 ] && ok "clave incorrecta rechazada (401)" || mal "clave incorrecta no dio 401"
+[ "$(codigo -X POST -d usuario=admin -d clave=incorrecta "$FRONT_URL/acceso")" = 401 ] && ok "clave incorrecta rechazada (401)" || mal "clave incorrecta no dio 401"
 [ "$(codigo "$FRONT_URL/panel")" = 303 ] && ok "/panel sin sesión redirige al acceso" || mal "/panel sin sesión no redirige"
-R="$(codigo -c "$JAR" --data-urlencode "clave=$CLAVE" "$FRONT_URL/acceso")"
+R="$(codigo -c "$JAR" --data-urlencode "usuario=admin" --data-urlencode "clave=$CLAVE" "$FRONT_URL/acceso")"
 [ "$R" = 303 ] && grep -q kerna_panel "$JAR" && ok "login con la clave $VERSION (cookie de sesión)" || { mal "login con la clave $VERSION dio $R"; echo "Sin sesión no se puede seguir."; exit 1; }
 HTML="$(c -b "$JAR" "$FRONT_URL/panel")"
 [ -n "$HTML" ] && echo "$HTML" | grep -q 'id="rei"' && ok "/panel carga con la cola de reintentos" || mal "/panel no muestra la cola de reintentos"

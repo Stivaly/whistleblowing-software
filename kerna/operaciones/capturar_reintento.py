@@ -13,7 +13,7 @@ JS_BLOQUE = "() => { const a = document.querySelector('[data-rei-acc]'); return 
 
 def entrar(ctx):
     pg = ctx.new_page()
-    pg.goto(URL + "/acceso"); pg.fill("input[name=clave]", CLAVE); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
+    pg.goto(URL + "/acceso"); pg.fill("input[name=usuario]", "admin"); pg.fill("input[name=clave]", CLAVE); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
     return pg
 
 

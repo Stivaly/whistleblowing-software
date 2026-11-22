@@ -11,7 +11,7 @@ with sync_playwright() as p:
         nav = getattr(p, nombre).launch()
         for ancho in (390, 1366, 1920):
             ctx = nav.new_context(viewport={"width": ancho, "height": 900}); pg = ctx.new_page()
-            pg.goto(URL + "/acceso"); pg.fill("input[name=clave]", CLAVE); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
+            pg.goto(URL + "/acceso"); pg.fill("input[name=usuario]", "admin"); pg.fill("input[name=clave]", CLAVE); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
             if nombre == "chromium" and ancho == 1366:
                 for ext in ("pdf", "xlsx", "csv"):
                     r = ctx.request.get(f"{URL}/panel/informe/descargar.{ext}?dias=30", timeout=120000)

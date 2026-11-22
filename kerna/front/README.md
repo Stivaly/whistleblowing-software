@@ -105,10 +105,12 @@ Los ajustes de la vista Ajustes (valores, rangos y validación) viven en `kerna/
 
 ## Correo
 
-`app/correo.py` envía los avisos de cuentas del panel con la misma cuenta SMTP que usa Veridy, con la identidad de Kerna (remitente «Kerna AI <remitente>», HTML con la paleta y el símbolo de Kerna, Unbounded y JetBrains Mono con respaldo seguro para correo, más versión de texto plano). Plantillas en `app/plantillas/correo/` (`base.html`, `_macros.html` y un `.html` y un `.txt` por tipo).
+`app/correo.py` envía los avisos de cuentas del panel con el correo propio de Kerna en Azure Communication Services Email (`infra/terraform/correo.tf`: servicio de correo, dominio administrado por Azure y servicio de comunicaciones asociado), con la identidad de Kerna ( HTML con la paleta y el símbolo de Kerna, Unbounded y JetBrains Mono con respaldo seguro para correo, más versión de texto plano). Plantillas en `app/plantillas/correo/` (`base.html`, `_macros.html` y un `.html` y un `.txt` por tipo).
 
-- **Secretos** (Key Vault de Kerna): `smtp-servidor`, `smtp-puerto`, `smtp-usuario`, `smtp-clave`, `smtp-remitente`, `smtp-seguridad`. Los copia `kerna/operaciones/copiar_smtp_veridy.sh` desde la tabla `config` de la base de Veridy (enciende Veridy, lee la tabla `config` con el rol `veridy_app`, copia sin imprimir valores y lo apaga; la IP pública del equipo debe estar en `postgres_ips_permitidas` de `infra/veridy/terraform`). Si Veridy tiene el SMTP de fábrica, no copia nada.
-- **Variables de la app** (`front.tf`, referencias de Key Vault): `SMTP_SERVIDOR`, `SMTP_PUERTO`, `SMTP_USUARIO`, `SMTP_CLAVE`, `SMTP_REMITENTE`, `SMTP_SEGURIDAD` (`TLS` = STARTTLS, `SSL` = conexión cifrada). Sin ellas, `enviar` devuelve `False`.
+- **Remitente:** `DoNotReply@<dominio>.azurecomm.net` (salida `correo_remitente` de Terraform). Para un dominio propio (p. ej. `kerna.cl`) basta otro `azurerm_email_communication_service_domain` con `domain_management = "CustomerManaged"` y sus registros DNS.
+- **Secreto** (Key Vault de Kerna): `correo-acs-conexion`, la cadena de conexión del servicio de comunicaciones, creada por Terraform.
+- **Variables de la app** (`front.tf`): `CORREO_ACS_CONEXION` (referencia de Key Vault) y `CORREO_REMITENTE`. Si faltan o la referencia no se resolvió, `correo.py` usa un SMTP por variables `SMTP_*` (solo para desarrollo); sin ninguno, `enviar` devuelve `False` y la gestión de cuentas muestra la contraseña temporal una sola vez en pantalla.
+- **Costo:** Azure cobra por correo enviado (fracción de centavo); sin cargo fijo.
 - **Uso:** `correo.enviar(tipo, para, datos) -> bool`. `True` si el servidor aceptó el mensaje; `False` ante cualquier falla (sin excepciones, timeout de 10 s). El log solo dice el tipo y la clase del error: nunca el contenido, la contraseña temporal, el destinatario ni las claves del SMTP.
 
 | Tipo | Datos obligatorios |
@@ -119,4 +121,4 @@ Los ajustes de la vista Ajustes (valores, rangos y validación) viven en `kerna/
 | `rol_cambiado` | `usuario`, `nombre`, `rol` |
 | `clave_cambiada` | `usuario`, `nombre` |
 
-- **Probar:** `kerna/operaciones/probar_correo.sh` envía un correo `cuenta_creada` de prueba a la dirección del remitente y dice solo `True/False` y el código SMTP; `python3 -m pytest -q kerna/pruebas/unitarias/test_front_correo.py` (SMTP simulado). Vistas previas y capturas a 600 y 375 px: `kerna/operaciones/capturar_correos.sh` (salida en `kerna/operaciones/salida/correos/`, ignorada por git). Los correos de los clientes de correo que no cargan imágenes externas siguen leyéndose: el símbolo va embebido (CID) y el texto no depende de él.
+- **Probar:** `kerna/operaciones/probar_correo.sh` envía un correo `cuenta_creada` de prueba a la dirección del remitente y dice solo `True/False` y el código de entrega; `python3 -m pytest -q kerna/pruebas/unitarias/test_front_correo.py` (Azure y SMTP simulados). Vistas previas y capturas a 600 y 375 px: `kerna/operaciones/capturar_correos.sh` (salida en `kerna/operaciones/salida/correos/`, ignorada por git). Los correos de los clientes de correo que no cargan imágenes externas siguen leyéndose: el símbolo va embebido (CID) y el texto no depende de él.

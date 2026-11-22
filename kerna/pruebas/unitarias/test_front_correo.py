@@ -157,3 +157,41 @@ def test_los_logs_no_llevan_secretos_ni_contenido(smtp_env, smtp, caplog):
     for secreto in (CLAVE_SMTP, CLAVE_TEMP, "usuario-smtp", "m.fuentes", "Marcela", "ejemplo.cl"):
         assert secreto not in texto
     assert re.search(r"cuenta_creada enviado", texto) and "SMTPAuthenticationError" in texto
+
+
+def test_envia_por_azure_communication_services(monkeypatch):
+    """Con CORREO_ACS_CONEXION y CORREO_REMITENTE envía por Azure (correo propio), con el logo en línea; sin SMTP."""
+    import types, sys
+    enviados = []
+
+    class Poller:
+        def result(self, timeout=None):
+            return {"status": "Succeeded"}
+
+    class Cliente:
+        @classmethod
+        def from_connection_string(cls, c):
+            assert c == "endpoint=https://x/;accesskey=y"
+            return cls()
+
+        def begin_send(self, m):
+            enviados.append(m)
+            return Poller()
+
+    monkeypatch.setitem(sys.modules, "azure.communication.email", types.SimpleNamespace(EmailClient=Cliente))
+    monkeypatch.setenv("CORREO_ACS_CONEXION", "endpoint=https://x/;accesskey=y")
+    monkeypatch.setenv("CORREO_REMITENTE", "DoNotReply@abc.azurecomm.net")
+    from app import correo
+    ok = correo.enviar("cuenta_creada", "persona@example.com", {"usuario": "ana", "nombre": "Ana", "rol": "Comercial",
+                                                                "clave_temporal": "Tmp-1234-abcd", "url": "https://kerna/acceso"})
+    assert ok and correo.ultimo_codigo == 202
+    m = enviados[0]
+    assert m["senderAddress"] == "DoNotReply@abc.azurecomm.net" and m["recipients"]["to"][0]["address"] == "persona@example.com"
+    assert "Tmp-1234-abcd" in m["content"]["html"] and m["content"]["plainText"]
+
+
+def test_referencia_de_key_vault_sin_resolver_no_se_usa(monkeypatch):
+    monkeypatch.setenv("CORREO_ACS_CONEXION", "@Microsoft.KeyVault(SecretUri=https://kv/secrets/x/)")
+    monkeypatch.setenv("CORREO_REMITENTE", "DoNotReply@abc.azurecomm.net")
+    from app import correo
+    assert correo._acs() is None

@@ -10,7 +10,7 @@ with sync_playwright() as p:
         nav = getattr(p, nom).launch()
         for w in (390, 1366):
             ctx = nav.new_context(viewport={"width": w, "height": 800 if w < 600 else 850}, has_touch=w < 600); pg = ctx.new_page()
-            pg.goto(B + "/acceso"); pg.fill("input[name=clave]", C); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
+            pg.goto(B + "/acceso"); pg.fill("input[name=usuario]", "admin"); pg.fill("input[name=clave]", C); pg.click("button[type=submit]"); pg.wait_for_load_state("networkidle")
             pg.goto(B + "/panel/ajustes"); pg.wait_for_load_state("networkidle"); pg.wait_for_timeout(800)
             pg.locator("[data-ajuste] .seg button, .seg button").first.click(); pg.wait_for_timeout(600)
             pg.evaluate("scrollTo(0, document.documentElement.scrollHeight)"); pg.wait_for_timeout(500)
