@@ -33,6 +33,7 @@
       const d = $('#dlg-eliminar'), f = $('form', d); f.reset(); d.dataset.usuario = fila.dataset.usuario; $('[data-n]', d).textContent = fila.dataset.nombre; $('[data-idl]', d).textContent = fila.dataset.usuario;
       $('[data-ok]', d).disabled = true; abrir(d); return;
     }
+    if (t.closest('[data-cerrar-limite]')) { location.reload(); return; }
     if (t.closest('[data-copiar]')) { const i = $('[data-v=clave]'); i.select(); (navigator.clipboard ? navigator.clipboard.writeText(i.value) : Promise.resolve(document.execCommand('copy'))).catch(() => {}); t.closest('[data-copiar]').textContent = 'Copiada'; return; }
     if (t.closest('[data-listo]')) location.reload();
   });
@@ -46,13 +47,14 @@
       : k === 'restablecer' ? await pedir('/panel/cuentas/restablecer', { usuario: d.dataset.usuario }) : await pedir('/panel/cuentas/eliminar', { usuario: d.dataset.usuario, confirmar: v.confirmar });
     if (r.estado !== 'ok') { error(d, MSG[r.estado] || MSG.error); b.disabled = k === 'eliminar' && $('[name=confirmar]', f).value.trim().toLowerCase() !== d.dataset.usuario; return; }
     d.close();
+    if (!r.correo_enviado && r.correo_motivo === 'limite') {   // cupo de correos de la demo agotado: solo esperar
+      const espera = r.correo_espera_min ? (r.correo_espera_min === 1 ? '1 minuto' : r.correo_espera_min + ' minutos') : 'una hora';
+      const c = $('#dlg-limite'); $('[data-v=espera]', c).textContent = espera; c.showModal(); return;
+    }
     if (r.clave) {
       const c = $('#dlg-clave'); $('[data-v=usuario]', c).value = r.usuario; $('[data-v=clave]', c).value = r.clave;
-      const limite = !r.correo_enviado && r.correo_motivo === 'limite';
-      const espera = r.correo_espera_min ? 'en ' + (r.correo_espera_min === 1 ? '1 minuto' : r.correo_espera_min + ' minutos') : 'dentro de una hora';
-      $('[data-v=titulo]', c).textContent = r.correo_enviado ? 'Se envió por correo' : limite ? 'Se alcanzó el límite de correos de la demo' : 'No se pudo enviar el correo';
+      $('[data-v=titulo]', c).textContent = r.correo_enviado ? 'Se envió por correo' : 'No se pudo enviar el correo';
       $('[data-v=nota]', c).textContent = r.correo_enviado ? 'Si no le llega, cópiala y envíasela tú por otro medio (chat o en persona). No se vuelve a mostrar'
-        : limite ? 'Esta demo envía pocos correos por hora y ya se usaron, así que no le llegará. Copia esta contraseña y envíasela tú por otro medio (chat o en persona), o restablécela ' + espera + ' para que le llegue por correo. No se vuelve a mostrar'
         : 'No le llegará por correo. Copia esta contraseña y envíasela tú por otro medio (chat o en persona). No se vuelve a mostrar';
       c.showModal();
     } else location.reload();

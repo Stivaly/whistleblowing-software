@@ -54,6 +54,9 @@
 <p class="cola-av s-bad" data-error role="alert" hidden></p>
 <div class="dlg-b"><button type="button" class="btn btn-sec" data-cerrar>Cancelar</button><button type="submit" class="btn btn-pri" data-ok disabled>Eliminar cuenta</button></div></form></dialog>
 
+<dialog id="dlg-limite" class="dlg" aria-labelledby="dlg-limite-t"><div class="dlg-f">
+<div class="dlg-h">{{ ic('e-revision-tiempo', px=40) }}<div><h2 id="dlg-limite-t" class="dlg-t">Límite de correos de la demo</h2><p class="dlg-p">Ya se enviaron los correos permitidos por hora. Espera <b data-v="espera">una hora</b> y usa «Restablecer contraseña» en esta cuenta para enviarle el correo.</p></div></div>
+<div class="dlg-b"><button type="button" class="btn btn-pri" data-cerrar-limite>Entendido</button></div></div></dialog>
 <dialog id="dlg-clave" class="dlg" aria-labelledby="dlg-clave-t"><div class="dlg-f">
 <div class="dlg-h">{{ ic('key-round', px=40) }}<div><h2 id="dlg-clave-t" class="dlg-t" data-v="titulo">Contraseña temporal</h2><p class="dlg-p" data-v="nota">Copia esta contraseña y envíasela a la persona. No se vuelve a mostrar</p></div></div>
 <label class="cl-c">Usuario<input readonly data-v="usuario"></label>
