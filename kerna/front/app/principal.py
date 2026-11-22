@@ -17,7 +17,7 @@ import json
 import re
 import time
 
-from . import ajustes as aj, clientes as cli, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
+from . import ajustes as aj, clientes as cli, demo_anon, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
@@ -498,3 +498,59 @@ def clientes_borrar_por_ley(request: Request, csrf: str = Form(""), id: str = Fo
     if confirmar.strip().lower() != id.strip().lower() or not id.strip():
         return JSONResponse({"estado": "confirmacion"}, status_code=400)
     return _accion_cliente(cli.anonimizar, id, referencia)
+
+
+# ---- Demo: «Anonimizador» (este archivo) y «Denuncias» (módulo aparte `demo_denuncias`).
+# Contrato con demo_denuncias (opcional; si no existe, la pestaña «Denuncias» no se muestra):
+#   registrar(app, permitido=_permitido, plantillas=plantillas)  -> agrega sus propias rutas bajo /panel/demo/...
+#   contexto() -> dict que demo.html recibe como `den` e `_demo_denuncias.html` (include «ignore missing») usa para pintarse.
+# La protección de sus rutas (sesión, mismo origen, CSRF) es suya; `permitido(request)` es la misma comprobación de /panel.
+try:
+    from . import demo_denuncias
+except ImportError:
+    demo_denuncias = None
+if demo_denuncias is not None and hasattr(demo_denuncias, "registrar"):
+    demo_denuncias.registrar(app, permitido=_permitido, plantillas=plantillas)
+
+
+def _contexto_denuncias():
+    if demo_denuncias is None or not hasattr(demo_denuncias, "contexto"):
+        return None
+    try:
+        return demo_denuncias.contexto()
+    except Exception:
+        return None
+
+
+def _pagina_demo(request: Request, pestana: str = "anonimizador", resultado=None, texto: str = "", error: str = "", codigo: int = 200):
+    pestana = "denuncias" if pestana == "denuncias" and demo_denuncias is not None else "anonimizador"
+    return plantillas.TemplateResponse(request, "demo.html", {
+        "pestana": pestana, "hay_denuncias": demo_denuncias is not None, "den": _contexto_denuncias(), "csrf": seguridad.token_csrf(request.cookies),
+        "relatos": demo_anon.RELATOS, "max_car": demo_anon.MAX_CARACTERES, "r": resultado, "texto": texto, "error": error, "tipos": demo_anon.TIPOS}, status_code=codigo)
+
+
+@app.get("/panel/demo", response_class=HTMLResponse)
+def panel_demo(request: Request, pestana: str = "anonimizador"):
+    if not _permitido(request):
+        return RedirectResponse("/acceso", status_code=303)
+    return _pagina_demo(request, pestana)
+
+
+@app.post("/panel/demo/anonimizar")
+def demo_anonimizar(request: Request, csrf: str = Form(""), texto: str = Form(""), relato: str = Form("")):
+    """Anonimiza el texto recibido y lo devuelve; no lo guarda ni lo registra. Con fetch (Accept: application/json) responde {estado, html}."""
+    js = _quiere_json(request)
+    if not _permitido(request):
+        return JSONResponse({"estado": "sesion"}, status_code=401) if js else RedirectResponse("/acceso", status_code=303)
+    fallo = "origen" if not _origen_ok(request) else "token" if not seguridad.csrf_valido(request.cookies, csrf) else ""
+    if fallo:
+        return JSONResponse({"estado": fallo}, status_code=403) if js else _pagina_demo(request, error=fallo, codigo=403)
+    texto = next((t for k, _, t in demo_anon.RELATOS if k == relato), texto)  # sin JavaScript, un relato precargado llega como su identificador
+    if not texto.strip():
+        return JSONResponse({"estado": "vacio"}, status_code=400) if js else _pagina_demo(request, error="vacio", codigo=400)
+    r = demo_anon.analizar(texto)
+    r["truncado"] = len(texto.replace("\r\n", "\n")) > demo_anon.MAX_CARACTERES
+    if js:
+        html = plantillas.get_template("_demo_anon_resultado.html").render(r=r, tipos=demo_anon.TIPOS, max_car=demo_anon.MAX_CARACTERES)
+        return JSONResponse({"estado": "ok", "html": html})
+    return _pagina_demo(request, resultado=r, texto=r["texto"])

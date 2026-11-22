@@ -1,0 +1,29 @@
+{% extends "base_panel.html" %}{% block titulo %}Demo · Kerna AI{% endblock %}
+{% set seccion = 'demo' %}
+{% block vista %}
+<div class="dmo" data-csrf="{{ csrf }}">
+<header class="bar"><div class="bar-t"><h1 class="h1">Demo</h1></div>
+<div class="bar-a"><nav class="seg" aria-label="Partes de la demo">
+<a href="/panel/demo?pestana=anonimizador" data-pestana="anonimizador" aria-current="{{ 'true' if pestana == 'anonimizador' else 'false' }}">Anonimizador</a>
+{% if hay_denuncias %}<a href="/panel/demo?pestana=denuncias" data-pestana="denuncias" aria-current="{{ 'true' if pestana == 'denuncias' else 'false' }}">Denuncias</a>{% endif %}
+</nav></div></header>
+
+<section id="dmo-anonimizador" data-panel="anonimizador"{% if pestana != 'anonimizador' %} hidden{% endif %} aria-label="Anonimizador">
+<form method="post" action="/panel/demo/anonimizar" class="dmo-f" data-form autocomplete="off">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<h2 class="mk"><label for="dmo-texto">Relato que se quiere anonimizar</label>{{ tip('demo_texto') }}<span class="mk-r"><span data-cuenta>{{ texto|length }}</span> / {{ max_car }}</span></h2>
+<textarea id="dmo-texto" name="texto" class="field dmo-ta" rows="7" maxlength="{{ max_car }}" spellcheck="false" required>{{ texto }}</textarea>
+{% if error %}<p class="cola-av s-bad" role="alert">{{ ic('e-cadena-agotada', px=40) }}<span>{{ {'vacio': 'Escribe o elige un relato para anonimizar', 'token': 'Recarga la página e inténtalo otra vez', 'origen': 'Recarga la página e inténtalo otra vez'}[error] }}</span></p>{% endif %}
+<p class="cola-av s-bad" data-error role="alert" hidden></p>
+<div class="dmo-acc"><button type="submit" class="btn btn-pri" data-enviar>{{ ic('eye-off') }}<span>Anonimizar</span></button>
+<span class="dmo-pre" role="group" aria-label="Relatos precargados">{% for k, t, x in relatos %}<button type="submit" name="relato" value="{{ k }}" class="chip brand" data-texto="{{ x }}" formnovalidate>{{ t }}</button>{% endfor %}</span></div>
+</form>
+<div data-salida aria-live="polite">{% if r %}{% include "_demo_anon_resultado.html" %}{% endif %}</div>
+</section>
+
+{% if hay_denuncias %}<section id="dmo-denuncias" data-panel="denuncias"{% if pestana != 'denuncias' %} hidden{% endif %} aria-label="Denuncias">
+{% include "_demo_denuncias.html" ignore missing %}
+</section>{% endif %}
+</div>
+<script src="/estaticos/demo.js?v={{ ver }}" defer></script>
+{% endblock %}

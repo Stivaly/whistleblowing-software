@@ -1,0 +1,13 @@
+{% from "_macros.html" import tip with context %}
+{%- macro seg(lista) -%}{%- for t, tipo, m in lista -%}{%- if tipo -%}<mark class="an-m" data-c="{{ tipos[tipo][2] }}" title="{{ tipos[tipo][0] }}">{{ t }}</mark>{%- else -%}{{ t }}{%- endif -%}{%- endfor -%}{%- endmacro -%}
+<div class="dmo-r" data-resultado>
+<div class="dmo-hl">{{ ic('e-lista' if r.total_entidades else 'e-sin-info', px=40) }}
+<div>{% if r.total_entidades %}<p class="dmo-t">{{ r.total_entidades }} {{ 'dato personal ocultado' if r.total_entidades == 1 else 'datos personales ocultados' }}{{ tip('demo_alcance') }}</p>
+<p class="dmo-s">{{ r.total_apariciones }} {{ 'aparición' if r.total_apariciones == 1 else 'apariciones' }} · {{ r.porcentaje_oculto }} % del texto</p>
+{% else %}<p class="dmo-t">No se encontraron datos personales{{ tip('demo_alcance') }}</p>{% endif %}</div></div>
+{% if r.resumen %}<ul class="dmo-ch" aria-label="Datos ocultados por tipo">{% for x in r.resumen %}<li class="an-c" data-c="{{ x.color }}"><i aria-hidden="true"></i><b>{{ x.entidades }}</b><span>{{ x.nombre }}</span>{% if x.apariciones != x.entidades %}<small>{{ x.apariciones }} veces</small>{% endif %}</li>{% endfor %}</ul>{% endif %}
+{% if r.truncado %}<p class="cola-av s-warn" role="status">{{ ic('e-revision-tiempo', px=40) }}<span>Solo se anonimizaron los primeros {{ max_car }} caracteres</span></p>{% endif %}
+<div class="dmo-2">
+<section aria-labelledby="dmo-o"><h2 id="dmo-o" class="mk">Texto original, con los datos marcados</h2><p class="dmo-tx">{{ seg(r.original_seg) }}</p></section>
+<section aria-labelledby="dmo-a"><h2 id="dmo-a" class="mk">Texto anonimizado</h2><p class="dmo-tx">{{ seg(r.anonimizado_seg) }}</p></section>
+</div></div>

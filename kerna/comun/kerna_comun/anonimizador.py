@@ -471,8 +471,13 @@ _Mapa.ocupado_ini = _ocupado_ini
 
 def anonimizar(texto: str) -> Resultado:
     """Sustituye los identificadores por marcadores. No interpreta el texto."""
+    return anonimizar_detallado(texto)[0]
+
+
+def anonimizar_detallado(texto: str) -> tuple:
+    """Igual que `anonimizar`, y además la lista de entidades sustituidas: [(inicio, fin, tipo, marcador)] sobre el texto original (orden de aparición)."""
     if not texto:
-        return Resultado(texto=texto or "", conteos={})
+        return Resultado(texto=texto or "", conteos={}), []
     mapa = _Mapa(len(texto))
     base = {t: 0 for t in TIPOS}
     for m in _MARCADOR.finditer(texto):  # los marcadores existentes no se tocan ni se renumeran
@@ -486,7 +491,7 @@ def anonimizar(texto: str) -> Resultado:
 
     numeros: dict = {}
     contadores = dict(base)
-    partes, pos = [], 0
+    partes, pos, entidades = [], 0, []
     for i, f, tipo, clave in spans:
         k = (tipo, clave)
         if k not in numeros:
@@ -494,12 +499,13 @@ def anonimizar(texto: str) -> Resultado:
             numeros[k] = contadores[tipo]
         partes.append(texto[pos:i])
         partes.append(f"[{tipo}_{numeros[k]}]")
+        entidades.append((i, f, tipo, f"[{tipo}_{numeros[k]}]"))
         pos = f
     partes.append(texto[pos:])
     conteos: dict = {}
     for tipo, _ in numeros:
         conteos[tipo] = conteos.get(tipo, 0) + 1
-    return Resultado(texto="".join(partes), conteos=conteos)
+    return Resultado(texto="".join(partes), conteos=conteos), entidades
 
 
 def _compactar(s: str) -> str:
