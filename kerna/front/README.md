@@ -28,6 +28,8 @@ App Service Plan Linux F1 (gratis) y Linux Web App Python 3.12 en `rg-kerna-dev`
 ## Accesos y roles
 Cada persona entra en `/acceso` con su usuario y contraseña (`FRONT_AUTH=clave`). `/panel/*` y `/cuenta` exigen una sesión; `/api/*` también acepta la clave compartida por cabecera `X-Clave`.
 
+Visión de conjunto de identidades, roles de Azure, secretos y comunicación entre servicios: `kerna/docs/permisos-e-identidades.md`.
+
 **Roles y permisos** (tabla única en `app/permisos.py`, aplicada en el servidor a toda ruta GET y POST por el middleware `control_acceso`; el menú solo la refleja):
 
 | Sección | Dirección | Operación de IA | Comercial | Evaluación | Invitado |
@@ -52,7 +54,7 @@ Evaluación ve todo y no modifica nada: sus formularios salen deshabilitados y c
 
 **Intentos:** 5 fallos seguidos bloquean la cuenta 15 minutos (se guarda en la tabla) y la IP tiene un límite aparte de 5 fallos cada 5 minutos. El mensaje es siempre el mismo, exista o no el usuario. Una cuenta con `debe_cambiar_clave` solo puede abrir `/cuenta/clave` hasta elegir su contraseña.
 
-**Cuentas (solo Dirección edita):** crear, editar (nombre, correo, rol, activar o desactivar), restablecer contraseña y eliminar (se escribe el usuario para confirmar). No se puede eliminar, desactivar ni restablecer la propia cuenta, ni dejar el sistema sin una cuenta Dirección activa. Crear y restablecer generan una contraseña temporal aleatoria y la envían por correo (`app/correo.py`, tipos `cuenta_creada`, `clave_restablecida`, `cuenta_eliminada`, `rol_cambiado`, `clave_cambiada`). Si el correo no sale, la contraseña se muestra una vez a quien la creó y el evento lo registra sin ella.
+**Cuentas (solo Dirección edita):** crear, editar (nombre, correo, rol, activar o desactivar), restablecer contraseña y eliminar (se escribe el usuario para confirmar). No se puede eliminar, desactivar ni restablecer la propia cuenta, ni dejar el sistema sin una cuenta Dirección activa. Crear y restablecer generan una contraseña temporal aleatoria y la envían por correo (`app/correo.py`, tipos `cuenta_creada`, `clave_restablecida`, `cuenta_eliminada`, `rol_cambiado`, `clave_cambiada`). La contraseña temporal se muestra además una vez a quien crea o restablece la cuenta, salvo si se agotó el cupo de correos de la demo: entonces la pantalla pide esperar y restablecer más tarde. El evento nunca la registra.
 
 **Cuenta `admin`:** si `cuentas` está vacía al arrancar (o en el primer acceso), se crea `admin`, rol Dirección, con la contraseña actual `FRONT_CLAVE` (hash argon2) y sin obligación de cambiarla. Esa es la primera cuenta: entrar como `admin`, abrir Cuentas y crear las demás (conviene cambiar la contraseña de `admin` en «Mi cuenta»).
 
