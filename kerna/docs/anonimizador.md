@@ -133,7 +133,9 @@ se reconoce:
 | `el folio 123456789` (verificador no cuadra) | no | no se toca |
 | `pagué 12.345.678 pesos` | no | no se toca |
 
-Un número de 9 dígitos que empieza en 9 se trata primero como teléfono móvil.
+Un RUT pegado de 8 o 9 caracteres se revisa antes que los teléfonos: si el verificador cuadra con módulo 11 es RUT, aunque
+tenga la forma de un fijo de Santiago (`212345678` = 21.234.567-8). Si no cuadra, sigue siendo teléfono
+(`912345678`, `223456789`). Un fijo que por casualidad cuadra (1 de cada 11) queda como RUT, igual oculto.
 
 ### 3.5 Direcciones
 

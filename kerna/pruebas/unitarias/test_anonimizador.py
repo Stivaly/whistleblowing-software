@@ -168,3 +168,18 @@ def test_diccionarios_y_formatos_libres_detectan(texto, tipo):
 def test_diccionarios_no_toman_palabras_comunes(texto):
     r = anonimizar(texto)
     assert r.texto == texto, (texto, r.texto)
+
+
+def test_rut_en_cualquier_formato_valido_por_modulo_11():
+    """Un RUT válido (módulo 11) se detecta como RUT en todos sus formatos, también pegado y con forma de fijo de Santiago."""
+    import random
+    from kerna_comun.anonimizador import _dv_rut
+    rnd = random.Random(7)
+    for _ in range(300):
+        c = str(rnd.randint(1_000_000, 29_999_999))
+        dv = _dv_rut(c)
+        pts = f"{int(c):,}".replace(",", ".")
+        for t in (c + dv, c + "-" + dv, c + " " + dv, pts + "-" + dv, pts + " " + dv, pts + dv, pts.replace(".", " ") + " " + dv,
+                  c + "." + dv):
+            assert anonimizar(f"mi número es {t} gracias").conteos.get("RUT"), t
+    assert anonimizar("fono 912345678").conteos == {"TELEFONO": 1}

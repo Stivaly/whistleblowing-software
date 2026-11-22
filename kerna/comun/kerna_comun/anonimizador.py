@@ -220,6 +220,9 @@ _RUT_CONTEXTO = re.compile(
     r"(\d{1,2}(?:[. ]?\d{3}){2}(?:[ .]?-?[ ]?[\dkK])?)(?![\w])")
 # RUT sin formato fijo: pegado (123456785), con espacios (12 345 678 5) o mezclado (12.345.678 5); vale solo si el
 # dígito verificador cuadra (módulo 11).
+# RUT pegado (8 o 9 caracteres sin separadores): va antes que los teléfonos, porque un RUT de 2x.xxx.xxx pegado tiene la
+# misma forma que un fijo de Santiago (2 + 8 dígitos). Si el verificador cuadra con módulo 11, se trata como RUT.
+_RUT_PEGADO = re.compile(r"(?<![\w$.,+-])\d{7,8}[\dkK](?![\w]|[.,]\d)")
 _RUT_LIBRE = re.compile(r"(?<![\w$.,-])(?:\d{1,2}[. ]\d{3}[. ]\d{3}|\d{7,8})[ .-]?[\dkK](?![\w]|[.,]\d)")
 
 _CUENTA_FILL = (r"(?i:corriente|cte|vista|rut|ahorro|bancaria|bancario|de|del|numero|número|nro|n[°º]|no|"
@@ -313,6 +316,7 @@ _REGLAS = [
     ("RUT", _RUT_PUNTOS, 0, None, _clave_rut),
     ("RUT", _RUT_GUION, 0, _rut_guion_valido, _clave_rut),
     ("RUT", _RUT_CONTEXTO, 1, None, _clave_rut),
+    ("RUT", _RUT_PEGADO, 0, rut_valido, _clave_rut),
     ("CUENTA", _TARJETA_GRUPOS, 0, None, _clave_digitos),
     ("CUENTA", _TARJETA_LUHN, 0, _luhn, _clave_digitos),
     ("CUENTA", _CUENTA_CONTEXTO, 1, None, _clave_digitos),
