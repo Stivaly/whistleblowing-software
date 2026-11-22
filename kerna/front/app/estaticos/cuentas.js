@@ -46,6 +46,11 @@
       : k === 'restablecer' ? await pedir('/panel/cuentas/restablecer', { usuario: d.dataset.usuario }) : await pedir('/panel/cuentas/eliminar', { usuario: d.dataset.usuario, confirmar: v.confirmar });
     if (r.estado !== 'ok') { error(d, MSG[r.estado] || MSG.error); b.disabled = k === 'eliminar' && $('[name=confirmar]', f).value.trim().toLowerCase() !== d.dataset.usuario; return; }
     d.close();
-    if (r.clave) { const c = $('#dlg-clave'); $('[data-v=usuario]', c).value = r.usuario; $('[data-v=clave]', c).value = r.clave; c.showModal(); } else location.reload();
+    if (r.clave) {
+      const c = $('#dlg-clave'); $('[data-v=usuario]', c).value = r.usuario; $('[data-v=clave]', c).value = r.clave;
+      $('[data-v=titulo]', c).textContent = r.correo_enviado ? 'Se envió por correo' : 'No se pudo enviar el correo';
+      $('[data-v=nota]', c).textContent = r.correo_enviado ? 'También la puedes entregar tú si el correo no llega: no se vuelve a mostrar' : 'Entrégale esta contraseña temporal: no se vuelve a mostrar';
+      c.showModal();
+    } else location.reload();
   });
 })();

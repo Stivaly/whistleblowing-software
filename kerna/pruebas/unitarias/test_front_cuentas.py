@@ -523,13 +523,14 @@ def test_crear_cuenta_muestra_la_clave_temporal_una_vez_si_no_sale_el_correo(web
     assert entrar(web, "maria.perez", r["clave"]).headers["location"] == "/cuenta/clave"
 
 
-def test_crear_con_correo_enviado_no_devuelve_la_clave(web, tablas, monkeypatch):
+def test_crear_con_correo_enviado_envia_y_muestra_la_clave_una_vez(web, tablas, monkeypatch):
     enviados = []
     monkeypatch.setattr(cuentas, "_enviar", lambda tipo, para, datos: enviados.append((tipo, para, datos)) or True)
     r = post(web, "/panel/cuentas/crear", sesion_prueba.csrf(), usuario="luis", nombre="Luis", correo="luis@x.cl", rol="comercial").json()
-    assert r["estado"] == "ok" and r["correo_enviado"] is True and r["clave"] is None
+    assert r["estado"] == "ok" and r["correo_enviado"] is True and r["clave"]   # un correo mal escrito no deja la cuenta sin entrada
     tipo, para, datos = enviados[0]
     assert tipo == "cuenta_creada" and para == "luis@x.cl" and set(datos) == {"usuario", "nombre", "rol", "clave_temporal", "url"} and datos["rol"] == "Comercial"
+    assert r["clave"] == datos["clave_temporal"]
     assert datos["url"] == "https://t/acceso" and cuentas.clave_correcta(tablas[cuentas.T_CUENTAS].f[(cuentas.PK, "luis")]["hash"], datos["clave_temporal"])
     assert "clave temporal enviada por correo" in eventos(tablas, "creada")[0]["detalle"] and datos["clave_temporal"] not in json.dumps([dict(e) for e in tablas[cuentas.T_EVENTOS].f.values()])
 
@@ -657,3 +658,22 @@ def test_el_historial_registra_accesos_y_cambios(web, tablas):
     evs = cuentas.eventos(10)
     assert [e["accion"] for e in evs] == ["acceso_ok", "acceso_fallido"] and all(set(e) == {"fecha", "actor", "accion", "cuenta", "detalle"} for e in evs)
     assert set(cuentas.ACCIONES) >= {e["accion"] for e in evs}
+
+
+
+def test_la_ip_del_limite_es_la_que_agrega_el_proxy_no_la_que_manda_el_cliente():
+    from starlette.requests import Request as R
+    def req(xff):
+        return R({"type": "http", "headers": [(b"x-forwarded-for", xff.encode())] if xff else [], "client": ("10.0.0.9", 1)})
+    assert principal._ip(req("6.6.6.6, 200.1.2.3:51000")) == "200.1.2.3"   # el primero lo inventa quien llama
+    assert principal._ip(req("200.1.2.3:51000")) == "200.1.2.3"
+    assert principal._ip(req("[2001:db8::1]:443")) == "2001:db8::1"
+    assert principal._ip(req("")) == "10.0.0.9"
+
+
+def test_ajustes_incompletos_se_rechazan_sin_tocar_lo_guardado(web, monkeypatch):
+    from app import ajustes as aj
+    guardados = []
+    monkeypatch.setattr(aj, "guardar", lambda v: guardados.append(v) or {"guardado_en": "x"})
+    r = post(web, "/panel/ajustes", sesion_prueba.csrf(), valores="{}")
+    assert r.status_code == 400 and r.json()["estado"] == "invalido" and not guardados

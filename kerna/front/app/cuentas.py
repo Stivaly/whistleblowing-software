@@ -7,7 +7,7 @@
   temporales ni huellas.
 
 Las contraseñas nunca se guardan ni se registran en claro: solo la huella argon2id (con su sal). La contraseña temporal de una cuenta
-nueva o restablecida se envía por correo (`correo.enviar`); si el correo no sale, se muestra una sola vez a quien la creó.
+nueva o restablecida se envía por correo (`correo.enviar`) y se muestra una sola vez a quien la creó o restableció.
 """
 from __future__ import annotations
 
@@ -281,7 +281,8 @@ def _datos(d: dict, con_usuario: bool) -> dict:
     nombre = " ".join(str(d.get("nombre") or "").split())
     correo = str(d.get("correo") or "").strip().lower()
     rol = str(d.get("rol") or "")
-    if not (1 <= len(nombre) <= 80) or not _CORREO.match(correo) or len(correo) > 120 or rol not in permisos.ASIGNABLES:
+    correo_ok = bool(_CORREO.match(correo)) or (not con_usuario and correo == "")   # al editar, una cuenta puede quedar sin correo (p. ej. admin)
+    if not (1 <= len(nombre) <= 80) or not correo_ok or len(correo) > 120 or rol not in permisos.ASIGNABLES:
         raise ErrorCuenta("invalido")
     salida = {"nombre": nombre, "correo": correo, "rol": rol}
     if con_usuario:
@@ -318,8 +319,8 @@ def crear(actor: str, datos: dict, url: str = "") -> dict:
     _olvidar(d["usuario"])
     enviado = _enviar("cuenta_creada", d["correo"], {"usuario": d["usuario"], "nombre": d["nombre"], "rol": permisos.nombre_rol(d["rol"]),
                                                       "clave_temporal": temporal, "url": url})
-    registrar_evento(actor, "creada", d["usuario"], f"rol {permisos.nombre_rol(d['rol'])}; " + ("clave temporal enviada por correo" if enviado else "correo no enviado: clave temporal mostrada en pantalla"))
-    return {"usuario": d["usuario"], "correo_enviado": enviado, "clave": None if enviado else temporal}
+    registrar_evento(actor, "creada", d["usuario"], f"rol {permisos.nombre_rol(d['rol'])}; " + ("clave temporal enviada por correo y mostrada una vez a quien la creó" if enviado else "correo no enviado: clave temporal mostrada una vez en pantalla"))
+    return {"usuario": d["usuario"], "correo_enviado": enviado, "clave": temporal}   # se muestra siempre una vez: un correo mal escrito no deja la cuenta sin entrada
 
 
 def editar(actor: str, usuario: str, datos: dict, activa: bool | None = None) -> dict:
@@ -358,8 +359,8 @@ def restablecer(actor: str, usuario: str, url: str = "") -> dict:
     _actualizar(u, {"hash": hash_clave(temporal), "debe_cambiar_clave": True, "sesion": int(f.get("sesion") or 1) + 1, "intentos_fallidos": 0,
                     "bloqueada_hasta": "", "actualizada": _ahora()})
     enviado = _enviar("clave_restablecida", f.get("correo") or "", {"usuario": u, "nombre": f.get("nombre") or u, "clave_temporal": temporal, "url": url})
-    registrar_evento(actor, "clave_restablecida", u, "clave temporal enviada por correo" if enviado else "correo no enviado: clave temporal mostrada en pantalla")
-    return {"usuario": u, "correo_enviado": enviado, "clave": None if enviado else temporal}
+    registrar_evento(actor, "clave_restablecida", u, "clave temporal enviada por correo y mostrada una vez a quien la restableció" if enviado else "correo no enviado: clave temporal mostrada una vez en pantalla")
+    return {"usuario": u, "correo_enviado": enviado, "clave": temporal}
 
 
 def eliminar(actor: str, usuario: str) -> dict:

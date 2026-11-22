@@ -134,7 +134,13 @@ def _permitido(request: Request) -> bool:
 
 
 def _ip(request: Request) -> str:
-    return request.headers.get("x-forwarded-for", request.client.host if request.client else "?").split(",")[0].strip()
+    """IP real del cliente. Detrás de App Service, el proxy de Azure AGREGA la IP real al final de X-Forwarded-For; los valores
+    anteriores los controla quien llama (falsificables), así que se toma el último. Se quita el puerto («1.2.3.4:5678»)."""
+    xff = request.headers.get("x-forwarded-for", "")
+    ip = xff.split(",")[-1].strip() if xff.strip() else (request.client.host if request.client else "?")
+    if ip.startswith("["):                    # [IPv6]:puerto
+        return ip[1:ip.find("]")] if "]" in ip else ip
+    return ip.rsplit(":", 1)[0] if ip.count(":") == 1 else ip
 
 
 def _poner_cookie(r, usuario: str, version: int, rol: str):
@@ -560,6 +566,8 @@ def guardar_ajustes(request: Request, csrf: str = Form(""), valores: str = Form(
         return fin("token", 403)
     try:
         v = json.loads(valores)
+        if not isinstance(v, dict) or set(aj.RECOMENDADO) - set(v):   # deben venir todos: uno ausente no se rellena con el recomendado
+            raise ValueError("faltan ajustes")
         aj.validar(v)
     except (ValueError, TypeError, AttributeError):
         return fin("invalido", 400)
@@ -665,15 +673,16 @@ def _accion_cuenta(fn, *a, **kw):
 
 
 @app.get("/panel/cuentas", response_class=HTMLResponse)
-def panel_cuentas(request: Request):
+def panel_cuentas(request: Request, historial: str = ""):
     if not _permitido(request):
         return RedirectResponse("/acceso", status_code=303)
+    todo = historial == "todo"   # por defecto los 30 más recientes; «Ver más» muestra hasta 200
     try:
-        lista, historial, error = cuentas.listar(), cuentas.eventos(100), None
+        lista, historial, error = cuentas.listar(), cuentas.eventos(200 if todo else 30), None
     except Exception as e:
         lista, historial, error = [], [], type(e).__name__
     return plantillas.TemplateResponse(request, "cuentas.html", {"lista": lista, "historial": historial, "error": error, "csrf": seguridad.token_csrf(request.cookies),
-                                                                   "roles": permisos.ROLES, "yo": _sesion_en(request).usuario, "min": cuentas.CLAVE_MIN})
+                                                                   "roles": permisos.ROLES, "yo": _sesion_en(request).usuario, "min": cuentas.CLAVE_MIN, "todo": todo})
 
 
 @app.post("/panel/cuentas/crear")
