@@ -36,13 +36,18 @@ PLAZO_SEGUIMIENTO_S = 600          # el núcleo corta a los 420 s (KERNA_PLAZO_G
 TOPE_10_MIN, TOPE_DIA = 8, 60      # el núcleo gasta modelos de pago: se limita el uso de la demo
 TIMEOUT_TOKEN_S, TIMEOUT_ENVIO_S, TIMEOUT_CONSULTA_S = 30, 70, 30
 
+# Lo que indexa el núcleo (corpus `normativa_cl`, kerna/evaluacion/datos/corpus_texto_*.md): la Ley Karin y los artículos que cambió en cinco normas
+# (agrupadas aquí bajo su ley paraguas), la ley de datos personales con su reforma y la de responsabilidad penal de las personas jurídicas.
 LEYES = (
     {"tipo": "karin", "norma": "Ley 21.643 (Karin)", "numero": "21.643", "nombre": "Ley Karin",
-     "tema": "Acoso y violencia en el trabajo, con sus cambios al Código del Trabajo y a los estatutos administrativos"},
+     "tema": "Acoso y violencia en el trabajo, con los artículos que cambió en estas normas",
+     "incluye": ({"nombre": "Código del Trabajo", "numero": ""}, {"nombre": "Estatuto Administrativo", "numero": "18.834"},
+                 {"nombre": "Estatuto Administrativo municipal", "numero": "18.883"}, {"nombre": "Bases de la Administración del Estado", "numero": "18.575"},
+                 {"nombre": "Orgánica de Municipalidades", "numero": "18.695"})},
     {"tipo": "datos", "norma": "Ley 19.628 y Ley 21.719 (datos personales)", "numero": "19.628 y 21.719", "nombre": "Datos personales",
-     "tema": "Protección y tratamiento de datos personales"},
+     "tema": "Protección y tratamiento de datos personales", "incluye": ()},
     {"tipo": "penal", "norma": "Ley 20.393 (responsabilidad penal de personas jurídicas)", "numero": "20.393", "nombre": "Responsabilidad penal",
-     "tema": "Responsabilidad penal de las personas jurídicas"},
+     "tema": "Responsabilidad penal de las personas jurídicas", "incluye": ()},
 )
 NOMBRE_LEY = {"karin": "Ley Karin (21.643)", "datos": "Datos personales (19.628 y 21.719)", "penal": "Responsabilidad penal (20.393)"}
 
@@ -81,6 +86,24 @@ def tipo_ley(id_articulo: str = "", norma: str = "") -> str | None:
     if re.search(r"20\.?393|penal de las personas", n, re.I):
         return "penal"
     return None
+
+
+_SUFIJOS = "bis|ter|quater|quáter|quinquies|sexies|septies|octies|nonies|decies"
+_LETRA = re.compile(r"^(\d+)[\s-]+([A-Za-zÑñ])(?=[\s-]|$)(.*)$")
+_PALABRA = re.compile(rf"^(\d+)[\s-]+({_SUFIJOS})\b(.*)$", re.I)
+
+
+def articulo_normal(texto: str) -> str:
+    """Escribe el número de artículo igual que las etiquetas esperadas: letra con guion y en mayúscula (211-B, 211-B bis); sufijo en palabra
+    con espacio y en minúscula (14 quinquies). El núcleo devuelve «211 C» o «211-b» según el fragmento."""
+    t = " ".join(str(texto or "").split())
+    m = _LETRA.match(t)
+    if m:
+        t = f"{m.group(1)}-{m.group(2).upper()}{m.group(3)}"
+    m = _PALABRA.match(t) or re.match(rf"^(\d+(?:-[A-Z])?)[\s-]+({_SUFIJOS})\b(.*)$", t, re.I)
+    if m:
+        t = f"{m.group(1)} {m.group(2).lower()}{m.group(3)}"
+    return t
 
 
 def _base(id_articulo: str) -> str:
@@ -177,7 +200,7 @@ def esperado(caso: dict | None) -> dict | None:
 def _articulo_vista(a: dict, ids_esperados: set[str]) -> dict:
     ia = str(a.get("id_articulo") or "")
     veredicto = {"confirma": "mantiene", "condiciona": "condiciona", "veta": "veta"}.get(str(a.get("dictamen") or ""), "")
-    return {"id": ia, "ley": tipo_ley(ia, a.get("norma", "")), "norma": str(a.get("norma") or ""), "articulo": str(a.get("articulo") or ""),
+    return {"id": ia, "ley": tipo_ley(ia, a.get("norma", "")), "norma": str(a.get("norma") or ""), "articulo": articulo_normal(a.get("articulo") or ""),
             "explicacion": str(a.get("explicacion") or ""), "cita": str(a.get("cita") or ""), "confianza": round(float(a.get("confianza") or 0), 2),
             "veredicto": veredicto, "coincide": _base(ia) in ids_esperados}
 
@@ -241,18 +264,24 @@ def _origen_ok(request: Request) -> bool:
     return request.headers.get("sec-fetch-site", "same-origin") in ("same-origin", "none")
 
 
-def registrar(app, permitido, plantillas=None) -> None:
+def registrar(app, permitido, plantillas=None, pantalla=None) -> None:
     """Agrega POST /panel/demo/denuncia (envía) y GET /panel/demo/denuncia/{ref} (consulta). Ambas exigen la sesión del panel;
-    la primera, además, mismo origen y token CSRF."""
+    la primera, además, mismo origen y token CSRF. Si la petición no pide JSON (un envío de formulario sin JavaScript) y se da `pantalla`
+    (la pantalla de error de Kerna, errores.py), un rechazo responde con esa pantalla y no con JSON crudo."""
+
+    def rechazo(request: Request, estado: str, codigo: int):
+        if pantalla is not None and "application/json" not in request.headers.get("accept", ""):
+            return pantalla(request, codigo)
+        return JSONResponse({"estado": estado}, status_code=codigo)
 
     @app.post("/panel/demo/denuncia")
     def enviar(request: Request, csrf: str = Form(""), texto: str = Form(""), caso: str = Form("")):
         if not permitido(request):
-            return JSONResponse({"estado": "sesion"}, status_code=401)
+            return rechazo(request, "sesion", 401)
         if not _origen_ok(request):
-            return JSONResponse({"estado": "origen"}, status_code=403)
+            return rechazo(request, "origen", 403)
         if not seguridad.csrf_valido(request.cookies, csrf):
-            return JSONResponse({"estado": "token"}, status_code=403)
+            return rechazo(request, "token", 403)
         texto = texto.replace("\r\n", "\n").strip()
         if len(texto) < MIN_CARACTERES:
             return JSONResponse({"estado": "corto"}, status_code=400)

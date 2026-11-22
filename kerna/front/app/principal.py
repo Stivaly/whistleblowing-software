@@ -438,13 +438,16 @@ _CODIGOS_CLIENTE = {"invalido": 400, "protegido": 403, "no_existe": 404, "existe
 
 
 def _guardia_cliente(request: Request, csrf: str = ""):
-    """None si la petición puede seguir; si no, la respuesta que corresponde."""
+    """None si la petición puede seguir; si no, la respuesta que corresponde: JSON si la petición lo pide (fetch del panel) y, si no, la
+    pantalla de error de Kerna (nunca JSON crudo en el navegador)."""
+    def fallo(estado: str, codigo: int):
+        return JSONResponse({"estado": estado}, status_code=codigo) if _quiere_json(request) else pantalla_error(request, codigo)
     if not _permitido(request):
-        return JSONResponse({"estado": "sesion"}, status_code=401)
+        return fallo("sesion", 401)
     if not _origen_ok(request):
-        return JSONResponse({"estado": "origen"}, status_code=403)
+        return fallo("origen", 403)
     if csrf is not None and not seguridad.csrf_valido(request.cookies, csrf):
-        return JSONResponse({"estado": "token"}, status_code=403)
+        return fallo("token", 403)
     return None
 
 
@@ -505,7 +508,7 @@ def clientes_borrar_por_ley(request: Request, csrf: str = Form(""), id: str = Fo
 
 # ---- Demo: «Anonimizador» (este archivo) y «Denuncias» (módulo aparte `demo_denuncias`).
 # Contrato con demo_denuncias (opcional; si no existe, la pestaña «Denuncias» no se muestra):
-#   registrar(app, permitido=_permitido, plantillas=plantillas)  -> agrega sus propias rutas bajo /panel/demo/...
+#   registrar(app, permitido=_permitido, plantillas=plantillas, pantalla=pantalla_error)  -> agrega sus propias rutas bajo /panel/demo/...
 #   contexto() -> dict que demo.html recibe como `den` e `_demo_denuncias.html` (include «ignore missing») usa para pintarse.
 # La protección de sus rutas (sesión, mismo origen, CSRF) es suya; `permitido(request)` es la misma comprobación de /panel.
 try:
@@ -513,7 +516,7 @@ try:
 except ImportError:
     demo_denuncias = None
 if demo_denuncias is not None and hasattr(demo_denuncias, "registrar"):
-    demo_denuncias.registrar(app, permitido=_permitido, plantillas=plantillas)
+    demo_denuncias.registrar(app, permitido=_permitido, plantillas=plantillas, pantalla=pantalla_error)
 
 
 def _contexto_denuncias():

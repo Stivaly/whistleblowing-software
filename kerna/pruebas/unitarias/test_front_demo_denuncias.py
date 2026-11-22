@@ -331,3 +331,100 @@ def test_los_iconos_de_estado_que_usa_el_js_existen_en_el_sprite():
     for ley in ("karin", "datos", "penal"):
         assert f'id="l-{ley}"' in sprite
     assert 'id="n-ayuda"' in sprite
+
+
+# ---- QA 2026-11-22: casos ajenos al corpus, leyes agrupadas, aviso sin JavaScript, rechazos con pantalla, notación de artículos ------------------------
+
+AJENOS = ("fuera-arriendo-particulares", "fuera-ruido-vecinos", "fuera-cerco-deslinde")
+
+
+def test_los_casos_ajenos_estan_marcados_fuera_del_corpus_y_no_tocan_lo_laboral_ni_los_datos():
+    """Tránsito y consumidor recibieron sugerencias reales del núcleo (Estatutos, 20.393): se reemplazaron por asuntos entre particulares."""
+    assert not {"fuera-transito-conductor", "fuera-consumidor-garantia", "fuera-tributaria-boletas"} & set(POR_ID)
+    for i in AJENOS:
+        c = POR_ID[i]
+        assert c["tipo"] == "fuera" and c["articulos"] == () and c["fuera"], i
+        assert not re.search(r"trabaj|emplead|jefe|jefatura|contrat|sueldo|remuneraci|municipal|funcionari|datos|acoso|soborno|cohecho|lavado|delito|empresa|sociedad",
+                             c["texto"], re.I), i
+        assert re.search(r"RUT \d", c["texto"]) and "@" in c["texto"] and "+56" in c["texto"]        # relato completo con datos personales
+        assert esperado_ok(c)
+
+
+def esperado_ok(c):
+    e = dd.esperado(c)
+    return e["tipo"] == "fuera" and e["articulos"] == [] and e["fuera"] == c["fuera"]
+
+
+def test_el_recordatorio_de_leyes_agrupa_las_normas_bajo_la_ley_karin():
+    ctx = dd.contexto()
+    por_tipo = {l["tipo"]: l for l in ctx["leyes"]}
+    assert set(por_tipo) == {"karin", "datos", "penal"}
+    inc = [(n["nombre"], n["numero"]) for n in por_tipo["karin"]["incluye"]]
+    assert ("Código del Trabajo", "") in inc
+    for numero in ("18.834", "18.883", "18.575"):
+        assert any(n == numero for _, n in inc), numero
+    assert not por_tipo["datos"]["incluye"] and not por_tipo["penal"]["incluye"]
+
+
+def test_el_recordatorio_de_leyes_se_muestra_agrupado_y_no_dice_que_solo_hay_tres(web):
+    t = web.get("/panel/demo?pestana=denuncias", headers=H).text
+    sub = re.search(r'<ul class="den-sub".*?</ul>', t, re.S).group(0)
+    for x in ("Código del Trabajo", "Estatuto Administrativo", "18.834", "Estatuto Administrativo municipal", "18.883", "18.575"):
+        assert x in sub
+    assert t.index('data-l="karin"') < t.index('<ul class="den-sub"') < t.index('data-l="datos"')      # la lista cuelga de la Ley Karin
+    assert not re.search(r"solo (conoce|hay|tiene) (las )?(tres|3)", t, re.I)
+
+
+def test_el_corpus_vigente_trae_las_normas_que_el_recordatorio_dice_incluir():
+    if not CORPUS.exists():
+        pytest.skip("el corpus vigente está fuera de git")
+    corpus = CORPUS.read_text()
+    for texto in ("Código del Trabajo", "Ley 18.834", "Ley 18.883", "Ley 18.575", "Ley 18.695", "Ley 19.628", "Ley 21.719", "Ley 20.393"):
+        assert texto in corpus, texto
+
+
+def test_sin_javascript_la_pestana_denuncias_avisa_en_vez_de_quedar_inerte(web):
+    t = web.get("/panel/demo?pestana=denuncias", headers=H).text
+    m = re.search(r"<noscript>(.*?)</noscript>", t, re.S)
+    assert m and "JavaScript" in m.group(1) and 'class="cola-av s-warn' in m.group(1) and 'href="#e-revision-tiempo"' in m.group(1)
+    assert ".den-b:not(:first-child){display:none}" in m.group(1)                  # los casos y el botón, inertes sin JS, no se ofrecen
+    assert "Anonimizador" in m.group(1)                                              # y dice qué sí funciona
+
+
+def test_un_rechazo_sin_pedir_json_responde_con_la_pantalla_de_error_de_kerna(web):
+    d = {"csrf": "mal", "texto": CASO["texto"], "caso": CASO["id"]}
+    for ruta, datos in (("/panel/demo/denuncia", d), ("/panel/clientes/crear", {"csrf": "mal", "id": "x", "nombre": "Y"})):
+        r = web.post(ruta, headers={**H, "Accept": "text/html"}, data=datos)
+        assert r.status_code == 403 and "text/html" in r.headers["content-type"], ruta
+        assert "No pudimos confirmar tu solicitud" in r.text and '{"estado"' not in r.text, ruta
+        assert r.headers["cache-control"] == "no-store"
+        j = web.post(ruta, headers={**H, "Accept": "application/json"}, data=datos)                # con Accept JSON todo sigue igual
+        assert j.status_code == 403 and j.json() == {"estado": "token"}, ruta
+        o = web.post(ruta, headers={**H, "Accept": "text/html", "Origin": "https://otro.example"}, data=datos)
+        assert o.status_code == 403 and "text/html" in o.headers["content-type"], ruta
+    assert web.nucleo.casos == []
+
+
+def test_sin_sesion_y_sin_pedir_json_tambien_es_una_pantalla(web):
+    r = web.post("/panel/clientes/crear", headers={"Accept": "text/html"}, data={"csrf": _csrf(), "id": "x"})
+    assert r.status_code == 401 and "text/html" in r.headers["content-type"] and '{"estado"' not in r.text
+    assert web.post("/panel/clientes/crear", headers={"Accept": "application/json"}, data={"csrf": _csrf()}).json() == {"estado": "sesion"}
+
+
+def test_el_articulo_obtenido_se_escribe_igual_que_el_esperado():
+    for crudo, esperado_ in (("211 C", "211-C"), ("211-c", "211-C"), ("211-B bis", "211-B bis"), ("211 B bis", "211-B bis"), ("211-b-bis", "211-B bis"),
+                             ("14 quinquies", "14 quinquies"), ("14-QUINQUIES", "14 quinquies"), ("16 BIS", "16 bis"), ("82", "82"), ("  211   A ", "211-A")):
+        assert dd.articulo_normal(crudo) == esperado_, crudo
+    r = dd.vista_resultado({"estado": "completada", "articulos": [art("207436-karin-art-211-c", "Código del Trabajo", "211 C", "confirma")]}, CASO)
+    assert r["articulos"][0]["articulo"] == "211-C"
+    assert "art. 211-C" in dict(CASO["articulos"])["207436-karin-art-211-c"]               # el esperado se escribe igual
+
+
+def test_el_js_trae_los_avisos_con_icono_el_scroll_al_resultado_y_el_mensaje_de_credenciales():
+    js = (RAIZ / "front/app/estaticos/demo_den.js").read_text()
+    assert "prefers-reduced-motion" in js and "scrollIntoView" in js and "irAlResultado" in js
+    assert "estado(ico || 'cadena-agotada', 40)" in js                                     # todo aviso lleva su ícono de estado
+    assert "no aceptó las credenciales" in js and "no respondió" in js and "motivo === 'credenciales'" in js
+    assert "Límite alcanzado" in js and "paste" in js
+    css = (RAIZ / "front/app/estaticos/demo_den.css").read_text()
+    assert "scroll-margin" in css

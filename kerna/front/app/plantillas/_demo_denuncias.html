@@ -2,11 +2,14 @@
 {% if den and den.casos is iterable %}
 <link rel="stylesheet" href="/estaticos/demo_den.css?v={{ ver }}">
 <div class="den" data-den data-csrf="{{ csrf }}" data-nucleo="{{ 1 if den.configurado else 0 }}">
+<noscript><style>.den-b:not(:first-child){display:none}</style>
+<p class="cola-av s-warn den-nojs" role="note">{{ ic('e-revision-tiempo', px=40) }}<span>Para analizar denuncias hace falta JavaScript. Actívalo en tu navegador y recarga la página. El Anonimizador sí funciona sin él.</span></p></noscript>
 
 <section class="den-b" aria-labelledby="den-ley-t">
-<h2 id="den-ley-t" class="mk">Leyes que conoce la demo<button type="button" class="den-q" data-q="Kerna solo sugiere artículos de estas leyes. Una denuncia sobre otra ley debe quedar sin sugerencia." aria-label="Ayuda: leyes que conoce la demo">{{ ic('circle-help') }}</button></h2>
+<h2 id="den-ley-t" class="mk">Leyes que conoce la demo<button type="button" class="den-q" data-q="Kerna solo sugiere artículos de estas leyes. La Ley Karin incluye los artículos que cambió en las normas de su lista. Una denuncia sobre otra ley debe quedar sin sugerencia." aria-label="Ayuda: leyes que conoce la demo">{{ ic('circle-help') }}</button></h2>
 <ul class="den-leyes">{% for l in den.leyes %}
-<li data-l="{{ l.tipo }}">{{ ley_icono(l.norma, 32) }}<span><b>{{ l.nombre }} <span class="den-n">{{ l.numero }}</span></b><small>{{ l.tema }}</small></span></li>{% endfor %}
+<li data-l="{{ l.tipo }}">{{ ley_icono(l.norma, 32) }}<span><b>{{ l.nombre }} <span class="den-n">{{ l.numero }}</span></b><small>{{ l.tema }}</small>{% if l.incluye %}
+<ul class="den-sub" aria-label="Normas que incluye {{ l.nombre }}">{% for n in l.incluye %}<li>{{ n.nombre }}{% if n.numero %} <span class="den-n">{{ n.numero }}</span>{% endif %}</li>{% endfor %}</ul>{% endif %}</span></li>{% endfor %}
 </ul>
 </section>
 

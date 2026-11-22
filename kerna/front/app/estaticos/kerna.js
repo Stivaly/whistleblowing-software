@@ -95,7 +95,8 @@
   let ultimo = Date.now(), fallo = false;
   function showTip(b) {
     if (!tt) return;
-    const hh = b.closest('k-tip') || b, key = hh.getAttribute('g') || hh.getAttribute('data-tip'), g = G[key]; if (!g) return;
+    const dq = b.classList.contains('den-q') ? b.getAttribute('data-q') : null;   // «?» de la Demo: su texto viaja en data-q; comparte el estado fijado y el scroll con los demás
+    const hh = b.closest('k-tip') || b, key = dq ? '' : hh.getAttribute('g') || hh.getAttribute('data-tip'), g = G[key]; if (!g && !dq) return;
     ttFor = b;
     let xt = hh.getAttribute('x');
     if (key === 'envivo') {
@@ -103,14 +104,14 @@
       const hora = d && !isNaN(d) ? d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) + ' (' + hace(Math.max(0, Math.round((Date.now() - d) / 1000))) + ')' : null;
       xt = fallo ? 'No se pudo actualizar; se reintenta en un minuto.' : (hora ? 'Último dato recibido: ' + hora + '. Puede tardar unos minutos.' : null);
     }
-    tt.textContent = (key === 'envivo' || key === 'neg_clientes') && xt ? xt : g.q;
+    tt.textContent = dq || ((key === 'envivo' || key === 'neg_clientes') && xt ? xt : g.q);
     b.setAttribute('aria-describedby', 'tt'); tt.classList.add('on');
     const r = b.getBoundingClientRect(), w = tt.offsetWidth, h = tt.offsetHeight;
     const x = Math.min(Math.max(12, r.left + r.width / 2 - w / 2), innerWidth - w - 12); let y = r.bottom + 8; if (y + h > innerHeight - 8) y = r.top - h - 8;
     tt.style.left = x + 'px'; tt.style.top = Math.max(8, y) + 'px';
   }
   function hideTip() { if (!tt) return; tt.classList.remove('on'); if (ttFor) ttFor.removeAttribute('aria-describedby'); ttFor = null; pinned = false; }
-  const selTip = 'k-tip button,[data-tip]';
+  const selTip = 'k-tip button,[data-tip],.den-q';
   const tipDe = (e) => e.target.closest && e.target.closest(selTip);
   document.addEventListener('pointerover', (e) => { const b = tipDe(e); if (b && e.pointerType === 'mouse' && !pinned) showTip(b); });
   document.addEventListener('pointerout', (e) => { if (tipDe(e) && !pinned && e.pointerType === 'mouse') hideTip(); });
@@ -234,13 +235,19 @@
   graficos(DATOS.graficos);
   function cascada(c) {
     if (!c) return;
+    const caja0 = document.getElementById('ch-casc');
+    if (caja0 && window.ResizeObserver && !caja0.dataset.obs) {   // el ancho de las etiquetas depende del ancho real de la caja: se vuelve a calcular si cambia
+      caja0.dataset.obs = '1'; let ult = caja0.clientWidth;
+      new ResizeObserver(() => { const w = caja0.clientWidth; if (Math.abs(w - ult) > 4) { ult = w; cascada(c); } }).observe(caja0);
+    }
     const col = (k) => (k === 'ok' ? css('--c-verde') : k === 'coral' ? css('--c-coral') : css('--bad-bar')), ink = css('--ink'), mu = css('--muted'), vacio = { color: 'transparent' };
     const seg = (d, pos) => d.map((x, i) => ({ value: x, itemStyle: { color: col(c.cols[i]), borderRadius: 2 }, label: { show: pos ? x > 0 : x < 0 && !(c.sp[i] > 0), position: pos ? 'top' : 'bottom', formatter: c.vals[i], color: ink, fontSize: 11, fontWeight: 600 } }));
-    const ancho = innerWidth < 600 ? 44 : 56;
+    const movil = innerWidth < 600, caja = document.getElementById('ch-casc'), slot = Math.floor(((caja && caja.clientWidth) || innerWidth - 40) / c.labels.length);
+    const ancho = movil ? Math.min(44, slot - 8) : 56, anchoEt = Math.max(30, slot - 2);   // la etiqueta nunca ocupa todo el hueco: entre dos queda aire
     mk('ch-casc', {
-      ...base(), grid: { left: 4, right: 4, top: 22, bottom: innerWidth < 600 ? 50 : 26 }, tooltip: { trigger: 'item', formatter: (p) => (p.seriesType === 'bar' && p.seriesIndex % 2 ? c.labels[p.dataIndex] + ': ' + c.vals[p.dataIndex] + ' UF' : ''), confine: true },
-      xAxis: { type: 'category', data: c.labels, axisLabel: { color: ink, fontSize: innerWidth < 600 ? 9.5 : 10.5, interval: 0, lineHeight: 13, margin: 8, ...(innerWidth < 600 ? { width: 44, overflow: 'break' } : {}) }, axisTick: { show: false }, axisLine: { lineStyle: { color: '#B9C1DA' } } },
-      yAxis: { type: 'value', show: false },
+      ...base(), grid: { left: 4, right: 4, top: 22, bottom: movil ? 54 : 26 }, tooltip: { trigger: 'item', formatter: (p) => (p.seriesType === 'bar' && p.seriesIndex % 2 ? c.labels[p.dataIndex] + ': ' + c.vals[p.dataIndex] + ' UF' : ''), confine: true },
+      xAxis: { type: 'category', data: c.labels, axisLabel: { color: ink, fontSize: movil ? 8.5 : 10.5, interval: 0, lineHeight: 12, margin: movil ? 10 : 8, ...(movil ? { width: anchoEt, overflow: 'break' } : {}) }, axisTick: { show: false }, axisLine: { lineStyle: { color: '#B9C1DA' } } },
+      yAxis: { type: 'value', show: false, min: (v) => (v.min < 0 ? v.min - (v.max - v.min) * 0.12 : v.min) },   // sitio para el valor bajo la barra más negativa
       series: [{ type: 'bar', stack: 'p', data: c.bp, itemStyle: vacio, silent: true, barWidth: ancho }, { type: 'bar', stack: 'p', data: seg(c.sp, true), barWidth: ancho },
         { type: 'bar', stack: 'p', data: c.bn, itemStyle: vacio, silent: true, barWidth: ancho }, { type: 'bar', stack: 'p', data: seg(c.sn, false), barWidth: ancho },
         ...c.niv.slice(0, -1).map((y, i) => ({ type: 'line', z: 1, silent: true, symbol: 'none', tooltip: { show: false }, data: c.niv.map((_, k) => (k === i || k === i + 1 ? y : null)), lineStyle: { color: '#8D98BC', width: 1, type: 'dashed' } }))],

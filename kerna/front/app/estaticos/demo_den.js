@@ -38,35 +38,28 @@
   const ayuda = (txt) => { const b = h('button', { type: 'button', class: 'den-q', 'data-q': txt, 'aria-label': 'Ayuda: ' + txt }); b.append(frag('<k-n style="--s:18px" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="#n-ayuda"/></svg></k-n>')); return b; };
   const chip = (cl, txt) => h('span', { class: 'chip ' + cl }, txt);
 
-  /* ---------- «?»: usa el globo de ayuda del panel (#tt) ---------- */
-  const tt = document.getElementById('tt'); let fijo = null;
-  const mostrar = (b) => {
-    const q = b.getAttribute('data-q'); if (!tt || !q) return;
-    tt.textContent = q; tt.classList.add('on');
-    const r = b.getBoundingClientRect(), w = tt.offsetWidth, al = tt.offsetHeight;
-    tt.style.left = Math.min(Math.max(12, r.left + r.width / 2 - w / 2), innerWidth - w - 12) + 'px';
-    let y = r.bottom + 8; if (y + al > innerHeight - 8) y = r.top - al - 8; tt.style.top = Math.max(8, y) + 'px';
-  };
-  const ocultar = () => { if (tt) tt.classList.remove('on'); fijo = null; };
-  const tipDe = (e) => e.target.closest && e.target.closest('.den-q');
-  document.addEventListener('pointerover', (e) => { const b = tipDe(e); if (b && e.pointerType === 'mouse' && !fijo) mostrar(b); });
-  document.addEventListener('pointerout', (e) => { if (tipDe(e) && !fijo && e.pointerType === 'mouse') ocultar(); });
-  document.addEventListener('focusin', (e) => { const b = tipDe(e); if (b) mostrar(b); });
-  document.addEventListener('focusout', (e) => { if (tipDe(e) && !fijo) ocultar(); });
-  document.addEventListener('click', (e) => { const b = tipDe(e); if (b) { if (fijo === b) ocultar(); else { mostrar(b); fijo = b; } } else if (fijo) ocultar(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') ocultar(); });
-  addEventListener('scroll', () => { if (!fijo) ocultar(); }, { passive: true });
+  /* los «?» (.den-q) los maneja el globo de ayuda del panel (kerna.js): mismo clic, foco, Escape y scroll que los demás */
 
   /* ---------- selección y texto ---------- */
-  const actualizar = () => { cuenta.textContent = ta.value.length; btn.disabled = ta.value.trim().length < datos.min || btn.dataset.ocupado === '1'; };
-  const falla = (m) => { err.hidden = !m; err.textContent = m || ''; };
+  const tope = cuenta.closest('.mk-r'), cerca = Math.floor(datos.max * 0.9);
+  const contar = () => { const n = ta.value.length; cuenta.textContent = n; if (tope) { tope.classList.toggle('cerca', n >= cerca); tope.dataset.limite = n >= datos.max ? 'Límite alcanzado' : ''; } };
+  let pegado = false;
+  ta.addEventListener('paste', (e) => {   // el campo corta en el límite: se avisa en vez de cortar sin decir nada
+    const t = (e.clipboardData && e.clipboardData.getData('text')) || '';
+    if (ta.value.length - (ta.selectionEnd - ta.selectionStart) + t.length > datos.max) pegado = true; falla('El texto pegado supera los ' + datos.max.toLocaleString('es-CL') + ' caracteres: se cortó el final', 'revision-tiempo');
+  });
+  const actualizar = () => { contar(); btn.disabled = ta.value.trim().length < datos.min || btn.dataset.ocupado === '1'; };
+  const falla = (m, ico) => {   // aviso con ícono de estado, como los demás avisos del panel
+    err.hidden = !m; err.replaceChildren(); if (!m) return;
+    err.className = 'cola-av ' + (ico === 'revision-tiempo' ? 's-warn' : 's-bad'); err.append(estado(ico || 'cadena-agotada', 40), h('span', null, m));
+  };
   document.querySelectorAll('.den-caso').forEach((b) => b.addEventListener('click', () => {
     document.querySelectorAll('.den-caso').forEach((o) => o.setAttribute('aria-checked', o === b ? 'true' : 'false'));
     caso = b.dataset.caso; falla(''); sesion++; salida.hidden = true; salida.replaceChildren();
     ta.value = caso && datos.casos[caso] ? datos.casos[caso].texto : '';
     actualizar(); if (!caso) ta.focus();
   }));
-  ta.addEventListener('input', () => { falla(''); actualizar(); });
+  ta.addEventListener('input', () => { if (pegado) pegado = false; else falla(''); actualizar(); });
 
   /* ---------- resultado ---------- */
   const cabecera = (ilu, titulo, sub, ...extra) => h('header', { class: 'den-hl' }, estado(ilu, 56), h('div', null, h('h3', { class: 'den-t' }, titulo), sub ? h('p', { class: 'den-s' }, sub) : null), ...extra);
@@ -99,7 +92,7 @@
     const s = h('section', { 'aria-label': 'Lo que se esperaba' }, t);
     if (e.tipo === 'fuera') {
       s.append(h('p', { class: 'den-vac' }, estado('sin-normativa', 24, true), h('b', null, 'Sin sugerencia'), h('span', { class: 'den-et' }, chip('na', 'Fuera del corpus'),
-        ayuda('Esa ley no está en el corpus de la demo: Kerna solo conoce las leyes 21.643, 19.628 y 21.719, y 20.393. Una denuncia sobre otra ley debe quedar sin sugerencia.'))));
+        ayuda('Esa ley no está en el corpus de la demo: Kerna solo conoce la Ley Karin (21.643) con las normas que cambió, la ley de datos personales (19.628 y 21.719) y la de responsabilidad penal (20.393). Una denuncia sobre otra ley debe quedar sin sugerencia.'))));
       s.append(h('p', { class: 'den-nota' }, 'Aplica: ' + e.fuera));
     } else s.append(h('ul', { class: 'den-l' }, e.articulos.map((a) => h('li', null, ley(a.ley, 28), h('b', null, a.etiqueta)))));
     return s;
@@ -108,9 +101,9 @@
     salida.hidden = false; salida.replaceChildren();
     let cab, cols = [];
     if (r.estado === 'sin_nucleo') {
-      const sinConexion = r.motivo === 'no_configurado';
-      cab = cabecera(sinConexion ? 'sin-conexion' : 'nucleo-no-disponible', r.esperado ? (sinConexion ? 'La demo no está conectada al núcleo' : 'El núcleo no respondió') : 'No se pudo analizar la denuncia',
-        r.esperado ? 'Se muestra la respuesta esperada guardada' : 'Inténtalo en un momento', comparacion(r));
+      const sinConexion = r.motivo === 'no_configurado', sinPermiso = r.motivo === 'credenciales';
+      cab = cabecera(sinPermiso ? 'revision-citas' : sinConexion ? 'sin-conexion' : 'nucleo-no-disponible', r.esperado ? (sinPermiso ? 'El núcleo no aceptó las credenciales de la demo' : sinConexion ? 'La demo no está conectada al núcleo' : 'El núcleo no respondió') : sinPermiso ? 'El núcleo no aceptó las credenciales de la demo' : 'No se pudo analizar la denuncia',
+        r.esperado ? 'Se muestra la respuesta esperada guardada' : sinPermiso ? 'Hay que revisar la cuenta de la demo' : 'Inténtalo en un momento', comparacion(r));
       if (r.esperado) cols = [columnaEsperada(r)];
     } else if (r.estado === 'listo') {
       cab = cabecera('lista', r.articulos.length === 1 ? 'Kerna sugiere 1 artículo' : 'Kerna sugiere ' + r.articulos.length + ' artículos', 'Analizada en ' + seg + ' s', comparacion(r));
@@ -129,6 +122,14 @@
       h('p', { class: 'den-s' }, 'Anonimizando, buscando en la ley y redactando · ' + seg + ' s'))));
   };
 
+  /* ---------- scroll al resultado (suave, salvo prefers-reduced-motion; scroll-margin lo deja sobre la barra inferior del móvil) ---------- */
+  const irAlResultado = (solo_si_fuera) => {
+    const r = salida.getBoundingClientRect();
+    if (solo_si_fuera && r.top >= 0 && r.top < innerHeight * 0.4) return;   // el resultado completo empieza arriba, no a media pantalla
+    const quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    salida.scrollIntoView({ block: innerWidth < 900 ? 'start' : 'nearest', behavior: quieto ? 'auto' : 'smooth' });
+  };
+
   /* ---------- envío y seguimiento ---------- */
   async function json(ruta, opciones) {
     try { const r = await fetch(ruta, { credentials: 'same-origin', headers: { Accept: 'application/json' }, ...opciones }); return await r.json().catch(() => ({ estado: 'error' })); }
@@ -137,11 +138,11 @@
   const libre = () => { btn.dataset.ocupado = '0'; actualizar(); };
   btn.addEventListener('click', async () => {
     const yo = ++sesion, t0 = Date.now(), seg = () => Math.round((Date.now() - t0) / 1000);
-    falla(''); btn.dataset.ocupado = '1'; btn.disabled = true; procesando(0);
+    falla(''); btn.dataset.ocupado = '1'; btn.disabled = true; procesando(0); irAlResultado(false);
     const r = await json('/panel/demo/denuncia', { method: 'POST', body: new URLSearchParams({ csrf, texto: ta.value, caso }) });
     if (yo !== sesion) return;
-    if (r.estado === 'sin_nucleo') { pintar(r, seg()); return libre(); }
-    if (r.estado !== 'ok' || !r.ref) { salida.hidden = true; salida.replaceChildren(); falla(MSG[r.estado] || MSG.error); return libre(); }
+    if (r.estado === 'sin_nucleo') { pintar(r, seg()); libre(); return irAlResultado(true); }
+    if (r.estado !== 'ok' || !r.ref) { salida.hidden = true; salida.replaceChildren(); falla(MSG[r.estado] || MSG.error, r.estado === 'limite' ? 'revision-tiempo' : ''); return libre(); }
     const vuelta = async () => {
       if (yo !== sesion) return;
       if (seg() > 480) { salida.replaceChildren(); salida.append(cabecera('revision-tiempo', 'El análisis tardó más de lo permitido', 'Vuelve a intentarlo')); return libre(); }
@@ -149,7 +150,7 @@
       if (yo !== sesion) return;
       if (d.estado === 'procesando') { procesando(seg()); return setTimeout(vuelta, 3000); }
       if (d.estado === 'desconocida' || d.estado === 'sesion' || d.estado === 'error') { salida.hidden = true; salida.replaceChildren(); falla(d.estado === 'sesion' ? MSG.sesion : 'Se perdió el seguimiento de esta denuncia. Analízala otra vez'); return libre(); }
-      pintar(d, seg()); libre();
+      pintar(d, seg()); libre(); irAlResultado(true);
     };
     setTimeout(vuelta, 2500);
   });

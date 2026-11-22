@@ -1,0 +1,59 @@
+{
+ "fecha": "2026-11-22T14:46:38Z",
+ "commit": "b69c36c59",
+ "etiqueta": "fuera_corpus_nuevos_cerco_1",
+ "medicion": "denuncias de la demo del panel contra el núcleo (código local, configuración y APIs del desplegado)",
+ "parametros": {
+  "comando": "kerna/operaciones/medir_demo_denuncias.sh --casos fuera-cerco-deslinde --etiqueta fuera_corpus_nuevos_cerco_1",
+  "concurrencia": 3,
+  "entorno_nucleo": {
+   "KERNA_EVALUADOR": "1",
+   "KERNA_EVALUADOR_CANDIDATOS": "70",
+   "KERNA_EVALUADOR_VARIANTE": "3m",
+   "KERNA_COLECCION": "normativa_cl_x_e",
+   "KERNA_ENR_BM25": "concat",
+   "KERNA_HIBRIDA": "1",
+   "KERNA_HIBRIDA_EXTRAS": "15",
+   "KERNA_MULTIQUERY": "1",
+   "KERNA_MULTIQUERY_MAX": "3",
+   "KERNA_MULTIQUERY_PESO_RELATO": "2",
+   "KERNA_REVISOR": "1",
+   "KERNA_GENERADOR_COMPLETAR": "5",
+   "KERNA_RERANK_LLM": "1",
+   "KERNA_RERANK_LLM_VENTANA": "35",
+   "KERNA_RERANK_LLM_FUENTE": "evaluador",
+   "KERNA_RERANK_LLM_VOTO_EVAL": "2",
+   "KERNA_RERANK_LLM_VOTO_RETRIEVER": "2",
+   "KERNA_RERANK_LLM_PERMUTACIONES": "2",
+   "KERNA_PLAZO_GLOBAL_S": "420",
+   "KERNA_CORTE_LLAMADA_S": "150",
+   "KERNA_MODELO_CLASIFICADOR": "gpt-5-nano",
+   "KERNA_CADENA": "[{\"modo\":\"oficial\",\"proveedor\":\"azure-openai\",\"modelo\":\"gpt-5-nano\",\"esquema\":true,\"sistema\":true},{\"modo\":\"respaldo\",\"proveedor\":\"gemini\",\"modelo\":\"gemini-3.8-flash\",\"esquema\":true,\"sistema\":true},{\"modo\":\"respaldo\",\"proveedor\":\"gemini\",\"modelo\":\"gemini-3.6-flash\",\"esquema\":true,\"sistema\":true},{\"modo\":\"respaldo\",\"proveedor\":\"gemini\",\"modelo\":\"gemini-3.5-flash-lite\",\"esquema\":true,\"sistema\":true},{\"modo\":\"local\",\"proveedor\":\"gemini\",\"modelo\":\"gemma-4-31b-it\",\"esquema\":true,\"sistema\":true}]"
+  },
+  "texto": "relato completo con datos personales; el núcleo lo anonimiza",
+  "criterio_coincide": "al menos un artículo sugerido (sin vetar) está entre los esperados; en las de fuera del corpus, que no haya sugerencia"
+ },
+ "duracion_s": 51.1,
+ "resumen": {
+  "casos": 1,
+  "coinciden": 1,
+  "difieren": 0,
+  "sin_respuesta": 0
+ },
+ "casos": [
+  {
+   "id": "fuera-cerco-deslinde",
+   "tipo": "fuera",
+   "estado": "sin_sugerencia",
+   "motivo": "sin_normativa_aplicable",
+   "modo": "oficial",
+   "segundos": 51.1,
+   "comparacion": "coincide",
+   "detalle": "",
+   "vetados": 5,
+   "obtenidos": [],
+   "esperados": [],
+   "fuera": "Código Civil (deslindes y propiedad)"
+  }
+ ]
+}

@@ -1321,3 +1321,25 @@ html,body{max-width:100%}
 .dmo-tx{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.75;color:var(--ink)}
 .an-m{background:var(--kb);box-shadow:inset 0 -2px 0 var(--ka);border-radius:3px;padding:1px 3px;color:var(--ink);font-weight:600}
 @media(max-width:599px){.dmo-t{font-size:17px}.dmo-acc .btn{width:100%}}
+
+/* Objetivos táctiles (QA 2026-11-22): el «?» tiene una caja de 28 px y el dibujo no cambia; la caja extra no ocupa lugar (margen negativo).
+   Los segmentos 7/30 días y «En vivo» miden al menos 32 px de alto (40 en móvil), igual que los enlaces de descarga. */
+#app k-tip button,k-tip button{width:28px;height:28px}
+k-tip{margin:-3px}
+.kb-l k-tip{margin:-6px -3px -6px 4px}
+.cola>.mk k-tip,.ct-l>k-tip{margin:-3px -3px -3px 1px}
+.vivo{padding:8px 6px;margin:-8px -6px;min-height:16px}
+#app .seg button,.seg a{min-height:34px}
+#app .dl .btn,.dl .btn{min-height:40px}
+@media(max-width:599px){
+  #app .seg button,#app .bar .seg button,.seg a{min-height:40px}
+  .vivo{padding:12px 8px;margin:-12px -8px}
+  #app .dl .btn,.dl .btn{min-height:44px}
+}
+/* contador de caracteres de la Demo: se destaca desde el 90 % del límite y dice «Límite alcanzado» al llegar */
+.mk-r.cerca{color:var(--warn);font-weight:600}
+.mk-r[data-limite]:not([data-limite=""])::before{content:attr(data-limite) " · ";font-weight:700}
+.dmo-r,.dmo [data-salida]{scroll-margin:12px 0 96px}
+/* «Entrar al panel» en una sola línea también a 360 px */
+.btn-go{white-space:nowrap}
+@media(max-width:400px){.btn-go{padding:0 12px;font-size:14px;gap:6px}}

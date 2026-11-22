@@ -111,39 +111,42 @@ CASOS: tuple[dict, ...] = (
         "articulos": (("1008668-art-1", f"{L203}, art. 1"), ("1008668-art-3", f"{L203}, art. 3"), ("1008668-art-4", f"{L203}, art. 4")),
     },
     {
-        "id": "fuera-consumidor-garantia", "tipo": "fuera", "titulo": "Tienda que no respeta la garantía de un producto",
-        "fuera": "Ley del Consumidor (19.496)",
+        "id": "fuera-cerco-deslinde", "tipo": "fuera", "titulo": "Vecino que corrió el cerco y ocupó parte del terreno",
+        "fuera": "Código Civil (deslindes y propiedad)",
         "texto": (
-            "Compré el 2 de septiembre un notebook en la tienda Electro Hogar de Mall Plaza Oeste por $489.990. A las tres semanas dejó de "
-            "encender. Llevé el equipo con la boleta y el vendedor, Cristián Muñoz, me dijo que la garantía «no cubre fallas de fábrica» "
-            "y que tenía que pagar la reparación. Reclamé en el servicio al cliente y me ofrecieron un cambio por un modelo más barato, "
-            "sin devolver la diferencia. Llevo seis semanas sin el computador, que uso para estudiar. Me llamo Valentina Rojas Pino, RUT "
-            "17.306.654-6, vivo en Pasaje Los Lirios 88, Cerrillos, y mi teléfono es +56 9 4321 0987. Quiero que me cambien el producto "
-            "o me devuelvan el dinero, como corresponde por la garantía legal."),
+            "Tengo una parcela en Calle Las Violetas 2210, Melipilla, que compré en 2019 con sus deslindes inscritos. El dueño de la "
+            "parcela de al lado, Heriberto Sandoval Pinto (RUT 8.934.512-6), corrió el cerco de alambre unos tres metros hacia mi lado "
+            "y plantó una hilera de árboles frutales en la franja que se quedó. Cuando se lo reclamé, me dijo que «ese pedazo siempre fue "
+            "suyo» y que si no me gustaba, fuera a un abogado. Tengo el plano de la parcela, las fotos del cerco original y el testimonio "
+            "de mi vecino de más abajo, Néstor Parra Díaz. Me llamo Gabriela Contreras Vidal, RUT 14.209.781-2, mi teléfono es +56 9 "
+            "5533 7788 y mi correo es gcontreras@correo.cl. Quiero que el cerco vuelva a su lugar y que retire lo que plantó en mi "
+            "terreno."),
         "articulos": (),
     },
     {
-        "id": "fuera-transito-conductor", "tipo": "fuera", "titulo": "Conductor ebrio que chocó autos estacionados",
-        "fuera": "Ley de Tránsito (18.290)",
+        "id": "fuera-arriendo-particulares", "tipo": "fuera", "titulo": "Arrendador que se queda con la garantía del arriendo",
+        "fuera": "Ley de arrendamiento de predios urbanos (18.101)",
         "texto": (
-            "El sábado 14 a las 02:30 de la madrugada, un vecino de mi calle, Sergio Bravo Tapia (patente KRBT-45), llegó manejando en "
-            "evidente estado de ebriedad por Avenida Departamental, en La Florida, e impactó tres autos estacionados frente al número "
-            "2150. Se bajó trastabillando, no quiso esperar a Carabineros y se fue a su casa. Los daños son importantes y hay una "
-            "camioneta con el parabrisas destrozado. Tenemos el video de la cámara del edificio, donde se ve cómo viene zigzagueando y la "
-            "hora exacta. No es la primera vez que maneja así. Mi nombre es Marta Cáceres Vega, mi teléfono es +56 9 3210 9876 y mi "
-            "correo es mcaceres@correo.cl. Pido que se sancione por conducir en estado de ebriedad y que respondan por los daños."),
+            "Arrendé hasta octubre un departamento en Calle Seminario 455, Providencia, a su dueño, Claudio Escobar Muñoz (RUT "
+            "9.874.116-3). Pagué un mes de garantía de $520.000 y entregué el departamento limpio y pintado, con fotos de ese día. "
+            "Ahora el dueño dice que no me devolverá la garantía porque «hay desgaste en las paredes» y exige otros $200.000 por una "
+            "mancha de humedad que ya estaba cuando llegué. Tampoco quiere firmar el acta de entrega ni responde los mensajes que le "
+            "mando al +56 9 7766 5544. Me llamo Fernanda Lagos Toro, RUT 16.402.338-1, y mi correo es flagos@correo.cl. Vivo ahora "
+            "en Avenida Matta 1020, Santiago. Quiero recuperar la garantía completa y que reconozca que el departamento se entregó "
+            "en buen estado."),
         "articulos": (),
     },
     {
-        "id": "fuera-tributaria-boletas", "tipo": "fuera", "titulo": "Venta de comida sin boletas ni iniciar actividades",
-        "fuera": "Código Tributario y Ley del IVA (DL 825)",
+        "id": "fuera-ruido-vecinos", "tipo": "fuera", "titulo": "Vecinos con fiestas y ruido todas las noches",
+        "fuera": "Normas sobre ruido y convivencia entre vecinos",
         "texto": (
-            "Un contribuyente de mi barrio, Óscar Tello Mardones (RUT 12.874.509-2), vende almuerzos por encargo todos los días desde "
-            "su casa en Pasaje Los Olivos 340, Peñalolén, y los despacha por Instagram. Atiende más de 80 pedidos diarios, pero nunca "
-            "entrega boleta, no ha iniciado actividades ante el Servicio de Impuestos Internos y recibe todo por transferencias a una "
-            "cuenta de su madre. Presume en redes de que «no paga ni un peso de IVA ni de renta» y de que tiene tres vehículos nuevos. "
-            "Competir así es injusto para quienes pagamos nuestros impuestos. Soy Elena Vargas Díaz, mi teléfono es +56 9 2109 8765 y "
-            "mi correo es evargas@correo.cl. Pido que se fiscalice la declaración de sus ventas."),
+            "En el departamento 302 de mi edificio, en Avenida Vicuña Mackenna 3900, Ñuñoa, viven unos vecinos, los hermanos Benjamín y "
+            "Camilo Arancibia Rojas, que hacen fiestas con música a todo volumen casi todas las noches, incluso entre semana, hasta las "
+            "cuatro o cinco de la mañana. Las paredes vibran y no puedo dormir; mi hija de seis años llora de cansancio. Les golpeé la "
+            "puerta tres veces y se ríen o no abren. La administradora del edificio, Teresa Valdés, les mandó una carta y no cambió "
+            "nada. Hay grabaciones con la hora, la última el viernes 6 a las 03:40. Soy Patricio Vergara Núñez, RUT 12.309.874-5, vivo "
+            "en el departamento 402, mi teléfono es +56 9 3344 8899 y mi correo es pvergara@correo.cl. Pido que se pare el ruido de "
+            "noche y que se sancione a los vecinos."),
         "articulos": (),
     },
 )

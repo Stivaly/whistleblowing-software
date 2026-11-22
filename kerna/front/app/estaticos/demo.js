@@ -15,9 +15,22 @@
   const ta = $('textarea', f), cuenta = $('[data-cuenta]', f), salida = $('[data-salida]'), err = $('[data-error]', f), boton = $('[data-enviar]', f);
   const MSG = { vacio: 'Escribe o elige un relato para anonimizar', token: 'Recarga la página e inténtalo otra vez', origen: 'Recarga la página e inténtalo otra vez',
     sesion: 'La sesión terminó. Vuelve a entrar', error: 'No se pudo completar. Inténtalo en un momento' };
-  const contar = () => { cuenta.textContent = ta.value.length; };
-  ta.addEventListener('input', contar); contar();
-  const aviso = (m) => { err.hidden = !m; err.textContent = m || ''; };
+  const MAX = parseInt(ta.getAttribute('maxlength'), 10) || 0, cerca = Math.floor(MAX * 0.9);
+  const contar = () => {   // el contador avisa cerca del límite: el texto nunca se corta sin que se vea
+    const n = ta.value.length; cuenta.textContent = n; const tope = $('.mk-r', f);
+    if (tope) { tope.classList.toggle('cerca', MAX > 0 && n >= cerca); tope.dataset.limite = MAX > 0 && n >= MAX ? 'Límite alcanzado' : ''; }
+  };
+  ta.addEventListener('input', () => { ta.setCustomValidity(''); contar(); }); contar();
+  ta.addEventListener('invalid', () => ta.setCustomValidity(MSG.vacio));   // mensaje propio en español, no el del navegador
+  ta.addEventListener('paste', (e) => {
+    const t = (e.clipboardData && e.clipboardData.getData('text')) || '';
+    if (MAX && ta.value.length - (ta.selectionEnd - ta.selectionStart) + t.length > MAX) aviso('El texto pegado supera los ' + MAX.toLocaleString('es-CL') + ' caracteres: se cortó el final');
+  });
+  const icono = (e) => { const t = document.createElement('template'); t.innerHTML = '<k-st data-e="' + e + '" style="--s:40px" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="#e-' + e + '"/></svg></k-st>'; return t.content.firstElementChild; };
+  const aviso = (m) => {
+    err.hidden = !m; err.replaceChildren(); if (!m) return;
+    const sp = document.createElement('span'); sp.textContent = m; err.append(icono('cadena-agotada'), sp);
+  };
   async function anonimizar(texto) {
     aviso(''); boton.disabled = true;
     try {
@@ -26,7 +39,8 @@
       const d = await r.json().catch(() => ({ estado: 'error' }));
       if (d.estado !== 'ok') { aviso(MSG[d.estado] || MSG.error); return; }
       salida.innerHTML = d.html;  // HTML ya escapado por el servidor
-      salida.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      const quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      salida.scrollIntoView({ block: innerWidth < 900 ? 'start' : 'nearest', behavior: quieto ? 'auto' : 'smooth' });
     } catch (_) { aviso(MSG.error); } finally { boton.disabled = false; }
   }
   f.addEventListener('submit', (e) => {
