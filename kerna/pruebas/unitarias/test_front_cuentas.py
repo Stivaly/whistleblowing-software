@@ -677,3 +677,14 @@ def test_ajustes_incompletos_se_rechazan_sin_tocar_lo_guardado(web, monkeypatch)
     monkeypatch.setattr(aj, "guardar", lambda v: guardados.append(v) or {"guardado_en": "x"})
     r = post(web, "/panel/ajustes", sesion_prueba.csrf(), valores="{}")
     assert r.status_code == 400 and r.json()["estado"] == "invalido" and not guardados
+
+
+def test_limite_de_correos_llega_a_la_pantalla(web, tablas, monkeypatch):
+    from app import correo
+    def falla(tipo, para, datos):
+        correo.ultimo_motivo, correo.ultimo_espera_min = "limite", 12
+        return False
+    monkeypatch.setattr(cuentas, "_enviar", falla)
+    r = post(web, "/panel/cuentas/crear", sesion_prueba.csrf(), usuario="lia", nombre="Lia", correo="lia@x.cl", rol="comercial").json()
+    assert r["correo_enviado"] is False and r["correo_motivo"] == "limite" and r["correo_espera_min"] == 12 and r["clave"]
+    assert "límite de envíos de la demo" in eventos(tablas, "creada")[0]["detalle"]

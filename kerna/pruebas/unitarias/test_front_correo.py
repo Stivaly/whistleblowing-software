@@ -195,3 +195,27 @@ def test_referencia_de_key_vault_sin_resolver_no_se_usa(monkeypatch):
     monkeypatch.setenv("CORREO_REMITENTE", "DoNotReply@abc.azurecomm.net")
     from app import correo
     assert correo._acs() is None
+
+
+def test_limite_de_envios_de_azure_se_distingue(monkeypatch):
+    """Un 429 de Azure (cupo de la demo agotado) deja motivo «limite» y los minutos que pide esperar."""
+    import types, sys
+
+    class Limite(Exception):
+        status_code = 429
+        response = types.SimpleNamespace(headers={"Retry-After": "600"})
+
+    class Cliente:
+        @classmethod
+        def from_connection_string(cls, c):
+            return cls()
+
+        def begin_send(self, m):
+            raise Limite()
+
+    monkeypatch.setitem(sys.modules, "azure.communication.email", types.SimpleNamespace(EmailClient=Cliente))
+    monkeypatch.setenv("CORREO_ACS_CONEXION", "endpoint=https://x/;accesskey=y")
+    monkeypatch.setenv("CORREO_REMITENTE", "DoNotReply@abc.azurecomm.net")
+    from app import correo
+    assert not correo.enviar("clave_cambiada", "p@example.com", {"usuario": "ana", "nombre": "Ana"})
+    assert correo.ultimo_motivo == "limite" and correo.ultimo_espera_min == 10

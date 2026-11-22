@@ -179,6 +179,15 @@ def clave_temporal() -> str:
 
 # ---- correo (módulo de otro agente: opcional) -------------------------------------------------------------------------------------
 
+def _motivo_correo() -> dict:
+    """Por qué no salió el último correo ("limite" = cupo de envíos de la demo agotado) y cuántos minutos esperar."""
+    try:
+        from . import correo
+        return {"correo_motivo": correo.ultimo_motivo, "correo_espera_min": correo.ultimo_espera_min}
+    except Exception:
+        return {"correo_motivo": None, "correo_espera_min": None}
+
+
 def _enviar(tipo: str, para: str, datos: dict) -> bool:
     """True si el correo salió. Si `correo.py` no existe o falla, False (nunca rompe la operación)."""
     if not para:
@@ -319,8 +328,8 @@ def crear(actor: str, datos: dict, url: str = "") -> dict:
     _olvidar(d["usuario"])
     enviado = _enviar("cuenta_creada", d["correo"], {"usuario": d["usuario"], "nombre": d["nombre"], "rol": permisos.nombre_rol(d["rol"]),
                                                       "clave_temporal": temporal, "url": url})
-    registrar_evento(actor, "creada", d["usuario"], f"rol {permisos.nombre_rol(d['rol'])}; " + ("clave temporal enviada por correo y mostrada una vez a quien la creó" if enviado else "correo no enviado: clave temporal mostrada una vez en pantalla"))
-    return {"usuario": d["usuario"], "correo_enviado": enviado, "clave": temporal}   # se muestra siempre una vez: un correo mal escrito no deja la cuenta sin entrada
+    registrar_evento(actor, "creada", d["usuario"], f"rol {permisos.nombre_rol(d['rol'])}; " + ("clave temporal enviada por correo y mostrada una vez a quien la creó" if enviado else ("correo no enviado (límite de envíos de la demo)" if _motivo_correo()["correo_motivo"] == "limite" else "correo no enviado") + ": clave temporal mostrada una vez en pantalla"))
+    return {"usuario": d["usuario"], "correo_enviado": enviado, "clave": temporal, **({} if enviado else _motivo_correo())}   # se muestra siempre una vez: un correo mal escrito no deja la cuenta sin entrada
 
 
 def editar(actor: str, usuario: str, datos: dict, activa: bool | None = None) -> dict:
@@ -359,8 +368,8 @@ def restablecer(actor: str, usuario: str, url: str = "") -> dict:
     _actualizar(u, {"hash": hash_clave(temporal), "debe_cambiar_clave": True, "sesion": int(f.get("sesion") or 1) + 1, "intentos_fallidos": 0,
                     "bloqueada_hasta": "", "actualizada": _ahora()})
     enviado = _enviar("clave_restablecida", f.get("correo") or "", {"usuario": u, "nombre": f.get("nombre") or u, "clave_temporal": temporal, "url": url})
-    registrar_evento(actor, "clave_restablecida", u, "clave temporal enviada por correo y mostrada una vez a quien la restableció" if enviado else "correo no enviado: clave temporal mostrada una vez en pantalla")
-    return {"usuario": u, "correo_enviado": enviado, "clave": temporal}
+    registrar_evento(actor, "clave_restablecida", u, "clave temporal enviada por correo y mostrada una vez a quien la restableció" if enviado else ("correo no enviado (límite de envíos de la demo)" if _motivo_correo()["correo_motivo"] == "limite" else "correo no enviado") + ": clave temporal mostrada una vez en pantalla")
+    return {"usuario": u, "correo_enviado": enviado, "clave": temporal, **({} if enviado else _motivo_correo())}
 
 
 def eliminar(actor: str, usuario: str) -> dict:

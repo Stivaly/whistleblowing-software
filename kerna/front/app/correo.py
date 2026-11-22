@@ -42,6 +42,17 @@ _html = Environment(loader=FileSystemLoader(PLANTILLAS), autoescape=select_autoe
 _txt = Environment(loader=FileSystemLoader(PLANTILLAS), autoescape=False, undefined=StrictUndefined, keep_trailing_newline=True)
 
 ultimo_codigo: int | None = None  # código SMTP de la última entrega (diagnóstico; no contiene datos)
+ultimo_motivo: str | None = None  # por qué no salió el último: "limite" (cupo de envíos de Azure), "sin_configurar" o "error"
+ultimo_espera_min: int | None = None  # con "limite": minutos que pide esperar Azure (None si no lo dice)
+
+
+def _espera_min(e: Exception) -> int | None:
+    """Minutos que pide esperar Azure en su respuesta 429 (Retry-After), o None."""
+    try:
+        s = float(e.response.headers.get("Retry-After") or e.response.headers.get("retry-after") or 0)
+    except Exception:
+        return None
+    return max(1, int(-(-s // 60))) if s > 0 else None
 
 
 @lru_cache(maxsize=1)
@@ -141,12 +152,13 @@ def _entregar_acs(cfg: dict, para: str, asunto: str, html: str, texto: str) -> i
 
 def enviar(tipo: str, para: str, datos: dict) -> bool:
     """Envía el correo `tipo` a `para`. True si el servidor lo aceptó; False ante cualquier falla (sin excepciones)."""
-    global ultimo_codigo
-    ultimo_codigo = None
+    global ultimo_codigo, ultimo_motivo, ultimo_espera_min
+    ultimo_codigo, ultimo_motivo, ultimo_espera_min = None, None, None
     try:
         acs, cfg = _acs(), _config()
         if acs is None and cfg is None:
             log.warning("correo %s no enviado: correo sin configurar", tipo)
+            ultimo_motivo = "sin_configurar"
             return False
         asunto, html, texto = armar(tipo, datos)
         if acs is not None:
@@ -154,8 +166,13 @@ def enviar(tipo: str, para: str, datos: dict) -> bool:
         else:
             ultimo_codigo = _entregar(cfg, _mensaje(cfg, para.strip(), asunto, html, texto), para.strip())
         ok = 200 <= ultimo_codigo < 300
+        ultimo_motivo = None if ok else "error"
         log.info("correo %s %s (%s %s)", tipo, "enviado" if ok else "rechazado", "ACS" if acs is not None else "SMTP", ultimo_codigo)
         return ok
     except Exception as e:  # nunca el mensaje de la excepción: puede traer la dirección o el servidor
-        log.warning("correo %s no enviado (%s)", tipo, type(e).__name__)
+        if getattr(e, "status_code", None) == 429:   # Azure: se agotó el cupo de envíos del dominio (unos 10 por hora en la demo)
+            ultimo_motivo, ultimo_espera_min = "limite", _espera_min(e)
+        else:
+            ultimo_motivo = "error"
+        log.warning("correo %s no enviado (%s%s)", tipo, type(e).__name__, ", límite de envíos" if ultimo_motivo == "limite" else "")
         return False
