@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% from "_macros.html" import filas, clave, boton %}
+{% block preheader %}Entra con la contraseña temporal; te pedirá cambiarla.{% endblock %}
+{% block titular %}Restablecimos tu contraseña{% endblock %}
+{% block intro %}Hola {{ nombre }}, restablecimos la contraseña de tu cuenta del panel de Kerna AI. La anterior ya no sirve.{% endblock %}
+{% block datos %}{{ filas([("Usuario", usuario)]) }}{% endblock %}
+{% block clave %}{{ clave(clave_temporal) }}
+<p style="margin:0 0 20px 0;">Entra con esta contraseña temporal; te pedirá cambiarla.</p>{% endblock %}
+{% block accion %}{{ boton(url, "Entrar al panel") }}{% endblock %}

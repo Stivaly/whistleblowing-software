@@ -60,11 +60,18 @@ resource "azurerm_linux_web_app" "front" {
     OPENAI_RECURSO_ID = azurerm_cognitive_account.openai.id
     # Costo real: lo que Azure cobró en la suscripción (Cost Management), por servicio y período.
     AZ_SUSCRIPCION_ID = data.azurerm_client_config.actual.subscription_id
-    FRONT_AUTH                     = "clave"
-    FRONT_CLAVE                    = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/front-clave-panel/)"
+    FRONT_AUTH        = "clave"
+    FRONT_CLAVE       = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/front-clave-panel/)"
     # Demo «Denuncias»: el panel es un cliente del núcleo con su cuenta propia (ver secretos.tf).
     DEMO_CLIENT_ID     = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/${azurerm_key_vault_secret.demo_client_id.name}/)"
     DEMO_CLIENT_SECRET = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/${azurerm_key_vault_secret.demo_client_secret.name}/)"
+    # Correo del panel (app/correo.py): la cuenta SMTP de Veridy, copiada al Key Vault con kerna/operaciones/copiar_smtp_veridy.sh.
+    SMTP_SERVIDOR  = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-servidor/)"
+    SMTP_PUERTO    = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-puerto/)"
+    SMTP_USUARIO   = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-usuario/)"
+    SMTP_CLAVE     = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-clave/)"
+    SMTP_REMITENTE = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-remitente/)"
+    SMTP_SEGURIDAD = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/smtp-seguridad/)"
     }, var.crear_nucleo ? {
     KERNA_NUCLEO_URL = "https://${azurerm_container_app.nucleo[0].ingress[0].fqdn}"
   } : {})

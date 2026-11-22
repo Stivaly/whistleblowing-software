@@ -1,0 +1,13 @@
+Restablecimos tu contraseña
+
+Hola {{ nombre }}, restablecimos la contraseña de tu cuenta del panel de Kerna AI. La anterior ya no sirve.
+
+Usuario: {{ usuario }}
+Contraseña temporal: {{ clave_temporal }}
+
+Entra con esta contraseña temporal; te pedirá cambiarla.
+{% if url %}Entrar al panel: {{ url }}
+{% endif %}
+Si no fuiste tú, avisa a Dirección.
+
+Kerna AI · Panel de gestión

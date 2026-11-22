@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% from "_macros.html" import filas %}
+{% block preheader %}Cambiaste la contraseña de tu cuenta.{% endblock %}
+{% block titular %}Cambiaste tu contraseña{% endblock %}
+{% block intro %}Hola {{ nombre }}, la contraseña de tu cuenta del panel de Kerna AI se cambió hace un momento. No necesitas hacer nada más.{% endblock %}
+{% block datos %}{{ filas([("Usuario", usuario)]) }}{% endblock %}
+{% block cierre %}Si no fuiste tú, avisa a Dirección de inmediato: alguien más podría tener acceso a tu cuenta.{% endblock %}

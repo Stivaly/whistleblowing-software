@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% from "_macros.html" import filas %}
+{% block preheader %}Ya no puedes entrar al panel con esta cuenta.{% endblock %}
+{% block titular %}Tu cuenta fue eliminada{% endblock %}
+{% block intro %}Hola {{ nombre }}, eliminamos tu cuenta del panel de Kerna AI. Ya no puedes entrar con ella.{% endblock %}
+{% block datos %}{{ filas([("Usuario", usuario)]) }}{% endblock %}
+{% block accion %}<p style="margin:0 0 20px 0;">Si necesitas volver a entrar, pide una cuenta nueva a Dirección.</p>{% endblock %}
+{% block cierre %}Si crees que fue un error, avisa a Dirección.{% endblock %}

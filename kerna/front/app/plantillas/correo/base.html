@@ -1,0 +1,59 @@
+{#- Estructura común de los correos de Kerna AI: tablas e estilos en línea para que lo lea cualquier cliente de correo.
+    Bloques: preheader, titular, intro, datos, clave, accion, cierre. Colores de la paleta del panel (kerna.css). -#}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<title>{{ asunto }}</title>
+<style>
+  body { margin:0; padding:0; background:#F4F6FB; }
+  @media only screen and (max-width:620px) {
+    .k-pad { padding-left:20px !important; padding-right:20px !important; }
+    .k-tit { font-size:20px !important; line-height:28px !important; }
+    .k-clave { font-size:18px !important; }
+    .k-boton a { display:block !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#F4F6FB;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F4F6FB;font-size:1px;line-height:1px;">{% block preheader %}{{ asunto }}{% endblock %}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#F4F6FB" style="background:#F4F6FB;">
+<tr><td align="center" style="padding:24px 12px;">
+  <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
+
+    <!-- Cabecera: símbolo y nombre -->
+    <tr><td class="k-pad" bgcolor="#FFFFFF" style="background:#FFFFFF;border:1px solid #DDE2EF;border-bottom:0;border-radius:14px 14px 0 0;padding:20px 32px 16px 32px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td style="vertical-align:middle;padding-right:12px;"><img src="{{ logo_src }}" width="56" height="56" alt="" style="display:block;border:0;width:56px;height:56px;"></td>
+        <td style="vertical-align:middle;font-family:'Unbounded','Arial Black','Segoe UI',Arial,sans-serif;font-size:20px;line-height:24px;font-weight:700;color:#1C2A6B;letter-spacing:.5px;">Kerna AI</td>
+      </tr></table>
+    </td></tr>
+    <tr><td height="4" bgcolor="#CFFF5E" style="height:4px;line-height:4px;font-size:0;background:#CFFF5E;border-left:1px solid #DDE2EF;border-right:1px solid #DDE2EF;">&nbsp;</td></tr>
+
+    <!-- Cuerpo -->
+    <tr><td class="k-pad" bgcolor="#FFFFFF" style="background:#FFFFFF;border:1px solid #DDE2EF;border-top:0;border-bottom:0;padding:28px 32px 8px 32px;font-family:Inter,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:23px;color:#0F1736;">
+      <div class="k-tit" style="font-family:'Unbounded','Arial Black','Segoe UI',Arial,sans-serif;font-size:22px;line-height:30px;font-weight:700;color:#1C2A6B;margin:0 0 12px 0;">{% block titular %}{% endblock %}</div>
+      <p style="margin:0 0 20px 0;">{% block intro %}{% endblock %}</p>
+{% block datos %}{% endblock %}
+{% block clave %}{% endblock %}
+{% block accion %}{% endblock %}
+    </td></tr>
+
+    <!-- Aviso de seguridad -->
+    <tr><td class="k-pad" bgcolor="#FFFFFF" style="background:#FFFFFF;border:1px solid #DDE2EF;border-top:0;border-bottom:0;padding:0 32px 24px 32px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:2px dotted #B9C1DA;padding-top:16px;font-family:Inter,'Segoe UI',Arial,sans-serif;font-size:13px;line-height:20px;color:#4F5B85;">
+        {% block cierre %}Si no fuiste tú, avisa a Dirección.{% endblock %}
+      </td></tr></table>
+    </td></tr>
+
+    <!-- Pie -->
+    <tr><td class="k-pad" bgcolor="#1C2A6B" style="background:#1C2A6B;border-radius:0 0 14px 14px;padding:14px 32px;font-family:'JetBrains Mono','SFMono-Regular',Consolas,'Courier New',monospace;font-size:11px;line-height:16px;letter-spacing:1.5px;text-transform:uppercase;color:#CFFF5E;">
+      Kerna AI &nbsp;·&nbsp; Panel de gestión
+    </td></tr>
+  </table>
+</td></tr>
+</table>
+</body>
+</html>

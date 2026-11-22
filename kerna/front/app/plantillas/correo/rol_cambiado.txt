@@ -1,0 +1,10 @@
+Cambió tu rol
+
+Hola {{ nombre }}, cambiamos tu rol en el panel de Kerna AI. Lo verás la próxima vez que entres.
+
+Usuario: {{ usuario }}
+Nuevo rol: {{ rol }}
+
+Si no esperabas este cambio, avisa a Dirección.
+
+Kerna AI · Panel de gestión

@@ -1,0 +1,11 @@
+Tu cuenta fue eliminada
+
+Hola {{ nombre }}, eliminamos tu cuenta del panel de Kerna AI. Ya no puedes entrar con ella.
+
+Usuario: {{ usuario }}
+
+Si necesitas volver a entrar, pide una cuenta nueva a Dirección.
+
+Si crees que fue un error, avisa a Dirección.
+
+Kerna AI · Panel de gestión

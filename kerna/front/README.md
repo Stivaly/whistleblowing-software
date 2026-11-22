@@ -102,3 +102,21 @@ Actualizarla solo cuando una configuración nueva mejora desarrollo y se desplie
 «Revisión manual» y «sin sugerencia» cuentan casos distintos que existen hoy en Veridy (fila `conector` de `reintentosmanuales`); las consultas históricas cuentan un caso por su último estado.
 
 Los ajustes de la vista Ajustes (valores, rangos y validación) viven en `kerna/comun/kerna_comun/ajustes_esquema.py`; los consumen el panel, el conector y el núcleo, y `kerna/front/desplegar.sh` empaqueta ese archivo junto a `app/`.
+
+## Correo
+
+`app/correo.py` envía los avisos de cuentas del panel con la misma cuenta SMTP que usa Veridy, con la identidad de Kerna (remitente «Kerna AI <remitente>», HTML con la paleta y el símbolo de Kerna, Unbounded y JetBrains Mono con respaldo seguro para correo, más versión de texto plano). Plantillas en `app/plantillas/correo/` (`base.html`, `_macros.html` y un `.html` y un `.txt` por tipo).
+
+- **Secretos** (Key Vault de Kerna): `smtp-servidor`, `smtp-puerto`, `smtp-usuario`, `smtp-clave`, `smtp-remitente`, `smtp-seguridad`. Los copia `kerna/operaciones/copiar_smtp_veridy.sh` desde la tabla `config` de la base de Veridy (enciende Veridy, lee la tabla `config` con el rol `veridy_app`, copia sin imprimir valores y lo apaga; la IP pública del equipo debe estar en `postgres_ips_permitidas` de `infra/veridy/terraform`). Si Veridy tiene el SMTP de fábrica, no copia nada.
+- **Variables de la app** (`front.tf`, referencias de Key Vault): `SMTP_SERVIDOR`, `SMTP_PUERTO`, `SMTP_USUARIO`, `SMTP_CLAVE`, `SMTP_REMITENTE`, `SMTP_SEGURIDAD` (`TLS` = STARTTLS, `SSL` = conexión cifrada). Sin ellas, `enviar` devuelve `False`.
+- **Uso:** `correo.enviar(tipo, para, datos) -> bool`. `True` si el servidor aceptó el mensaje; `False` ante cualquier falla (sin excepciones, timeout de 10 s). El log solo dice el tipo y la clase del error: nunca el contenido, la contraseña temporal, el destinatario ni las claves del SMTP.
+
+| Tipo | Datos obligatorios |
+| --- | --- |
+| `cuenta_creada` | `usuario`, `nombre`, `rol`, `clave_temporal`, `url` |
+| `clave_restablecida` | `usuario`, `nombre`, `clave_temporal`, `url` |
+| `cuenta_eliminada` | `usuario`, `nombre` |
+| `rol_cambiado` | `usuario`, `nombre`, `rol` |
+| `clave_cambiada` | `usuario`, `nombre` |
+
+- **Probar:** `kerna/operaciones/probar_correo.sh` envía un correo `cuenta_creada` de prueba a la dirección del remitente y dice solo `True/False` y el código SMTP; `python3 -m pytest -q kerna/pruebas/unitarias/test_front_correo.py` (SMTP simulado). Vistas previas y capturas a 600 y 375 px: `kerna/operaciones/capturar_correos.sh` (salida en `kerna/operaciones/salida/correos/`, ignorada por git). Los correos de los clientes de correo que no cargan imágenes externas siguen leyéndose: el símbolo va embebido (CID) y el texto no depende de él.

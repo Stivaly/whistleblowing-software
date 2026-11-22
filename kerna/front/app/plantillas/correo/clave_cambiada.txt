@@ -1,0 +1,9 @@
+Cambiaste tu contraseña
+
+Hola {{ nombre }}, la contraseña de tu cuenta del panel de Kerna AI se cambió hace un momento. No necesitas hacer nada más.
+
+Usuario: {{ usuario }}
+
+Si no fuiste tú, avisa a Dirección de inmediato: alguien más podría tener acceso a tu cuenta.
+
+Kerna AI · Panel de gestión

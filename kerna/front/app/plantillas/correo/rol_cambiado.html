@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% from "_macros.html" import filas %}
+{% block preheader %}Tu nuevo rol: {{ rol }}.{% endblock %}
+{% block titular %}Cambió tu rol{% endblock %}
+{% block intro %}Hola {{ nombre }}, cambiamos tu rol en el panel de Kerna AI. Lo verás la próxima vez que entres.{% endblock %}
+{% block datos %}{{ filas([("Usuario", usuario), ("Nuevo rol", rol)]) }}{% endblock %}
