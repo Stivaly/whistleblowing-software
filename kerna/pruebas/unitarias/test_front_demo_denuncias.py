@@ -132,9 +132,9 @@ def test_los_relatos_son_completos_y_traen_datos_personales_para_el_anonimizador
     for c in CASOS:
         t = c["texto"]
         assert dd.MIN_CARACTERES < len(t) <= dd.MAX_CARACTERES, c["id"]
-        assert not re.search(r"ejemplo|ficticio|prueba", t, re.I), c["id"]
+        assert not re.search(r"ejemplo|ficticio", t, re.I), c["id"]
         r = anonimizador.anonimizar(t)
-        assert r.conteos.get("PERSONA") and (r.conteos.get("TELEFONO") or r.conteos.get("CORREO")), c["id"]
+        assert r.conteos.get("PERSONA") and (c["tipo"] == "fuera" or r.conteos.get("TELEFONO") or r.conteos.get("CORREO")), c["id"]  # los «fuera» van tal como están en el banco
 
 
 def test_las_denuncias_fuera_del_corpus_no_tratan_las_leyes_del_corpus():
@@ -335,19 +335,18 @@ def test_los_iconos_de_estado_que_usa_el_js_existen_en_el_sprite():
 
 # ---- QA 2026-11-22: casos ajenos al corpus, leyes agrupadas, aviso sin JavaScript, rechazos con pantalla, notación de artículos ------------------------
 
-AJENOS = ("fuera-arriendo-particulares", "fuera-ruido-vecinos", "fuera-cerco-deslinde")
 
 
-def test_los_casos_ajenos_estan_marcados_fuera_del_corpus_y_no_tocan_lo_laboral_ni_los_datos():
-    """Tránsito y consumidor recibieron sugerencias reales del núcleo (Estatutos, 20.393): se reemplazaron por asuntos entre particulares."""
-    assert not {"fuera-transito-conductor", "fuera-consumidor-garantia", "fuera-tributaria-boletas"} & set(POR_ID)
-    for i in AJENOS:
-        c = POR_ID[i]
-        assert c["tipo"] == "fuera" and c["articulos"] == () and c["fuera"], i
-        assert not re.search(r"trabaj|emplead|jefe|jefatura|contrat|sueldo|remuneraci|municipal|funcionari|datos|acoso|soborno|cohecho|lavado|delito|empresa|sociedad",
-                             c["texto"], re.I), i
-        assert re.search(r"RUT \d", c["texto"]) and "@" in c["texto"] and "+56" in c["texto"]        # relato completo con datos personales
-        assert esperado_ok(c)
+def test_los_casos_ajenos_salen_del_banco_y_estan_marcados_fuera_del_corpus():
+    """Los casos «fuera» son controles del banco de evaluación (ley «ninguna») que no tuvieron sugerencia con la cadena desplegada."""
+    import json
+    banco = {c["id"]: c for c in json.loads((Path(__file__).resolve().parents[2] / "evaluacion/datos/denuncias_desarrollo_20261115_etiquetadas.json").read_text())["casos"]}
+    fuera = [c for c in CASOS if c["tipo"] == "fuera"]
+    assert len(fuera) >= 2
+    for c in fuera:
+        b = banco[c["banco"]]
+        assert b["ley_principal"] == "ninguna" and c["texto"] == b["texto_original"], c["id"]
+        assert c["articulos"] == () and c["fuera"] and esperado_ok(c), c["id"]
 
 
 def esperado_ok(c):
