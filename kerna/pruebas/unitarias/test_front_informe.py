@@ -74,8 +74,8 @@ def test_costo_real_por_modelo_con_equivalencia(inf):
     assert filas["Claude Haiku 5.5"][5] == pytest.approx(haiku, abs=1e-4) and filas["Claude Sonnet 5.5"][5] == pytest.approx(sonnet, abs=1e-4)
     assert "Claude Opus 5.5" not in filas
     k = {x["etiqueta"]: x["valor"] for x in c["kpis"]}
-    assert k["Costo del período"] == pytest.approx(haiku + sonnet, abs=1e-3)
-    assert k["Costo por denuncia"] == pytest.approx((haiku + sonnet) / 10, abs=1e-5)
+    assert k["Costo del período"] is None   # sin facturación de Azure no se muestra un costo (nunca uno simulado)
+    assert k["Costo de IA por denuncia, estimado con tarifas de Anthropic"] == pytest.approx((haiku + sonnet) / 10, abs=1e-5)
     assert k["Costo de IA mensual proyectado, 1.000 denuncias"] == pytest.approx((haiku + sonnet) / 10 * 1000, abs=0.01)
     texto = str(c).lower()
     assert "estimaci" not in texto and "escenario" not in texto and "tokenizador" not in texto and "opus" not in texto
@@ -170,3 +170,13 @@ def test_informe_casos_son_los_de_veridy():
     r = informe.construir(INI, FIN, ejecutar=falso, evaluacion=EVAL, conector=con)
     k = {x["etiqueta"]: x["valor"] for x in r["secciones"][0]["kpis"]}
     assert k["Casos procesados"] == 116 and k["% con sugerencia"] == 86.2
+
+
+def test_costo_del_periodo_es_lo_que_azure_cobro(monkeypatch):
+    from app import costo_ia
+    monkeypatch.setattr(costo_ia, "costo_azure", lambda i, f: {"total": 53.84, "ia": 47.31, "moneda": "USD", "desde": i, "hasta": f,
+                                                               "servicios": [("IA (Azure OpenAI)", 47.31), ("Veridy (contenedores)", 6.53)]})
+    c = next(s for s in informe.construir(INI, FIN, ejecutar=falso, evaluacion=EVAL)["secciones"] if s["id"] == "costo")
+    k = {x["etiqueta"]: x for x in c["kpis"]}
+    assert k["Costo del período"]["valor"] == 53.84 and "Azure Cost Management" in k["Costo del período"]["fuente"]
+    assert k["Costo del período: IA (Azure OpenAI)"]["valor"] == 47.31

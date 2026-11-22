@@ -102,6 +102,28 @@ def costo_modelos(filas: list[dict], por_denuncia: list[dict] | None = None, com
             "denuncias": prod, "pruebas": max(total - prod, 0.0) if completo else 0.0}
 
 
+MESES_CORTOS = ("ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic")
+
+
+def periodo_txt(desde, hasta) -> str:
+    """«15 – 22 nov 2026», «24 oct – 22 nov 2026» o «24 dic 2025 – 22 ene 2026»."""
+    m = lambda d: MESES_CORTOS[d.month - 1]  # noqa: E731
+    if desde.year != hasta.year:
+        return f"{desde.day} {m(desde)} {desde.year} – {hasta.day} {m(hasta)} {hasta.year}"
+    if desde.month != hasta.month:
+        return f"{desde.day} {m(desde)} – {hasta.day} {m(hasta)} {hasta.year}"
+    return f"{desde.day} – {hasta.day} {m(hasta)} {hasta.year}"
+
+
+def costo_real(c: dict | None) -> dict | None:
+    """Lo que Azure cobró (costo_ia.costo_azure) con el formato que usa el Resumen: total y un ítem por servicio."""
+    if not c:
+        return None
+    return {"total": c["total"], "por_caso": 0.0, "casos": 0, "real": True, "moneda": c["moneda"], "ia": c["ia"],
+            "periodo": periodo_txt(c["desde"], c["hasta"]),
+            "modelos": [{"modelo": n, "ref": "Azure", "casos": 0, "usd": v} for n, v in c["servicios"]]}
+
+
 def heat(filas: list[dict]) -> dict | None:
     """Denuncias por día de la semana (lunes a domingo) y franja de 3 horas."""
     if not filas:
@@ -196,7 +218,13 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
                   "meta": META_P95_S, "metaT": f"meta {f.dec_corto(META_P95_S, 0)} s", "z": [{"a": 0, "b": 1, "e": "na"}], "mx_txt": "", "pos": 0, "pos_meta": 33.3,
                   "et": "Sin datos", "tr": "", "te": "na", "ta": "minus", "x": "No hay solicitudes medidas en el período."})
     # --- Costo
-    if costo:
+    if costo and costo.get("real"):
+        k.append({"k": "costo_k", "i": "coins", "l": "Costo del período", "form": "costo", "e": "na", "p": "US$", "u": "", "num": round(costo["total"], 2), "v": f.usd(costo["total"]),
+                  "et": "", "tr": "", "te": "na", "ta": "minus", "s": serie, "sub": costo["periodo"],
+                  "stack": [{"n": x["modelo"], "usd": f.usd(x["usd"]), "w": round(100 * x["usd"] / costo["total"], 1) if costo["total"] else 0} for x in costo["modelos"][:4]],
+                  "x": f"Lo que Azure cobró del {costo['periodo']}: " + " · ".join(f"{x['modelo']} US$ {f.usd(x['usd'])}" for x in costo["modelos"])
+                       + ". Azure publica el costo con hasta 24 h de atraso. Gemini y Voyage se cobran fuera de Azure."})
+    elif costo:
         refs = sorted({x["ref"] for x in costo["modelos"]})
         k.append({"k": "costo_k", "i": "coins", "l": "Costo del período", "form": "costo", "e": "na", "p": "US$", "u": "", "num": round(costo["total"], 2), "v": f.usd(costo["total"]),
                   "et": "", "tr": "", "te": "na", "ta": "minus", "s": serie, "por_caso": f.usd(costo["por_caso"], 3),
@@ -310,7 +338,7 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
     # --- Costo por modelo
     costo_v = None
     if costo:
-        costo_v = {"total": f.usd(costo["total"]), "por_caso": f.usd(costo["por_caso"], 4),
+        costo_v = {"total": f.usd(costo["total"]), "por_caso": costo["periodo"] if costo.get("real") else f.usd(costo["por_caso"], 4),
                    "ref": ", ".join(sorted({x["ref"] for x in costo["modelos"]})),
                    "modelos": [{"n": x["modelo"], "usd": f.usd(x["usd"]), "w": round(100 * x["usd"] / costo["total"], 1) if costo["total"] else 0} for x in costo["modelos"]]}
         mp.t["costo.total"], mp.t["costo.caso"] = costo_v["total"], costo_v["por_caso"]

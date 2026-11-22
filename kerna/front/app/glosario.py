@@ -49,7 +49,7 @@ def glosario() -> dict:
         "casos": ("Denuncias recibidas", "Denuncias de Veridy que Kerna procesó en el período."),
         "calidad": ("Sugerencias acertadas", f"Veces que el artículo correcto sale entre los 5 primeros (meta {meta_r} %)."),
         "tiempo": ("Tiempo de respuesta", f"Tiempo en que terminan 9 de cada 10 casos (meta {meta_t} s)."),
-        "costo_k": ("Costo del período", "Lo que habría costado toda la IA, pruebas incluidas, con modelos de Anthropic."),
+        "costo_k": ("Costo del período", "Lo que Azure cobró de verdad en las fechas indicadas: IA, servidores y otros."),
         "casos_dia": ("Denuncias por día", "Cada barra es un día: con sugerencia y sin sugerencia."),
         "modos": ("Cómo se resolvieron", "Reparto entre modelo principal, respaldo y sin sugerencia."),
         "acierto_ley": ("Acierto por ley", "El acierto de cada ley; la marca es la meta."),

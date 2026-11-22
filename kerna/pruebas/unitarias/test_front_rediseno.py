@@ -476,3 +476,13 @@ def test_costo_ia_suma_azure_y_solo_gemini_de_las_etapas(monkeypatch):
     assert next(f for f in filas if f["modelo"] == "gpt-5-nano")["tokens_entrada_total"] == 100.0   # no se suma dos veces
     monkeypatch.setattr(costo_ia, "tokens_azure", lambda i, f: None)
     assert costo_ia.filas_totales(etapas, *costo_ia.ultimos(7)) == (etapas, False)
+
+
+def test_kpi_costo_muestra_lo_cobrado_por_azure_y_las_fechas():
+    from datetime import datetime, timezone
+    c = vistas.costo_real({"total": 36.94, "ia": 33.09, "moneda": "USD", "desde": datetime(2026, 11, 15, tzinfo=timezone.utc),
+                           "hasta": datetime(2026, 11, 22, tzinfo=timezone.utc), "servicios": [("IA (Azure OpenAI)", 33.09), ("Panel (App Service)", 3.85)]})
+    from test_front_vistas import EV, M
+    k = next(x for x in vistas.resumen(M, EV, None, None, c, [], None, 7)["kpis"] if x["k"] == "costo_k")
+    assert k["v"] == "36,94" and k["sub"] == "15 – 22 nov 2026" and "Anthropic" not in k["x"] and "simul" not in k["x"].lower()
+    assert vistas.periodo_txt(datetime(2026, 10, 24), datetime(2026, 11, 22)) == "24 oct – 22 nov 2026"

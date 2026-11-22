@@ -68,3 +68,41 @@ def filas_totales(etapas: list[dict], inicio: datetime, fin: datetime) -> tuple[
 def ultimos(dias: int) -> tuple[datetime, datetime]:
     fin = datetime.now(timezone.utc)
     return fin - timedelta(days=int(dias)), fin
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Costo real: lo que Azure cobró (Cost Management, rol Cost Management Reader sobre la suscripción en AZ_SUSCRIPCION_ID).
+# ---------------------------------------------------------------------------------------------------------------------
+SERVICIOS_IA = {"foundry models", "cognitive services", "azure openai", "azure ai services"}
+NOMBRE_SERVICIO = {"Foundry Models": "IA (Azure OpenAI)", "Container Instances": "Veridy (contenedores)",
+                   "Azure App Service": "Panel (App Service)", "Azure Container Apps": "Núcleo (Container Apps)",
+                   "Azure Database for PostgreSQL": "Base de datos de Veridy"}
+
+
+def costo_azure(inicio: datetime, fin: datetime) -> dict | None:
+    """Lo que Azure cobró entre inicio y fin, por servicio: {"total", "ia", "moneda", "servicios": [(nombre, monto)],
+    "desde", "hasta"}. None si no se pudo leer. Azure publica el costo con hasta 24 h de atraso."""
+    sub = os.environ.get("AZ_SUSCRIPCION_ID", "")
+    if not sub:
+        return None
+    cuerpo = json.dumps({"type": "ActualCost", "timeframe": "Custom",
+                         "timePeriod": {"from": f"{inicio.astimezone(timezone.utc):%Y-%m-%dT00:00:00Z}", "to": f"{fin.astimezone(timezone.utc):%Y-%m-%dT23:59:59Z}"},
+                         "dataset": {"granularity": "None", "aggregation": {"c": {"name": "Cost", "function": "Sum"}},
+                                     "grouping": [{"type": "Dimension", "name": "ServiceName"}]}}).encode()
+    pet = urllib.request.Request(f"{API}/subscriptions/{sub}/providers/Microsoft.CostManagement/query?api-version=2023-11-01", data=cuerpo, method="POST",
+                                 headers={"Authorization": "Bearer " + _token(), "Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(pet, timeout=30) as r:
+            d = json.load(r)
+    except Exception:
+        return None
+    cols = [c["name"] for c in d["properties"]["columns"]]
+    ic, isv, imo = cols.index("Cost"), cols.index("ServiceName"), cols.index("Currency")
+    por = {}
+    moneda = "USD"
+    for f in d["properties"]["rows"]:
+        moneda = f[imo] or moneda
+        por[f[isv]] = por.get(f[isv], 0.0) + float(f[ic] or 0)
+    servicios = sorted(((NOMBRE_SERVICIO.get(k, k), v) for k, v in por.items() if v >= 0.005), key=lambda x: -x[1])
+    return {"total": sum(por.values()), "ia": sum(v for k, v in por.items() if k.lower() in SERVICIOS_IA), "moneda": moneda,
+            "servicios": servicios, "desde": inicio, "hasta": fin}

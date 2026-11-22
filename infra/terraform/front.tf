@@ -57,6 +57,8 @@ resource "azurerm_linux_web_app" "front" {
     REINTENTOS_TABLA_URL           = azurerm_storage_account.nucleo.primary_table_endpoint
     # Costo de IA: tokens de todas las llamadas a Azure OpenAI (producción, pruebas y mediciones) desde las métricas de la cuenta.
     OPENAI_RECURSO_ID = azurerm_cognitive_account.openai.id
+    # Costo real: lo que Azure cobró en la suscripción (Cost Management), por servicio y período.
+    AZ_SUSCRIPCION_ID = data.azurerm_client_config.actual.subscription_id
     FRONT_AUTH                     = "clave"
     FRONT_CLAVE                    = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/front-clave-panel/)"
     # Demo «Denuncias»: el panel es un cliente del núcleo con su cuenta propia (ver secretos.tf).
@@ -89,6 +91,13 @@ resource "azurerm_role_assignment" "front_metricas_openai" {
   count                = var.crear_front ? 1 : 0
   scope                = azurerm_cognitive_account.openai.id
   role_definition_name = "Monitoring Reader"
+  principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "front_costos" {
+  count                = var.crear_front ? 1 : 0
+  scope                = "/subscriptions/${data.azurerm_client_config.actual.subscription_id}"
+  role_definition_name = "Cost Management Reader"
   principal_id         = azurerm_linux_web_app.front[0].identity[0].principal_id
 }
 

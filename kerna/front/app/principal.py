@@ -129,13 +129,12 @@ def _vista_resumen(m: dict, dias: int, prov, rei) -> dict:
 
 
 def _costo(etapas: list[dict], por_denuncia: list[dict], dias: int) -> dict | None:
-    """Costo de IA del período: todo lo gastado (métricas de Azure OpenAI, con pruebas y mediciones, más Gemini) y el costo
-    por denuncia real. Si las métricas no responden, solo las denuncias reales; nunca rompe el panel."""
+    """Costo del período: lo que Azure cobró de verdad en esas fechas (Cost Management), por servicio. Cambia con 7, 30 o
+    90 días. Si la facturación no responde, no se muestra un costo (nunca uno simulado); nunca rompe el panel."""
     try:
-        filas, completo = cache.obtener(("costo_az", dias), lambda: costo_ia.filas_totales(etapas, *costo_ia.ultimos(dias)), consultas.TTL_S)
+        return vistas.costo_real(cache.obtener(("costo_real", dias), lambda: costo_ia.costo_azure(*costo_ia.ultimos(dias)), 600))
     except Exception:
-        filas, completo = por_denuncia, False
-    return vistas.costo_modelos(filas if completo else por_denuncia, por_denuncia, completo)
+        return None
 
 
 def _metricas(dias: int) -> dict:
