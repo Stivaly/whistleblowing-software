@@ -23,7 +23,7 @@ Corre en tres lugares, todos con el mismo código de `kerna_comun`:
 |---|---|
 | Conector (grupo de Veridy) | Primera pasada: anonimiza el relato antes de enviarlo al núcleo. |
 | Núcleo (Container App `ca-kerna-dev-nucleo`) | Segunda pasada sobre el texto recibido, y anonimización de las observaciones de valoraciones y clasificaciones. |
-| Front (pestaña «Anonimizador» de `/panel/demo`) | Demo: muestra el texto original con los datos marcados por tipo, el resultado y cuántos datos ocultó. No guarda nada. |
+| Front (pestaña «Anonimizador» de `/panel/demo`) | Demo: muestra el texto original con los datos marcados por tipo, el resultado y cuántos datos ocultó. No guarda nada. «Borrar todo» deja el campo y el resultado en blanco (también en la pestaña «Denuncias»). |
 
 Principios que se mantienen desde el inicio:
 
@@ -74,10 +74,11 @@ Ninguna lista se escribió a mano: todas se descargan de fuentes públicas y se 
 | Archivo | Contenido | Fuente | Entradas |
 |---|---|---|---|
 | `nombres.txt` | Nombres de pila frecuentes de Chile (≥ 200 inscripciones), España y Argentina | Registro Civil de Chile 1920-2021 (paquete R `guaguas`), olea/lemarios | 3.027 |
-| `apellidos.txt` | Apellidos frecuentes de Chile y España | forebears.io (rangos 1-793), INE España (olea/lemarios) | 813 |
-| `otros.txt` | Nombres y apellidos de otros países y los menos frecuentes de Chile (20 a 199 inscripciones) | NameDatabases (dominio público), `guaguas` | 101.524 |
+| `apellidos.txt` | Apellidos de Chile y España: los más frecuentes de Chile, más los del INE de España con 100 o más personas que no son palabra del español ni ciudad | forebears.io (rangos 1-793), INE España (`apellidos_frecuencia.xls`, censo al 01/01/2025), olea/lemarios | 13.615 |
+| `apellidos_frecuentes.txt` | Los más frecuentes de Chile y España (base del parecido en minúscula) | forebears.io, olea/lemarios | 813 |
+| `otros.txt` | Nombres y apellidos de otros países, los menos frecuentes de Chile y el resto de apellidos del INE (20 a 99 personas, o que también son palabra o ciudad) | NameDatabases (dominio público), `guaguas`, INE | 132.886 |
 | `lemario.txt.gz` | Todas las palabras y formas verbales del español | olea/lemarios | 526.303 |
-| `palabras.txt` / `verbos.txt` | Nombres o apellidos que también son palabra o forma verbal (`rosa`, `paz`, `marco`, `tomas`) | cruce de las anteriores | 4.233 / 2.700 |
+| `palabras.txt` / `verbos.txt` | Nombres o apellidos que también son palabra o forma verbal (`rosa`, `paz`, `marco`, `tomas`) | cruce de las anteriores | 5.600 / 3.955 |
 | `calles.txt` | Nombres de calles de Chile, sin el tipo de vía | OpenStreetMap (Overpass) | 65.835 |
 | `lugares.txt` | Países y ciudades de más de 15.000 habitantes | GeoNames | 112.710 |
 
@@ -115,6 +116,9 @@ frecuentes de Chile, España y Argentina:
   `e`/`i`, `h` muda y letras dobles se tratan igual. `karlos` = `carlos`, `gonsales` = `gonzalez`, `yessica` = `jessica`.
 - **Un error de una letra** (que falte, sobre o cambie una), en palabras de 5 o más letras: `frnando`, `carlso`,
   `gonzalz`.
+- **Contra qué se compara:** una palabra con mayúscula se compara con todos los nombres y los 13.615 apellidos, así que se
+  detectan apellidos que no están en ninguna lista pero se parecen a uno (`Cassorla`, `Guayasamín`). En minúscula solo se
+  compara con los nombres y los apellidos más frecuentes, para no tomar fragmentos de palabras.
 - **Salvaguarda:** nunca se aplica a una palabra del español ni a su plural, femenino o forma con pronombre (`pagos`,
   `misma`, `darle`), ni a siglas en mayúsculas (`RUT` no es `Ruth`). En minúscula, el parecido por una letra se exige
   junto a `con`, `soy`, `a`, `que`…; el fonético basta solo.
@@ -186,9 +190,9 @@ unificación de variantes de un mismo nombre, el formato de los marcadores y de 
 
 | Componente | Estado |
 |---|---|
-| Front (demo) | Desplegado con `kerna/front/desplegar.sh --ref HEAD`; empaqueta `nombres_cl.py` y `diccionarios/`. Comprobado en pantalla. |
-| Núcleo | Imagen `kerna-nucleo:3c4e84476` desplegada en `ca-kerna-dev-nucleo` (revisión 18, 100 % del tráfico); `/salud` responde y la imagen anonimiza `carolina` y el RUT pegado. |
-| Conector | Imagen `kerna-conector:3c4e84476` desplegada con `infra/aplicar.sh veridy` (`conector_tag` en `infra/veridy/terraform/terraform.tfvars`); el grupo de contenedores de Veridy se recreó, el conector corre sin reinicios y Veridy responde. |
+| Front (demo) | Desplegado con `kerna/front/desplegar.sh --ref HEAD`; empaqueta `nombres_cl.py` y `diccionarios/`. Comprobado en pantalla (anonimizar y «Borrar todo», 390 y 1366 px). |
+| Núcleo | Imagen `kerna-nucleo:c0d10d7ff` en `ca-kerna-dev-nucleo` (100 % del tráfico, `Healthy`); `/salud` 200, sin errores. |
+| Conector | Imagen `kerna-conector:c0d10d7ff` desplegada con `infra/aplicar.sh veridy`; corre sin reinicios ni errores, Veridy responde. |
 
 ## 8. Cómo mantenerlo
 
