@@ -15,7 +15,7 @@
 <textarea id="dmo-texto" name="texto" class="field dmo-ta" rows="7" maxlength="{{ max_car }}" spellcheck="false" required>{{ texto }}</textarea>
 {% if error %}<p class="cola-av s-bad" role="alert">{{ ic('e-cadena-agotada', px=40) }}<span>{{ {'vacio': 'Escribe o elige un relato para anonimizar', 'token': 'Recarga la página e inténtalo otra vez', 'origen': 'Recarga la página e inténtalo otra vez'}[error] }}</span></p>{% endif %}
 <p class="cola-av s-bad" data-error role="alert" hidden></p>
-<div class="dmo-acc"><button type="submit" class="btn btn-pri" data-enviar>{{ ic('eye-off') }}<span>Anonimizar</span></button><a class="btn btn-sec" href="/panel/demo" data-borrar>{{ ic('rotate-ccw') }}<span>Borrar todo</span></a>
+<div class="dmo-acc"><button type="submit" class="btn btn-pri" data-enviar>{{ ic('eye-off') }}<span>Anonimizar</span></button><a class="btn btn-sec" href="/panel/demo?pestana=anonimizador" data-borrar>{{ ic('rotate-ccw') }}<span>Borrar todo</span></a>
 <span class="dmo-pre" role="group" aria-label="Relatos precargados">{% for k, t, x in relatos %}<button type="submit" name="relato" value="{{ k }}" class="chip brand" data-texto="{{ x }}" formnovalidate>{{ t }}</button>{% endfor %}</span></div>
 </form>
 <div data-salida aria-live="polite">{% if r %}{% include "_demo_anon_resultado.html" %}{% endif %}</div>
