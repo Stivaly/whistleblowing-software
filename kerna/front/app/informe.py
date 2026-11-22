@@ -334,7 +334,7 @@ def construir(ini: datetime, fin: datetime, ejecutar=None, evaluacion=None, nego
     por_caso = costo_den / nmod if nmod else None
     desg = [[cl, ", ".join(d[4]), d[0], d[1], d[2], round(d[3], 4)] for cl, d in desglose.items()]
     costo = {"id": "costo", "titulo": "Costo y consumo",
-             "justificacion": "Muestra todo lo gastado en IA en el período (denuncias reales, pruebas, mediciones y demo) a precios de la API de Anthropic, según los tokens por modelo y su equivalente Claude.",
+             "justificacion": "Muestra todo lo gastado en IA en el período (denuncias reales, pruebas, mediciones y demo) homologado a las tarifas de la API de Anthropic: lo que habría costado hacerlo con sus modelos, según los tokens por modelo y su equivalente Claude.",
              "kpis": [{"etiqueta": "Solicitudes con tokens medidos", "valor": nsol, "unidad": "solicitudes", "fuente": LF_LA},
                       {"etiqueta": "Tokens de entrada", "valor": int(te), "unidad": "tokens", "fuente": LF_LA + ", tokens_entrada de solicitud_terminada"},
                       {"etiqueta": "Tokens de salida", "valor": int(ts), "unidad": "tokens", "fuente": LF_LA},

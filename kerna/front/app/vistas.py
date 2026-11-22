@@ -204,7 +204,8 @@ def resumen(m: dict, ev: dict | None = None, prov: dict | None = None, rei: dict
                   "x": ((f"Todo lo gastado en IA: denuncias reales US$ {f.usd(costo['denuncias'])} y pruebas, mediciones y demo US$ {f.usd(costo['pruebas'])}. "
                          if costo.get("completo") else "Solo las denuncias reales: no se pudieron leer las métricas de Azure OpenAI. ")
                         + f"Costo por denuncia: US$ {f.usd(costo['por_caso'], 4)}. " + " · ".join(f"{x['modelo']} US$ {f.usd(x['usd'])}" for x in costo["modelos"])
-                        + ". Tarifas de la API de Anthropic: " + ", ".join(refs) + ". Sin servidores de Azure ni embeddings.")})
+                        + ". Homologado a las tarifas de la API de Anthropic (" + ", ".join(refs) + "): es lo que habría costado hacer lo mismo,"
+                        + " pruebas incluidas, con sus modelos. Sin servidores de Azure ni embeddings.")})
     else:
         k.append({"k": "costo_k", "i": "coins", "l": "Costo del período", "form": "spark", "e": "na", "p": "", "u": "", "num": None, "v": "—", "et": "Sin datos", "tr": "", "te": "na",
                   "ta": "minus", "s": serie, "x": "No hay tokens medidos en el período."})

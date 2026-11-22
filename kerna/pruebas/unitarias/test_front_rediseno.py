@@ -175,7 +175,7 @@ def test_costo_muestra_el_modelo_real_y_la_referencia_va_en_el_tooltip():
     from test_front_vistas import EV, M
     v = vistas.resumen(M, EV, None, None, c, [], None, 7)
     k = next(x for x in v["kpis"] if x["k"] == "costo_k")
-    assert k["et"] == "" and "Tarifas de la API de Anthropic: Claude Haiku 5.5" in k["x"]  # sin chip: no hay meta de costo
+    assert k["et"] == "" and "Homologado a las tarifas de la API de Anthropic (Claude Haiku 5.5)" in k["x"]  # sin chip: no hay meta de costo
     assert v["costo"]["modelos"][0]["n"] == "gpt-5-nano" and v["costo"]["ref"] == "Claude Haiku 5.5"
 
 
