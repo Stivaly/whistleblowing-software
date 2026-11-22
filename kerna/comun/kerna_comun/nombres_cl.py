@@ -1,6 +1,7 @@
 """Diccionarios del anonimizador, generados desde fuentes públicas por kerna/comun/herramientas/generar_diccionarios.py.
 
-- NOMBRES / APELLIDOS: frecuentes en Chile (Registro Civil vía «guaguas», forebears.io), España (INE) y Argentina.
+- NOMBRES / APELLIDOS: frecuentes en Chile (Registro Civil vía «guaguas», forebears.io), España (INE, ≥ 100 personas) y Argentina.
+- APELLIDOS_FRECUENTES: los más frecuentes de Chile y España; base de la coincidencia aproximada.
 - OTROS: nombres y apellidos de otros países (NameDatabases) y los menos frecuentes de Chile.
 - PALABRAS / VERBOS: nombres o apellidos que también son palabra o forma verbal del español.
 - LEMARIO: todas las palabras y formas verbales del español (olea/lemarios).
@@ -26,6 +27,7 @@ def _leer(nombre: str) -> frozenset:
 
 NOMBRES = _leer("nombres")
 APELLIDOS = _leer("apellidos")
+APELLIDOS_FRECUENTES = _leer("apellidos_frecuentes")
 OTROS = _leer("otros")
 PALABRAS = _leer("palabras")
 VERBOS = _leer("verbos")
@@ -71,24 +73,32 @@ def _borrados(w: str) -> set:
     return {w[:i] + w[i + 1:] for i in range(len(w))}
 
 
-_BASE = (NOMBRES | APELLIDOS) - LEMARIO
-_FON = {fonetica(w) for w in _BASE if len(w) >= 4}
-_BORR: dict = {}
-for _w in _BASE:
-    if len(_w) >= 5:
-        for _b in _borrados(_w):
-            _BORR.setdefault(_b, set()).add(_w)
+def _indice(base: frozenset) -> tuple:
+    borr: dict = {}
+    for w in base:
+        if len(w) >= 5:
+            for b in _borrados(w):
+                borr.setdefault(b, set()).add(w)
+    return base, {fonetica(w) for w in base if len(w) >= 4}, borr
 
 
-def parecido(t: str) -> bool:
-    """t (minúscula, sin tildes) no es del español y suena como un nombre o apellido frecuente o difiere de uno en una letra."""
+# El parecido se mide contra lo más frecuente (minúscula) o contra todos los nombres y apellidos (con mayúscula).
+_FRECUENTE = _indice((NOMBRES | APELLIDOS_FRECUENTES) - LEMARIO)
+_AMPLIO = _indice((NOMBRES | APELLIDOS) - LEMARIO)
+_FON = _FRECUENTE[1]
+
+
+def parecido(t: str, amplio: bool = False) -> bool:
+    """t (minúscula, sin tildes) no es del español y suena como un nombre o apellido o difiere de uno en una letra.
+    amplio=True compara con todos los apellidos (para palabras con mayúscula); si no, solo con los más frecuentes."""
     if len(t) < 4 or es_palabra(t):
         return False
-    if fonetica(t) in _FON:
+    base, fon, borr = _AMPLIO if amplio else _FRECUENTE
+    if fonetica(t) in fon:
         return True
     if len(t) < 5:
         return False
-    if t in _BORR:                                # le falta una letra («carlo» ← no: < 5; «gonzlez»)
+    if t in borr:
         return True
     b = _borrados(t)
-    return any(x in _BASE for x in b) or any(x in _BORR for x in b)   # le sobra una letra o tiene una cambiada
+    return any(x in base for x in b) or any(x in borr for x in b)

@@ -43,6 +43,10 @@
       salida.scrollIntoView({ block: innerWidth < 900 ? 'start' : 'nearest', behavior: quieto ? 'auto' : 'smooth' });
     } catch (_) { aviso(MSG.error); } finally { boton.disabled = false; }
   }
+  const borrar = $('[data-borrar]', f);   // sin JS es un enlace que recarga la demo vacía
+  if (borrar) borrar.addEventListener('click', (e) => {
+    e.preventDefault(); ta.value = ''; ta.setCustomValidity(''); contar(); aviso(''); salida.replaceChildren(); ta.focus();
+  });
   f.addEventListener('submit', (e) => {
     e.preventDefault();
     const p = e.submitter && e.submitter.dataset.texto;

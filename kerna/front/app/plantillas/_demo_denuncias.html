@@ -27,7 +27,7 @@
 <h2 id="den-tx-t" class="mk"><label for="den-texto">Texto de la denuncia</label><button type="button" class="den-q" data-q="El texto se anonimiza antes de analizarlo y no se guarda. Si lo cambias, deja de tener respuesta esperada." aria-label="Ayuda: texto de la denuncia">{{ ic('circle-help') }}</button><span class="mk-r"><span data-cuenta>0</span> / {{ den.max_car }}</span></h2>
 <textarea id="den-texto" class="field den-ta" rows="7" maxlength="{{ den.max_car }}" spellcheck="false" placeholder="Pega o escribe una denuncia"></textarea>
 <p class="cola-av s-bad" data-error role="alert" hidden></p>
-<div class="den-acc"><button type="button" class="btn btn-pri" data-analizar disabled>{{ ic('sparkles') }}<span>Analizar denuncia</span></button></div>
+<div class="den-acc"><button type="button" class="btn btn-pri" data-analizar disabled>{{ ic('sparkles') }}<span>Analizar denuncia</span></button><button type="button" class="btn btn-sec" data-borrar>{{ ic('rotate-ccw') }}<span>Borrar todo</span></button></div>
 </section>
 
 <section class="den-r" data-salida aria-live="polite" aria-atomic="true" hidden></section>

@@ -8,10 +8,12 @@ Fuentes (descargarlas en carpetas aparte y pasar las rutas; detalle y licencias 
   --namedb          carpeta con nombres_all.txt y apellidos_all.txt de github.com/smashew/NameDatabases (dominio público;
                     nombres y apellidos de varios países y culturas).
   --calles          CSV de nombres de vías de Chile (OpenStreetMap vía Overpass; © colaboradores de OSM, ODbL).
+  --ine             apellidos_frecuencia.xls del INE de España (apellidos con frecuencia ≥ 20, censo al 01/01/2025).
   --geonames        carpeta con cities15000.zip y countryInfo.txt de download.geonames.org (CC BY 4.0).
 Salida (minúsculas, sin tildes, una entrada por línea):
   nombres.txt     nombres de pila frecuentes en Chile (≥ --min-chile inscripciones) y de España y Argentina.
-  apellidos.txt   apellidos frecuentes en Chile y en España.
+  apellidos.txt   apellidos frecuentes en Chile y en España (INE: ≥ 100 personas, salvo los que son palabra del español).
+  apellidos_frecuentes.txt  los más frecuentes de Chile y España (base de la coincidencia aproximada).
   otros.txt       nombres y apellidos de otros países y los menos frecuentes de Chile (≥ --min-otros inscripciones).
   palabras.txt / verbos.txt  nombres o apellidos (de las tres listas) que también son palabra o forma verbal del español.
   lemario.txt.gz  todas las palabras y formas verbales del español (para no tomar una palabra por un nombre).
@@ -49,7 +51,7 @@ def simples(conjunto: set[str]) -> set[str]:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    for a in ("guaguas", "forebears", "olea", "namedb", "calles", "geonames"):
+    for a in ("guaguas", "forebears", "olea", "namedb", "calles", "geonames", "ine"):
         ap.add_argument("--" + a, required=True)
     ap.add_argument("--min-chile", type=int, default=200)
     ap.add_argument("--min-otros", type=int, default=20)
@@ -66,14 +68,17 @@ def main() -> None:
     chile_poco = {w for w, n in total.items() if a.min_otros <= n < a.min_chile}
 
     nombres = simples(chile | leer(olea / "nombres-propios-es.txt") | leer(olea / "nombres-propios-ar.txt"))
-    apellidos = simples(leer(Path(a.forebears)) | leer(olea / "apellidos-es.txt"))
-    otros = simples(chile_poco | leer(namedb / "nombres_all.txt") | leer(namedb / "apellidos_all.txt")) - nombres - apellidos
-
-    lemas = leer(olea / "lemario-general-del-espanol.txt")
-    formas = leer(olea / "verbos-espanol-conjugaciones.txt")
-    todos = nombres | apellidos | otros
-    verbos = todos & formas
-    palabras = (todos & lemas) - verbos
+    import pandas as pd
+    hojas = pd.read_excel(a.ine, sheet_name=None, header=None)
+    ine_100, ine_20 = set(), set()
+    for nombre_hoja, hoja in hojas.items():
+        destino = ine_100 if "100" in nombre_hoja and "99" not in nombre_hoja else ine_20
+        destino |= {norm(str(x)) for x in hoja.iloc[5:, 1] if isinstance(x, str)}
+    lemas_previos = leer(olea / "lemario-general-del-espanol.txt") | leer(olea / "verbos-espanol-conjugaciones.txt")
+    def es_palabra(w):   # forma base, plural o femenino en el lemario («finanzas», «bienes», «terceros»)
+        return any(x in lemas_previos for x in (w, w[:-1], w[:-2], w[:-1] + "o", w[:-2] + "o"))
+    frecuentes = simples(leer(Path(a.forebears)) | leer(olea / "apellidos-es.txt"))   # Chile y España, los más frecuentes
+    apellidos = frecuentes | {w for w in simples(ine_100) if not es_palabra(w)}
 
     calles = set()
     for linea in Path(a.calles).read_text(encoding="utf-8").splitlines():
@@ -96,9 +101,18 @@ def main() -> None:
         if linea and not linea.startswith("#"):
             lugares |= {w for w in norm(linea.split("\t")[4]).split() if w.isalpha() and len(w) >= 4}
 
+    apellidos -= (lugares - frecuentes)   # «Zaragoza», «Lisboa»: apellidos en España, pero sueltos son ciudades
+    otros = simples(chile_poco | leer(namedb / "nombres_all.txt") | leer(namedb / "apellidos_all.txt") | ine_100 | ine_20) - nombres - apellidos
+    lemas = leer(olea / "lemario-general-del-espanol.txt")
+    formas = leer(olea / "verbos-espanol-conjugaciones.txt")
+    todos = nombres | apellidos | otros
+    verbos = todos & formas
+    palabras = (todos & lemas) - verbos
+
+
     SALIDA.mkdir(exist_ok=True)
     for nombre, datos in (("nombres", nombres), ("apellidos", apellidos), ("otros", otros), ("palabras", palabras),
-                          ("verbos", verbos), ("calles", calles), ("lugares", lugares)):
+                          ("verbos", verbos), ("calles", calles), ("lugares", lugares), ("apellidos_frecuentes", frecuentes)):
         (SALIDA / f"{nombre}.txt").write_text("\n".join(sorted(datos)) + "\n", encoding="utf-8")
         print(nombre, len(datos))
     lemario = sorted(lemas | formas)

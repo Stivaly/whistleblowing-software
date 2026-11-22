@@ -137,7 +137,7 @@ _FUNCIONALES = INICIOS_DE_ORACION | {"ella", "ellas", "ellos", "nosotros", "noso
 
 def _es_nombre(t: str) -> bool:
     """Nombre o apellido: frecuente, de otro país (si no es palabra del español) o parecido a uno frecuente («karlos»)."""
-    return t in _DICC or (t not in LUGARES and ((t in OTROS and not es_palabra(t)) or parecido(t)))
+    return t in _DICC or (t not in LUGARES and ((t in OTROS and not es_palabra(t)) or parecido(t, amplio=True)))
 
 
 _COMUNAS_NORM = {unicodedata.normalize("NFKD", c).encode("ascii", "ignore").decode() for c in COMUNAS}  # solas: lugar

@@ -60,6 +60,11 @@
     actualizar(); if (!caso) ta.focus();
   }));
   ta.addEventListener('input', () => { if (pegado) pegado = false; else falla(''); actualizar(); });
+  const borrar = document.querySelector('.den-b [data-borrar]');   // deja el texto, la elección y el resultado en blanco
+  if (borrar) borrar.addEventListener('click', () => {
+    document.querySelectorAll('.den-caso').forEach((o) => o.setAttribute('aria-checked', 'false'));
+    caso = ''; sesion++; ta.value = ''; falla(''); salida.hidden = true; salida.replaceChildren(); actualizar(); ta.focus();
+  });
 
   /* ---------- resultado ---------- */
   const cabecera = (ilu, titulo, sub, ...extra) => h('header', { class: 'den-hl' }, estado(ilu, 56), h('div', null, h('h3', { class: 'den-t' }, titulo), sub ? h('p', { class: 'den-s' }, sub) : null), ...extra);
