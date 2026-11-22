@@ -340,7 +340,10 @@ def test_los_iconos_de_estado_que_usa_el_js_existen_en_el_sprite():
 def test_los_casos_ajenos_salen_del_banco_y_estan_marcados_fuera_del_corpus():
     """Los casos «fuera» son controles del banco de evaluación (ley «ninguna») que no tuvieron sugerencia con la cadena desplegada."""
     import json
-    banco = {c["id"]: c for c in json.loads((Path(__file__).resolve().parents[2] / "evaluacion/datos/denuncias_desarrollo_20261115_etiquetadas.json").read_text())["casos"]}
+    ruta = Path(__file__).resolve().parents[2] / "evaluacion/datos/denuncias_desarrollo_20261115_etiquetadas.json"
+    if not ruta.exists():
+        pytest.skip("el banco de evaluación no se versiona (tiene datos personales)")
+    banco = {c["id"]: c for c in json.loads(ruta.read_text())["casos"]}
     fuera = [c for c in CASOS if c["tipo"] == "fuera"]
     assert len(fuera) >= 2
     for c in fuera:
