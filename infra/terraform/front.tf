@@ -48,7 +48,7 @@ resource "azurerm_linux_web_app" "front" {
     }
   }
 
-  app_settings = {
+  app_settings = merge({
     SCM_DO_BUILD_DURING_DEPLOYMENT = "true"
     WEBSITES_PORT                  = "8000"
     LOG_ANALYTICS_WORKSPACE_ID     = azurerm_log_analytics_workspace.logs.workspace_id
@@ -57,7 +57,12 @@ resource "azurerm_linux_web_app" "front" {
     REINTENTOS_TABLA_URL           = azurerm_storage_account.nucleo.primary_table_endpoint
     FRONT_AUTH                     = "clave"
     FRONT_CLAVE                    = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/front-clave-panel/)"
-  }
+    # Demo «Denuncias»: el panel es un cliente del núcleo con su cuenta propia (ver secretos.tf).
+    DEMO_CLIENT_ID     = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/${azurerm_key_vault_secret.demo_client_id.name}/)"
+    DEMO_CLIENT_SECRET = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/${azurerm_key_vault_secret.demo_client_secret.name}/)"
+    }, var.crear_nucleo ? {
+    KERNA_NUCLEO_URL = "https://${azurerm_container_app.nucleo[0].ingress[0].fqdn}"
+  } : {})
 
   lifecycle {
     ignore_changes = [app_settings["WEBSITE_RUN_FROM_PACKAGE"]]

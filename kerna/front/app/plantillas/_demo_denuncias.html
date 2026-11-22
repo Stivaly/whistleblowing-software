@@ -1,0 +1,34 @@
+{#- Sección «Denuncias» de la demo (se incluye dentro de demo.html). Usa `den` (demo_denuncias.contexto()) y `csrf`. -#}
+{% if den and den.casos is iterable %}
+<link rel="stylesheet" href="/estaticos/demo_den.css?v={{ ver }}">
+<div class="den" data-den data-csrf="{{ csrf }}" data-nucleo="{{ 1 if den.configurado else 0 }}">
+
+<section class="den-b" aria-labelledby="den-ley-t">
+<h2 id="den-ley-t" class="mk">Leyes que conoce la demo<button type="button" class="den-q" data-q="Kerna solo sugiere artículos de estas leyes. Una denuncia sobre otra ley debe quedar sin sugerencia." aria-label="Ayuda: leyes que conoce la demo">{{ ic('circle-help') }}</button></h2>
+<ul class="den-leyes">{% for l in den.leyes %}
+<li data-l="{{ l.tipo }}">{{ ley_icono(l.norma, 32) }}<span><b>{{ l.nombre }} <span class="den-n">{{ l.numero }}</span></b><small>{{ l.tema }}</small></span></li>{% endfor %}
+</ul>
+</section>
+
+<section class="den-b" aria-labelledby="den-el-t">
+<h2 id="den-el-t" class="mk">Elige una denuncia<button type="button" class="den-q" data-q="Cada denuncia trae la respuesta esperada. Las marcadas «Fuera del corpus» tratan una ley que la demo no tiene y no deben tener sugerencia." aria-label="Ayuda: elige una denuncia">{{ ic('circle-help') }}</button></h2>
+<div class="den-casos" role="radiogroup" aria-labelledby="den-el-t">
+{% for c in den.casos %}<button type="button" class="den-caso" role="radio" aria-checked="false" data-caso="{{ c.id }}" data-t="{{ c.tipo }}">
+{% if c.tipo == 'fuera' %}{{ ic('e-sin-normativa', px=28, mini=True) }}{% else %}{{ ley_icono(c.ley, 28) }}{% endif %}
+<span class="den-ct"><b>{{ c.titulo }}</b><small>{% if c.tipo == 'fuera' %}Fuera del corpus{% else %}{{ c.ley }}{% endif %}</small></span></button>{% endfor %}
+<button type="button" class="den-caso den-propia" role="radio" aria-checked="false" data-caso="" data-t="propia">{{ ic('pencil') }}<span class="den-ct"><b>Escribir otra denuncia</b><small>Sin respuesta esperada</small></span></button>
+</div>
+</section>
+
+<section class="den-b" aria-labelledby="den-tx-t">
+<h2 id="den-tx-t" class="mk"><label for="den-texto">Texto de la denuncia</label><button type="button" class="den-q" data-q="El texto se anonimiza antes de analizarlo y no se guarda. Si lo cambias, deja de tener respuesta esperada." aria-label="Ayuda: texto de la denuncia">{{ ic('circle-help') }}</button><span class="mk-r"><span data-cuenta>0</span> / {{ den.max_car }}</span></h2>
+<textarea id="den-texto" class="field den-ta" rows="7" maxlength="{{ den.max_car }}" spellcheck="false" placeholder="Pega o escribe una denuncia"></textarea>
+<p class="cola-av s-bad" data-error role="alert" hidden></p>
+<div class="den-acc"><button type="button" class="btn btn-pri" data-analizar disabled>{{ ic('sparkles') }}<span>Analizar denuncia</span></button></div>
+</section>
+
+<section class="den-r" data-salida aria-live="polite" aria-atomic="true" hidden></section>
+<script type="application/json" id="den-datos">{{ den.json|safe }}</script>
+</div>
+<script src="/estaticos/demo_den.js?v={{ ver }}" defer></script>
+{% endif %}
