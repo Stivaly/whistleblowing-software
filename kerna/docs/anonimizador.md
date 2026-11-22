@@ -186,7 +186,7 @@ unificación de variantes de un mismo nombre, el formato de los marcadores y de 
 |---|---|
 | Front (demo) | Desplegado con `kerna/front/desplegar.sh --ref HEAD`; empaqueta `nombres_cl.py` y `diccionarios/`. Comprobado en pantalla. |
 | Núcleo | Imagen `kerna-nucleo:3c4e84476` desplegada en `ca-kerna-dev-nucleo` (revisión 18, 100 % del tráfico); `/salud` responde y la imagen anonimiza `carolina` y el RUT pegado. |
-| Conector | Imagen `kerna-conector:3c4e84476` subida al registro y `conector_tag` cambiado en `infra/veridy/terraform/terraform.tfvars`. Falta aplicar: el plan reemplaza el grupo de contenedores de Veridy y requiere PostgreSQL encendido. |
+| Conector | Imagen `kerna-conector:3c4e84476` desplegada con `infra/aplicar.sh veridy` (`conector_tag` en `infra/veridy/terraform/terraform.tfvars`); el grupo de contenedores de Veridy se recreó, el conector corre sin reinicios y Veridy responde. |
 
 ## 8. Cómo mantenerlo
 
