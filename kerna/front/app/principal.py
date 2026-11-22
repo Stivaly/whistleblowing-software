@@ -17,7 +17,7 @@ import json
 import re
 import time
 
-from . import ajustes as aj, clientes as cli, demo_anon, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
+from . import ajustes as aj, clientes as cli, demo_anon, errores, orbital, cache, consultas, evaluaciones, exportar, formato, glosario, graficos, informe as inf_mod, negocio, proveedores, reintentos, seguridad, vistas
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Kerna AI", docs_url=None, redoc_url=None, openapi_url=None)
@@ -65,6 +65,9 @@ async def cabeceras_seguras(request: Request, call_next):
     return r
 
 
+pantalla_error = errores.registrar(app, plantillas, lambda r: _permitido(r), CABECERAS)  # 404, 405, 422, 500… con pantalla de Kerna (o JSON)
+
+
 @app.get("/", response_class=HTMLResponse)
 def portada(request: Request):
     return plantillas.TemplateResponse(request, "portada.html")
@@ -88,7 +91,7 @@ def acceso(request: Request):
 def entrar(request: Request, clave: str = Form("")):
     ip = request.headers.get("x-forwarded-for", request.client.host if request.client else "?").split(",")[0].strip()
     if not seguridad.limitar(ip):
-        return plantillas.TemplateResponse(request, "acceso.html", {"error": True}, status_code=429)
+        return pantalla_error(request, 429, espera_s=seguridad.espera_s(ip))
     if not seguridad.clave_valida(clave):
         seguridad.fallo(ip)
         return plantillas.TemplateResponse(request, "acceso.html", {"error": True}, status_code=401)

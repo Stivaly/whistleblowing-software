@@ -56,6 +56,12 @@ def limitar(ip: str, max_fallos: int = 5, ventana_s: int = 300) -> bool:
     return len(_fallos[ip]) < max_fallos
 
 
+def espera_s(ip: str, ventana_s: int = 300) -> float:
+    """Segundos que faltan para que la IP bloqueada pueda intentar de nuevo (0 si no está bloqueada)."""
+    ts = [t for t in _fallos.get(ip, []) if time.time() - t < ventana_s]
+    return max(0.0, min(ts) + ventana_s - time.time()) if ts else 0.0
+
+
 def fallo(ip: str) -> None:
     _fallos.setdefault(ip, []).append(time.time())
 

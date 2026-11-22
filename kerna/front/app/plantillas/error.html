@@ -1,0 +1,28 @@
+{% extends "base_panel.html" if en_panel else "base_pub.html" %}
+{% macro cuerpo_error() %}
+<section class="err" aria-labelledby="err-t" role="alert">
+{{ baldosa(ico, 120) }}
+<div class="err-x">
+<p class="err-c">Error {{ codigo }}</p>
+<h1 id="err-t" class="disp err-h">{{ titulo }}</h1>
+<p class="err-p">{{ texto }}</p>
+<div class="err-a">
+{% if reintentar %}<a class="btn btn-pri" href="{{ reintento }}">{{ ic('rotate-cw') }} Reintentar</a>{% endif %}
+{% if sin_sesion %}<a class="btn {{ 'btn-sec' if reintentar else 'btn-pri' }}" href="/acceso">{{ ic('key-round') }} Entrar con la clave</a>{% endif %}
+{% if en_panel %}<a class="btn {{ 'btn-sec' if reintentar else 'btn-pri' }}" href="/panel">{{ ic('layout-dashboard') }} Volver al panel</a>{% endif %}
+{% if not en_panel %}<a class="btn btn-sec" href="/">{{ ic('globe') }} Ir a la portada</a>{% endif %}
+</div></div></section>
+<style>
+.err{display:flex;align-items:center;gap:24px;padding:24px 0 16px;max-width:760px}
+.err-x{min-width:0}
+.err-c{margin:0;font:500 12px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-2)}
+.err-h{margin:8px 0 0;font-size:clamp(22px,3.4vw,32px);line-height:1.15;color:var(--brand);overflow-wrap:anywhere}
+.err-p{margin:8px 0 0;font-size:15px;line-height:1.5;color:var(--muted)}
+.err-a{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+@media(max-width:599px){.err{flex-direction:column;align-items:flex-start;gap:16px}.err .ti{width:96px!important}.err-a .btn{flex:1 1 100%}}
+</style>
+{% endmacro %}
+{% block titulo %}{{ titulo }} · Kerna AI{% endblock %}
+{% block navpub %}{% endblock %}
+{% block cuerpo %}<div class="max-w-7xl mx-auto px-4 md:px-8 pt-10 md:pt-16 pb-20">{{ cuerpo_error() }}</div>{% endblock %}
+{% block vista %}{{ cuerpo_error() }}{% endblock %}
