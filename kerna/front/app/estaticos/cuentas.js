@@ -51,9 +51,9 @@
       const limite = !r.correo_enviado && r.correo_motivo === 'limite';
       const espera = r.correo_espera_min ? 'en ' + (r.correo_espera_min === 1 ? '1 minuto' : r.correo_espera_min + ' minutos') : 'dentro de una hora';
       $('[data-v=titulo]', c).textContent = r.correo_enviado ? 'Se envió por correo' : limite ? 'Se alcanzó el límite de correos de la demo' : 'No se pudo enviar el correo';
-      $('[data-v=nota]', c).textContent = r.correo_enviado ? 'También la puedes entregar tú si el correo no llega: no se vuelve a mostrar'
-        : limite ? 'Esta demo envía pocos correos por hora y ya se usaron. Entrégale tú esta contraseña, o restablécela ' + espera + ' para que le llegue por correo. No se vuelve a mostrar'
-        : 'Entrégale esta contraseña temporal: no se vuelve a mostrar';
+      $('[data-v=nota]', c).textContent = r.correo_enviado ? 'Si no le llega, cópiala y envíasela tú por otro medio (chat o en persona). No se vuelve a mostrar'
+        : limite ? 'Esta demo envía pocos correos por hora y ya se usaron, así que no le llegará. Copia esta contraseña y envíasela tú por otro medio (chat o en persona), o restablécela ' + espera + ' para que le llegue por correo. No se vuelve a mostrar'
+        : 'No le llegará por correo. Copia esta contraseña y envíasela tú por otro medio (chat o en persona). No se vuelve a mostrar';
       c.showModal();
     } else location.reload();
   });
