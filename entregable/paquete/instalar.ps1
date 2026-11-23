@@ -132,7 +132,7 @@ $f.Add_Shown({
   $barra.Style = "Blocks"; $barra.Value = 100
   $titulo.Text = "Listo. Veridy y Kerna están funcionando"
   $mensaje.ForeColor = [System.Drawing.Color]::FromArgb(31, 138, 76)
-  $mensaje.Text = "Elige por dónde empezar. Las cuentas de prueba están en la página de inicio. Para apagar todo, usa «Detener»."
+  $mensaje.Text = "Elige por dónde empezar. Las cuentas de prueba están en la página de inicio. Para apagar todo, usa «Detener» en la carpeta «archivos»."
   $bInicio.Visible = $true; $bDenuncia.Visible = $true; $bPanel.Visible = $true
   Start-Process $Inicio
 })

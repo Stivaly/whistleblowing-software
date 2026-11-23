@@ -22,11 +22,8 @@
 <table>
   <tr><th>Archivo</th><th>Para qué sirve</th></tr>
   <tr><td><b>Instalar</b> (Instalar.bat)</td><td>Windows: instala y enciende todo con un doble clic.</td></tr>
-  <tr><td><b>Detener</b> (Detener.bat)</td><td>Windows: apaga todo. Lo que hiciste se conserva.</td></tr>
-  <tr><td>instalar.sh / detener.sh</td><td>Lo mismo, para Linux.</td></tr>
-  <tr><td>imagenes.tar.gz</td><td>Los programas ya listos (no se descarga nada más).</td></tr>
-  <tr><td>configuracion.env</td><td>Datos de conexión y cuentas de prueba. No hace falta abrirlo.</td></tr>
-  <tr><td>manual-de-usuario.pdf</td><td>Cómo usar Veridy y Kerna, paso a paso.</td></tr>
+  <tr><td>instalar.sh</td><td>Lo mismo, para Linux.</td></tr>
+  <tr><td>carpeta <b>archivos</b></td><td>Lo que usan los instaladores, los manuales y <b>Detener</b> (apaga todo; lo que hiciste se conserva). No hace falta abrirla para instalar.</td></tr>
 </table>
 <div class="nota">No cambies los nombres de los archivos ni los saques de la carpeta.</div>
 
@@ -84,7 +81,7 @@ No la cierres mientras trabaja.</div>
 <h2>5. Apagar y volver a encender</h2>
 <table>
   <tr><th></th><th>Windows</th><th>Linux</th></tr>
-  <tr><td>Apagar</td><td>Doble clic en <b>Detener</b></td><td><code>./detener.sh</code></td></tr>
+  <tr><td>Apagar</td><td>Doble clic en <b>Detener</b>, dentro de la carpeta <b>archivos</b></td><td><code>./archivos/detener.sh</code></td></tr>
   <tr><td>Volver a encender</td><td>Doble clic en <b>Instalar</b> (tarda 1 minuto)</td><td><code>./instalar.sh</code></td></tr>
 </table>
 <p>Las denuncias, valoraciones y clasificaciones que hiciste se conservan al apagar. Al apagar el computador también se apaga todo; al volver a usarlo, abre «Instalar» otra vez.</p>
@@ -108,7 +105,7 @@ No la cierres mientras trabaja.</div>
 Si la red obliga a usar un «proxy», abre <b>configuracion.env</b> con el Bloc de notas, escribe la dirección del proxy en la última línea (por ejemplo <code>HTTPS_PROXY=http://proxy.institucion.cl:8080</code>), guarda y vuelve a abrir «Instalar». Como alternativa rápida, conecta el computador a otra red, por ejemplo el teléfono como punto de acceso.</div>
 
 <h2>7. Desinstalar</h2>
-<p>Primero usa <b>Detener</b>. Luego, en Docker Desktop, sección <b>Containers</b>, elimina el grupo <b>veridy-kerna</b>; en <b>Images</b>, elimina las que empiezan con <i>veridy-local</i> y <i>kerna-</i>; y en <b>Volumes</b>, los que empiezan con <i>veridy-kerna</i> (esto borra también las denuncias de prueba). Por último, borra la carpeta veridy-kerna-local y, si ya no lo necesitas, desinstala Docker Desktop desde «Agregar o quitar programas».</p>
+<p>Primero usa <b>Detener</b> (carpeta <b>archivos</b>). Luego, en Docker Desktop, sección <b>Containers</b>, elimina el grupo <b>veridy-kerna</b>; en <b>Images</b>, elimina las que empiezan con <i>veridy-local</i> y <i>kerna-</i>; y en <b>Volumes</b>, los que empiezan con <i>veridy-kerna</i> (esto borra también las denuncias de prueba). Por último, borra la carpeta veridy-kerna-local y, si ya no lo necesitas, desinstala Docker Desktop desde «Agregar o quitar programas».</p>
 
 </body>
 </html>

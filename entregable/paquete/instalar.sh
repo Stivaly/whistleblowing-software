@@ -53,7 +53,7 @@ cat <<FIN
   Página de inicio (botones a cada parte y cuentas de prueba):  $INICIO
   Hacer una denuncia en Veridy:  http://localhost:8401/#/submission
   Panel de Kerna:                http://localhost:8402/acceso
-  Para apagar todo:              ./detener.sh
+  Para apagar todo:              ./archivos/detener.sh
 
 FIN
 abrir "$INICIO"

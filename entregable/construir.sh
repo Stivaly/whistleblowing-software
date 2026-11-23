@@ -58,18 +58,22 @@ cp "$AQUI"/manuales/*.pdf "$P/manuales/" 2>/dev/null || echo "   (sin manuales e
 docker build -q -t "kerna-panel-local:$VERSION" -f "$AQUI/imagenes/Dockerfile.panel" "$P" >/dev/null
 
 echo "4/6 Carpeta del paquete"
-mkdir -p "$PAQ"
-cp "$AQUI/paquete/docker-compose.yml" "$AQUI"/paquete/*.bat "$AQUI"/paquete/*.ps1 "$AQUI"/paquete/*.sh "$AQUI/paquete/LEEME.txt" "$PAQ/"
-chmod +x "$PAQ"/*.sh
+# Arriba solo los instaladores; todo lo demás en archivos/ (la usuaria no necesita abrirla).
+if [ -e "$PAQ" ]; then P0="$RAIZ/.papelera/$(date +%F)/entregable/dist/veridy-kerna-local-$(date +%H%M%S)"; mkdir -p "$(dirname "$P0")"; mv "$PAQ" "$P0"; fi
+A="$PAQ/archivos"; mkdir -p "$A"
+cp "$AQUI/paquete/docker-compose.yml" "$AQUI/paquete/Detener.bat" "$AQUI"/paquete/*.ps1 "$AQUI"/paquete/*.sh "$AQUI/paquete/LEEME.txt" "$A/"
+printf '@echo off\r\nstart "" powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%%~dp0archivos\\instalar.ps1"\r\n' > "$PAQ/Instalar.bat"
+printf '#!/usr/bin/env bash\n# Instalador de Veridy y Kerna para Linux. Uso: ./instalar.sh\nexec bash "$(dirname "$0")/archivos/instalar.sh" "$@"\n' > "$PAQ/instalar.sh"
+chmod +x "$PAQ"/*.sh "$A"/*.sh
 # Windows: fin de línea CRLF; PowerShell 5 necesita BOM para leer bien los acentos.
-python3 - "$PAQ" <<'PY'
+python3 - "$A" <<'PY'
 import pathlib, sys
 for p in pathlib.Path(sys.argv[1]).iterdir():
     if p.suffix in (".ps1", ".bat", ".txt"):
         t = p.read_text(encoding="utf-8").replace("\r\n", "\n").replace("\n", "\r\n")
         p.write_text(t, encoding="utf-8-sig" if p.suffix == ".ps1" else "utf-8", newline="")
 PY
-cp "$AQUI"/manuales/*.pdf "$PAQ/" 2>/dev/null || true
+cp "$AQUI"/manuales/*.pdf "$A/" 2>/dev/null || true
 sal() { terraform -chdir="$TF" output -raw "$1"; }
 {
   echo "VERSION=$VERSION"
@@ -81,13 +85,15 @@ sal() { terraform -chdir="$TF" output -raw "$1"; }
   grep -E '^(VERIDY_CONECTOR_CLAVE|VERIDY_AUDITOR_USUARIO|VERIDY_AUDITOR_CLAVE|KERNA_CLIENT_ID|KERNA_CLIENT_SECRET|KERNA_PANEL_USUARIO|KERNA_PANEL_CLAVE|IDENTITY_ENDPOINT|IDENTITY_HEADER|DEMO_CLIENT_ID|DEMO_CLIENT_SECRET|FRONT_CLAVE)=' "$DIST/secretos.env"
   echo "# Solo si la red exige un proxy para salir a internet (p. ej. http://proxy.miinstitucion.cl:8080):"
   echo "HTTPS_PROXY="
-} | tr -d '\r' > "$PAQ/configuracion.env"
+} | tr -d '\r' > "$A/configuracion.env"
 
 echo "5/6 Imágenes en el paquete (para instalar sin descargar nada)"
-docker save "veridy-local:$VERSION" "kerna-conector-local:$VERSION" "kerna-panel-local:$VERSION" | gzip -1 > "$PAQ/imagenes.tar.gz"
+docker save "veridy-local:$VERSION" "kerna-conector-local:$VERSION" "kerna-panel-local:$VERSION" | gzip -1 > "$A/imagenes.tar.gz"
 
 echo "6/6 Listo: $PAQ ($(du -sh "$PAQ" | cut -f1))"
 if [ "$ZIP" = 1 ]; then
+  mkdir -p "$RAIZ/.papelera/$(date +%F)/entregable/dist"
+  [ -e "$DIST/veridy-kerna-local.zip" ] && mv "$DIST/veridy-kerna-local.zip" "$RAIZ/.papelera/$(date +%F)/entregable/dist/veridy-kerna-local-$(date +%H%M%S).zip"
   (cd "$DIST" && python3 -c "import shutil;shutil.make_archive('veridy-kerna-local','zip','.','veridy-kerna-local')")
   echo "   $DIST/veridy-kerna-local.zip"
 fi
