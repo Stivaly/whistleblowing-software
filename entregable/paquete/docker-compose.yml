@@ -11,7 +11,7 @@ services:
   veridy:
     image: veridy-local:${VERSION}
     restart: unless-stopped
-    ports: ["127.0.0.1:8401:8080"]
+    ports: ["127.0.0.1:${PUERTO_VERIDY:-8401}:8080"]
     volumes: ["veridy-datos:/var/globaleaks"]
     healthcheck:
       test: ["CMD", "python3", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8080/api/health',timeout=5)"]
@@ -44,7 +44,7 @@ services:
   panel:
     image: kerna-panel-local:${VERSION}
     restart: unless-stopped
-    ports: ["127.0.0.1:8402:8000"]
+    ports: ["127.0.0.1:${PUERTO_PANEL:-8402}:8000"]
     environment:
       <<: *salida
       FRONT_AUTH: clave
@@ -66,12 +66,12 @@ services:
     image: kerna-panel-local:${VERSION}
     restart: unless-stopped
     command: ["python", "/app/lanzador/lanzador.py"]
-    ports: ["127.0.0.1:8400:8400"]
+    ports: ["127.0.0.1:${PUERTO_INICIO:-8400}:8400"]
     environment:
       <<: *salida
       NUBE_SALUD: ${KERNA_API_URL}/salud
-      VERIDY_PUBLICA: http://localhost:8401
-      PANEL_PUBLICO: http://localhost:8402
+      VERIDY_PUBLICA: http://localhost:${PUERTO_VERIDY:-8401}
+      PANEL_PUBLICO: http://localhost:${PUERTO_PANEL:-8402}
       VERIDY_AUDITOR_USUARIO: ${VERIDY_AUDITOR_USUARIO}
       VERIDY_AUDITOR_CLAVE: ${VERIDY_AUDITOR_CLAVE}
       KERNA_PANEL_USUARIO: ${KERNA_PANEL_USUARIO}

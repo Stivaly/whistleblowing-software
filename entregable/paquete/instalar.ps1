@@ -6,12 +6,11 @@ Add-Type -AssemblyName System.Drawing
 $ErrorActionPreference = "Continue"
 $Aqui = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $Aqui
-$Inicio = "http://localhost:8400"
 
 # Estado compartido entre los pasos (segundo plano) y la ventana.
 $E = [hashtable]::Synchronized(@{
   Aqui = $Aqui; Pasos = @("", "", "", "", ""); Mensaje = "No cierres esta ventana."; Base = ""; Desde = $null
-  Final = ""; Botones = @(); Barra = "mover"
+  Final = ""; Botones = @(); Barra = "mover"; Puertos = @{ inicio = 8400; veridy = 8401; panel = 8402 }
 })
 
 # ---------------------------------------------------------------- pasos (segundo plano)
@@ -99,11 +98,22 @@ $trabajo = {
     }
     Paso 2 "ok"
 
-    # 4. Encender
+    # 4. Encender (en puertos libres: Windows a veces se reserva 8400-8402)
     Paso 3 "curso"; Avance "Poniendo en marcha Veridy y Kerna."
+    [void](Ejecutar "compose --env-file `"$Config`" -f `"$Aqui\docker-compose.yml`" stop" 120)  # suelta los puertos de una vez anterior
+    function Libre($n) { try { $l = New-Object System.Net.Sockets.TcpListener([System.Net.IPAddress]::Loopback, $n); $l.Start(); $l.Stop(); return $true } catch { return $false } }
+    $usados = @()
+    foreach ($k in @("INICIO", "VERIDY", "PANEL")) {
+      $base = @{ INICIO = 8400; VERIDY = 8401; PANEL = 8402 }[$k]
+      $n = $base
+      foreach ($c in @($base, ($base + 10000), ($base + 20000), ($base + 30000), ($base + 40000), ($base + 50000))) { if (($usados -notcontains $c) -and (Libre $c)) { $n = $c; break } }
+      $usados += $n; Set-Item "env:PUERTO_$k" $n
+    }
+    $E.Puertos = @{ inicio = $env:PUERTO_INICIO; veridy = $env:PUERTO_VERIDY; panel = $env:PUERTO_PANEL }
+    Anotar ("puertos: inicio $env:PUERTO_INICIO, veridy $env:PUERTO_VERIDY, panel $env:PUERTO_PANEL")
     if ((Ejecutar "compose --progress plain --env-file `"$Config`" -f `"$Aqui\docker-compose.yml`" up -d --pull never" 300) -ne 0) {
       $e = Get-Content "$env:TEMP\vk-error.txt" -Raw
-      if ($e -match "port is already allocated|address already in use") { $e = "Otro programa está usando los puertos 8400, 8401 o 8402. Ciérralo y vuelve a abrir «Instalar»." }
+      if ($e -match "port is already allocated|address already in use") { $e = "Otro programa está usando los puertos que necesita Veridy. Vuelve a abrir «Instalar»: buscará otros." }
       Fallo 3 $e; return
     }
     Paso 3 "ok"
@@ -111,7 +121,7 @@ $trabajo = {
     # 5. Esperar
     Paso 4 "curso"; Avance "Esperando a que Veridy y el panel respondan (hasta 3 minutos)."
     $ini = Get-Date; $ok = $false
-    while (-not $ok -and ((Get-Date) - $ini).TotalMinutes -lt 3) { Start-Sleep -Seconds 3; $ok = (Responde "http://localhost:8401/api/health") -and (Responde "http://localhost:8402/salud") }
+    while (-not $ok -and ((Get-Date) - $ini).TotalMinutes -lt 3) { Start-Sleep -Seconds 3; $ok = (Responde "http://localhost:$env:PUERTO_VERIDY/api/health") -and (Responde "http://localhost:$env:PUERTO_PANEL/salud") }
     if (-not $ok) { Fallo 4 "Todavía no responde. Abre la página de inicio: allí se ve qué falta, y se actualiza sola."; $E.Botones = @("inicio"); return }
     Paso 4 "ok"
     $E.Desde = $null
@@ -169,9 +179,9 @@ $botones = @{
   docker    = Boton "Ir a descargar Docker Desktop" 24 260 $azul
   reiniciar = Boton "Reiniciar ahora" 24 200 $azul
 }
-$botones.inicio.Add_Click({ Start-Process $Inicio })
-$botones.denuncia.Add_Click({ Start-Process "http://localhost:8401/#/submission" })
-$botones.panel.Add_Click({ Start-Process "http://localhost:8402/acceso" })
+$botones.inicio.Add_Click({ Start-Process ("http://localhost:" + $E.Puertos.inicio) })
+$botones.denuncia.Add_Click({ Start-Process ("http://localhost:" + $E.Puertos.veridy + "/#/submission") })
+$botones.panel.Add_Click({ Start-Process ("http://localhost:" + $E.Puertos.panel + "/acceso") })
 $botones.docker.Add_Click({ Start-Process "https://docs.docker.com/desktop/setup/install/windows-install/" })
 $botones.reiniciar.Add_Click({ Restart-Computer -Force })
 
