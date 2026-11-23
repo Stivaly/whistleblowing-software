@@ -28,9 +28,19 @@ $trabajo = {
   function Fallo($i, $t) { Paso $i "mal"; $E.Base = $t; $E.Desde = $null; $E.Final = "mal"; $E.Barra = "parar"; Anotar "FALLO $t" }
   function Ejecutar($argumentos, $limite = 0) {
     # Devuelve el código de salida de docker; -1 si pasa del límite (en segundos).
-    $p = Start-Process -FilePath "docker" -ArgumentList $argumentos -WindowStyle Hidden -PassThru `
-      -RedirectStandardOutput "$env:TEMP\vk-salida.txt" -RedirectStandardError "$env:TEMP\vk-error.txt"
-    if ($limite -gt 0) { if (-not $p.WaitForExit($limite * 1000)) { try { $p.Kill() } catch {}; return -1 } } else { $p.WaitForExit() }
+    # (Start-Process -PassThru a veces no entrega el código de salida; por eso se usa Process directo.)
+    $exe = Join-Path $env:ProgramFiles "Docker\Docker\resources\bin\docker.exe"
+    if (-not (Test-Path $exe)) { $exe = "docker" }
+    $si = New-Object System.Diagnostics.ProcessStartInfo
+    $si.FileName = $exe; $si.Arguments = $argumentos
+    $si.UseShellExecute = $false; $si.CreateNoWindow = $true
+    $si.RedirectStandardOutput = $true; $si.RedirectStandardError = $true
+    try { $p = [System.Diagnostics.Process]::Start($si) } catch { Anotar "docker no se pudo ejecutar: $_"; Set-Content "$env:TEMP\vk-error.txt" "$_"; return -2 }
+    $out = $p.StandardOutput.ReadToEndAsync(); $err = $p.StandardError.ReadToEndAsync()
+    if ($limite -gt 0) { if (-not $p.WaitForExit($limite * 1000)) { try { $p.Kill() } catch {}; Anotar "docker ${argumentos}: sin respuesta en $limite s"; return -1 } } else { $p.WaitForExit() }
+    $p.WaitForExit()
+    Set-Content "$env:TEMP\vk-salida.txt" $out.Result; Set-Content "$env:TEMP\vk-error.txt" $err.Result
+    if ($p.ExitCode -ne 0) { Anotar ("docker $argumentos -> " + $p.ExitCode + ": " + $err.Result) }
     return $p.ExitCode
   }
   function DockerResponde { return ((Ejecutar "info" 10) -eq 0) }
