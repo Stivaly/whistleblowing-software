@@ -28,20 +28,12 @@
 <div class="nota">No cambies los nombres de los archivos ni los saques de la carpeta.</div>
 
 <h2>2. Instalación en Windows</h2>
-<h3>Paso 1. Instalar Docker Desktop (solo la primera vez)</h3>
-<p>Docker Desktop es el programa gratuito que permite que Veridy y Kerna funcionen en tu computador sin instalar nada más.</p>
-<div class="paso"><b class="t">1.1</b>Abre el navegador y entra a <b>docker.com/products/docker-desktop</b>. Presiona <b>«Download for Windows»</b>.</div>
-<div class="paso"><b class="t">1.2</b>Abre el archivo descargado (<i>Docker Desktop Installer.exe</i>). Si Windows pregunta si permites cambios, responde <b>Sí</b>.</div>
-<div class="paso"><b class="t">1.3</b>Deja marcadas las opciones que vienen marcadas (en especial «Use WSL 2») y presiona <b>OK</b>. Al terminar presiona <b>«Close and restart»</b>: el computador se reinicia.</div>
-<div class="paso"><b class="t">1.4</b>Después del reinicio, Docker Desktop se abre solo. Acepta las condiciones (<b>Accept</b>). Si pide iniciar sesión, puedes presionar <b>«Skip»</b> (Omitir). Si aparece un aviso para actualizar «WSL», sigue sus instrucciones y vuelve a abrir Docker Desktop.</div>
-<div class="paso"><b class="t">1.5</b>Espera hasta que en la esquina inferior izquierda de Docker Desktop diga <b>«Engine running»</b> en verde. Puedes minimizar la ventana.</div>
-
-<h3>Paso 2. Instalar Veridy y Kerna</h3>
+<p>No necesitas instalar nada antes: si falta Docker Desktop (el programa gratuito que hace funcionar Veridy y Kerna), el instalador lo descarga e instala solo.</p>
 <div class="paso"><b class="t">2.1</b>Abre la carpeta <b>veridy-kerna-local</b> y haz <b>doble clic en «Instalar»</b>.</div>
 <div class="paso"><b class="t">2.2</b>Si aparece «Windows protegió su PC», presiona <b>«Más información»</b> y luego <b>«Ejecutar de todas formas»</b>. Si el firewall pregunta por Docker, presiona <b>Permitir</b>.</div>
 <div class="paso"><b class="t">2.3</b>Se abre la ventana <b>«Instalar Veridy y Kerna»</b>. Hace todo sola y va marcando cada paso con un ✓:
 <ol>
-  <li>Revisar que Docker Desktop esté instalado.</li>
+  <li>Revisar o instalar Docker Desktop. Si hay que instalarlo, Windows pregunta si permites cambios: responde <b>Sí</b>. Si después pide reiniciar, reinicia y vuelve a hacer doble clic en «Instalar».</li>
   <li>Encender Docker Desktop (si estaba apagado, lo abre y espera).</li>
   <li>Copiar los programas (la primera vez tarda entre 2 y 6 minutos).</li>
   <li>Poner en marcha Veridy y Kerna.</li>
@@ -52,13 +44,7 @@ No la cierres mientras trabaja.</div>
 <p>Si en algún paso aparece una ✗ roja, la ventana explica qué falta. Corrígelo y vuelve a hacer doble clic en «Instalar»: retoma desde donde quedó.</p>
 
 <h2>3. Instalación en Linux</h2>
-<h3>Paso 1. Instalar Docker (solo la primera vez)</h3>
-<p>Abre una terminal (en Ubuntu: tecla Ctrl + Alt + T) y copia estas tres líneas, una por una, presionando Enter después de cada una. Pedirá tu contraseña.</p>
-<div class="paso"><code>curl -fsSL https://get.docker.com | sudo sh</code><br>
-<code>sudo usermod -aG docker $USER</code><br>
-<code>sudo systemctl enable --now docker</code></div>
-<p>Cierra la sesión del computador y vuelve a entrar (así tu usuario puede usar Docker). También sirve Docker Desktop para Linux, si lo prefieres.</p>
-<h3>Paso 2. Instalar Veridy y Kerna</h3>
+<p>Tampoco hace falta instalar nada antes: si falta Docker, el instalador lo instala solo (pedirá tu contraseña).</p>
 <div class="paso"><b class="t">2.1</b>Abre la carpeta <b>veridy-kerna-local</b>, haz clic derecho en un espacio vacío y elige <b>«Abrir en una terminal»</b>.</div>
 <div class="paso"><b class="t">2.2</b>Escribe <code>./instalar.sh</code> y presiona Enter. Verás los mismos cinco pasos con un ✓ verde cada uno.</div>
 <div class="paso"><b class="t">2.3</b>Al terminar, la terminal muestra las direcciones de cada parte: mantén presionada la tecla Ctrl y haz clic en la que quieras abrir.</div>
@@ -89,7 +75,7 @@ No la cierres mientras trabaja.</div>
 <h2>6. Si algo no funciona</h2>
 <table>
   <tr><th>Lo que pasa</th><th>Qué hacer</th></tr>
-  <tr><td>«Falta Docker Desktop»</td><td>Instálalo (sección 2, paso 1) y vuelve a abrir «Instalar».</td></tr>
+  <tr><td>«No se pudo descargar Docker Desktop»</td><td>Revisa la conexión a internet y vuelve a abrir «Instalar».</td></tr>
   <tr><td>«Docker Desktop no terminó de encender»</td><td>Abre Docker Desktop desde el menú Inicio, espera «Engine running» y vuelve a abrir «Instalar».</td></tr>
   <tr><td>Docker Desktop dice que falta «virtualización» o «WSL»</td><td>Hay que activar la virtualización del computador (en la configuración de arranque, opción «Virtualization» o «VT-x»). Si es un computador institucional, pídelo al área de informática.</td></tr>
   <tr><td>«Otro programa está usando los puertos 8400, 8401 o 8402»</td><td>Cierra el otro programa (o reinicia el computador) y vuelve a abrir «Instalar».</td></tr>

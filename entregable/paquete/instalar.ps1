@@ -25,7 +25,7 @@ $titulo.Font = New-Object System.Drawing.Font("Segoe UI", 15, [System.Drawing.Fo
 $titulo.Location = New-Object System.Drawing.Point(24, 18); $titulo.AutoSize = $true
 $f.Controls.Add($titulo)
 
-$nombres = @("Revisar que Docker Desktop esté instalado", "Encender Docker Desktop", "Copiar los programas (la primera vez tarda unos minutos)", "Poner en marcha Veridy y Kerna", "Esperar a que todo responda")
+$nombres = @("Revisar o instalar Docker Desktop", "Encender Docker Desktop", "Copiar los programas (la primera vez tarda unos minutos)", "Poner en marcha Veridy y Kerna", "Esperar a que todo responda")
 $pasos = @()
 for ($i = 0; $i -lt $nombres.Count; $i++) {
   $l = New-Object System.Windows.Forms.Label
@@ -89,9 +89,22 @@ function Responde($url) {
 $f.Add_Shown({
   # 1. Docker instalado
   Paso 0 "curso"
+  $binDocker = Join-Path $env:ProgramFiles "Docker\Docker\resources\bin"
+  if (-not (Get-Command docker -ErrorAction SilentlyContinue) -and (Test-Path "$binDocker\docker.exe")) { $env:PATH = "$binDocker;$env:PATH" }
   if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-    Fallo 0 "Falta Docker Desktop. Usa el botón para ir a descargarlo; instálalo, reinicia el computador y vuelve a abrir «Instalar»."
-    $bDocker.Visible = $true; return
+    $mensaje.Text = "Descargando Docker Desktop (unos 600 MB; puede tardar varios minutos)."
+    $destino = Join-Path $env:TEMP "DockerDesktopInstaller.exe"
+    $wc = New-Object System.Net.WebClient
+    $tarea = $wc.DownloadFileTaskAsync("https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe", $destino)
+    while (-not $tarea.IsCompleted) { [System.Windows.Forms.Application]::DoEvents(); Start-Sleep -Milliseconds 200 }
+    if ($tarea.IsFaulted) { Fallo 0 "No se pudo descargar Docker Desktop. Revisa la conexión a internet o usa el botón para descargarlo a mano."; $bDocker.Visible = $true; return }
+    $mensaje.Text = "Instalando Docker Desktop. Windows pedirá permiso: presiona «Sí». Tarda unos minutos."
+    try { $p = Start-Process -FilePath $destino -ArgumentList "install","--quiet","--accept-license","--backend=wsl-2","--always-run-service" -Verb RunAs -PassThru }
+    catch { Fallo 0 "Se necesita presionar «Sí» para instalar Docker Desktop. Vuelve a abrir «Instalar»."; return }
+    while (-not $p.HasExited) { [System.Windows.Forms.Application]::DoEvents(); Start-Sleep -Milliseconds 300 }
+    if (-not (Test-Path "$binDocker\docker.exe")) { Fallo 0 "La instalación de Docker Desktop no terminó. Reinicia el computador y vuelve a abrir «Instalar»."; return }
+    $env:PATH = "$binDocker;$env:PATH"
+    if ($p.ExitCode -eq 3010) { Fallo 0 "Docker Desktop quedó instalado. Windows necesita reiniciarse: reinicia el computador y vuelve a abrir «Instalar»."; return }
   }
   Paso 0 "ok"
 

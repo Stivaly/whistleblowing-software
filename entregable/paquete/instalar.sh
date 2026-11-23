@@ -9,8 +9,13 @@ paso()  { printf '\n\033[1m► %s\033[0m\n' "$1"; }
 falla() { printf '\033[31m✗ %s\033[0m\n' "$1"; read -rp "Presiona Enter para cerrar." _; exit 1; }
 
 DOCKER=docker
-paso "Revisar que Docker esté instalado"
-command -v docker >/dev/null || falla "Falta Docker. Instálalo con las instrucciones del manual de instalación (sección Linux) y vuelve a ejecutar ./instalar.sh"
+paso "Revisar o instalar Docker"
+if ! command -v docker >/dev/null; then
+  echo "Instalando Docker (pedirá la contraseña de este computador)."
+  command -v curl >/dev/null || sudo apt-get install -y curl >/dev/null 2>&1 || sudo dnf install -y curl >/dev/null 2>&1
+  curl -fsSL https://get.docker.com | sudo sh >/dev/null || falla "No se pudo instalar Docker. Revisa la conexión a internet y vuelve a ejecutar ./instalar.sh"
+  sudo systemctl enable --now docker >/dev/null 2>&1 || true
+fi
 if ! docker info >/dev/null 2>&1; then
   if sudo -n true 2>/dev/null || [ -t 0 ]; then DOCKER="sudo docker"; fi
 fi
