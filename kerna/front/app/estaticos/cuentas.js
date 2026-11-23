@@ -54,7 +54,7 @@
     if (r.clave) {
       const c = $('#dlg-clave'); $('[data-v=usuario]', c).value = r.usuario; $('[data-v=clave]', c).value = r.clave;
       $('[data-v=titulo]', c).textContent = r.correo_enviado ? 'Se envió por correo' : 'No se pudo enviar el correo';
-      $('[data-v=nota]', c).textContent = r.correo_enviado ? 'Si no le llega, cópiala y envíasela tú por otro medio (chat o en persona). No se vuelve a mostrar'
+      $('[data-v=nota]', c).textContent = r.correo_enviado ? 'Puede llegar a correo no deseado (spam): pídele que lo revise. Si no le llega, cópiala y envíasela tú por otro medio. No se vuelve a mostrar'
         : 'No le llegará por correo. Copia esta contraseña y envíasela tú por otro medio (chat o en persona). No se vuelve a mostrar';
       c.showModal();
     } else location.reload();

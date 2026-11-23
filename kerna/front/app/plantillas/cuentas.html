@@ -26,7 +26,7 @@
 
 {% if ed %}
 <dialog id="dlg-nueva" class="dlg" aria-labelledby="dlg-nueva-t"><form method="dialog" class="dlg-f" data-form="crear">
-<div class="dlg-h">{{ ic('user-plus', px=40) }}<div><h2 id="dlg-nueva-t" class="dlg-t">Crear cuenta</h2><p class="dlg-p">Le llega una contraseña temporal por correo</p></div></div>
+<div class="dlg-h">{{ ic('user-plus', px=40) }}<div><h2 id="dlg-nueva-t" class="dlg-t">Crear cuenta</h2><p class="dlg-p">Le llega una contraseña temporal por correo (puede caer en no deseado)</p></div></div>
 <label class="cl-c">Nombre<input name="nombre" maxlength="80" required autocomplete="off"></label>
 <label class="cl-c">Usuario<input name="usuario" maxlength="32" required autocomplete="off" autocapitalize="none" pattern="[a-z0-9][a-z0-9._\-]{2,31}" placeholder="maria.perez" title="3 a 32 letras minúsculas, números, punto, guion o guion bajo"></label>
 <label class="cl-c">Correo<input name="correo" type="email" maxlength="120" required autocomplete="off"></label>
