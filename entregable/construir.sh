@@ -10,7 +10,7 @@ AQUI="$(cd "$(dirname "$0")" && pwd)"; RAIZ="$(git -C "$AQUI" rev-parse --show-t
 DIST="$AQUI/dist"; PAQ="$DIST/veridy-kerna-local"; TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 SEMILLA=1; ZIP=1
 for a in "$@"; do case "$a" in --sin-semilla) SEMILLA=0;; --sin-zip) ZIP=0;; *) echo "opción desconocida: $a" >&2; exit 2;; esac; done
-VERSION="${VERSION:-$(date +%Y%m%d)}"
+VERSION="${VERSION:-$(date +%Y%m%d%H%M)}"
 TF="$RAIZ/infra/terraform"; TFV="$RAIZ/infra/veridy/terraform"
 VERIDY_BASE="acrkernadevg6mzy.azurecr.io/veridy:$(sed -n 's/^imagen_tag *= *"\(.*\)"/\1/p' "$TFV/terraform.tfvars")"
 CONECTOR_BASE="acrkernadevg6mzy.azurecr.io/kerna-conector:$(sed -n 's/^conector_tag *= *"\(.*\)"/\1/p' "$TFV/terraform.tfvars")"
