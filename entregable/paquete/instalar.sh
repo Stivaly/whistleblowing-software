@@ -7,7 +7,6 @@ INICIO="http://localhost:8400"
 verde() { printf '\033[32m✓ %s\033[0m\n' "$1"; }
 paso()  { printf '\n\033[1m► %s\033[0m\n' "$1"; }
 falla() { printf '\033[31m✗ %s\033[0m\n' "$1"; read -rp "Presiona Enter para cerrar." _; exit 1; }
-abrir() { (xdg-open "$1" || sensible-browser "$1" || true) >/dev/null 2>&1 & }
 
 DOCKER=docker
 paso "Revisar que Docker esté instalado"
@@ -56,4 +55,3 @@ cat <<FIN
   Para apagar todo:              ./archivos/detener.sh
 
 FIN
-abrir "$INICIO"

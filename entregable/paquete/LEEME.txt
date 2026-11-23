@@ -3,7 +3,7 @@ VERIDY Y KERNA - INSTALACIÓN EN ESTE COMPUTADOR
 Windows
   1. Instala Docker Desktop (una sola vez). Instrucciones en «manual-de-instalacion.pdf» (esta carpeta).
   2. En la carpeta principal, doble clic en «Instalar». Se abre una ventana que hace todo sola.
-  3. Al terminar, usa los botones de la ventana o de la página de inicio que se abre en el navegador.
+  3. Al terminar, usa los botones de la ventana para ir a cada parte.
   Para apagar: doble clic en «Detener» (esta carpeta).
 
 Linux

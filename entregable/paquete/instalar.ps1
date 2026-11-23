@@ -55,6 +55,8 @@ function Boton($texto, $x, $ancho, $color) {
 $bInicio   = Boton "Abrir la página de inicio" 24 190 ([System.Drawing.Color]::FromArgb(11, 16, 32))
 $bDenuncia = Boton "Hacer una denuncia en Veridy" 222 190 ([System.Drawing.Color]::FromArgb(47, 95, 208))
 $bPanel    = Boton "Panel de Kerna" 420 180 ([System.Drawing.Color]::FromArgb(14, 124, 134))
+$bDocker   = Boton "Ir a descargar Docker Desktop" 24 260 ([System.Drawing.Color]::FromArgb(47, 95, 208))
+$bDocker.Add_Click({ Start-Process "https://docs.docker.com/desktop/setup/install/windows-install/" })
 $bInicio.Add_Click({ Start-Process $Inicio })
 $bDenuncia.Add_Click({ Start-Process "http://localhost:8401/#/submission" })
 $bPanel.Add_Click({ Start-Process "http://localhost:8402/acceso" })
@@ -88,8 +90,8 @@ $f.Add_Shown({
   # 1. Docker instalado
   Paso 0 "curso"
   if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-    Fallo 0 "Falta Docker Desktop. Se abrirá su página de descarga: instálalo, reinicia el computador y vuelve a abrir «Instalar»."
-    Start-Process "https://docs.docker.com/desktop/setup/install/windows-install/"; return
+    Fallo 0 "Falta Docker Desktop. Usa el botón para ir a descargarlo; instálalo, reinicia el computador y vuelve a abrir «Instalar»."
+    $bDocker.Visible = $true; return
   }
   Paso 0 "ok"
 
@@ -134,7 +136,6 @@ $f.Add_Shown({
   $mensaje.ForeColor = [System.Drawing.Color]::FromArgb(31, 138, 76)
   $mensaje.Text = "Elige por dónde empezar. Las cuentas de prueba están en la página de inicio. Para apagar todo, usa «Detener» en la carpeta «archivos»."
   $bInicio.Visible = $true; $bDenuncia.Visible = $true; $bPanel.Visible = $true
-  Start-Process $Inicio
 })
 
 [void]$f.ShowDialog()
