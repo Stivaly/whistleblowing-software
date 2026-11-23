@@ -33,7 +33,7 @@ $trabajo = {
     if ($limite -gt 0) { if (-not $p.WaitForExit($limite * 1000)) { try { $p.Kill() } catch {}; return -1 } } else { $p.WaitForExit() }
     return $p.ExitCode
   }
-  function DockerResponde { return ((Ejecutar "info" 20) -eq 0) }
+  function DockerResponde { return ((Ejecutar "info" 10) -eq 0) }
   function Responde($url) {
     try { $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 4; return ($r.StatusCode -lt 400) } catch { return $false }
   }
@@ -72,9 +72,9 @@ $trabajo = {
     if (-not (DockerResponde)) {
       $exe = Join-Path $env:ProgramFiles "Docker\Docker\Docker Desktop.exe"
       if (Test-Path $exe) { Start-Process $exe }
-      Avance "Encendiendo Docker Desktop (la primera vez tarda hasta 5 minutos). Si Docker muestra una ventana pidiendo aceptar condiciones, acéptalas."
+      Avance "Encendiendo Docker Desktop. Si Docker muestra una ventana pidiendo aceptar condiciones, acéptalas."
       $ini = Get-Date; $listo = $false
-      while (-not $listo -and ((Get-Date) - $ini).TotalMinutes -lt 5) { Start-Sleep -Seconds 5; $listo = DockerResponde }
+      while (-not $listo -and ((Get-Date) - $ini).TotalSeconds -lt 120) { Start-Sleep -Seconds 3; $listo = DockerResponde }
       if (-not $listo) { Fallo 1 "Docker Desktop no terminó de encender. Presiona «Reiniciar ahora»: al volver a entrar, la instalación sigue sola."; SeguirTrasReiniciar; return }
     }
     Paso 1 "ok"
