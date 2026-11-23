@@ -1,0 +1,82 @@
+# Veridy + Kerna en este computador. Lo usan Instalar / Detener; no hace falta abrirlo.
+# Solo se abren puertos en este computador (127.0.0.1). Hacia internet solo sale tráfico HTTPS (443) a Kerna en Azure.
+name: veridy-kerna
+
+x-red-salida: &salida
+  HTTPS_PROXY: ${HTTPS_PROXY:-}
+  HTTP_PROXY: ${HTTP_PROXY:-}
+  NO_PROXY: veridy,panel,inicio,localhost,127.0.0.1
+
+services:
+  veridy:
+    image: veridy-local:${VERSION}
+    restart: unless-stopped
+    ports: ["127.0.0.1:8401:8080"]
+    volumes: ["veridy-datos:/var/globaleaks"]
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8080/api/health',timeout=5)"]
+      interval: 15s
+      timeout: 6s
+      retries: 20
+      start_period: 30s
+
+  conector:
+    image: kerna-conector-local:${VERSION}
+    restart: unless-stopped
+    depends_on:
+      veridy: {condition: service_healthy}
+    volumes: ["conector-datos:/datos"]
+    environment:
+      <<: *salida
+      VERIDY_URL: http://veridy:8080
+      VERIDY_USUARIO: kerna-conector
+      VERIDY_PASSWORD: ${VERIDY_CONECTOR_CLAVE}
+      KERNA_API_URL: ${KERNA_API_URL}
+      KERNA_CLIENT_ID: ${KERNA_CLIENT_ID}
+      KERNA_CLIENT_SECRET: ${KERNA_CLIENT_SECRET}
+      KERNA_ID_EMPRESA: ${KERNA_CLIENT_ID}
+      KERNA_TABLAS_URL: ${KERNA_TABLAS_URL}
+      CONECTOR_INTERVALO_S: "20"
+      CONECTOR_ESTADO: sqlite:////datos/conector.db
+      IDENTITY_ENDPOINT: ${IDENTITY_ENDPOINT}
+      IDENTITY_HEADER: ${IDENTITY_HEADER}
+
+  panel:
+    image: kerna-panel-local:${VERSION}
+    restart: unless-stopped
+    ports: ["127.0.0.1:8402:8000"]
+    environment:
+      <<: *salida
+      FRONT_AUTH: clave
+      FRONT_CLAVE: ${FRONT_CLAVE}
+      LOG_ANALYTICS_WORKSPACE_ID: ${LOG_ANALYTICS_WORKSPACE_ID}
+      EVALUACIONES_TABLA_URL: ${KERNA_TABLAS_URL}
+      NEGOCIO_TABLA_URL: ${KERNA_TABLAS_URL}
+      CUENTAS_TABLA_URL: ${KERNA_TABLAS_URL}
+      REINTENTOS_TABLA_URL: ${KERNA_TABLAS_URL}
+      OPENAI_RECURSO_ID: ${OPENAI_RECURSO_ID}
+      AZ_SUSCRIPCION_ID: ${AZ_SUSCRIPCION_ID}
+      KERNA_NUCLEO_URL: ${KERNA_API_URL}
+      DEMO_CLIENT_ID: ${DEMO_CLIENT_ID}
+      DEMO_CLIENT_SECRET: ${DEMO_CLIENT_SECRET}
+      IDENTITY_ENDPOINT: ${IDENTITY_ENDPOINT}
+      IDENTITY_HEADER: ${IDENTITY_HEADER}
+
+  inicio:
+    image: kerna-panel-local:${VERSION}
+    restart: unless-stopped
+    command: ["python", "/app/lanzador/lanzador.py"]
+    ports: ["127.0.0.1:8400:8400"]
+    environment:
+      <<: *salida
+      NUBE_SALUD: ${KERNA_API_URL}/salud
+      VERIDY_PUBLICA: http://localhost:8401
+      PANEL_PUBLICO: http://localhost:8402
+      VERIDY_AUDITOR_USUARIO: ${VERIDY_AUDITOR_USUARIO}
+      VERIDY_AUDITOR_CLAVE: ${VERIDY_AUDITOR_CLAVE}
+      KERNA_PANEL_USUARIO: ${KERNA_PANEL_USUARIO}
+      KERNA_PANEL_CLAVE: ${KERNA_PANEL_CLAVE}
+
+volumes:
+  veridy-datos:
+  conector-datos:

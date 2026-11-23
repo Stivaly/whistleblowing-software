@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Manual de usuario: Veridy y Kerna</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<section class="portada">
+  <h1>Manual de usuario</h1>
+  <div class="sub">Veridy (denuncias) y Kerna (sugerencias de leyes para cada denuncia)</div>
+  <div class="datos">
+    <p><b>Para quién es:</b> para la persona que va a probar el sistema. No necesitas conocimientos técnicos.</p>
+    <p><b>Qué vas a hacer:</b> enviar una denuncia, revisarla como auditor junto a la sugerencia de Kerna y mirar el panel de Kerna.</p>
+    <p><b>Antes de empezar:</b> el sistema ya debe estar instalado (ver el «Manual de instalación»).</p>
+  </div>
+</section>
+
+<section class="indice">
+  <h2>Contenido</h2>
+  <ol>
+    <li>Cómo se relacionan Veridy y Kerna</li>
+    <li>La página de inicio y las cuentas de prueba</li>
+    <li>Parte 1 · Hacer una denuncia en Veridy</li>
+    <li>Parte 2 · Revisar la denuncia como auditor</li>
+    <li>Parte 3 · La sugerencia de Kerna, pieza por pieza</li>
+    <li>Parte 4 · Valorar y clasificar</li>
+    <li>Parte 5 · Todos los avisos que puede mostrar Kerna</li>
+    <li>Parte 6 · El panel de Kerna</li>
+    <li>Preguntas frecuentes</li>
+  </ol>
+</section>
+
+<h2>1. Cómo se relacionan Veridy y Kerna</h2>
+<p><b>Veridy</b> es el lugar donde las personas presentan denuncias (por ejemplo, de acoso laboral o de mal uso de datos personales) y donde los auditores de la organización las revisan.</p>
+<p><b>Kerna</b> es un asistente que lee cada denuncia nueva y le propone al auditor qué artículos de la ley chilena podrían aplicar, con el texto exacto de la ley y un enlace a la Biblioteca del Congreso Nacional. Kerna <b>sugiere</b>; quien decide siempre es el auditor.</p>
+<div class="paso"><b class="t">El recorrido de una denuncia</b>
+1) Una persona presenta la denuncia en Veridy. →
+2) Veridy la guarda protegida; Kerna la recibe sin nombres ni datos personales (los borra antes de analizarla). →
+3) Alrededor de un minuto después, la sugerencia aparece dentro de la denuncia, solo para los auditores. →
+4) El auditor revisa, valora cada artículo y guarda su clasificación. →
+5) El panel de Kerna muestra cuántas denuncias se revisaron, qué tan acertadas fueron y cuánto costó.</div>
+<div class="nota">La persona que denuncia <b>nunca ve</b> la sugerencia de Kerna. Solo la ven los auditores.</div>
+
+<h2>2. La página de inicio y las cuentas de prueba</h2>
+<p>Al terminar la instalación se abre sola en el navegador. También puedes abrirla cuando quieras escribiendo <code>localhost:8400</code> en la barra de direcciones del navegador. Desde aquí llegas a todo con botones.</p>
+<figure><img src="capturas/i01_inicio.png"><figcaption>Página de inicio</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Aviso general.</b> Dice si todo está listo. Si dice «Preparando todo», espera: se actualiza sola.</li>
+  <li><b class="n">2</b><b>Luces de estado.</b> Verde = esa parte funciona. «Conexión con Kerna en internet» en rojo significa que este computador no logra llegar a Kerna (ver Preguntas frecuentes).</li>
+  <li><b class="n">3</b><b>Hacer una denuncia en Veridy.</b> Abre el formulario de denuncias (Parte 1).</li>
+  <li><b class="n">4</b><b>Cuenta del auditor.</b> Usuario y contraseña para revisar denuncias. El botón «Copiar» la deja lista para pegar.</li>
+  <li><b class="n">5</b><b>Entrar a Veridy como auditor.</b> Abre la entrada de auditores (Parte 2).</li>
+  <li><b class="n">6</b><b>Cuenta del panel de Kerna.</b> Usuario y contraseña del panel.</li>
+  <li><b class="n">7</b><b>Entrar al panel de Kerna</b> (Parte 6).</li>
+  <li><b class="n">8</b><b>Manuales.</b> Este manual y el de instalación.</li>
+</ol>
+<table>
+  <tr><th>Para</th><th>Usuario</th><th>Contraseña</th></tr>
+  <tr><td>Revisar denuncias en Veridy (auditor)</td><td><code>{{AUDITOR_USUARIO}}</code></td><td><code>{{AUDITOR_CLAVE}}</code></td></tr>
+  <tr><td>Panel de Kerna</td><td><code>{{PANEL_USUARIO}}</code></td><td><code>{{PANEL_CLAVE}}</code></td></tr>
+</table>
+<p>Para hacer una denuncia <b>no se necesita cuenta</b>: cualquier persona puede hacerla.</p>
+
+<h2>3. Parte 1 · Hacer una denuncia en Veridy</h2>
+<p>En esta parte actúas como una persona que quiere denunciar algo. Te recomendamos usar el ejemplo de este manual (un caso de acoso laboral) o escribir uno propio con detalles: mientras más concreto sea el relato, mejor es la sugerencia de Kerna.</p>
+
+<h3>Paso 1. Entrar al formulario</h3>
+<p>En la página de inicio presiona <b>«Hacer una denuncia en Veridy»</b>. Si llegas a la portada de Veridy, presiona el botón marcado.</p>
+<figure><img src="capturas/v_acoso_01_portada.png"><figcaption>Portada de Veridy</figcaption></figure>
+<ol class="marcas"><li><b class="n">1</b><b>Presentar una denuncia:</b> comienza el formulario.</li></ol>
+
+<h3>Paso 2. Elegir el tipo de denuncia</h3>
+<figure><img src="capturas/v_acoso_02_tipo.png"><figcaption>Lista de tipos de denuncia</figcaption></figure>
+<ol class="marcas"><li><b class="n">1</b>Presiona la lista y elige el tipo que mejor describe lo que pasó (por ejemplo, <b>Acoso laboral</b>). Puedes escribir para buscar.</li></ol>
+<figure><img src="capturas/v_acoso_03_tipo_elegido.png"><figcaption>Tipo elegido</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b>El tipo elegido queda a la vista. La «x» a su derecha lo borra si te equivocaste.</li>
+  <li><b class="n">2</b><b>Siguiente:</b> pasa a la próxima pantalla. Si falta algo obligatorio (marcado con <b style="color:#c00">*</b>), Veridy lo indica en rojo y no avanza.</li>
+</ol>
+
+<h3>Paso 3. Las personas involucradas</h3>
+<p>Aquí se indica <b>a quién se denuncia</b>, no a quien denuncia.</p>
+<figure><img src="capturas/v_acoso_04_persona.png"><figcaption>Personas involucradas</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Nombres</b> de la persona denunciada (obligatorio). Si no lo sabes, escribe «No sé».</li>
+  <li><b class="n">2</b><b>Apellidos</b> (obligatorio).</li>
+  <li><b class="n">3</b><b>Relación con la compañía:</b> empleado, proveedor, cliente, inversionista u otro. Si eliges «Otro», usa «Especificación» para explicarlo.</li>
+  <li><b class="n">4</b><b>Siguiente.</b> «Anterior» vuelve atrás sin perder lo escrito.</li>
+</ol>
+
+<h3>Paso 4. Dónde y cuándo ocurrió</h3>
+<figure><img src="capturas/v_acoso_05_lugar_fecha.png"><figcaption>Lugar y fecha</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>País.</b></li>
+  <li><b class="n">2</b><b>Región</b> (en el formulario dice «Estado/Provincia»).</li>
+  <li><b class="n">3</b><b>Ciudad o comuna.</b></li>
+  <li><b class="n">4</b><b>Área u obra</b> donde ocurrió (por ejemplo, «Área de Contabilidad»).</li>
+  <li><b class="n">5</b><b>Desde:</b> presiona el recuadro y elige el día en el calendario.</li>
+  <li><b class="n">6</b><b>Hasta:</b> si fue un solo día, elige el mismo. La «x» borra las fechas.</li>
+  <li><b class="n">7</b><b>Siguiente.</b></li>
+</ol>
+
+<h3>Paso 5. El relato</h3>
+<p>Es la parte más importante: es lo que lee Kerna. Cuenta qué pasó, quién, cuándo, cuántas veces y a quién se lo informaste.</p>
+<figure><img src="capturas/v_acoso_06_relato.png"><figcaption>Relato y evidencia</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Describa los detalles:</b> escribe el relato. Puedes nombrar personas: Kerna borra nombres, RUT, teléfonos y correos antes de analizarlo.</li>
+  <li><b class="n">2</b><b>¿Posee evidencia?</b> Elige una opción. Según lo que elijas, pueden aparecer campos nuevos para adjuntar archivos o explicar cómo entregarías la evidencia física.</li>
+  <li><b class="n">3</b><b>Siguiente.</b></li>
+</ol>
+<div class="paso"><b class="t">Texto de ejemplo (puedes copiarlo)</b>
+Desde marzo de este año mi jefe directo, el señor Rodrigo Valenzuela, jefe del área de contabilidad, me grita delante de mis compañeros, me dice que soy una inútil y que si no me gusta me vaya. En las reuniones de los lunes me deja fuera a propósito y me asigna tareas imposibles de cumplir con plazos de un día para el otro. Hace dos semanas me dijo que me iba a hacer la vida imposible hasta que renuncie. Le escribí a recursos humanos y nadie me ha respondido. Tengo licencia médica por estrés desde el 3 de noviembre.</div>
+
+<h3>Paso 6. Tus datos de contacto y envío</h3>
+<figure><img src="capturas/v_acoso_07_contacto.png"><figcaption>Datos de contacto</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>¿Desea compartir sus datos?</b> «No» mantiene la denuncia anónima. Si eliges «Sí», aparecen campos para nombre, teléfono y correo (todos opcionales).</li>
+  <li><b class="n">2</b><b>Entregar:</b> envía la denuncia. Después de esto ya no se puede modificar el formulario.</li>
+</ol>
+
+<h3>Paso 7. Guardar el código de seguimiento</h3>
+<figure><img src="capturas/v_acoso_08_codigo.png"><figcaption>Denuncia enviada</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Código de 16 números.</b> Es la única forma de volver a ver tu denuncia como denunciante. Anótalo. Haz clic sobre él para copiarlo.</li>
+  <li><b class="n">2</b><b>Ver su denuncia:</b> abre lo que enviaste.</li>
+</ol>
+<figure><img src="capturas/v_acoso_09_seguimiento.png"><figcaption>Vista del denunciante</figcaption></figure>
+<p>Esta es la vista del denunciante: ve sus respuestas y puede escribir mensajes o agregar archivos. <b>No aparece nada de Kerna</b>. Para volver más tarde: portada de Veridy → escribir el código en «¿Ya ha presentado una denuncia?» → «Iniciar sesión». Usa «Cerrar sesión» (arriba a la derecha) al terminar.</p>
+<div class="bien">Listo. En alrededor de un minuto la denuncia ya tiene su sugerencia de Kerna. Sigue con la Parte 2.</div>
+
+<h2>4. Parte 2 · Revisar la denuncia como auditor</h2>
+<h3>Paso 1. Entrar</h3>
+<p>En la página de inicio presiona <b>«Entrar a Veridy como auditor»</b>.</p>
+<figure><img src="capturas/a01_login.png"><figcaption>Entrada de auditores</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Nombre de usuario:</b> <code>{{AUDITOR_USUARIO}}</code></li>
+  <li><b class="n">2</b><b>Contraseña:</b> <code>{{AUDITOR_CLAVE}}</code></li>
+  <li><b class="n">3</b><b>Iniciar sesión.</b> Tarda unos segundos: Veridy prepara las llaves que protegen las denuncias.</li>
+</ol>
+
+<h3>Paso 2. Ir a las denuncias</h3>
+<figure><img src="capturas/a02_principal.png"><figcaption>Pantalla principal del auditor</figcaption></figure>
+<ol class="marcas"><li><b class="n">1</b><b>Denuncias:</b> abre la bandeja con todas las denuncias que te llegaron. Los íconos de arriba a la derecha son: inicio, tus preferencias, ayuda y salir.</li></ol>
+
+<h3>Paso 3. La bandeja de entrada</h3>
+<p>Cada fila es una denuncia. La más reciente aparece primero.</p>
+<figure><img src="capturas/a03_bandeja.png"><figcaption>Bandeja de denuncias</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Una denuncia.</b> Muestra su número, estado (Abierto), fecha de llegada, última actualización y fecha en que se borrará automáticamente. Haz clic en la fila para abrirla.</li>
+  <li><b class="n">2</b><b>Buscar:</b> filtra las denuncias por cualquier dato visible.</li>
+</ol>
+
+<h3>Paso 4. La denuncia abierta</h3>
+<figure><img src="capturas/a04_caso.png"><figcaption>Denuncia abierta</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Aviso de Kerna.</b> Resume en pocas palabras qué pasa con la sugerencia de esta denuncia (por ejemplo «Sugerencia lista»). Haz clic para abrir o cerrar el detalle.</li>
+  <li><b class="n">2</b><b>Actualizar:</b> vuelve a cargar la denuncia. Igual Kerna revisa sola cada 20 segundos si hay novedades.</li>
+  <li><b class="n">3</b><b>Volver</b> a la bandeja.</li>
+</ol>
+<p>Más abajo están las respuestas del formulario (tipo, personas, lugar, fecha, relato), los adjuntos y los comentarios. Estas partes son propias de Veridy y funcionan como siempre.</p>
+
+<h3>Paso 5. Vistazo rápido sin abrir</h3>
+<p>Si dejas el puntero sobre el aviso de Kerna, aparece un resumen:</p>
+<figure><img class="media" src="capturas/a05_tooltip.png"><figcaption>Resumen al pasar el puntero</figcaption></figure>
+<p><b>Resumen:</b> qué ley y cuántos artículos sugirió. <b>Modo:</b> «Modo habitual» si se preparó de la forma normal; otro texto si se usó una forma alternativa (ver Parte 5).</p>
+
+<h2>5. Parte 3 · La sugerencia de Kerna, pieza por pieza</h2>
+<p>Al hacer clic en el aviso se abre el bloque de Kerna, justo debajo de los datos de la denuncia.</p>
+<figure><img src="capturas/a06_panel_cabecera.png"><figcaption>Cabecera del bloque de Kerna</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Título y etiqueta de estado.</b> La etiqueta repite el estado del aviso.</li>
+  <li><b class="n">2</b><b>Dibujo y estado en grande.</b> Cada estado tiene su dibujo, para reconocerlo de un vistazo.</li>
+  <li><b class="n">3</b><b>Recordatorio:</b> la sugerencia ayuda, pero la decisión final es del auditor.</li>
+</ol>
+<figure><img src="capturas/a07_panel_completo.png"><figcaption>Bloque completo con cinco artículos sugeridos</figcaption></figure>
+<p>Cada tarjeta es un artículo de ley sugerido. Vienen ordenados del más al menos pertinente.</p>
+
+<h3>Las partes de cada tarjeta</h3>
+<figure><img class="media" src="capturas/a08_articulo.png"><figcaption>Una tarjeta de artículo</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Número del artículo y ley</b> a la que pertenece (por ejemplo, artículo 211 A del Código del Trabajo, incorporado por la Ley Karin).</li>
+  <li><b class="n">2</b><b>Anillo de confianza:</b> mientras más segmentos llenos, más seguro está Kerna de que el artículo aplica (de 1 a 10).</li>
+  <li><b class="n">3</b><b>Incluir en la clasificación:</b> marca esta casilla si decides que el artículo sí aplica al caso. Se guarda al final, con «Guardar clasificación» (Parte 4).</li>
+  <li><b class="n">4</b><b>Explicación:</b> por qué Kerna cree que el artículo se relaciona con los hechos.</li>
+  <li><b class="n">5</b><b>Ver cita textual:</b> muestra el texto exacto de la ley.</li>
+  <li><b class="n">6</b><b>Ver el artículo en la Biblioteca del Congreso Nacional:</b> abre la ley oficial en una pestaña nueva, para comprobarla.</li>
+  <li><b class="n">7</b><b>Pulgar arriba / abajo:</b> tu opinión sobre si el artículo corresponde al caso (Parte 4).</li>
+</ol>
+<figure><img class="media" src="capturas/a09_cita.png"><figcaption>Cita textual abierta</figcaption></figure>
+<ol class="marcas"><li><b class="n">1</b>El texto de la ley tal como está vigente. Kerna verifica que cada cita coincida palabra por palabra con la ley antes de mostrarla. «Ocultar cita textual» la cierra.</li></ol>
+
+<h2>6. Parte 4 · Valorar y clasificar</h2>
+<p>Valorar y clasificar son dos cosas distintas: <b>valorar</b> es opinar sobre cada artículo (sirve para medir y mejorar a Kerna); <b>clasificar</b> es tu decisión final sobre qué artículos aplican al caso.</p>
+<h3>Valorar un artículo</h3>
+<figure><img class="media" src="capturas/a10_valorar.png"><figcaption>Valorando un artículo</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b>Presiona <b>pulgar arriba</b> si el artículo corresponde, o <b>pulgar abajo</b> si no. El botón elegido queda marcado.</li>
+  <li><b class="n">2</b><b>Observación (opcional):</b> aparece al elegir. Explica tu opinión en hasta 500 caracteres (el contador muestra cuántos llevas).</li>
+  <li><b class="n">3</b><b>Enviar valoración.</b></li>
+</ol>
+<figure><img class="media" src="capturas/a11_valoracion_enviada.png"><figcaption>Valoración enviada</figcaption></figure>
+<ol class="marcas"><li><b class="n">1</b>Aparece «Valoración enviada». Si cambias de opinión, elige de nuevo y vuelve a enviar: vale la última.</li></ol>
+
+<h3>Clasificar el caso</h3>
+<figure><img src="capturas/a12_incluir.png"><figcaption>Artículos marcados para la clasificación</figcaption></figure>
+<ol class="marcas"><li><b class="n">1</b>Marca <b>«Incluir en la clasificación»</b> en cada artículo que, según tu criterio, aplica.</li></ol>
+<figure><img src="capturas/a13_clasificar.png"><figcaption>Parte final del bloque</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Agregar otro artículo:</b> si falta uno que Kerna no sugirió, escríbelo (por ejemplo «Código del Trabajo, artículo 2») y presiona «Agregar». Aparece en una lista; «Quitar» lo saca.</li>
+  <li><b class="n">2</b><b>Observación (opcional)</b> sobre tu clasificación.</li>
+  <li><b class="n">3</b><b>Guardar clasificación:</b> registra tu decisión con los artículos marcados y los agregados.</li>
+  <li><b class="n">4</b><b>Ninguno aplica:</b> úsalo si ningún artículo sugerido corresponde al caso.</li>
+  <li><b class="n">5</b><b>Código de seguimiento:</b> identifica esta sugerencia. Si algo se ve mal, copia este código («Copiar código») y envíalo a quien administra el sistema. No contiene datos de la denuncia.</li>
+</ol>
+<figure><img src="capturas/a14_guardada.png"><figcaption>Clasificación guardada</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b>El aviso cambia a <b>«Clasificación guardada»</b>.</li>
+  <li><b class="n">2</b>El bloque lo confirma. Si necesitas corregirla, cambia las marcas y guarda de nuevo: vale la última.</li>
+</ol>
+
+<h2>7. Parte 5 · Todos los avisos que puede mostrar Kerna</h2>
+<p>La mayoría de las veces verás «Preparando sugerencia», luego «Sugerencia lista» y, cuando guardes, «Clasificación guardada». Los demás avisos aparecen solo cuando algo no sale como siempre. En todos los casos <b>puedes trabajar la denuncia como siempre</b>: Kerna nunca bloquea al auditor.</p>
+<table>
+  <tr><th>Aviso</th><th>Qué significa</th><th>Qué hacer</th></tr>
+  <tr><td>Preparando sugerencia</td><td>Kerna recibió la denuncia y la está analizando.</td><td>Esperar (suele ser menos de un minuto). Aparece sola.</td></tr>
+  <tr><td>Sugerencia lista</td><td>Hay artículos sugeridos.</td><td>Revisar, valorar y clasificar.</td></tr>
+  <tr><td>Sugerencia lista · modo alternativo</td><td>Se preparó con un modelo de respaldo.</td><td>Revisar cada artículo con más atención.</td></tr>
+  <tr><td>Sugerencia lista · búsqueda alternativa</td><td>Las leyes se buscaron con el método de respaldo.</td><td>Revisar; puede faltar algún artículo.</td></tr>
+  <tr><td>Sin normativa encontrada</td><td>No hubo artículos que calcen con claridad.</td><td>Clasificar según tu criterio.</td></tr>
+  <tr><td>Sin sugerencia · tiempo excedido</td><td>Kerna tardó demasiado y se detuvo.</td><td>Clasificar como siempre.</td></tr>
+  <tr><td>Sin sugerencia · citas no verificadas</td><td>Las citas no coincidían con la ley vigente; por seguridad no se muestran.</td><td>Clasificar como siempre.</td></tr>
+  <tr><td>Sin sugerencia · no se pudo generar</td><td>Falla de Kerna en esta denuncia.</td><td>Clasificar; si se repite, enviar el código de seguimiento.</td></tr>
+  <tr><td>Kerna no disponible</td><td>Kerna no responde ahora; se reintenta solo.</td><td>Esperar o clasificar como siempre.</td></tr>
+  <tr><td>Kerna sin respuesta</td><td>Pasó el tiempo habitual sin noticias de Kerna.</td><td>Clasificar; avisar si pasa en varias.</td></tr>
+  <tr><td>Sin información de Kerna</td><td>Denuncia antigua o anterior a Kerna.</td><td>Clasificar como siempre.</td></tr>
+  <tr><td>Sin conexión</td><td>Tu navegador perdió la conexión.</td><td>Revisar la red y presionar «Reintentar».</td></tr>
+  <tr><td>Clasificación guardada</td><td>Ya registraste tu decisión.</td><td>Nada; puedes corregirla guardando otra.</td></tr>
+</table>
+
+<div class="estado"><h3>Preparando sugerencia</h3>
+<figure><img src="capturas/e_generando.png"></figure>
+<p>Kerna ya tiene la denuncia y busca los artículos. El bloque explica que puedes seguir trabajando; la sugerencia reemplaza este aviso apenas está lista, sin recargar la página.</p></div>
+
+<div class="estado"><h3>Sugerencia lista · modo alternativo</h3>
+<figure><img src="capturas/e_modo.png"></figure>
+<p>El modelo habitual no estaba disponible y Kerna usó uno de respaldo. Las citas igual fueron verificadas contra la ley, pero la elección de artículos puede ser menos precisa. Un recuadro amarillo lo advierte sobre los artículos.</p></div>
+
+<div class="estado"><h3>Sugerencia lista · búsqueda alternativa</h3>
+<figure><img src="capturas/e_busqueda.png"></figure>
+<p>El buscador de leyes habitual no estaba disponible y se usó el de respaldo. Puede faltar algún artículo: si echas de menos uno, agrégalo con «Agregar otro artículo».</p></div>
+
+<div class="estado"><h3>Sin normativa encontrada</h3>
+<figure><img src="capturas/e_sin-normativa.png"></figure>
+<p>Kerna no encontró, entre las leyes que conoce, artículos que correspondan con claridad. Pasa, por ejemplo, con relatos muy breves o vagos («creo que algo raro pasa»). No significa que no haya ley aplicable.</p></div>
+
+<div class="estado"><h3>Sin sugerencia · tiempo excedido</h3>
+<figure><img src="capturas/e_revision-tiempo.png"></figure>
+<p>La preparación superó el tiempo máximo permitido y se detuvo. Esta denuncia no tendrá sugerencia.</p></div>
+
+<div class="estado"><h3>Sin sugerencia · citas no verificadas</h3>
+<figure><img src="capturas/e_revision-citas.png"></figure>
+<p>Kerna compara cada cita con el texto vigente de la ley. Si no coinciden, prefiere no mostrar nada antes que mostrar una cita equivocada.</p></div>
+
+<div class="estado"><h3>Sin sugerencia · no se pudo generar</h3>
+<figure><img src="capturas/e_cadena-agotada.png"></figure>
+<p>Falló la preparación por un problema de Kerna. Si se repite en varias denuncias, envía el código de seguimiento que aparece al final del bloque.</p></div>
+
+<div class="estado"><h3>Kerna no disponible</h3>
+<figure><img src="capturas/e_nucleo-no-disponible.png"></figure>
+<p>Kerna no respondió. La denuncia queda en espera y se vuelve a intentar sola; cuando Kerna responde, la sugerencia aparece aquí. En el panel de Kerna estas denuncias se ven en «En espera».</p></div>
+
+<div class="estado"><h3>Kerna sin respuesta (todavía no recibió la denuncia)</h3>
+<figure><img src="capturas/e_sin-nota.png"></figure>
+<p>Pasaron más de 5 minutos desde que llegó la denuncia y Kerna aún no la recibe. Suele indicar que la parte de Kerna que trabaja en este computador está detenida (ver Preguntas frecuentes).</p></div>
+
+<div class="estado"><h3>Kerna sin respuesta (la recibió, pero no respondió)</h3>
+<figure><img src="capturas/e_en-proceso-viejo.png"></figure>
+<p>Kerna recibió la denuncia pero la sugerencia no llegó en el tiempo habitual. Puede llegar más tarde.</p></div>
+
+<div class="estado"><h3>Sin información de Kerna</h3>
+<figure><img src="capturas/e_sin-info.png"></figure>
+<p>Denuncias antiguas, anteriores a la llegada de Kerna. Se clasifican como siempre.</p></div>
+
+<div class="estado"><h3>Sin conexión</h3>
+<figure><img src="capturas/e_sin-conexion.png"></figure>
+<ol class="marcas"><li><b class="n">1</b>Tu navegador perdió la conexión con Veridy. Lo que ves puede estar desactualizado; nada de lo guardado se pierde. Presiona <b>«Reintentar»</b> cuando vuelva la red.</li></ol></div>
+
+<h2 class="kerna">8. Parte 6 · El panel de Kerna</h2>
+<p>El panel muestra, con números y gráficos, cómo está funcionando Kerna: cuántas denuncias revisó, qué tan acertadas fueron sus sugerencias, cuánto tarda, cuánto cuesta y cómo va el negocio. Nunca muestra el texto de las denuncias ni datos de las personas.</p>
+<div class="nota">La cuenta de prueba tiene el perfil <b>Evaluación</b>: ve todas las secciones pero no puede cambiar nada. Por eso algunos botones aparecen apagados y arriba dice «Tu rol solo puede ver esta sección». La sección «Demo» sí se puede usar.</div>
+
+<h3>Entrar</h3>
+<figure><img src="capturas/k01_acceso.png"><figcaption>Entrada al panel</figcaption></figure>
+<p>En la página de inicio presiona <b>«Entrar al panel de Kerna»</b>, escribe el usuario <code>{{PANEL_USUARIO}}</code> y la contraseña <code>{{PANEL_CLAVE}}</code> y presiona <b>«Entrar»</b>. La primera entrada del día puede tardar hasta medio minuto. Por seguridad, 5 intentos fallidos seguidos bloquean la cuenta 15 minutos.</p>
+
+<h3>Resumen</h3>
+<figure><img src="capturas/k02_resumen.png"><figcaption>Resumen</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Generar informe:</b> lleva al informe de gestión descargable.</li>
+  <li><b class="n">2</b><b>Menú:</b> Operación (Resumen), Negocio (Clientes y márgenes), Configuración (Administrar clientes, Ajustes, Cuentas) y Pruebas (Demo). La sección abierta queda destacada.</li>
+  <li><b class="n">3</b><b>Período:</b> «En vivo» indica que los datos se actualizan solos. Elige ver los últimos 7 o 30 días.</li>
+  <li><b class="n">4</b><b>Servicios de inteligencia artificial</b> que usa Kerna y si están operativos. Si uno falla, Kerna usa el siguiente.</li>
+  <li><b class="n">5</b><b>Denuncias del período</b> y cuántas se atendieron de la forma principal.</li>
+  <li><b class="n">6</b><b>Porcentaje que recibió sugerencia</b> y <b>En espera</b>: denuncias que esperan un nuevo intento. «Reintentar ahora» las vuelve a enviar sin esperar (apagado para Evaluación).</li>
+  <li><b class="n">7</b><b>Sugerencias acertadas:</b> de cada 100 artículos que debía encontrar en un conjunto de casos de prueba revisados por abogados, cuántos encontró. La meta es 80 %. La barra muestra dónde está frente a la meta.</li>
+  <li><b class="n">8</b><b>Tiempo de respuesta:</b> cuánto tarda una sugerencia, frente a la meta.</li>
+  <li><b class="n">9</b><b>Costo del período</b> en dólares, por el uso de inteligencia artificial.</li>
+  <li><b class="n">10</b><b>Sugerencias útiles:</b> porcentaje de pulgares arriba que dieron los auditores. Tus valoraciones de la Parte 4 se suman aquí.</li>
+  <li><b class="n">11</b><b>El camino de una denuncia:</b> cuánto tarda cada etapa: quitar datos personales, clasificar, buscar en la ley, redactar y verificar citas.</li>
+  <li><b class="n">12</b><b>Acierto por ley:</b> lo mismo que el punto 7, separado por ley (datos personales, personas jurídicas y Ley Karin).</li>
+  <li><b class="n">13</b><b>Tu cuenta y Salir.</b> Haz clic en tu nombre para cambiar tu contraseña.</li>
+</ol>
+<div class="paso"><b class="t">Los signos «?»</b>Junto a cada título hay un «?». Al hacer clic explica, en una frase, qué mide ese número y qué significa que suba o baje. Úsalos cuando tengas dudas.</div>
+<p>Los colores indican cómo va cada número: <b style="color:#1F8A4C">verde</b> = cumple la meta, <b style="color:#AE8926">amarillo</b> = cerca, <b style="color:#B3473F">rojo</b> = lejos de la meta.</p>
+
+<h3>Informe de gestión</h3>
+<figure><img src="capturas/k04_informe.png"><figcaption>Informe de gestión</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Período del informe:</b> 7, 30 o 90 días.</li>
+  <li><b class="n">2</b><b>Otro período:</b> elige fechas exactas.</li>
+  <li><b class="n">3</b><b>Descargar</b> el informe en PDF (para leer o imprimir), Excel (para trabajar los números) o CSV (para otros programas).</li>
+  <li><b class="n">4</b><b>Metas cumplidas</b> en el período y cuál está bajo la meta.</li>
+  <li><b class="n">5</b><b>Resumen:</b> denuncias recibidas, con sugerencia, acertadas, útiles, tiempo y costo. «Sin datos» significa que en ese período no hubo denuncias para medirlo.</li>
+  <li><b class="n">6</b><b>Pestañas de detalle:</b> Calidad, Rapidez, Costos, Rentabilidad e Incidentes (abajo).</li>
+  <li><b class="n">7</b><b>Datos:</b> de dónde sale cada número y hasta qué fecha.</li>
+</ol>
+<div class="dos">
+<figure><img src="capturas/k05_informe_1_rapidez.png"><figcaption>Rapidez: tiempos por etapa y frente a la meta</figcaption></figure>
+<figure><img src="capturas/k05_informe_2_costos.png"><figcaption>Costos: gasto por período, por denuncia y por modelo, con proyección mensual</figcaption></figure>
+<figure><img src="capturas/k05_informe_3_rentabilidad.png"><figcaption>Rentabilidad: ingresos frente a costos</figcaption></figure>
+<figure><img src="capturas/k05_informe_4_incidentes.png"><figcaption>Incidentes: fallas de los servicios y denuncias que quedaron sin sugerencia, por motivo</figcaption></figure>
+</div>
+<p><b>Calidad</b> (la pestaña que se abre primero) muestra el acierto global y por ley, el acierto con el artículo exacto y cuántas pruebas automáticas pasaron.</p>
+
+<h3>Clientes y márgenes (Negocio)</h3>
+<figure><img src="capturas/k06_negocio.png"><figcaption>Negocio</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Período</b> a analizar.</li>
+  <li><b class="n">2</b><b>Frase resumen:</b> ingreso y utilidad del período, en UF.</li>
+  <li><b class="n">3</b><b>Del ingreso a la utilidad:</b> la barra verde de la izquierda es lo que se cobra; cada barra roja es un costo que se descuenta (atender clientes, parte de Veridy, costos fijos, crédito y equipos, impuesto); la última barra verde es lo que queda.</li>
+  <li><b class="n">4</b><b>Indicadores:</b> ganancia sobre el ingreso, costo de atención (y cuánto es de inteligencia artificial), denuncias con sugerencia y sugerencias calificadas por auditores.</li>
+  <li><b class="n">5</b><b>Clientes:</b> cuántos usaron Kerna en el período y cuántos no. Despliega la lista para ver el detalle.</li>
+  <li><b class="n">6</b><b>Proyección a 5 años:</b> ingresos, costos y utilidad por año, ganancia total, rentabilidad anual, retorno por UF invertida y año en que se recupera la inversión. «Ver tabla año por año» muestra los números.</li>
+  <li><b class="n">7</b><b>Ingreso del último año</b> repartido entre utilidad y costos.</li>
+</ol>
+
+<h3>Administrar clientes</h3>
+<figure><img src="capturas/k07_clientes.png"><figcaption>Clientes</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Aviso de perfil:</b> con la cuenta de prueba solo se puede mirar.</li>
+  <li><b class="n">2</b><b>Agregar cliente:</b> da de alta una organización nueva y le crea su clave de acceso a Kerna.</li>
+  <li><b class="n">3</b><b>Lista de clientes:</b> nombre y rubro, identificador, plan, denuncias al mes contratadas y fecha de alta. «Veridy (instalación local de prueba)» es la instalación que estás usando.</li>
+  <li><b class="n">4</b><b>Acceso:</b> si el cliente tiene clave propia para usar Kerna.</li>
+  <li><b class="n">5</b><b>Dar de baja</b> (corta el acceso, se puede revertir) y <b>Borrar por ley</b> (cuando el cliente lo pide: sus datos quedan anónimos y no se puede deshacer).</li>
+</ol>
+
+<h3>Ajustes</h3>
+<figure><img src="capturas/k08_ajustes.png"><figcaption>Ajustes</figcaption></figure>
+<ol class="marcas">
+  <li><b class="n">1</b><b>Aviso de perfil</b> (solo lectura).</li>
+  <li><b class="n">2</b><b>Todo guardado:</b> confirma que lo que ves es lo vigente, y desde cuándo.</li>
+  <li><b class="n">3</b><b>Valores recomendados:</b> vuelve a los valores de fábrica.</li>
+  <li><b class="n">4</b><b>Procesamiento:</b> cuántas denuncias se envían a Kerna por ronda, cuántas veces se reintenta una que falló, cuánto se espera entre intentos, cada cuánto se revisa si hay denuncias nuevas y si se reintentan las que quedaron para revisión manual.</li>
+  <li><b class="n">5</b><b>Inteligencia artificial:</b> el revisor que comprueba las citas, cuántos artículos se consideran por caso y el orden de los modelos (el primero es el principal; si falla, se usa el siguiente).</li>
+  <li><b class="n">6</b><b>Compartir:</b> a qué equipos (analistas, comité de ética, auditoría, fiscalía) se les da acceso automático a cada denuncia.</li>
+  <li><b class="n">7</b><b>Plazos:</b> meta de tiempo de respuesta y después de cuántas horas avisar si una denuncia sigue sin sugerencia.</li>
+</ol>
+<p>El dibujo azul de la izquierda de cada bloque resume con una figura el valor elegido. «Se aplica ya» indica que un cambio rige desde el momento en que se guarda.</p>
+
+<h3>Cuentas</h3>
+<figure><img src="capturas/k09_cuentas.png"><figcaption>Cuentas del panel</figcaption></figure>
+<p>Lista de las personas que pueden entrar al panel, con su perfil (Dirección, Operación de IA, Comercial, Evaluación o Invitado), si están activas y su último acceso. Más abajo está el historial: quién creó, cambió o desactivó cada cuenta y cuándo. Solo el perfil Dirección puede crear cuentas o restablecer contraseñas.</p>
+
+<h3>Demo</h3>
+<p>Sirve para ver por dentro lo que hace Kerna, sin pasar por Veridy. Nada de lo que hagas aquí se guarda ni cuenta en las estadísticas. Tiene dos pestañas, arriba a la derecha: <b>Anonimizador</b> y <b>Denuncias</b>.</p>
+<figure><img src="capturas/k10_demo.png"><figcaption>Demo, pestaña Anonimizador</figcaption></figure>
+<p><b>Anonimizador:</b> escribe un relato en el recuadro (hasta 5.000 caracteres) o elige uno de los ejemplos de abajo, y presiona <b>«Anonimizar»</b>. «Borrar todo» limpia el recuadro.</p>
+<figure><img src="capturas/k10_demo_anon.png"><figcaption>Resultado del anonimizador</figcaption></figure>
+<p>Kerna muestra cuántos datos personales encontró y de qué tipo (nombres, RUT, teléfonos, correos), el texto original con esos datos marcados y el texto tal como lo recibe Kerna, con cada dato reemplazado por una etiqueta como [PERSONA_1]. Así se comprueba que Kerna nunca trabaja con los datos de las personas.</p>
+<figure><img src="capturas/k10_demo_denuncias.png"><figcaption>Demo, pestaña Denuncias</figcaption></figure>
+<p><b>Denuncias:</b> arriba aparecen las leyes que conoce Kerna. Elige una denuncia de ejemplo (o escribe una en «Texto de la denuncia») y presiona <b>«Analizar denuncia»</b>: verás los artículos que Kerna sugiere, como los vería un auditor. Tarda unos segundos.</p>
+
+<h3>Mi cuenta y salir</h3>
+<figure><img src="capturas/k11_cuenta.png"><figcaption>Mi cuenta</figcaption></figure>
+<p>Muestra tus datos y permite cambiar tu contraseña (debe tener entre 12 y 128 caracteres y ser distinta de tu usuario). Para salir, usa «Salir» en la esquina inferior izquierda del menú.</p>
+
+<h2>9. Preguntas frecuentes</h2>
+<table>
+  <tr><th>Pregunta</th><th>Respuesta</th></tr>
+  <tr><td>Envié una denuncia y no veo la sugerencia.</td><td>Espera un minuto y presiona «Actualizar» en la denuncia. Si el aviso dice «Kerna sin respuesta», revisa en la página de inicio que «Conexión con Kerna en internet» esté en verde.</td></tr>
+  <tr><td>La luz «Conexión con Kerna en internet» está en rojo.</td><td>Este computador no llega a Kerna. Prueba con otra red (por ejemplo, el teléfono como punto de acceso). Ver «Si algo no funciona» en el manual de instalación.</td></tr>
+  <tr><td>Olvidé el código de 16 números de mi denuncia.</td><td>No se puede recuperar: es lo que protege el anonimato. Haz una denuncia nueva.</td></tr>
+  <tr><td>¿Kerna ve mi nombre?</td><td>No. Antes de analizar, Kerna borra nombres, RUT, teléfonos, correos y direcciones. La denuncia completa solo la ven los auditores en Veridy.</td></tr>
+  <tr><td>¿Puedo equivocarme al clasificar?</td><td>Sí, y se corrige guardando de nuevo: vale la última clasificación.</td></tr>
+  <tr><td>El panel dice «Sin datos».</td><td>No hubo denuncias en el período elegido para medir ese número. Elige un período más largo.</td></tr>
+  <tr><td>El panel muestra cifras de otras organizaciones.</td><td>Es normal: el panel reúne a todos los clientes de Kerna, incluidos los de demostración.</td></tr>
+</table>
+
+</body>
+</html>

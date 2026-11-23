@@ -6,7 +6,7 @@
 #   infra/scripts/subir_imagen_kerna.sh nucleo --desplegar     # + actualiza la Container App a esa imagen
 #   infra/scripts/subir_imagen_kerna.sh conector --tag v1      # tag manual
 #
-# Componentes: nucleo | conector | servicio_local. El contexto de build es kerna/ y el Dockerfile,
+# Componentes: nucleo | conector | servicio_local | pasarela. El contexto de build es kerna/ y el Dockerfile,
 # kerna/<componente>/Dockerfile. Se construye en este equipo porque ACR Tasks está bloqueado en
 # suscripciones con créditos gratuitos. Requiere Docker, `az login` y Terraform aplicado.
 set -euo pipefail
@@ -14,8 +14,8 @@ set -euo pipefail
 RAIZ="$(git -C "$(dirname "$0")" rev-parse --show-toplevel)"
 TF="$RAIZ/infra/terraform"
 
-COMP="${1:?falta el componente: nucleo | conector | servicio_local}"; shift
-case "$COMP" in nucleo|conector|servicio_local) ;; *) echo "componente desconocido: $COMP" >&2; exit 2 ;; esac
+COMP="${1:?falta el componente: nucleo | conector | servicio_local | pasarela}"; shift
+case "$COMP" in nucleo|conector|servicio_local|pasarela) ;; *) echo "componente desconocido: $COMP" >&2; exit 2 ;; esac
 DESPLEGAR=0
 TAG=""
 while [ $# -gt 0 ]; do

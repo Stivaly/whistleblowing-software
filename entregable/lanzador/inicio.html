@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veridy y Kerna: inicio</title>
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(/fuentes/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:600;src:url(/fuentes/inter-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:700;src:url(/fuentes/inter-latin-700-normal.woff2) format("woff2")}
+:root{--fondo:#F3F5FA;--tarjeta:#FFFFFF;--texto:#141A2E;--suave:#5D6684;--borde:#DDE2EE;--veridy:#2F5FD0;--kerna:#0E7C86;--ok:#1F8A4C;--espera:#AE8926;--mal:#B3473F;--oscuro:#0B1020}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--texto);font-family:Inter,system-ui,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45}
+header{background:var(--oscuro);color:#fff;padding:28px 16px 30px}
+.ancho{max-width:1040px;margin:0 auto;padding:0 16px}
+header h1{margin:0 0 6px;font-size:28px;font-weight:700}
+header p{margin:0;color:#C9D1E6;font-size:16px}
+#aviso{margin:22px 0 0;padding:14px 16px;border-radius:10px;background:#FFF6DD;border:1px solid #E9D48F;font-size:15px}
+#aviso.listo{background:#E6F5EC;border-color:#9ED3B2}
+.estados{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 0}
+.estado{display:flex;align-items:center;gap:8px;background:var(--tarjeta);border:1px solid var(--borde);border-radius:999px;padding:6px 14px;font-size:14px}
+.punto{width:10px;height:10px;border-radius:50%;background:var(--espera)}
+.estado.ok .punto{background:var(--ok)} .estado.mal .punto{background:var(--mal)}
+.grilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin:24px 0}
+.tarjeta{background:var(--tarjeta);border:1px solid var(--borde);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.tarjeta h2{margin:0;font-size:20px}
+.tarjeta p{margin:0;color:var(--suave);font-size:15px}
+.etiqueta{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.veridy .etiqueta{color:var(--veridy)} .kerna .etiqueta{color:var(--kerna)}
+a.boton{display:block;text-align:center;text-decoration:none;font-weight:600;font-size:16px;padding:13px 16px;border-radius:10px;color:#fff}
+.veridy a.boton{background:var(--veridy)} .kerna a.boton{background:var(--kerna)}
+a.boton.secundario{background:#fff!important;border:2px solid currentColor}
+.veridy a.boton.secundario{color:var(--veridy)} .kerna a.boton.secundario{color:var(--kerna)}
+a.boton[aria-disabled=true]{opacity:.45;pointer-events:none}
+.clave{background:var(--fondo);border:1px dashed var(--borde);border-radius:10px;padding:10px 12px;font-size:14px}
+.clave div{display:grid;grid-template-columns:82px 1fr auto;align-items:center;gap:8px;margin:4px 0}
+.clave code{font-family:Consolas,"DejaVu Sans Mono",monospace;font-size:14px;white-space:nowrap;font-weight:600}
+.clave button{border:1px solid var(--borde);background:#fff;border-radius:6px;padding:3px 10px;font:inherit;font-size:13px;cursor:pointer}
+.pie{margin:8px 0 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.pie .tarjeta a{color:var(--veridy);font-weight:600}
+ol{margin:0;padding-left:20px;color:var(--suave);font-size:15px}
+</style>
+</head>
+<body>
+<header><div class="ancho">
+  <h1>Veridy y Kerna</h1>
+  <p>Desde aquí entras a cada parte. Usa los botones; no necesitas escribir direcciones.</p>
+</div></header>
+
+<main class="ancho">
+  <div id="aviso">Preparando todo. La primera vez puede tardar unos minutos; esta página se actualiza sola.</div>
+  <div class="estados">
+    <span class="estado" id="e-veridy"><span class="punto"></span>Veridy</span>
+    <span class="estado" id="e-panel"><span class="punto"></span>Panel de Kerna</span>
+    <span class="estado" id="e-nube"><span class="punto"></span>Conexión con Kerna en internet</span>
+  </div>
+
+  <div class="grilla">
+    <section class="tarjeta veridy">
+      <span class="etiqueta">Paso 1 · Veridy</span>
+      <h2>Hacer una denuncia</h2>
+      <p>Abre el formulario de denuncias, tal como lo ve cualquier persona que quiere informar algo.</p>
+      <a class="boton" data-servicio="veridy" data-ruta="/#/submission" target="_blank" rel="noopener">Hacer una denuncia en Veridy</a>
+      <a class="boton secundario" data-servicio="veridy" data-ruta="/#/" target="_blank" rel="noopener">Ver la página principal de Veridy</a>
+    </section>
+
+    <section class="tarjeta veridy">
+      <span class="etiqueta">Paso 2 · Veridy</span>
+      <h2>Revisar denuncias como auditor</h2>
+      <p>Entra a la bandeja del auditor, abre la denuncia y mira lo que Kerna sugiere.</p>
+      <div class="clave">
+        <div><span>Usuario</span><code id="au"></code><button data-copiar="au">Copiar</button></div>
+        <div><span>Contraseña</span><code id="ac"></code><button data-copiar="ac">Copiar</button></div>
+      </div>
+      <a class="boton" data-servicio="veridy" data-ruta="/#/login" target="_blank" rel="noopener">Entrar a Veridy como auditor</a>
+    </section>
+
+    <section class="tarjeta kerna">
+      <span class="etiqueta">Paso 3 · Kerna</span>
+      <h2>Panel de Kerna</h2>
+      <p>Muestra cuántas denuncias revisó Kerna, qué tan útiles fueron sus sugerencias y cuánto cuesta.</p>
+      <div class="clave">
+        <div><span>Usuario</span><code id="pu"></code><button data-copiar="pu">Copiar</button></div>
+        <div><span>Contraseña</span><code id="pc"></code><button data-copiar="pc">Copiar</button></div>
+      </div>
+      <a class="boton" data-servicio="panel" data-ruta="/acceso" target="_blank" rel="noopener">Entrar al panel de Kerna</a>
+      <a class="boton secundario" data-servicio="panel" data-ruta="/" target="_blank" rel="noopener">Qué es Kerna</a>
+    </section>
+  </div>
+
+  <div class="pie">
+    <section class="tarjeta">
+      <h2>Manuales</h2>
+      <p><a href="/manuales/manual-de-usuario.pdf" target="_blank" rel="noopener">Manual de usuario (paso a paso, con imágenes)</a></p>
+      <p><a href="/manuales/manual-de-instalacion.pdf" target="_blank" rel="noopener">Manual de instalación</a></p>
+    </section>
+    <section class="tarjeta">
+      <h2>El recorrido en tres pasos</h2>
+      <ol>
+        <li>Haz una denuncia y guarda el código de 16 números que te muestra Veridy al final.</li>
+        <li>Espera alrededor de un minuto y entra como auditor: la denuncia aparece en la bandeja con la sugerencia de Kerna.</li>
+        <li>Valora la sugerencia y luego mira el panel de Kerna.</li>
+      </ol>
+    </section>
+  </div>
+</main>
+
+<script>
+const D = /*DATOS*/{};
+const base = {veridy: D.veridy, panel: D.panel};
+document.getElementById("au").textContent = D.auditor_usuario;
+document.getElementById("ac").textContent = D.auditor_clave;
+document.getElementById("pu").textContent = D.panel_usuario;
+document.getElementById("pc").textContent = D.panel_clave;
+document.querySelectorAll("a[data-servicio]").forEach(a => { a.href = base[a.dataset.servicio] + a.dataset.ruta; a.setAttribute("aria-disabled", "true"); });
+document.querySelectorAll("button[data-copiar]").forEach(b => b.addEventListener("click", () => {
+  const t = document.getElementById(b.dataset.copiar).textContent;
+  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { b.textContent = "Copiado"; setTimeout(() => b.textContent = "Copiar", 1500); }).catch(() => {});
+}));
+async function revisar() {
+  let e = {};
+  try { e = await (await fetch("/estado", {cache: "no-store"})).json(); } catch (_) {}
+  for (const k of ["veridy", "panel", "nube"]) {
+    const el = document.getElementById("e-" + k);
+    el.className = "estado " + (e[k] ? "ok" : (k === "nube" && e.veridy ? "mal" : ""));
+  }
+  document.querySelectorAll("a[data-servicio]").forEach(a => a.setAttribute("aria-disabled", e[a.dataset.servicio] ? "false" : "true"));
+  const aviso = document.getElementById("aviso");
+  if (e.veridy && e.panel && e.nube) { aviso.className = "listo"; aviso.textContent = "Todo está listo. Elige por dónde empezar."; }
+  else if (e.veridy && e.panel) { aviso.className = ""; aviso.textContent = "Veridy y el panel están listos, pero este computador todavía no logra hablar con Kerna en internet. Si sigue así después de 3 minutos, revisa la conexión (ver el manual de instalación, sección «Si algo no funciona»)."; }
+  setTimeout(revisar, (e.veridy && e.panel && e.nube) ? 30000 : 4000);
+}
+revisar();
+</script>
+</body>
+</html>

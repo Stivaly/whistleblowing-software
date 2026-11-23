@@ -1,0 +1,15 @@
+# Panel de Kerna para la instalación local de prueba y página de inicio (misma imagen, dos contenedores).
+# El contexto lo arma entregable/construir.sh igual que kerna/front/desplegar.sh (app + consultas KQL + parte de kerna_comun).
+FROM python:3.12-slim
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/app HOME=/tmp
+WORKDIR /app
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+COPY app /app/app
+COPY kerna_comun /app/kerna_comun
+COPY lanzador /app/lanzador
+COPY manuales /app/manuales
+RUN useradd --system --uid 10001 --no-create-home kerna
+USER kerna
+EXPOSE 8000 8400
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "-w", "1", "--timeout", "120", "app.principal:app"]

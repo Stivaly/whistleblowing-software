@@ -25,6 +25,7 @@ El contrato entre las piezas (notas, API del núcleo, cadena de modelos) está e
 | [`conector/`](conector/README.md) | Reconciliación Veridy ↔ núcleo | Contenedor `conector` del grupo de Veridy |
 | [`servicio_local/`](servicio_local/README.md) | Embedding abierto e índice de respaldo | Container App `ca-kerna-dev-servicio-local` (escala a cero) |
 | [`pipeline_bcn/`](pipeline_bcn/README.md) | Extracción de la normativa (BCN) y vectorización | Jobs `job-kerna-dev-diario`, `-semanal`, `-vigencia-21719` |
+| `pasarela/` | Tokens de corta duración para la instalación local de prueba (`entregable/README.md`) | Container App `ca-kerna-dev-pasarela` (escala a cero) |
 | [`comun/`](comun/README.md) | Anonimizador, notas y telemetría compartidos | Biblioteca |
 | [`evaluacion/`](evaluacion/informe-embeddings.md) | Mediciones, informe de embeddings y matriz de pruebas | Local y job `job-kerna-dev-eval-embeddings` |
 | [`pruebas/`](pruebas/README.md) | Suite automatizada | `scripts/probar.sh` |

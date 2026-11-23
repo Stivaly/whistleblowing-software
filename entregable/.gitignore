@@ -1,0 +1,6 @@
+dist/
+manuales/capturas/
+manuales/*.pdf
+manuales/*.final.html
+manuales/.pdf.py
+__pycache__/

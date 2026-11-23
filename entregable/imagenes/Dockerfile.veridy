@@ -1,0 +1,12 @@
+# Veridy para la instalación local de prueba: la imagen desplegada en Azure + acceso por http://localhost
+# (sin certificado) + datos iniciales (cuentas de prueba, canal y cuenta del conector) que se copian la primera vez.
+ARG BASE=acrkernadevg6mzy.azurecr.io/veridy:89ea8aab2
+FROM ${BASE}
+USER root
+COPY backend/globaleaks/rest/api.py /usr/lib/python3/dist-packages/globaleaks/rest/api.py
+COPY entregable/imagenes/veridy-inicio.sh /usr/local/bin/veridy-inicio.sh
+COPY entregable/dist/semilla-veridy.tar.gz /opt/semilla-veridy.tar.gz
+RUN chmod 755 /usr/local/bin/veridy-inicio.sh && chmod 644 /opt/semilla-veridy.tar.gz
+USER 1000:1000
+ENV VERIDY_HTTP_LOCAL=1
+CMD ["/usr/local/bin/veridy-inicio.sh"]

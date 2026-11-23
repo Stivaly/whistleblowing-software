@@ -5,6 +5,7 @@
 import base64
 import inspect
 import json
+import os
 import re
 import secrets
 
@@ -41,6 +42,11 @@ from globaleaks.rest import decorators, errors
 from globaleaks.state import State, extract_exception_traceback_and_schedule_email
 from globaleaks.utils.json import JSONEncoder
 from globaleaks.utils.sock import isIPAddress
+
+# Instalación local de prueba (VERIDY_HTTP_LOCAL=1): Veridy se usa por http://localhost sin certificado y el conector
+# de Kerna lo llama por el nombre del servicio (veridy) dentro de la red de Docker.
+HTTP_LOCAL = os.environ.get('VERIDY_HTTP_LOCAL') == '1'
+NOMBRES_LOCALES = (b'localhost', b'127.0.0.1', b'veridy')
 
 tid_regexp = r'([0-9]+)'
 uuid_regexp = r'([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})'
@@ -259,6 +265,9 @@ class APIResourceWrapper(Resource):
                 b'acme-challenge' in request.path:
             return False
 
+        if HTTP_LOCAL and request.hostname in NOMBRES_LOCALES:
+            return False
+
         return True
 
     def should_redirect_tor(self, request):
@@ -362,6 +371,7 @@ class APIResourceWrapper(Resource):
 
         if not State.tenants[1].cache.wizard_done or \
           request.hostname == b'127.0.0.1' or \
+          (HTTP_LOCAL and request.hostname in NOMBRES_LOCALES) or \
           (State.tenants[1].cache.hostname == '' and isIPAddress(request.hostname)):
             request.tid = 1
         else:

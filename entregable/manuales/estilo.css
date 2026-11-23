@@ -1,0 +1,33 @@
+@page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+:root { --azul:#2F5FD0; --kerna:#0E7C86; --texto:#1B2135; --suave:#5D6684; --rojo:#E5262A; --fondo:#F3F5FA; }
+* { box-sizing: border-box; }
+body { font-family: "DejaVu Sans", Arial, sans-serif; color: var(--texto); font-size: 10.5pt; line-height: 1.5; margin: 0; }
+h1 { font-size: 22pt; margin: 0 0 6mm; color: #0B1020; }
+h2 { font-size: 16pt; margin: 0 0 4mm; color: #0B1020; border-bottom: 3px solid var(--azul); padding-bottom: 2mm; page-break-before: always; }
+h2.kerna { border-color: var(--kerna); }
+h3 { font-size: 12.5pt; margin: 7mm 0 2mm; color: #0B1020; page-break-after: avoid; }
+p { margin: 0 0 3mm; }
+.portada { height: 250mm; display: flex; flex-direction: column; justify-content: center; }
+.portada h1 { font-size: 30pt; }
+.portada .sub { font-size: 14pt; color: var(--suave); margin-bottom: 14mm; }
+.portada .datos { font-size: 11pt; border-left: 4px solid var(--azul); padding-left: 5mm; }
+.indice ol { font-size: 11.5pt; line-height: 1.9; }
+figure { margin: 3mm 0 4mm; page-break-inside: avoid; }
+figure img { width: 100%; border: 1px solid #CDD3E1; border-radius: 4px; display: block; }
+figure img.media { width: 70%; margin: 0 auto; }
+figure img.chica { width: 48%; margin: 0 auto; }
+figcaption { font-size: 9pt; color: var(--suave); margin-top: 1.5mm; text-align: center; }
+ol.marcas { list-style: none; padding: 0; margin: 0 0 4mm; }
+ol.marcas li { margin: 0 0 2.2mm; padding-left: 9mm; position: relative; page-break-inside: avoid; }
+ol.marcas li b.n { position: absolute; left: 0; top: 0; width: 6.2mm; height: 6.2mm; border-radius: 50%; background: var(--rojo); color: #fff; font-size: 9pt; text-align: center; line-height: 6.2mm; }
+.paso { background: var(--fondo); border-radius: 6px; padding: 3mm 4mm; margin: 0 0 3mm; page-break-inside: avoid; }
+.paso b.t { display: block; color: var(--azul); margin-bottom: 1mm; }
+.nota { border-left: 4px solid #AE8926; background: #FFF8E6; padding: 2.5mm 4mm; margin: 3mm 0; page-break-inside: avoid; }
+.bien { border-left: 4px solid #1F8A4C; background: #EAF6EF; padding: 2.5mm 4mm; margin: 3mm 0; page-break-inside: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 2mm 0 4mm; font-size: 9.5pt; page-break-inside: avoid; }
+th, td { border: 1px solid #CDD3E1; padding: 1.8mm 2.5mm; text-align: left; vertical-align: top; }
+th { background: var(--fondo); }
+code, .cod { font-family: "DejaVu Sans Mono", Consolas, monospace; font-size: 9.5pt; background: var(--fondo); padding: 0 1.2mm; border-radius: 3px; }
+.estado { page-break-inside: avoid; margin-bottom: 5mm; }
+.estado h3 { margin-top: 4mm; }
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }

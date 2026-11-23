@@ -1,0 +1,15 @@
+VERIDY Y KERNA - INSTALACIÓN EN ESTE COMPUTADOR
+
+Windows
+  1. Instala Docker Desktop (una sola vez). Instrucciones en «manual-de-instalacion.pdf».
+  2. Doble clic en «Instalar». Se abre una ventana que hace todo sola.
+  3. Al terminar, usa los botones de la ventana o de la página de inicio que se abre en el navegador.
+  Para apagar: doble clic en «Detener».
+
+Linux
+  1. Instala Docker (una sola vez). Instrucciones en «manual-de-instalacion.pdf».
+  2. En esta carpeta, abre una terminal y escribe:  ./instalar.sh
+  Para apagar:  ./detener.sh
+
+Página de inicio (botones y cuentas de prueba):  http://localhost:8400
+Cómo usar Veridy y Kerna, paso a paso:  «manual-de-usuario.pdf»
