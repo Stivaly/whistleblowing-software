@@ -34,10 +34,11 @@ $trabajo = {
     $si = New-Object System.Diagnostics.ProcessStartInfo
     $si.FileName = $exe; $si.Arguments = $argumentos
     $si.UseShellExecute = $false; $si.CreateNoWindow = $true
-    $si.RedirectStandardOutput = $true; $si.RedirectStandardError = $true
+    $si.RedirectStandardOutput = $true; $si.RedirectStandardError = $true; $si.RedirectStandardInput = $true
     try { $p = [System.Diagnostics.Process]::Start($si) } catch { Anotar "docker no se pudo ejecutar: $_"; Set-Content "$env:TEMP\vk-error.txt" "$_"; return -2 }
+    $p.StandardInput.Close()  # si docker preguntara algo, no queda esperando una respuesta
     $out = $p.StandardOutput.ReadToEndAsync(); $err = $p.StandardError.ReadToEndAsync()
-    if ($limite -gt 0) { if (-not $p.WaitForExit($limite * 1000)) { try { $p.Kill() } catch {}; Anotar "docker ${argumentos}: sin respuesta en $limite s"; return -1 } } else { $p.WaitForExit() }
+    if ($limite -gt 0) { if (-not $p.WaitForExit($limite * 1000)) { try { $p.Kill() } catch {}; Anotar "docker ${argumentos}: sin respuesta en $limite s"; Set-Content "$env:TEMP\vk-error.txt" ("No terminó en $limite s. Lo último que dijo Docker: " + $err.Result + $out.Result); return -1 } } else { $p.WaitForExit() }
     $p.WaitForExit()
     Set-Content "$env:TEMP\vk-salida.txt" $out.Result; Set-Content "$env:TEMP\vk-error.txt" $err.Result
     if ($p.ExitCode -ne 0) { Anotar ("docker $argumentos -> " + $p.ExitCode + ": " + $err.Result) }
@@ -100,7 +101,7 @@ $trabajo = {
 
     # 4. Encender
     Paso 3 "curso"; Avance "Poniendo en marcha Veridy y Kerna."
-    if ((Ejecutar "compose --env-file `"$Config`" -f `"$Aqui\docker-compose.yml`" up -d" 600) -ne 0) {
+    if ((Ejecutar "compose --progress plain --env-file `"$Config`" -f `"$Aqui\docker-compose.yml`" up -d --pull never" 300) -ne 0) {
       $e = Get-Content "$env:TEMP\vk-error.txt" -Raw
       if ($e -match "port is already allocated|address already in use") { $e = "Otro programa está usando los puertos 8400, 8401 o 8402. Ciérralo y vuelve a abrir «Instalar»." }
       Fallo 3 $e; return
