@@ -83,3 +83,18 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "veridy" {
   start_ip_address = each.value
   end_ip_address   = each.value
 }
+
+# Instalación local de prueba (entregable/): Veridy corre en el computador de quien prueba y usa esta base.
+# Esas IPs no se conocen de antemano, así que se admite cualquiera; el acceso sigue exigiendo TLS y la clave de veridy_app.
+variable "postgres_abierto_entregable" {
+  type    = bool
+  default = true
+}
+
+resource "azurerm_postgresql_flexible_server_firewall_rule" "entregable" {
+  count            = var.postgres_abierto_entregable ? 1 : 0
+  name             = "entregable-local"
+  server_id        = azurerm_postgresql_flexible_server.veridy.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "255.255.255.255"
+}

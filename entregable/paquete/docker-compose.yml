@@ -1,5 +1,6 @@
 # Veridy + Kerna en este computador. Lo usan Instalar / Detener; no hace falta abrirlo.
-# Solo se abren puertos en este computador (127.0.0.1). Hacia internet solo sale tráfico HTTPS (443) a Kerna en Azure.
+# Solo se abren puertos en este computador (127.0.0.1). Hacia internet sale HTTPS (443) a Kerna en Azure y
+# PostgreSQL (5432, con TLS) a la base de Veridy en Azure: las denuncias, cuentas y configuración son las de Azure.
 name: veridy-kerna
 
 x-red-salida: &salida
@@ -12,13 +13,16 @@ services:
     image: veridy-local:${VERSION}
     restart: unless-stopped
     ports: ["127.0.0.1:${PUERTO_VERIDY:-8401}:8080"]
-    volumes: ["veridy-datos:/var/globaleaks"]
+    volumes: ["veridy-trabajo:/var/globaleaks"]  # solo logs y temporales; los datos están en Azure
+    environment:
+      VERIDY_PG_FQDN: ${VERIDY_PG_FQDN}
+      VERIDY_DB_CLAVE: ${VERIDY_DB_CLAVE}
     healthcheck:
       test: ["CMD", "python3", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8080/api/health',timeout=5)"]
       interval: 15s
       timeout: 6s
       retries: 20
-      start_period: 30s
+      start_period: 60s
 
   conector:
     image: kerna-conector-local:${VERSION}
@@ -34,10 +38,12 @@ services:
       KERNA_API_URL: ${KERNA_API_URL}
       KERNA_CLIENT_ID: ${KERNA_CLIENT_ID}
       KERNA_CLIENT_SECRET: ${KERNA_CLIENT_SECRET}
-      KERNA_ID_EMPRESA: ${KERNA_CLIENT_ID}
+      KERNA_ID_EMPRESA: ${KERNA_ID_EMPRESA}
       KERNA_TABLAS_URL: ${KERNA_TABLAS_URL}
       CONECTOR_INTERVALO_S: "20"
-      CONECTOR_ESTADO: sqlite:////datos/conector.db
+      CONECTOR_ESTADO: postgresql://kerna_conector:${CONECTOR_PG_CLAVE_URL}@${VERIDY_PG_FQDN}:5432/kerna_conector?sslmode=verify-full&sslrootcert=/etc/ssl/certs/ca-certificates.crt
+      VERIDY_COMPARTIR_CON: ${VERIDY_COMPARTIR_CON}
+      VERIDY_COMPARTIR_SIEMPRE: ${VERIDY_COMPARTIR_SIEMPRE}
       IDENTITY_ENDPOINT: ${IDENTITY_ENDPOINT}
       IDENTITY_HEADER: ${IDENTITY_HEADER}
 
@@ -78,5 +84,5 @@ services:
       KERNA_PANEL_CLAVE: ${KERNA_PANEL_CLAVE}
 
 volumes:
-  veridy-datos:
+  veridy-trabajo:
   conector-datos:
