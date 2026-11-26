@@ -193,5 +193,5 @@ class ClienteVeridy:
                             {"operation": "grant", "args": {"receiver": id_receptor}})
         if r.status_code in (403, 404):
             raise CasoNoAccesible("la cuenta no puede compartir el caso", r.status_code)
-        if r.status_code not in (200, 201, 204):
+        if r.status_code not in (200, 201, 202, 204):  # Veridy responde 202 al conceder acceso
             raise ErrorVeridy("no se pudo compartir el caso", r.status_code)

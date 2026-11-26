@@ -13,7 +13,7 @@
   <div class="datos">
     <p><b>Tiempo:</b> 15 a 30 minutos la primera vez (casi todo es esperar). Las siguientes veces, 1 minuto.</p>
     <p><b>Necesitas:</b> un computador con Windows 10/11 o Linux, 8 GB de memoria, 6 GB libres en disco, conexión a internet y permiso para instalar programas.</p>
-    <p><b>Qué queda instalado:</b> Veridy y Kerna funcionando en tu computador. Lo que hace la inteligencia artificial de Kerna ocurre en internet; tu computador solo la consulta.</p>
+    <p><b>Qué queda instalado:</b> Veridy y Kerna funcionando en tu computador. Las denuncias y cuentas de Veridy están en internet (las mismas para todos los que prueban), y lo que hace la inteligencia artificial de Kerna también ocurre en internet; tu computador solo los consulta.</p>
   </div>
 </section>
 
@@ -45,9 +45,9 @@ No la cierres mientras trabaja.</div>
 
 <h2>3. Instalación en Linux</h2>
 <p>Tampoco hace falta instalar nada antes: si falta Docker, el instalador lo instala solo (pedirá tu contraseña).</p>
-<div class="paso"><b class="t">2.1</b>Abre la carpeta <b>veridy-kerna-local</b>, haz clic derecho en un espacio vacío y elige <b>«Abrir en una terminal»</b>.</div>
-<div class="paso"><b class="t">2.2</b>Escribe <code>./instalar.sh</code> y presiona Enter. Verás los mismos cinco pasos con un ✓ verde cada uno.</div>
-<div class="paso"><b class="t">2.3</b>Al terminar, la terminal muestra las direcciones de cada parte: mantén presionada la tecla Ctrl y haz clic en la que quieras abrir.</div>
+<div class="paso"><b class="t">3.1</b>Abre la carpeta <b>veridy-kerna-local</b>, haz clic derecho en un espacio vacío y elige <b>«Abrir en una terminal»</b>.</div>
+<div class="paso"><b class="t">3.2</b>Escribe <code>./instalar.sh</code> y presiona Enter. Verás los mismos cinco pasos con un ✓ verde cada uno.</div>
+<div class="paso"><b class="t">3.3</b>Al terminar, la terminal muestra las direcciones de cada parte: mantén presionada la tecla Ctrl y haz clic en la que quieras abrir.</div>
 
 <h2>4. La página de inicio</h2>
 <p>Es el punto de partida de la prueba. Desde aquí llegas a todo con un botón y ves las cuentas de prueba. Si la cierras, vuelve a abrirla escribiendo <code>localhost:8400</code> en el navegador.</p>
@@ -70,7 +70,7 @@ No la cierres mientras trabaja.</div>
   <tr><td>Apagar</td><td>Doble clic en <b>Detener</b>, dentro de la carpeta <b>archivos</b></td><td><code>./archivos/detener.sh</code></td></tr>
   <tr><td>Volver a encender</td><td>Doble clic en <b>Instalar</b> (tarda 1 minuto)</td><td><code>./instalar.sh</code></td></tr>
 </table>
-<p>Las denuncias, valoraciones y clasificaciones que hiciste se conservan al apagar. Al apagar el computador también se apaga todo; al volver a usarlo, abre «Instalar» otra vez.</p>
+<p>Las denuncias, valoraciones y clasificaciones quedan guardadas en internet, así que se conservan al apagar y las ven también los demás que prueban. Al apagar el computador también se apaga todo; al volver a usarlo, abre «Instalar» otra vez.</p>
 
 <h2>6. Si algo no funciona</h2>
 <table>
@@ -78,12 +78,14 @@ No la cierres mientras trabaja.</div>
   <tr><td>«No se pudo descargar Docker Desktop»</td><td>Revisa la conexión a internet y vuelve a abrir «Instalar».</td></tr>
   <tr><td>«Docker Desktop no terminó de encender»</td><td>Abre Docker Desktop desde el menú Inicio, espera «Engine running» y vuelve a abrir «Instalar».</td></tr>
   <tr><td>Docker Desktop dice que falta «virtualización» o «WSL»</td><td>Hay que activar la virtualización del computador (en la configuración de arranque, opción «Virtualization» o «VT-x»). Si es un computador institucional, pídelo al área de informática.</td></tr>
-  <tr><td>«Otro programa está usando los puertos 8400, 8401 o 8402»</td><td>Cierra el otro programa (o reinicia el computador) y vuelve a abrir «Instalar».</td></tr>
+  <tr><td>«Otro programa está usando los puertos que necesita Veridy»</td><td>Vuelve a abrir «Instalar»: en Windows busca otros puertos libres solo. En Linux, cierra el programa que usa 8400, 8401 u 8402.</td></tr>
+  <tr><td>La luz «Veridy» queda en rojo o el paso «Esperar a que todo responda» no termina</td><td>La red no deja llegar a la base de datos de Veridy en internet. Ver el recuadro de abajo.</td></tr>
   <tr><td>La luz «Conexión con Kerna en internet» queda en rojo</td><td>La red no deja salir hacia Kerna. Ver el recuadro de abajo.</td></tr>
   <tr><td>La página no abre</td><td>Escribe <code>localhost:8400</code> en el navegador. Si no responde, abre «Instalar» otra vez.</td></tr>
 </table>
-<div class="nota"><b>Redes de instituciones educativas o empresas.</b> Kerna solo necesita poder navegar por HTTPS (el mismo tipo de conexión que usa cualquier página web segura, puerto 443). No necesita puertos especiales ni conexiones entrantes. Si la red bloquea sitios, el área de informática debe permitir estas direcciones:
+<div class="nota"><b>Redes de instituciones educativas o empresas.</b> Kerna necesita poder navegar por HTTPS (el mismo tipo de conexión que usa cualquier página web segura, puerto 443) y Veridy necesita llegar a su base de datos (puerto 5432, conexión cifrada). No hacen falta conexiones entrantes. Si la red bloquea sitios o puertos, el área de informática debe permitir estas direcciones:
 <ul>
+  <li><code>psql-veridy-dev-g6mzy.postgres.database.azure.com</code>, puerto 5432 (denuncias y cuentas de Veridy)</li>
   <li><code>*.chilecentral.azurecontainerapps.io</code> (Kerna)</li>
   <li><code>stkernadevg6mzy.table.core.windows.net</code> (datos del panel)</li>
   <li><code>api.loganalytics.io</code> y <code>management.azure.com</code> (cifras del panel)</li>
