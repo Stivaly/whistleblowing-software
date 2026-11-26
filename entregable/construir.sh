@@ -87,7 +87,7 @@ sal() { terraform -chdir="$TF" output -raw "$1"; }
   echo "KERNA_CLIENT_SECRET='$(kvv kerna-client-secret)'"
   echo "KERNA_ID_EMPRESA=veridy"
   echo "VERIDY_COMPARTIR_CON=Auditor Kerna"
-  echo "VERIDY_COMPARTIR_SIEMPRE=Kerna e2e (pruebas)"
+  echo "VERIDY_COMPARTIR_SIEMPRE=Kerna e2e (pruebas),Auditor de prueba"
   grep -E '^(VERIDY_AUDITOR_USUARIO|VERIDY_AUDITOR_CLAVE|KERNA_PANEL_USUARIO|KERNA_PANEL_CLAVE|IDENTITY_ENDPOINT|IDENTITY_HEADER|DEMO_CLIENT_ID|DEMO_CLIENT_SECRET|FRONT_CLAVE)=' "$DIST/secretos.env"
   echo "# Solo si la red exige un proxy para salir a internet (p. ej. http://proxy.miinstitucion.cl:8080):"
   echo "HTTPS_PROXY="
